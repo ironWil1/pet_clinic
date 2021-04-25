@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  db:
+    container_name: pets_db
+    image: library/postgres:12-alpine
+
+    environment:
+      - POSTGRES_PASSWORD=123456Qwe
+      - POSTGRES_USER=jm
+      - POSTGRES_DB=pets
+      - PGDATA=/var/lib/postgresql/data/pets
+    ports:
+      - 5433:5432
