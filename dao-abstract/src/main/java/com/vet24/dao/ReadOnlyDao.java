@@ -1,7 +1,7 @@
 package com.vet24.dao;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 
 public interface ReadOnlyDao<K extends Serializable, T> {
 
@@ -9,5 +9,5 @@ public interface ReadOnlyDao<K extends Serializable, T> {
 
     boolean isExistByKey (K key);
 
-    Collection<T> getAll ();
+    List<T> getAll ();
 }
