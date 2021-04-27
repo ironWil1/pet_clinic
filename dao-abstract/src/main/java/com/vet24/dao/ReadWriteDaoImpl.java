@@ -3,7 +3,6 @@ package com.vet24.dao;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,7 @@ public class ReadWriteDaoImpl<K extends Serializable, T> extends ReadOnlyDaoImpl
     }
 
     @Override
-    public void persistAll(Collection<T> entities) {
+    public void persistAll(List<T> entities) {
         entities.forEach(elem -> manager.persist(elem));
     }
 
@@ -38,7 +37,7 @@ public class ReadWriteDaoImpl<K extends Serializable, T> extends ReadOnlyDaoImpl
     }
 
     @Override
-    public void deleteAll(Collection<T> entities) {
+    public void deleteAll(List<T> entities) {
         entities.forEach(elem -> manager.remove(elem));
     }
 }
