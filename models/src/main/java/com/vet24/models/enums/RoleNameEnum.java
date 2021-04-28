@@ -1,7 +1,7 @@
-package com.vet24.models;
+package com.vet24.models.enums;
 
 public enum RoleNameEnum {
     ADMIN,
-    MANGER,
+    MANAGER,
     CLIENT
 }

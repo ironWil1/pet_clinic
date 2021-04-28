@@ -1,17 +1,13 @@
-package com.vet24.models;
+package com.vet24.models.user;
+
+import com.vet24.models.enums.RoleNameEnum;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 
 @Entity
@@ -23,9 +19,6 @@ public class Role implements GrantedAuthority {
 
     private RoleNameEnum name;
 
-    @Transient
-    @OneToMany(mappedBy = "role")
-    private Set<User> users;
 
     public Role(){};
 
@@ -49,13 +42,6 @@ public class Role implements GrantedAuthority {
         this.name = name;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
 
     @Override
     public String getAuthority() {

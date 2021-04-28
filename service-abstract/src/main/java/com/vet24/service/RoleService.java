@@ -1,6 +1,6 @@
 package com.vet24.service;
 
-import com.vet24.models.Role;
+import com.vet24.models.user.Role;
 
 import java.util.List;
 

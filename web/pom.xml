@@ -11,7 +11,7 @@
 
     <artifactId>web</artifactId>
 
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>com.vet24</groupId>

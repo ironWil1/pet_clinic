@@ -1,13 +1,12 @@
-package com.vet24.models;
-
-import com.sun.istack.NotNull;
-import com.sun.istack.Nullable;
+package com.vet24.models.user;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,12 +54,12 @@ public class User implements UserDetails {
 
     public User(){};
 
-    public User(String a, String b, String c, String d, Role g) {
-        this.firstname = a;
-        this.lastname = b;
-        this.login = c;
-        this.password = d;
-        this.role = g;
+    public User(String firstname, String lastname, String login, String password, Role role) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.login = login;
+        this.password = password;
+        this.role = role;
     }
 
     public Long getId() {
@@ -125,7 +124,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return (Collection<? extends GrantedAuthority>) role;
+        List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
+        list.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+        return list;
     }
 
     @Override

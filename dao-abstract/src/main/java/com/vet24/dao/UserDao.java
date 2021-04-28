@@ -1,6 +1,6 @@
 package com.vet24.dao;
 
-import com.vet24.models.User;
+import com.vet24.models.user.User;
 
 import java.util.List;
 

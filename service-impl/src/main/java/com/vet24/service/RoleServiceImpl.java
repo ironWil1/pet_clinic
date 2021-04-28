@@ -1,15 +1,16 @@
 package com.vet24.service;
 
 import com.vet24.dao.RoleDao;
-import com.vet24.models.Role;
+import com.vet24.models.user.Role;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
 
-import javax.transaction.Transactional;
+
 
 
 @Service

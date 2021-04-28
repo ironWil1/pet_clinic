@@ -1,6 +1,6 @@
 package com.vet24.service;
 
-import com.vet24.models.User;
+import com.vet24.models.user.User;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

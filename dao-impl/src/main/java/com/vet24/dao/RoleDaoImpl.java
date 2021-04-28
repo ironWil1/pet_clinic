@@ -1,7 +1,6 @@
 package com.vet24.dao;
 
-import com.vet24.models.Role;
-import com.vet24.models.User;
+import com.vet24.models.user.Role;
 
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +9,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 
 @Repository
 public class RoleDaoImpl implements RoleDao {

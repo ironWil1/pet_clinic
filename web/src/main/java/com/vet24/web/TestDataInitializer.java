@@ -1,9 +1,8 @@
 package com.vet24.web;
 
-import com.vet24.dao.RoleDao;
-import com.vet24.models.Role;
-import com.vet24.models.RoleNameEnum;
-import com.vet24.models.User;
+import com.vet24.models.user.Role;
+import com.vet24.models.enums.RoleNameEnum;
+import com.vet24.models.user.User;
 import com.vet24.service.RoleService;
 import com.vet24.service.UserService;
 
@@ -24,16 +23,22 @@ public class TestDataInitializer implements ApplicationRunner {
         this.userService = userService;
     }
 
+    public void roleInitialize() {
+        roleService.addRole(new Role(RoleNameEnum.ADMIN));
+        roleService.addRole(new Role(RoleNameEnum.MANAGER));
+        roleService.addRole(new Role(RoleNameEnum.CLIENT));
+    }
+
+    public void userInitialize() {
+        userService.addUser(new User("Ivan", "Ivanov", "Ivan", "123456", roleService.getRoleById(1L)));
+        userService.addUser(new User("Petr", "Petrov", "Petr", "123456", roleService.getRoleById(2L)));
+        userService.addUser(new User("Jm", "Jm", "Jm", "123456", roleService.getRoleById(3L)));
+    }
+
     @Override
     public void run(ApplicationArguments args) {
-        Role admin = new Role(RoleNameEnum.ADMIN);
-        Role client = new Role(RoleNameEnum.CLIENT);
-        Role manger = new Role(RoleNameEnum.MANGER);
-        roleService.addRole(admin);
-        roleService.addRole(client);
-        roleService.addRole(manger);
-        userService.addUser(new User("Ivan", "Ivanov", "Ivan", "123456", client));
-        userService.addUser(new User("Petr", "Petrov", "Petr", "123456", admin));
-        userService.addUser(new User("Jm", "Jm", "Jm", "123456", manger));
+        roleInitialize();
+        userInitialize();
+        System.out.println(userService.getUserById(1L).getAuthorities());
     }
 }

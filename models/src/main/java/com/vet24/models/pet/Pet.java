@@ -1,4 +1,4 @@
-package com.vet24.models;
+package com.vet24.models.pet;
 
 import javax.persistence.Entity;
 
