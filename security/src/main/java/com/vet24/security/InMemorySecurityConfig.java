@@ -16,9 +16,7 @@ public class InMemorySecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/").authenticated()
-                .and()
-                .formLogin()
+                .antMatchers("/**").permitAll()
                 .and()
                 .csrf().disable();
     }
