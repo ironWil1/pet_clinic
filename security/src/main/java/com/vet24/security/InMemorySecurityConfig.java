@@ -27,7 +27,7 @@ public class InMemorySecurityConfig extends WebSecurityConfigurerAdapter {
     protected UserDetailsService users () {
         UserDetails admin = User.builder()
                 .username("admin")
-                .password("admin")
+                .password("{noop}admin")
                 .roles("admin")
                 .build();
         return new InMemoryUserDetailsManager(admin);
