@@ -3,7 +3,6 @@ package com.vet24.dao.userDaoImpl;
 import com.vet24.dao.userDao.UserDao;
 import com.vet24.models.user.User;
 
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
