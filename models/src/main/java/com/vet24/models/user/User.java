@@ -1,5 +1,7 @@
 package com.vet24.models.user;
 
+import com.vet24.models.pet.Pet;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -65,6 +67,7 @@ public class User implements UserDetails {
         this.password = password;
         this.role = role;
     }
+
 
     public Long getId() {
         return id;

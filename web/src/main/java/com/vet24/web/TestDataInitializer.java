@@ -1,8 +1,11 @@
 package com.vet24.web;
 
+import com.vet24.models.pet.Pet;
+import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.User;
+import com.vet24.service.userService.ClientService;
 import com.vet24.service.userService.RoleService;
 import com.vet24.service.userService.UserService;
 
@@ -10,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
 
 @Component
 public class TestDataInitializer implements ApplicationRunner {
