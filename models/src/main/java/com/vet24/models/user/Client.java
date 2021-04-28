@@ -1,5 +1,6 @@
 package com.vet24.models.user;
 
+import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.pet.Pet;
 
 import java.util.Set;
@@ -21,6 +22,7 @@ public class Client extends User {
     private Set<Pet> pets;
 
     public Client() {
+        super();
     }
 
     public Client(String firstname, String lastname, String login, String password, Role role, Set<Pet> pets) {
@@ -34,5 +36,12 @@ public class Client extends User {
 
     public void setPets(Set<Pet> pets) {
         this.pets = pets;
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "pets=" + pets + " login " + super.getLogin() + " " + super.getRole() +
+                '}';
     }
 }

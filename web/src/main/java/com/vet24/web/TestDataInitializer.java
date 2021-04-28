@@ -1,15 +1,21 @@
 package com.vet24.web;
 
+import com.vet24.models.pet.Pet;
+import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.User;
+import com.vet24.service.userService.ClientService;
 import com.vet24.service.userService.RoleService;
 import com.vet24.service.userService.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
 
 
 @Component
@@ -17,6 +23,7 @@ public class TestDataInitializer implements ApplicationRunner {
 
     private RoleService roleService;
     private UserService userService;
+
 
     @Autowired
     public TestDataInitializer(RoleService roleService, UserService userService) {
@@ -33,14 +40,15 @@ public class TestDataInitializer implements ApplicationRunner {
     public void userInitialize() {
         userService.addUser(new User("Ivan", "Ivanov", "Ivan", "123456", roleService.getRoleById(1L)));
         userService.addUser(new User("Petr", "Petrov", "Petr", "123456", roleService.getRoleById(2L)));
-        userService.addUser(new User("Jm", "Jm", "Jm", "123456", roleService.getRoleById(3L)));
-    }
+        userService.addUser(new Client("Jm", "Jm", "Jm", "123456", roleService.getRoleById(3L), new HashSet<Pet>()));
 
+    }
 
     @Override
     public void run(ApplicationArguments args) {
         roleInitialize();
         userInitialize();
         System.out.println(userService.getUserById(1L).getAuthorities());
+        System.out.println(userService.getUserById(3L));
     }
 }
