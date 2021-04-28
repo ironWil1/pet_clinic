@@ -1,7 +1,8 @@
-package com.vet24.service;
+package com.vet24.service.userServiceImpl;
 
-import com.vet24.dao.RoleDao;
+import com.vet24.dao.userDao.RoleDao;
 import com.vet24.models.user.Role;
+import com.vet24.service.userService.RoleService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

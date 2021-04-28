@@ -1,4 +1,4 @@
-package com.vet24.dao;
+package com.vet24.dao.userDao;
 
 import com.vet24.models.user.Role;
 

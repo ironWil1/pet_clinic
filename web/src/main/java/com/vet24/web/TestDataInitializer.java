@@ -3,8 +3,8 @@ package com.vet24.web;
 import com.vet24.models.user.Role;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.User;
-import com.vet24.service.RoleService;
-import com.vet24.service.UserService;
+import com.vet24.service.userService.RoleService;
+import com.vet24.service.userService.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -34,6 +34,7 @@ public class TestDataInitializer implements ApplicationRunner {
         userService.addUser(new User("Petr", "Petrov", "Petr", "123456", roleService.getRoleById(2L)));
         userService.addUser(new User("Jm", "Jm", "Jm", "123456", roleService.getRoleById(3L)));
     }
+
 
     @Override
     public void run(ApplicationArguments args) {
