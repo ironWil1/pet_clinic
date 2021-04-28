@@ -1,4 +1,4 @@
-package com.vet24.service;
+package com.vet24.service.media;
 
 import org.springframework.web.multipart.MultipartFile;
 
