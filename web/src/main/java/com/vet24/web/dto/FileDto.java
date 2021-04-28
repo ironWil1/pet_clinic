@@ -1,14 +1,14 @@
 package com.vet24.web.dto;
 
-public class UploadFileDto {
+public class FileDto {
 
     private String filename;
     private String url;
 
-    public UploadFileDto() {
+    public FileDto() {
     }
 
-    public UploadFileDto(String filename, String url) {
+    public FileDto(String filename, String url) {
         this.filename = filename;
         this.url = url;
     }

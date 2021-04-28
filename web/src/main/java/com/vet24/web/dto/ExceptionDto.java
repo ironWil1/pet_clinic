@@ -1,10 +1,10 @@
 package com.vet24.web.dto;
 
-public class FileExceptionDto {
+public class ExceptionDto {
 
     private String message;
 
-    public FileExceptionDto() {
+    public ExceptionDto() {
     }
 
     public String getMessage() {
