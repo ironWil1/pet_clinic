@@ -1,8 +1,7 @@
-package com.vet24;
+package com.vet24.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication(scanBasePackages = "com.vet24")
 public class PetClinicApplication {
