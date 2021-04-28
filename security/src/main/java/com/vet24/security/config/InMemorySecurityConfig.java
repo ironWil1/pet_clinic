@@ -1,4 +1,4 @@
-package com.vet24.security;
+package com.vet24.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
