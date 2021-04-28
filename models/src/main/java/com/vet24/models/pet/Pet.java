@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Pet {
+public abstract class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,5 @@
 package com.vet24.models.user;
 
-import com.vet24.models.pet.Pet;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
