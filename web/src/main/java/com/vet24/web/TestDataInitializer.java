@@ -23,12 +23,14 @@ public class TestDataInitializer implements ApplicationRunner {
 
     private RoleService roleService;
     private UserService userService;
+    private ClientService clientService;
 
 
     @Autowired
-    public TestDataInitializer(RoleService roleService, UserService userService) {
+    public TestDataInitializer(RoleService roleService, UserService userService, ClientService clientService) {
         this.roleService = roleService;
         this.userService = userService;
+        this.clientService = clientService;
     }
 
     public void roleInitialize() {
@@ -40,7 +42,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void userInitialize() {
         userService.addUser(new User("Ivan", "Ivanov", "Ivan", "123456", roleService.getRoleById(1L)));
         userService.addUser(new User("Petr", "Petrov", "Petr", "123456", roleService.getRoleById(2L)));
-        userService.addUser(new Client("Jm", "Jm", "Jm", "123456", roleService.getRoleById(3L), new HashSet<Pet>()));
+        clientService.addClient(new Client("Jm", "Jm", "Jm", "123456", roleService.getRoleById(3L), new HashSet<Pet>()));
 
     }
 
@@ -50,5 +52,8 @@ public class TestDataInitializer implements ApplicationRunner {
         userInitialize();
         System.out.println(userService.getUserById(1L).getAuthorities());
         System.out.println(userService.getUserById(3L));
+        System.out.println(roleService.getRoleById(2L));
+        System.out.println(clientService.getAllClients());
+        System.out.println(clientService.getClientById(1L));
     }
 }

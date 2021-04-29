@@ -1,6 +1,48 @@
 package com.vet24.service.userServiceImpl;
 
+import com.vet24.dao.userDao.ClientDao;
+import com.vet24.models.user.Client;
+import com.vet24.service.userService.ClientService;
 
-public class ClientServiceImpl extends UserServiceImpl {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+@Service
+public class ClientServiceImpl implements ClientService {
+
+    @Autowired
+    ClientDao clientDao;
+
+    @Transactional
+    @Override
+    public Client getClientById(Long id) {
+        return clientDao.getClientById(id);
+    }
+
+    @Transactional
+    @Override
+    public List<Client> getAllClients() {
+        return clientDao.getAllClients();
+    }
+
+    @Transactional
+    @Override
+    public void addClient(Client client) {
+        clientDao.addClient(client);
+    }
+
+    @Transactional
+    @Override
+    public void editClient(Client client) {
+        clientDao.editClient(client);
+    }
+
+    @Transactional
+    @Override
+    public void deleteClient(Long id) {
+        clientDao.deleteClient(id);
+    }
 }

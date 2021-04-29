@@ -20,7 +20,7 @@ public class RoleDaoImpl implements RoleDao {
 
     @Override
     public Role getRoleById(Long id) {
-        Role role = (Role) entityManager.createQuery("from Role where id =:id").setParameter("id", id).getSingleResult();
+        Role role = entityManager.find(Role.class, id);
         return role;
     }
 

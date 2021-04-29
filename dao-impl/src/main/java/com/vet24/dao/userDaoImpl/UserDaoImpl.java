@@ -19,13 +19,15 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserById(Long id) {
-        User user = (User) entityManager.createQuery("from User where id =:id").setParameter("id", id).getSingleResult();
+        User user = entityManager.find(User.class, id);
         return user;
     }
 
     @Override
     public User getUserByLogin(String login) {
-        User user = (User) entityManager.createQuery("from User where login =:login").setParameter("login", login).getSingleResult();
+        User user = entityManager
+                .createQuery("from User where login =:login", User.class)
+                .setParameter("login", login).getSingleResult();
         return user;
     }
 
