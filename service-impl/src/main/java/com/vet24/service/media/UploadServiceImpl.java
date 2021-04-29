@@ -20,7 +20,7 @@ import java.util.Objects;
 @PropertySource("application.properties")
 public class UploadServiceImpl implements UploadService {
 
-    @Value("${vet24.service.media.upload-folder:uploads/}")
+    @Value("${application-upload-folder:uploads/}")
     private String uploadFolder;
 
     @Override
