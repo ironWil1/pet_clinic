@@ -3,21 +3,20 @@ package com.vet24.dao;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-public class ReadOnlyDaoImpl<K extends Serializable, T> implements ReadOnlyDao<K, T> {
+public abstract class ReadOnlyDaoImpl<K extends Serializable, T> implements ReadOnlyDao<K, T> {
 
     @PersistenceContext
     EntityManager manager;
 
-    private Class<T> type;
+    private final Class<T> type;
 
-    public Class<T> getType() {
-        return type;
-    }
-
-    public void setType(Class<T> type) {
-        this.type = type;
+    @SuppressWarnings("unchecked")
+    public ReadOnlyDaoImpl() {
+        this.type = (Class<T>) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[1];
     }
 
     @Override
