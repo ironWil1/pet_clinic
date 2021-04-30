@@ -1,7 +1,7 @@
 package com.vet24.web.controllers.media;
 
 import com.vet24.service.media.UploadService;
-import com.vet24.web.dto.FileDto;
+import com.vet24.models.dto.UploadedFileDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
