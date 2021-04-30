@@ -28,15 +28,15 @@ public class UploadServiceImpl implements UploadService {
     @Override
     public UploadedFileDto store(MultipartFile file) {
         String originFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        LocalDateTime now = LocalDateTime.now();
+        int extensionIndex = originFilename.lastIndexOf(".");
 
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file " + originFilename);
         }
-
-        LocalDateTime now = LocalDateTime.now();
-        int extensionIndex = (originFilename.lastIndexOf(".") > 0)
-                ? originFilename.lastIndexOf(".")
-                : originFilename.length() - 1;
+        if (extensionIndex < 0) {
+            throw new StorageException("Cannot store file [" + originFilename + "] without extension");
+        }
 
         String storageFolder = uploadFolder
                 + File.separator

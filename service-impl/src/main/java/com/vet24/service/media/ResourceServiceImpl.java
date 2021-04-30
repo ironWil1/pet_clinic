@@ -50,9 +50,11 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public String getContentTypeByFileName(String filename) {
-        int extensionIndex = (filename.lastIndexOf(".") > 0)
-                ? filename.lastIndexOf(".")
-                : filename.length() - 1;
+        int extensionIndex = filename.lastIndexOf(".");
+
+        if (extensionIndex < 0) {
+            throw new StorageException("Cannot load file [" + filename + "] without extension");
+        }
 
         return contentTypeMap.getOrDefault(
                 filename.substring(extensionIndex),
