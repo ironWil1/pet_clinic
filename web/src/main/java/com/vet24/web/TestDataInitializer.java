@@ -50,10 +50,6 @@ public class TestDataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         roleInitialize();
         userInitialize();
-        System.out.println(userService.getUserById(1L).getAuthorities());
-        System.out.println(userService.getUserById(3L));
-        System.out.println(roleService.getRoleById(2L));
-        System.out.println(clientService.getAllClients());
-        System.out.println(clientService.getClientById(1L));
+
     }
 }

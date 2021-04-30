@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
@@ -26,10 +27,14 @@ public class ClientDaoImpl implements ClientDao {
 
     @Override
     public Client getClientByLogin(String login) {
-        Client client = entityManager
-                .createQuery("from Client where login =:login", Client.class)
-                .setParameter("login", login).getSingleResult();
-        return client;
+        try {
+            Client client = entityManager
+                    .createQuery("from Client where login =:login", Client.class)
+                    .setParameter("login", login).getSingleResult();
+            return client;
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override

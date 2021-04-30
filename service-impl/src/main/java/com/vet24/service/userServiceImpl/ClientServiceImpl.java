@@ -22,6 +22,11 @@ public class ClientServiceImpl implements ClientService {
         return clientDao.getClientById(id);
     }
 
+    @Override
+    public Client getClientByLogin(String login) {
+        return clientDao.getClientByLogin(login);
+    }
+
     @Transactional
     @Override
     public List<Client> getAllClients() {
