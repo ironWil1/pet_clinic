@@ -55,7 +55,7 @@ public abstract class Pet {
     @Column
     private String color;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private PetSize petSize;
 

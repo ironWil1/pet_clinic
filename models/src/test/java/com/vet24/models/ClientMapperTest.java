@@ -4,7 +4,7 @@ import com.vet24.models.dtos.ClientDto;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
-import com.vet24.models.mappers.ClientMapper;
+import com.vet24.models.mappers.MapStructMapper;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -21,7 +21,7 @@ public class ClientMapperTest {
                 "AndrLogin", "password", new Role(RoleNameEnum.CLIENT), new HashSet<>());
 
         //when
-        ClientDto clientDto = ClientMapper.INSTANCE.clientToClientDto(client);
+        ClientDto clientDto = MapStructMapper.INSTANCE.clientToClientDto(client);
 
         //then
         assertThat(clientDto).isNotNull();

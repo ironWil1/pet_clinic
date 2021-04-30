@@ -8,6 +8,7 @@ import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.User;
+import com.vet24.service.pet.PetService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.UserService;
@@ -20,26 +21,27 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Properties;
+import java.util.Objects;
 import java.util.Set;
 
 
 @Component
 public class TestDataInitializer implements ApplicationRunner {
 
-    private RoleService roleService;
-    private UserService userService;
-    private ClientService clientService;
+    private final Set<Pet> pets = new HashSet<>();
+    private final RoleService roleService;
+    private final UserService userService;
+    private final ClientService clientService;
+    private final PetService petService;
+    private final Environment environment;
 
-    @Autowired
-    Environment environment;
-
-
-    @Autowired
-    public TestDataInitializer(RoleService roleService, UserService userService, ClientService clientService) {
+    public TestDataInitializer(RoleService roleService, UserService userService,
+                               ClientService clientService, PetService petService, Environment environment) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
+        this.petService = petService;
+        this.environment = environment;
     }
 
     public void roleInitialize() {
@@ -49,20 +51,30 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userInitialize() {
-//        Dog dog1 = new Dog("Sharik", LocalDate.now(), PetType.DOG, Gender.MALE, "Yourkshire Terrier");
-//        Set<Pet> pets = new HashSet<>();
-//        pets.add(dog1);
-        userService.addUser(new User("Ivan", "Ivanov", "Ivan", "123456", roleService.getRoleById(1L)));
-        userService.addUser(new User("Petr", "Petrov", "Petr", "123456", roleService.getRoleById(2L)));
-        clientService.addClient(new Client("ClientFirstName", "LastName", "clientLogin",
-                "123456", roleService.getRoleById(3L), new HashSet<>()));
+        userService.addUser(new User("Ivan", "Ivanov", "Ivan",
+                "123456", roleService.getRoleById(1L)));
+        userService.addUser(new User("Petr", "Petrov", "Petr",
+                "123456", roleService.getRoleById(2L)));
+        clientService.addClient(new Client("John", "Smith", "clientLogin",
+                "123456", roleService.getRoleById(3L), pets));
 
+    }
+
+    public void petInitialize() {
+        Dog dog1 = new Dog("Delilah", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier");
+        Dog dog2 = new Dog("Buddy", LocalDate.now(), PetType.DOG, Gender.MALE, "Golden Retriever");
+        petService.save(dog1);
+        petService.save(dog2);
+        pets.add(dog1);
+        pets.add(dog2);
     }
 
     @Override
     public void run(ApplicationArguments args) {
-        if (environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create")
-                || environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create-drop")) {
+        if (Objects.requireNonNull(environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create")
+                || Objects.requireNonNull(
+                        environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop")) {
+            petInitialize();
             roleInitialize();
             userInitialize();
         }
