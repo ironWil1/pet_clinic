@@ -1,10 +1,10 @@
-package com.vet24.service.userService;
+package com.vet24.dao.user;
 
 import com.vet24.models.user.Role;
 
 import java.util.List;
 
-public interface RoleService {
+public interface RoleDao {
     Role getRoleById(Long id);
     List<Role> getAllRoles();
     void addRole(Role role);

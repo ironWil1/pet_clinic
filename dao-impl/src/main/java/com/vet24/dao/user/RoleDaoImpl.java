@@ -1,6 +1,5 @@
-package com.vet24.dao.userDaoImpl;
+package com.vet24.dao.user;
 
-import com.vet24.dao.userDao.RoleDao;
 import com.vet24.models.user.Role;
 
 import org.springframework.stereotype.Repository;

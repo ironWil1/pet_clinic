@@ -1,4 +1,4 @@
-package com.vet24.service.userService;
+package com.vet24.service.user;
 
 import com.vet24.models.user.User;
 

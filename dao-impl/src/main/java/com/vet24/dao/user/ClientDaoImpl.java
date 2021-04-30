@@ -1,7 +1,6 @@
-package com.vet24.dao.userDaoImpl;
+package com.vet24.dao.user;
 
 
-import com.vet24.dao.userDao.ClientDao;
 import com.vet24.models.user.Client;
 
 import org.springframework.stereotype.Repository;
@@ -11,7 +10,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 @Repository
 public class ClientDaoImpl implements ClientDao {

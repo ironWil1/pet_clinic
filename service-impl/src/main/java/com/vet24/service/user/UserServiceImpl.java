@@ -1,8 +1,7 @@
-package com.vet24.service.userServiceImpl;
+package com.vet24.service.user;
 
-import com.vet24.dao.userDao.UserDao;
+import com.vet24.dao.user.UserDao;
 import com.vet24.models.user.User;
-import com.vet24.service.userService.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

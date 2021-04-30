@@ -1,4 +1,4 @@
-package com.vet24.dao.userDao;
+package com.vet24.dao.user;
 
 import com.vet24.models.user.User;
 
