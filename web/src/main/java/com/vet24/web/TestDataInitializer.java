@@ -1,5 +1,8 @@
 package com.vet24.web;
 
+import com.vet24.models.enums.Gender;
+import com.vet24.models.enums.PetType;
+import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
@@ -15,8 +18,10 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 
 @Component
@@ -44,9 +49,13 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userInitialize() {
+//        Dog dog1 = new Dog("Sharik", LocalDate.now(), PetType.DOG, Gender.MALE, "Yourkshire Terrier");
+//        Set<Pet> pets = new HashSet<>();
+//        pets.add(dog1);
         userService.addUser(new User("Ivan", "Ivanov", "Ivan", "123456", roleService.getRoleById(1L)));
         userService.addUser(new User("Petr", "Petrov", "Petr", "123456", roleService.getRoleById(2L)));
-        clientService.addClient(new Client("Jm", "Jm", "Jm", "123456", roleService.getRoleById(3L), new HashSet<Pet>()));
+        clientService.addClient(new Client("ClientFirstName", "LastName", "clientLogin",
+                "123456", roleService.getRoleById(3L), new HashSet<>()));
 
     }
 
