@@ -12,9 +12,11 @@ import com.vet24.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Properties;
 
 
 @Component
@@ -23,6 +25,9 @@ public class TestDataInitializer implements ApplicationRunner {
     private RoleService roleService;
     private UserService userService;
     private ClientService clientService;
+
+    @Autowired
+    Environment environment;
 
 
     @Autowired
@@ -47,8 +52,10 @@ public class TestDataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        roleInitialize();
-        userInitialize();
-
+        if (environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create")
+                || environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create-drop")) {
+            roleInitialize();
+            userInitialize();
+        }
     }
 }
