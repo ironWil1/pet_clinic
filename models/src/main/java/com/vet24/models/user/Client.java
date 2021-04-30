@@ -1,46 +1,46 @@
 package com.vet24.models.user;
 
-
 import com.vet24.models.pet.Pet;
 
-import java.util.List;
+import java.util.Set;
 
-public class Client {
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 
-    private String username;
-    private String avatar;
-    private String email;
-    private List<Pet> pets;
+@Entity
+@DiscriminatorValue("CLIENT")
+public class Client extends User {
 
-    public String getUsername() {
-        return username;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "client_pets", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "pet_id"))
+    private Set<Pet> pets;
+
+    public Client() {
+        super();
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public Client(String firstname, String lastname, String login, String password, Role role, Set<Pet> pets) {
+        super(firstname, lastname, login, password, role);
+        this.pets = pets;
     }
 
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<Pet> getPets() {
+    public Set<Pet> getPets() {
         return pets;
     }
 
-    public void setPets(List<Pet> pets) {
+    public void setPets(Set<Pet> pets) {
         this.pets = pets;
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "pets=" + pets + " login " + super.getLogin() + " " + super.getRole() +
+                '}';
     }
 }
