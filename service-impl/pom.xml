@@ -20,6 +20,11 @@
         </dependency>
         <dependency>
             <groupId>com.vet24</groupId>
+            <artifactId>dao-abstract</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vet24</groupId>
             <artifactId>service-abstract</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
