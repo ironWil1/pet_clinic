@@ -1,5 +1,6 @@
 package com.vet24.service.media;
 
+import com.vet24.models.dto.UploadedFileDto;
 import com.vet24.models.exception.StorageException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -20,11 +21,11 @@ import java.util.Objects;
 @PropertySource("application.properties")
 public class UploadServiceImpl implements UploadService {
 
-    @Value("${application-upload-folder:uploads/}")
+    @Value("${application.upload.folder:uploads}")
     private String uploadFolder;
 
     @Override
-    public String store(MultipartFile file) {
+    public UploadedFileDto store(MultipartFile file) {
         String originFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
         if (file.isEmpty()) {
@@ -49,6 +50,6 @@ public class UploadServiceImpl implements UploadService {
             throw new StorageException("Failed to store file " + originFilename);
         }
 
-        return storageFolder + storageFilename;
+        return new UploadedFileDto(storageFilename, storageFolder + storageFilename);
     }
 }

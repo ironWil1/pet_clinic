@@ -16,7 +16,7 @@ import java.util.Map;
 @PropertySource("application.properties")
 public class ResourceServiceImpl implements ResourceService {
 
-    @Value("${application-upload-folder:uploads/}")
+    @Value("${application.upload.folder:uploads}")
     private String uploadFolder;
 
     private String contentTypeDefault = "application/octet-stream";
