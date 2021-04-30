@@ -23,11 +23,8 @@ public class UploadController {
     }
 
     @PostMapping("/upload-file")
-    @ApiResponse(responseCode = "200", description = "Successful upload", content = @Content(schema = @Schema(implementation = FileDto.class)))
-    public ResponseEntity<FileDto> uploadFile(@RequestParam("file") MultipartFile file){
-        String storageUrl = uploadService.store(file);
-        FileDto uploadFile = new FileDto(file.getOriginalFilename(), storageUrl);
-
-        return new ResponseEntity<>(uploadFile, HttpStatus.OK);
+    @ApiResponse(responseCode = "200", description = "Successful upload", content = @Content(schema = @Schema(implementation = UploadedFileDto.class)))
+    public ResponseEntity<UploadedFileDto> uploadFile(@RequestParam("file") MultipartFile file){
+        return new ResponseEntity<>(uploadService.store(file), HttpStatus.OK);
     }
 }
