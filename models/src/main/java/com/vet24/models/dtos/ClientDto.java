@@ -4,10 +4,10 @@ import java.util.List;
 
 public class ClientDto {
 
-    String username;
-    String avatar;
-    String email;
-    List<PetDto> pets;
+    private String username;
+    private String avatar;
+    private String email;
+    private List<PetDto> pets;
 
     public String getUsername() {
         return username;
