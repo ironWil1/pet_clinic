@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+
 @RestController
 @RequestMapping("/api/uploads")
 public class ResourceController {
@@ -19,8 +21,8 @@ public class ResourceController {
     }
 
     @GetMapping("/{year:\\d{4}}/{month:\\d{2}}/{day:\\d{2}}/{filename}")
-    public ResponseEntity<byte[]> getFile(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String filename){
-        byte[] file = resourceService.loadAsByteArray(year + "/" + month + "/" + day + "/" + filename);
+    public ResponseEntity<byte[]> getFile(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String filename) {
+        byte[] file = resourceService.loadAsByteArray(year + File.separator + month + File.separator + day + File.separator + filename);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", resourceService.getContentTypeByFileName(filename));

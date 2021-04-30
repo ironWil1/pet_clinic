@@ -7,6 +7,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -49,22 +50,22 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public String getContentTypeByFileName(String filename) {
-        String extension = filename.substring(filename.lastIndexOf("."));
-        String contentType = contentTypeDefault;
+        int extensionIndex = (filename.lastIndexOf(".") > 0)
+                ? filename.lastIndexOf(".")
+                : filename.length() - 1;
 
-        if (contentTypeMap.containsKey(extension)) {
-            contentType = contentTypeMap.get(extension);
-        }
-
-        return contentType;
+        return contentTypeMap.getOrDefault(
+                filename.substring(extensionIndex),
+                contentTypeDefault
+        );
     }
 
     @Override
     public byte[] loadAsByteArray(String filename) {
-        try (InputStream is = new FileSystemResource(uploadFolder + filename).getInputStream()) {
+        try (InputStream is = new FileSystemResource(uploadFolder + File.separator + filename).getInputStream()) {
             return StreamUtils.copyToByteArray(is);
         } catch (IOException e) {
-            throw new StorageException("Could not read file: " + filename);
+            throw new StorageException("Could not read file: " + filename, e);
         }
     }
 }

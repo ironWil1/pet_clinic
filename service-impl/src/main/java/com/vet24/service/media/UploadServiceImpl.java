@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -33,21 +34,28 @@ public class UploadServiceImpl implements UploadService {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        int extensionIndex = originFilename.lastIndexOf(".");
-        String storageFolder = uploadFolder + now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd/"));
+        int extensionIndex = (originFilename.lastIndexOf(".") > 0)
+                ? originFilename.lastIndexOf(".")
+                : originFilename.length() - 1;
+
+        String storageFolder = uploadFolder
+                + File.separator
+                + now.format(DateTimeFormatter.ofPattern(
+                        "yyyy" + File.separator + "MM" + File.separator + "dd"))
+                + File.separator;
+
         String storageFilename = originFilename.substring(0, extensionIndex)
                 + now.format(DateTimeFormatter.ofPattern("_yyyy-MM-dd_HH-mm-ss"))
                 + originFilename.substring(extensionIndex);
 
         try (InputStream inputStream = file.getInputStream()) {
-
             if (!Files.exists(Paths.get(storageFolder))) {
                 Files.createDirectories(Paths.get(storageFolder));
             }
             Files.copy(inputStream, Paths.get(storageFolder + storageFilename),
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new StorageException("Failed to store file " + originFilename);
+            throw new StorageException("Failed to store file " + originFilename, e);
         }
 
         return new UploadedFileDto(storageFilename, storageFolder + storageFilename);
