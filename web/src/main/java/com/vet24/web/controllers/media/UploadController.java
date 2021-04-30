@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/uploads")
 public class UploadController {
@@ -24,7 +26,7 @@ public class UploadController {
 
     @PostMapping("/upload-file")
     @ApiResponse(responseCode = "200", description = "Successful upload", content = @Content(schema = @Schema(implementation = UploadedFileDto.class)))
-    public ResponseEntity<UploadedFileDto> uploadFile(@RequestParam("file") MultipartFile file){
+    public ResponseEntity<UploadedFileDto> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         return new ResponseEntity<>(uploadService.store(file), HttpStatus.OK);
     }
 }

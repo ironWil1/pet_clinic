@@ -67,7 +67,7 @@ public class ResourceServiceImpl implements ResourceService {
         try (InputStream is = new FileSystemResource(uploadFolder + File.separator + filename).getInputStream()) {
             return StreamUtils.copyToByteArray(is);
         } catch (IOException e) {
-            throw new StorageException("Could not read file: " + filename, e);
+            throw new StorageException("File not found: " + filename, e);
         }
     }
 }

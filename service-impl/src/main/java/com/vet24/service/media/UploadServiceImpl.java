@@ -26,7 +26,7 @@ public class UploadServiceImpl implements UploadService {
     private String uploadFolder;
 
     @Override
-    public UploadedFileDto store(MultipartFile file) {
+    public UploadedFileDto store(MultipartFile file) throws IOException {
         String originFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         LocalDateTime now = LocalDateTime.now();
         int extensionIndex = originFilename.lastIndexOf(".");
@@ -41,22 +41,19 @@ public class UploadServiceImpl implements UploadService {
         String storageFolder = uploadFolder
                 + File.separator
                 + now.format(DateTimeFormatter.ofPattern(
-                        "yyyy" + File.separator + "MM" + File.separator + "dd"))
+                "yyyy" + File.separator + "MM" + File.separator + "dd"))
                 + File.separator;
 
         String storageFilename = originFilename.substring(0, extensionIndex)
                 + now.format(DateTimeFormatter.ofPattern("_yyyy-MM-dd_HH-mm-ss"))
                 + originFilename.substring(extensionIndex);
 
-        try (InputStream inputStream = file.getInputStream()) {
-            if (!Files.exists(Paths.get(storageFolder))) {
-                Files.createDirectories(Paths.get(storageFolder));
-            }
-            Files.copy(inputStream, Paths.get(storageFolder + storageFilename),
-                    StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new StorageException("Failed to store file " + originFilename, e);
+        InputStream inputStream = file.getInputStream();
+        if (!Files.exists(Paths.get(storageFolder))) {
+            Files.createDirectories(Paths.get(storageFolder));
         }
+        Files.copy(inputStream, Paths.get(storageFolder + storageFilename),StandardCopyOption.REPLACE_EXISTING);
+        inputStream.close();
 
         return new UploadedFileDto(storageFilename, storageFolder + storageFilename);
     }
