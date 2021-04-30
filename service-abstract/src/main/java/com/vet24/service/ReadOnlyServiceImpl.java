@@ -7,12 +7,10 @@ import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.List;
 
-@Service
-public class ReadOnlyServiceImpl<K extends Serializable, T> implements ReadOnlyService<K, T> {
+public abstract class ReadOnlyServiceImpl<K extends Serializable, T> implements ReadOnlyService<K, T> {
 
     private final ReadOnlyDao<K, T> readOnlyDao;
 
-    @Autowired
     public ReadOnlyServiceImpl(ReadOnlyDao<K, T> readOnlyDao) {
         this.readOnlyDao = readOnlyDao;
     }
