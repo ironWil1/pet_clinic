@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ReadWriteDaoImpl<K extends Serializable, T> extends ReadOnlyDaoImpl<K, T> implements ReadWriteDao<K, T> {
+public abstract class ReadWriteDaoImpl<K extends Serializable, T> extends ReadOnlyDaoImpl<K, T> implements ReadWriteDao<K, T> {
 
     @PersistenceContext
     EntityManager manager;
