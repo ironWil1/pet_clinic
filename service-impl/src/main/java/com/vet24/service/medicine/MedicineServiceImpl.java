@@ -6,6 +6,7 @@ import com.vet24.models.dto.medicine.MedicineDto;
 import com.vet24.models.medicine.Medicine;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +50,11 @@ public class MedicineServiceImpl implements MedicineService {
     @Override
     public void deleteMedicine(Long id) {
         medicineDao.deleteMedicine(id);
+    }
+
+    @Override
+    public List<Medicine> search(String manufactureName, String name, String searchtext) {
+        return  medicineDao.search(manufactureName, name, searchtext);
     }
 
     public List<MedicineDto> findAll() {

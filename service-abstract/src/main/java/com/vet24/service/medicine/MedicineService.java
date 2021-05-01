@@ -2,6 +2,8 @@ package com.vet24.service.medicine;
 
 import com.vet24.models.medicine.Medicine;
 
+import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 
 public interface MedicineService {
@@ -10,4 +12,5 @@ public interface MedicineService {
     void addMedicine(Medicine medicine);
     void editMedicine(Medicine medicine);
     void deleteMedicine(Long id);
+    List<Medicine> search(String manufactureName, String name, String searchtext);
 }

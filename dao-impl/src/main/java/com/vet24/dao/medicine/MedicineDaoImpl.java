@@ -3,6 +3,7 @@ package com.vet24.dao.medicine;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.user.User;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
@@ -43,4 +44,18 @@ public class MedicineDaoImpl implements MedicineDao {
     public void deleteMedicine(Long id) {
         entityManager.remove(getMedicineById(id));
     }
+
+    @Override
+    public List<Medicine> search(String manufactureName, String name, String searchtext) {
+        return entityManager.createQuery("SELECT m FROM Medicine m WHERE "
+                + "m.name LIKE '%' || :name || '%' "
+                + "AND m.manufactureName LIKE '%' || :manufactureName || '%' "
+                + "AND m.description LIKE '%' || :searchtext || '%' ", Medicine.class)
+                .setParameter("manufactureName", manufactureName)
+                .setParameter("name", name)
+                .setParameter("searchtext", searchtext)
+                .getResultList();
+    }
+
+
 }

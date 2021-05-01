@@ -66,5 +66,6 @@ public class TestDataInitializer implements ApplicationRunner {
             userInitialize();
             medicineInitialize();
         }
+        System.out.println(medicineService.search("", "sputnik", ""));
     }
 }
