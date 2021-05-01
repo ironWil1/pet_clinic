@@ -9,4 +9,5 @@ public class MedicineDto {
     String name;
     String icon;
     String description;
+
 }
