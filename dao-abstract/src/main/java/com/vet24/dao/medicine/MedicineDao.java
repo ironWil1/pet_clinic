@@ -14,5 +14,6 @@ public interface MedicineDao {
     void addMedicine(Medicine medicine);
     void editMedicine(Medicine medicine);
     void deleteMedicine(Long id);
-    List<Medicine> search(String manufactureName, String name, String searchtext);
+    List<Medicine> searchFull(String manufactureName, String name, String searchtext);
+    List<Medicine> search(String manufactureName, String name);
 }

@@ -53,8 +53,13 @@ public class MedicineServiceImpl implements MedicineService {
     }
 
     @Override
-    public List<Medicine> search(String manufactureName, String name, String searchtext) {
-        return  medicineDao.search(manufactureName, name, searchtext);
+    public List<Medicine> searchFull(String manufactureName, String name, String searchtext) {
+        return  medicineDao.searchFull(manufactureName, name, searchtext);
+    }
+
+    @Override
+    public List<Medicine> search(String manufactureName, String name) {
+        return  medicineDao.search(manufactureName, name);
     }
 
     public List<MedicineDto> findAll() {

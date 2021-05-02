@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -84,12 +86,16 @@ public class MedicineController {
 
     @GetMapping("/search")
     public ResponseEntity<List<Medicine>> search(
-            @Param("manufactureName") String manufactureName
-            , @Param("name") String name
-            , @Param("searchtext") String searchtext) {
-
-        List<Medicine> list =  medicineService.search(manufactureName, name, searchtext);
-        return new ResponseEntity<List<Medicine>>(list, HttpStatus.OK);
+            @RequestParam(required = false, name = "manufactureName") String manufactureName
+            ,@RequestParam(required = false, name = "name") String name
+            , @RequestParam(required = false, name = "searchtext") String searchtext) {
+        List<Medicine> medicineList = new ArrayList<>();
+        if (searchtext.equals("")) {
+            medicineList =  medicineService.search(manufactureName, name);
+        } else {
+            medicineList = medicineService.searchFull(manufactureName, name, searchtext);
+        }
+        return new ResponseEntity<List<Medicine>>(medicineList, HttpStatus.OK);
     }
 
 
