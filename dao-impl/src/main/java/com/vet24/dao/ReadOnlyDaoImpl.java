@@ -1,5 +1,7 @@
 package com.vet24.dao;
 
+import org.springframework.data.jpa.repository.Query;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
@@ -26,7 +28,12 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> implements Read
 
     @Override
     public boolean isExistByKey(K key) {
-        return manager.find(type, key) == null;
+        String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
+                " FROM " + type.getName() + " e WHERE e.id = :id";
+        return manager
+                .createQuery(query, Boolean.class)
+                .setParameter("id", key)
+                .getSingleResult();
     }
 
     @Override
