@@ -55,7 +55,7 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void medicineInitialize() {
-        medicineService.addMedicine(new Medicine("Sinopharm", "sputnik", "sdasd", "protiv covid"));
+        medicineService.addMedicine(new Medicine("sinopharm", "sputnik", "sdasd", "protiv covid"));
     }
 
     @Override

@@ -92,18 +92,18 @@ public class MedicineController {
 //                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
 //    }
 
-    @PostMapping(value = "/{id}/set-pic")
-    public ResponseEntity<Medicine> savePic(@PathVariable Long id, @RequestBody MedicineDto medicineDto) {
-        Medicine medicine = medicineService.getMedicineById(id);
-        medicine.setIcon(medicineDto.getIcon());
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @PostMapping(value = "/{id}/set-pic")
+//    public ResponseEntity<Medicine> savePic(@PathVariable Long id, @RequestBody MedicineDto medicineDto) {
+//        Medicine medicine = medicineService.getMedicineById(id);
+//        medicine.setIcon(medicineDto.getIcon());
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
     @GetMapping("/search")
     public ResponseEntity<List<Medicine>> search(
-            @RequestParam(required = false, name = "manufactureName") String manufactureName
-            ,@RequestParam(required = false, name = "name") String name
-            , @RequestParam(required = false, name = "searchtext") String searchtext) {
+            @RequestParam(required = false, name = "manufactureName", defaultValue = "") String manufactureName
+            ,@RequestParam(required = false, name = "name", defaultValue = "") String name
+            , @RequestParam(required = false, name = "searchtext", defaultValue = "") String searchtext) {
         List<Medicine> medicineList;
         if (searchtext.equals("")) {
             medicineList =  medicineService.search(manufactureName, name);
