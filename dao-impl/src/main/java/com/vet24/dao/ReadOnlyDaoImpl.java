@@ -32,11 +32,12 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
         for (Field field : type.getDeclaredFields()) {
             if(field.isAnnotationPresent(Id.class)) {
                 id = field;
+                break;
             }
         }
         if (id != null) {
             String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
-                    " FROM " + type.getName() + " WHERE " + type.getName() + "." + id + " = :id";
+                    " FROM " + type.getName() + " WHERE " + id.getName() + " = :id";
            result = manager
                     .createQuery(query, Boolean.class)
                     .setParameter("id", key)
