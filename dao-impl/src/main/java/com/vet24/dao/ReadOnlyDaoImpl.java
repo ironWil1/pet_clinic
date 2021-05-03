@@ -9,12 +9,12 @@ import java.util.List;
 public abstract class ReadOnlyDaoImpl<K extends Serializable, T> implements ReadOnlyDao<K, T> {
 
     @PersistenceContext
-    EntityManager manager;
+    protected EntityManager manager;
 
     private final Class<T> type;
 
     @SuppressWarnings("unchecked")
-    public ReadOnlyDaoImpl() {
+    protected ReadOnlyDaoImpl() {
         this.type = (Class<T>) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[1];
     }
