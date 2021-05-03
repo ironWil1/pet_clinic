@@ -1,16 +1,14 @@
 package com.vet24.dao.medicine;
 
 import com.vet24.models.medicine.Medicine;
-import com.vet24.models.user.User;
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 
 @Repository
 public class MedicineDaoImpl implements MedicineDao {

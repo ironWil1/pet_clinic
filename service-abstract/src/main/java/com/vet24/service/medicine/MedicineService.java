@@ -2,8 +2,6 @@ package com.vet24.service.medicine;
 
 import com.vet24.models.medicine.Medicine;
 
-import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 
 public interface MedicineService {

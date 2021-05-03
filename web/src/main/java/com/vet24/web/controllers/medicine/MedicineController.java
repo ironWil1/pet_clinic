@@ -1,17 +1,15 @@
 package com.vet24.web.controllers.medicine;
 
-import com.vet24.models.TestClient;
 import com.vet24.models.dto.medicine.MedicineDto;
+import com.vet24.models.mappers.MapStructMapper;
 import com.vet24.models.medicine.Medicine;
-import com.vet24.service.medicine.Mapping;
 import com.vet24.service.medicine.MedicineService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.ModelMap;
+
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,52 +27,70 @@ import java.util.List;
 @RequestMapping("api/manager/medicine")
 public class MedicineController {
 
-    @Autowired
-    MedicineService medicineService;
+    private final MedicineService medicineService;
+    private final MapStructMapper mapStructMapper;
 
-    @Autowired
-    Mapping mapping;
+    public MedicineController(MedicineService medicineService
+            , MapStructMapper mapStructMapper) {
+        this.medicineService = medicineService;
+        this.mapStructMapper = mapStructMapper;
+    }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<Medicine> getOne(@PathVariable("id") Long id) {
-        Medicine medicine = medicineService.getMedicineById(id);
-        return medicine != null
-                ? new ResponseEntity<>(medicine, HttpStatus.OK)
+    public ResponseEntity<MedicineDto> getOne(@PathVariable("id") Long id) {
+        MedicineDto medicineDto = mapStructMapper
+                .medicineToMedicineDto(medicineService.getMedicineById(id));
+        return medicineDto != null
+                ? new ResponseEntity<>(medicineDto, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
-        medicineService.deleteMedicine(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public  ResponseEntity<Void> delete(@PathVariable(name = "id") Long id) {
+        if (medicineService.getMedicineById(id) == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            medicineService.deleteMedicine(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Medicine> update(@PathVariable Long id,
+    public ResponseEntity<MedicineDto> update(@PathVariable Long id,
                                                @RequestBody MedicineDto medicineDto) {
         Medicine medicine = medicineService.getMedicineById(id);
-        medicine.setManufactureName(medicineDto.getManufactureName());
-        medicine.setName(medicineDto.getName());
-        medicine.setIcon(medicineDto.getIcon());
-        medicine.setDescription(medicineDto.getDescription());
-        medicineService.editMedicine(medicine);
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (medicine == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            medicine.setManufactureName(medicineDto.getManufactureName());
+            medicine.setName(medicineDto.getName());
+            medicine.setIcon(medicineDto.getIcon());
+            medicine.setDescription(medicineDto.getDescription());
+            medicineService.editMedicine(medicine);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<Medicine> save(@RequestBody MedicineDto medicineDto) {
-        Medicine medicine = mapping.mapToMedicine(medicineDto);
+    public ResponseEntity<MedicineDto> save(@RequestBody MedicineDto medicineDto) {
+        Medicine medicine = mapStructMapper.medicineDtoToMedicine(medicineDto);
         medicineService.addMedicine(medicine);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}/set-pic")
-    public ResponseEntity<String> getPic(@PathVariable("id") Long id) {
-        Medicine medicine = medicineService.getMedicineById(id);
-        return medicine.getIcon() != null
-                ? new ResponseEntity<String>(medicine.getIcon(), HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+//    @GetMapping("/{id}/set-pic")
+//    public ResponseEntity<byte[]> getPic(@PathVariable("id") Long id) {
+//        Medicine medicine = medicineService.getMedicineById(id);
+//        if (medicine == null) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        } else {
+//
+//        }
+//        return medicine.getIcon() != null
+//                ? new ResponseEntity<>(, HttpStatus.OK)
+//                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
 
     @PostMapping(value = "/{id}/set-pic")
     public ResponseEntity<Medicine> savePic(@PathVariable Long id, @RequestBody MedicineDto medicineDto) {
@@ -89,13 +104,13 @@ public class MedicineController {
             @RequestParam(required = false, name = "manufactureName") String manufactureName
             ,@RequestParam(required = false, name = "name") String name
             , @RequestParam(required = false, name = "searchtext") String searchtext) {
-        List<Medicine> medicineList = new ArrayList<>();
+        List<Medicine> medicineList;
         if (searchtext.equals("")) {
             medicineList =  medicineService.search(manufactureName, name);
         } else {
             medicineList = medicineService.searchFull(manufactureName, name, searchtext);
         }
-        return new ResponseEntity<List<Medicine>>(medicineList, HttpStatus.OK);
+        return new ResponseEntity<>(medicineList, HttpStatus.OK);
     }
 
 
