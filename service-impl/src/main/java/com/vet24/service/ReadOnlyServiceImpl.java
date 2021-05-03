@@ -1,8 +1,6 @@
 package com.vet24.service;
 
 import com.vet24.dao.ReadOnlyDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.List;
