@@ -8,9 +8,6 @@ import java.util.stream.Collectors;
 
 public abstract class ReadWriteDaoImpl<K extends Serializable, T> extends ReadOnlyDaoImpl<K, T> implements ReadWriteDao<K, T> {
 
-    @PersistenceContext
-    EntityManager manager;
-
     @Override
     public void persist(T entity) {
         manager.persist(entity);
