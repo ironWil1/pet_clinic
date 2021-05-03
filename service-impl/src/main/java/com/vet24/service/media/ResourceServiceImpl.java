@@ -10,8 +10,9 @@ import org.springframework.util.StreamUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @PropertySource("application.properties")
@@ -22,31 +23,31 @@ public class ResourceServiceImpl implements ResourceService {
 
     private String contentTypeDefault = "application/octet-stream";
 
-    private Map<String, String> contentTypeMap = new HashMap<>() {{
-        put(".mp4", "video/mp4");
-        put(".mpeg", "video/mpeg");
-        put(".mpg", "video/mpeg");
-        put(".ogg", "video/ogg");
-        put(".3gpp", "video/3gpp");
-        put(".wmv", "video/x-ms-wmv");
-        put(".flv", "video/x-flv");
-        put(".jpeg", "image/jpeg");
-        put(".jpe", "image/jpeg");
-        put(".jpg", "image/jpeg");
-        put(".gif", "image/gif");
-        put(".png", "image/png");
-        put(".tiff", "image/tiff");
-        put(".tif", "image/tiff");
-        put(".mid", "audio/midi");
-        put(".midi", "audio/midi");
-        put(".mp3", "audio/mpeg");
-        put(".wav", "audio/vnd.wav");
-        put(".flac", "audio/flac");
-        put(".m4a", "audio/mp4");
-        put(".m4b", "audio/mp4");
-        put(".m3u", "audio/x-mpegurl");
-        put(".au", "audio/basic");
-    }};
+    private Map<String, String> contentTypeMap = Stream.of(new String[][]{
+            {".mp4", "video/mp4"},
+            {".mpeg", "video/mpeg"},
+            {".mpg", "video/mpeg"},
+            {".ogg", "video/ogg"},
+            {".3gpp", "video/3gpp"},
+            {".wmv", "video/x-ms-wmv"},
+            {".flv", "video/x-flv"},
+            {".jpeg", "image/jpeg"},
+            {".jpe", "image/jpeg"},
+            {".jpg", "image/jpeg"},
+            {".gif", "image/gif"},
+            {".png", "image/png"},
+            {".tiff", "image/tiff"},
+            {".tif", "image/tiff"},
+            {".mid", "audio/midi"},
+            {".midi", "audio/midi"},
+            {".mp3", "audio/mpeg"},
+            {".wav", "audio/vnd.wav"},
+            {".flac", "audio/flac"},
+            {".m4a", "audio/mp4"},
+            {".m4b", "audio/mp4"},
+            {".m3u", "audio/x-mpegurl"},
+            {".au", "audio/basic"}
+    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     @Override
     public String getContentTypeByFileName(String filename) {

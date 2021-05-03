@@ -1,6 +1,6 @@
 package com.vet24.service.media;
 
-import com.vet24.models.dto.UploadedFileDto;
+import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.exception.StorageException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

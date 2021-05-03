@@ -1,7 +1,7 @@
 package com.vet24.web.exceptionhandler;
 
 import com.vet24.models.exception.StorageException;
-import com.vet24.models.dto.ExceptionDto;
+import com.vet24.models.dto.exception.ExceptionDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -27,12 +27,4 @@ public class FileExceptionHandler {
 
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
-
-    /*@ExceptionHandler
-    public ResponseEntity<ExceptionDto> handleException(Exception exception) {
-        ExceptionDto data = new ExceptionDto();
-        data.setMessage(exception.getMessage());
-
-        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
-    }*/
 }

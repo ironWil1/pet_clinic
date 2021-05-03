@@ -1,4 +1,4 @@
-package com.vet24.models.dto;
+package com.vet24.models.dto.media;
 
 import lombok.Data;
 
