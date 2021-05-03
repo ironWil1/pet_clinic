@@ -104,12 +104,7 @@ public class MedicineController {
             @RequestParam(required = false, name = "manufactureName", defaultValue = "") String manufactureName
             ,@RequestParam(required = false, name = "name", defaultValue = "") String name
             , @RequestParam(required = false, name = "searchtext", defaultValue = "") String searchtext) {
-        List<Medicine> medicineList;
-        if (searchtext.equals("")) {
-            medicineList =  medicineService.search(manufactureName, name);
-        } else {
-            medicineList = medicineService.searchFull(manufactureName, name, searchtext);
-        }
+        List<Medicine> medicineList = medicineService.searchFull(manufactureName, name, searchtext);
         return new ResponseEntity<>(medicineList, HttpStatus.OK);
     }
 

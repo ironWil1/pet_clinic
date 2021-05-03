@@ -46,15 +46,13 @@ public class MedicineServiceImpl implements MedicineService {
         medicineDao.deleteMedicine(id);
     }
 
+    @Transactional
     @Override
     public List<Medicine> searchFull(String manufactureName, String name, String searchtext) {
-        return  medicineDao.searchFull(manufactureName, name, searchtext);
+        if (searchtext.equals("")) {
+            return medicineDao.search(manufactureName, name);
+        } else {
+            return  medicineDao.searchFull(manufactureName, name, searchtext);
+        }
     }
-
-    @Override
-    public List<Medicine> search(String manufactureName, String name) {
-        return  medicineDao.search(manufactureName, name);
-    }
-
-
 }
