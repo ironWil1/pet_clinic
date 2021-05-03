@@ -1,14 +1,15 @@
 package com.vet24.dao;
 
-import org.springframework.data.jpa.repository.Query;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-public abstract class ReadOnlyDaoImpl<K extends Serializable, T> implements ReadOnlyDao<K, T> {
+public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
 
     @PersistenceContext
     protected EntityManager manager;
@@ -21,22 +22,29 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> implements Read
                 .getGenericSuperclass()).getActualTypeArguments()[1];
     }
 
-    @Override
     public T getByKey(K key) {
         return manager.find(type, key);
     }
 
-    @Override
     public boolean isExistByKey(K key) {
-        String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
-                " FROM " + type.getName() + " e WHERE e.id = :id";
-        return manager
-                .createQuery(query, Boolean.class)
-                .setParameter("id", key)
-                .getSingleResult();
+        Field id = null;
+        boolean result = false;
+        for (Field field : type.getDeclaredFields()) {
+            if(field.isAnnotationPresent(Id.class)) {
+                id = field;
+            }
+        }
+        if (id != null) {
+            String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
+                    " FROM " + type.getName() + " WHERE " + type.getName() + "." + id + " = :id";
+           result = manager
+                    .createQuery(query, Boolean.class)
+                    .setParameter("id", key)
+                    .getSingleResult();
+        }
+        return result;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<T> getAll() {
         return manager
