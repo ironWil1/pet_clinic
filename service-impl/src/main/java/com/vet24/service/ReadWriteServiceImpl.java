@@ -11,7 +11,7 @@ public abstract class ReadWriteServiceImpl<K extends Serializable, T> extends Re
 
     private final ReadWriteDaoImpl<K, T> readWriteDao;
 
-    public ReadWriteServiceImpl(ReadOnlyDaoImpl<K, T> readOnlyDao, ReadWriteDaoImpl<K, T> readWriteDao) {
+    protected ReadWriteServiceImpl(ReadOnlyDaoImpl<K, T> readOnlyDao, ReadWriteDaoImpl<K, T> readWriteDao) {
         super(readOnlyDao);
         this.readWriteDao = readWriteDao;
     }

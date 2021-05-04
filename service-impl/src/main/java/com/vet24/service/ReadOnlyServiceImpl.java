@@ -9,7 +9,7 @@ public abstract class ReadOnlyServiceImpl<K extends Serializable, T> {
 
     private final ReadOnlyDaoImpl<K, T> readOnlyDao;
 
-    public ReadOnlyServiceImpl(ReadOnlyDaoImpl<K, T> readOnlyDao) {
+    protected ReadOnlyServiceImpl(ReadOnlyDaoImpl<K, T> readOnlyDao) {
         this.readOnlyDao = readOnlyDao;
     }
 
