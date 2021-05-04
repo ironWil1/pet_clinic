@@ -1,13 +1,18 @@
 package com.vet24.models.dtos;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.vet24.models.enums.PetType;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+@Data
+//@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+//@JsonSubTypes({
+//        @JsonSubTypes.Type(value = DogDto.class, name = "DOG"),
+//        @JsonSubTypes.Type(value = CatDto.class, name = "CAT")
+//})
 public class PetDto {
 
     private Long id;
