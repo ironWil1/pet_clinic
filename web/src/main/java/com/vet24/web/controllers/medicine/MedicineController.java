@@ -101,7 +101,6 @@ public class MedicineController {
                     ? new ResponseEntity<>(resourceService.loadIconAsByteArray(url), HttpStatus.OK)
                     : new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
 
     @PostMapping(value = "/{id}/set-pic", consumes = {"multipart/form-data"})
@@ -126,9 +125,6 @@ public class MedicineController {
         List<Medicine> medicineList = medicineService.searchFull(manufactureName, name, searchtext);
         return new ResponseEntity<>(medicineList, HttpStatus.OK);
     }
-
-
-
 }
 
 
