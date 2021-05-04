@@ -1,8 +1,11 @@
 package com.vet24.web.controllers.medicine;
 
+import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.medicine.MedicineDto;
 import com.vet24.models.mappers.MapStructMapper;
 import com.vet24.models.medicine.Medicine;
+import com.vet24.service.media.ResourceService;
+import com.vet24.service.media.UploadService;
 import com.vet24.service.medicine.MedicineService;
 
 
@@ -19,8 +22,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
 @RestController
@@ -29,11 +38,17 @@ public class MedicineController {
 
     private final MedicineService medicineService;
     private final MapStructMapper mapStructMapper;
+    private final ResourceService resourceService;
+    private final UploadService uploadService;
 
     public MedicineController(MedicineService medicineService
-            , MapStructMapper mapStructMapper) {
+            , MapStructMapper mapStructMapper
+            , ResourceService resourceService
+            , UploadService uploadService) {
         this.medicineService = medicineService;
         this.mapStructMapper = mapStructMapper;
+        this.resourceService = resourceService;
+        this.uploadService = uploadService;
     }
 
 
@@ -79,25 +94,33 @@ public class MedicineController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-//    @GetMapping("/{id}/set-pic")
-//    public ResponseEntity<byte[]> getPic(@PathVariable("id") Long id) {
-//        Medicine medicine = medicineService.getMedicineById(id);
-//        if (medicine == null) {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        } else {
-//
-//        }
-//        return medicine.getIcon() != null
-//                ? new ResponseEntity<>(, HttpStatus.OK)
-//                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//    }
+    @GetMapping("/{id}/set-pic")
+    public ResponseEntity<byte[]> getPic(@PathVariable("id") Long id) {
+        Medicine medicine = medicineService.getMedicineById(id);
+        if (medicine == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            String url = medicine.getIcon();
+            return url != null
+                    ? new ResponseEntity<>(resourceService.loadIconAsByteArray(url), HttpStatus.OK)
+                    : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-//    @PostMapping(value = "/{id}/set-pic")
-//    public ResponseEntity<Medicine> savePic(@PathVariable Long id, @RequestBody MedicineDto medicineDto) {
-//        Medicine medicine = medicineService.getMedicineById(id);
-//        medicine.setIcon(medicineDto.getIcon());
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    }
+
+    @PostMapping(value = "/{id}/set-pic", consumes = {"multipart/form-data"})
+    public ResponseEntity<UploadedFileDto> savePic(@PathVariable Long id
+            , @RequestParam("file") MultipartFile file) throws IOException {
+        Medicine medicine = medicineService.getMedicineById(id);
+        if (medicine == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            UploadedFileDto uploadedFileDto = uploadService.store(file);
+            medicine.setIcon(uploadedFileDto.getUrl());
+            medicineService.editMedicine(medicine);
+            return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
+        }
+    }
 
     @GetMapping("/search")
     public ResponseEntity<List<Medicine>> search(

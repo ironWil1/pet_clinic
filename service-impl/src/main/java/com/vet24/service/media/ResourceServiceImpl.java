@@ -71,4 +71,13 @@ public class ResourceServiceImpl implements ResourceService {
             throw new StorageException("File not found: " + filename, e);
         }
     }
+
+    @Override
+    public byte[] loadIconAsByteArray(String url) {
+        try (InputStream is = new FileSystemResource(url).getInputStream()) {
+            return StreamUtils.copyToByteArray(is);
+        } catch (IOException e) {
+            throw new StorageException("File not found: ", e);
+        }
+    }
 }

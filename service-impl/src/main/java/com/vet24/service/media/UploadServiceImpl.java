@@ -54,6 +54,7 @@ public class UploadServiceImpl implements UploadService {
         }
         Files.copy(inputStream, Paths.get(storageFolder + storageFilename),StandardCopyOption.REPLACE_EXISTING);
         inputStream.close();
+        String a = storageFolder + storageFilename;
 
         return new UploadedFileDto(storageFilename, storageFolder + storageFilename);
     }
