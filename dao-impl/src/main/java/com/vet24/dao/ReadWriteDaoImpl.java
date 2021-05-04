@@ -1,6 +1,7 @@
 package com.vet24.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,15 +12,24 @@ public abstract class ReadWriteDaoImpl<K extends Serializable, T> extends ReadOn
     }
 
     public void persistAll(List<T> entities) {
-        entities.forEach(elem -> manager.persist(elem));
         int count = 0;
-        while (entities.listIterator().hasNext()) {
-            ++count;
+        List<T> temp = null;
+        int tempIndex = 0;
+
+        while (count < entities.size()) {
+            if (temp == null) {
+                manager.persist(entities.get(count));
+            } else {
+                manager.persist(temp.get(tempIndex));
+                tempIndex++;
+            }
+            count++;
             if (count % 100 == 0) {
+                temp = new ArrayList<>(entities.subList(count, entities.size()));
+                tempIndex = 0;
                 manager.flush();
                 manager.clear();
             }
-            entities.listIterator().next();
         }
     }
 
