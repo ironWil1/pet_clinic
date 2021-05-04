@@ -23,7 +23,7 @@ import java.time.LocalDate;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "pet_entities")
-@DiscriminatorColumn(name = "pet_discriminator", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "pet_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
 public abstract class Pet {
@@ -41,7 +41,7 @@ public abstract class Pet {
     @Column(nullable = false)
     private LocalDate birthDay;
 
-    @Column(nullable = false)
+    @Column(insertable = false, updatable = false, name = "pet_type")
     @Enumerated(EnumType.STRING)
     private PetType petType;
 

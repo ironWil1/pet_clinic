@@ -20,7 +20,7 @@ public class Dog extends Pet {
     }
 
     public Dog(String name, LocalDate birthDay, PetType petType, Gender gender, String breed) {
-        super(name, birthDay, petType, gender, breed);
+        super(name, birthDay, PetType.DOG, gender, breed);
     }
 
     // add later when ready
