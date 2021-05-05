@@ -42,10 +42,10 @@ public abstract class ReadWriteDaoImpl<K extends Serializable, T> extends ReadOn
     }
 
     public void delete(T entity) {
-        manager.remove(entity);
+        manager.remove(manager.contains(entity) ? entity : manager.merge(entity));
     }
 
     public void deleteAll(List<T> entities) {
-        entities.forEach(elem -> manager.remove(elem));
+        entities.forEach(this::delete);
     }
 }
