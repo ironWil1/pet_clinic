@@ -1,5 +1,6 @@
 package com.vet24.dao.medicine;
 
+import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.models.medicine.Medicine;
 
 import org.springframework.stereotype.Repository;
@@ -11,37 +12,10 @@ import javax.persistence.PersistenceContext;
 
 
 @Repository
-public class MedicineDaoImpl implements MedicineDao {
+public class MedicineDaoImpl extends ReadWriteDaoImpl<Long, Medicine> implements MedicineDao {
 
     @PersistenceContext
     EntityManager entityManager;
-
-    @Override
-    public Medicine getMedicineById(Long id) {
-        return entityManager.find(Medicine.class, id);
-    }
-
-    @Override
-    public List<Medicine> getAllMedicine() {
-        return entityManager
-                .createQuery("SELECT m FROM Medicine m", Medicine.class)
-                .getResultList();
-    }
-
-    @Override
-    public void addMedicine(Medicine medicine) {
-        entityManager.persist(medicine);
-    }
-
-    @Override
-    public void editMedicine(Medicine medicine) {
-        entityManager.merge(medicine);
-    }
-
-    @Override
-    public void deleteMedicine(Long id) {
-        entityManager.remove(getMedicineById(id));
-    }
 
     @Override
     public List<Medicine> searchFull(String manufactureName, String name, String searchtext) {

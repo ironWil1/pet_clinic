@@ -48,7 +48,7 @@ public class MedicineController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MedicineDto> getById(@PathVariable("id") Long id) {
-        Medicine medicine = medicineService.getMedicineById(id);
+        Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
@@ -59,10 +59,11 @@ public class MedicineController {
 
     @DeleteMapping(value = "/{id}")
     public  ResponseEntity<Void> deleteById(@PathVariable(name = "id") Long id) {
-        if (medicineService.getMedicineById(id) == null) {
+        Medicine medicine = medicineService.getByKey(id);
+        if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            medicineService.deleteMedicine(id);
+            medicineService.delete(medicine);
             return new ResponseEntity<>(HttpStatus.OK);
         }
     }
@@ -70,12 +71,12 @@ public class MedicineController {
     @PutMapping("/{id}")
     public ResponseEntity<MedicineDto> update(@PathVariable Long id,
                                                @RequestBody MedicineDto medicineDto) {
-        Medicine medicine = medicineService.getMedicineById(id);
+        Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             medicine = medicineMapper.medicineDtoToMedicine(medicineDto);
-            medicineService.editMedicine(medicine);
+            medicineService.update(medicine);
             return new ResponseEntity<>(HttpStatus.OK);
         }
     }
@@ -84,13 +85,13 @@ public class MedicineController {
     public ResponseEntity<MedicineDto> save(@RequestBody MedicineDto medicineDto) {
         Medicine medicine = medicineMapper.medicineDtoToMedicine(medicineDto);
         medicine.setId(null);
-        medicineService.addMedicine(medicine);
+        medicineService.persist(medicine);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}/set-pic")
     public ResponseEntity<byte[]> getPic(@PathVariable("id") Long id) {
-        Medicine medicine = medicineService.getMedicineById(id);
+        Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
@@ -104,13 +105,13 @@ public class MedicineController {
     @PostMapping(value = "/{id}/set-pic", consumes = {"multipart/form-data"})
     public ResponseEntity<UploadedFileDto> savePic(@PathVariable Long id
             , @RequestParam("file") MultipartFile file) throws IOException {
-        Medicine medicine = medicineService.getMedicineById(id);
+        Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             UploadedFileDto uploadedFileDto = uploadService.store(file);
             medicine.setIcon(uploadedFileDto.getUrl());
-            medicineService.editMedicine(medicine);
+            medicineService.update(medicine);
             return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
         }
     }

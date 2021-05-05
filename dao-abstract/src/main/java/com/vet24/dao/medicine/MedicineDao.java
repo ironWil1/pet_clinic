@@ -1,16 +1,13 @@
 package com.vet24.dao.medicine;
 
+import com.vet24.dao.ReadWriteDao;
 import com.vet24.models.medicine.Medicine;
 
 import java.util.List;
 
 
-public interface MedicineDao {
-    Medicine getMedicineById(Long id);
-    List<Medicine> getAllMedicine();
-    void addMedicine(Medicine medicine);
-    void editMedicine(Medicine medicine);
-    void deleteMedicine(Long id);
+public interface MedicineDao extends ReadWriteDao<Long, Medicine> {
+
     List<Medicine> searchFull(String manufactureName, String name, String searchtext);
     List<Medicine> search(String manufactureName, String name);
 }
