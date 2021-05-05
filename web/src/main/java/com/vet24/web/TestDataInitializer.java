@@ -44,10 +44,21 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userInitialize() {
-        userService.addUser(new User("Ivan", "Ivanov", "Ivan", "123456", roleService.getRoleById(1L)));
-        userService.addUser(new User("Petr", "Petrov", "Petr", "123456", roleService.getRoleById(2L)));
+        userService.persist(new User("Ivan", "Ivanov", "Ivan", "123456", roleService.getRoleById(1L)));
+        userService.persist(new User("Petr", "Petrov", "Petr", "123456", roleService.getRoleById(2L)));
         clientService.addClient(new Client("Jm", "Jm", "Jm", "123456", roleService.getRoleById(3L), new HashSet<Pet>()));
 
+    }
+
+    public void userUpdateMethod() {
+        User user = new User("Test", "Testov", "TestLogin", "TestPassword", roleService.getRoleById(2L));
+        user.setId(1L);
+        userService.update(user);
+    }
+
+    public void userDeleteMethod() {
+        User user = userService.getByKey(1L);
+        userService.delete(user);
     }
 
     @Override
@@ -56,6 +67,8 @@ public class TestDataInitializer implements ApplicationRunner {
                 || environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create-drop")) {
             roleInitialize();
             userInitialize();
+           // userUpdateMethod();
+            userDeleteMethod();
         }
     }
 }
