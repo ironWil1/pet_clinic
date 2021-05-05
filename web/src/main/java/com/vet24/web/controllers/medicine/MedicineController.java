@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.medicine;
 
+
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.medicine.MedicineDto;
 import com.vet24.models.mappers.MedicineMapper;
@@ -82,6 +83,7 @@ public class MedicineController {
     @PostMapping(value = "")
     public ResponseEntity<MedicineDto> save(@RequestBody MedicineDto medicineDto) {
         Medicine medicine = medicineMapper.medicineDtoToMedicine(medicineDto);
+        medicine.setId(null);
         medicineService.addMedicine(medicine);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -94,7 +96,7 @@ public class MedicineController {
         } else {
             String url = medicine.getIcon();
             return url != null
-                    ? new ResponseEntity<>(resourceService.loadIconAsByteArray(url), HttpStatus.OK)
+                    ? new ResponseEntity<>(resourceService.loadAsByteArray(url), HttpStatus.OK)
                     : new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
