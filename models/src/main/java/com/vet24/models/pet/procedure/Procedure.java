@@ -10,6 +10,8 @@ import java.time.LocalDate;
 
 @Data
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Procedure implements Serializable {
 
     @Id
@@ -19,8 +21,9 @@ public abstract class Procedure implements Serializable {
     @Column
     private LocalDate date;
 
-    @Column
-    private ProcedureTypeEnum type;
+    @Column(nullable = false, insertable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
+    public ProcedureTypeEnum type;
 
     @Column
     private String medicineBatchNumber;
@@ -31,5 +34,6 @@ public abstract class Procedure implements Serializable {
     @Column
     private Integer periodDays;
 
+//    @Column
 //    private Medicine medicine;
 }
