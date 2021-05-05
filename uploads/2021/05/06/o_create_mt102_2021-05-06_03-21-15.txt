@@ -1,0 +1,362 @@
+create or replace procedure O_Create_Mt102(
+  o_Mt_        in  O_MT.O_MT % type,
+  Do_Commit_   in  Types.TBit default 1,
+  Outgoing_Mt_ out OUTGOING_MT.OUTGOING_MT % type,
+  Err_Code     out Types.TErr_Code,
+  Err_Msg      out Types.TErr_Msg
+  )
+is
+  ProcName           constant  Types.TProc_Name :='O_Create_Mt102';
+  SummMask           constant  varchar2(25)    := 'fm999999999999999990.00';
+
+  o_Mt               Main.O_MT % rowtype;
+  Sum_102_           Main.O_MT102.SUMM % type;
+  Sender_            Main.OUTGOING_MT.SENDER % type;
+  Sender_Name_       Main.OUTGOING_MT.SENDER_NAME % type;
+  Receiver_          Main.OUTGOING_MT.RECEIVER % type;
+  Receiver_Name_     Main.OUTGOING_MT.RECEIVER_NAME % type;
+  Main_Header_       Main.OUTGOING_MT.MAIN_HEADER % type;
+  App_Header_        Main.OUTGOING_MT.APP_HEADER % type;
+  g_Person_          Main.G_PERSON.G_PERSON % type;
+  Outgoing_MT_Field_ Main.OUTGOING_MT_FIELD.OUTGOING_MT_FIELD%type;
+  OMRec              Main.K_Types.TOutgoing_Mt_Rec;
+  -- Признак перехода на новый формат МТ. Если Is_Trans_Idn_ = 0 то работа по РНН, а если Is_Trans_Idn_ = 1 то ИНН
+  Is_Trans_Idn_      constant  Pls_Integer := Adm.Params.Get_System_Setup_Param('TRANS_ON_IDN');
+begin
+  Err_Code := 0;
+  Err_Msg  := ' ';
+
+  begin
+    select *
+      into o_Mt
+      from O_MT
+     where O_MT = o_Mt_;
+  exception
+    when others then
+      Err_Code := -20500;
+      Err_Msg  := ProcName || ' 010 ' || Adm.Error_Pack.Get_Err_Msg('8823', Err_Code, SqlErrM);
+      raise Types.E_Force_Exit;
+  end;
+
+  select nvl(sum(SUMM), 0)
+    into Sum_102_
+    from Main.O_MT102
+   where O_MT = o_Mt.o_Mt;
+
+  if o_Mt.F32a_Summ <> Sum_102_ then
+    Err_Code := -20500;
+    Err_Msg  := ProcName || ' 020 ' || Adm.Error_Pack.Get_Err_Msg('8824', Err_Code, SqlErrM);
+    raise Types.E_Force_Exit;
+  end if;
+
+  -- Создать исходящее сообщение --
+  begin
+
+    Main.Mt.Get_Our_Crypto_Code(Code_    => Sender_,
+                                Name_    => Sender_Name_,
+                                Err_Code => Err_Code,
+                                Err_Msg  => Err_Msg);
+
+    if Err_Code <> 0 then
+      Err_Msg  := ProcName || ' 030 --> ' || Err_Msg;
+      raise Types.E_Force_Exit;
+    end if;
+
+    if PARAMS.Get_System_Setup_Param('IS_TRANS_ENPF') = 1 then
+      Receiver_      := PARAMS.Get_System_Setup_Param('CRYPTO_CODE_KCMR');
+    else
+      Receiver_      := PARAMS.Get_System_Setup_Param('CRYPTO_CODE_FOR_SKP');
+    end if;
+    Receiver_Name_ := 'КЦМР, СКП';
+    g_Person_      := 6455333;
+
+    -- Получить заголовок исходящего сообщения --
+    Main.MT.Get_MT_Headers(Sender_      => Sender_,
+                           Receiver_    => Receiver_,
+                           MT_Type_     => o_Mt.Mt_Type,
+                           Main_Header_ => Main_Header_,
+                           App_Header_  => App_Header_);
+
+    OMRec.Working_Date    := Connection_Param.idOperDay;
+    OMRec.Work_Date       := Connection_Param.dOper;
+    OMRec.MT_Type         := o_Mt.Mt_Type;
+    OMRec.MT_Sub_Type     := null;
+    OMRec.MT_Sub_Type_Key := null;
+    OMRec.Unique_Code     := ':20:';
+    OMRec.Unique_Value    := o_Mt.Reference;
+    OMRec.Sender          := Sender_;
+    OMRec.Sender_Name     := Sender_Name_;
+    OMRec.Receiver        := Receiver_;
+    OMRec.Receiver_Name   := Receiver_Name_;
+    OMRec.Main_Header     := Main_Header_;
+    OMRec.App_Header      := App_Header_;
+    OMRec.Client          := g_Person_;
+    OMRec.F32a_Summ       := trim(To_Char(o_Mt.F32a_Summ, 'fm999999999999999990.00'));
+
+    Main.MT.Insert_Outgoing_MT(OMRec    => OMRec,
+                               Err_Code => Err_Code,
+                               Err_Msg  => Err_Msg);
+
+    if Err_Code <> 0 then
+      Err_Msg  := ProcName || ' 040 --> ' || Err_Msg;
+      raise Types.E_Force_Exit;
+    end if;
+
+    Outgoing_Mt_ := OMRec.Outgoing_Mt;
+  end;
+
+  -- Вставляем поля в Outgoing_MT_Field основного блока 102 --
+  begin
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, ':20:', o_Mt.Reference, 1, Outgoing_MT_Field_);
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, ':50:', '/' || o_Mt.F50_Guarantor_Oper || '/' || o_Mt.F50_Guarantor_Account, 3, Outgoing_MT_Field_);
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/NAME/', Adm.Funcs.To_Dos(o_Mt.F50_Guarantor_Name), 3, Outgoing_MT_Field_);
+
+    if Is_Trans_Idn_ = 0 then
+      MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/RNN/', o_Mt.F50_Guarantor_RNN, 3, Outgoing_MT_Field_);
+    else
+      MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/IDN/', o_Mt.F50_Guarantor_RNN, 3, Outgoing_MT_Field_);
+    end if;
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/CHIEF/', Adm.Funcs.To_Dos(o_Mt.F50_Guarantor_Chief), 3, Outgoing_MT_Field_);
+
+    if o_Mt.F50_Guarantor_Main_Bk is not null then
+      MT.Insert_Outgoing_MT_Field(
+        OMRec.Outgoing_Mt, '/MAINBK/', Adm.Funcs.To_Dos(o_Mt.F50_Guarantor_Main_Bk), 3,  Outgoing_MT_Field_);
+    end if;
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/IRS/', o_Mt.F50_Guarantor_Resid, 3, Outgoing_MT_Field_);
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/SECO/', o_Mt.F50_Guarantor_Econ_Sect, 3, Outgoing_MT_Field_);
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, ':52B:', o_Mt.F52B_Guarantor_Bank_Mfo, 3, Outgoing_MT_Field_);
+
+    /*if o_Mt.F53B_Mfo is not null then
+      MT.Insert_Outgoing_MT_Field(OMRec.Outgoing_Mt, ':53B:', o_Mt.F53B_Mfo, 3, Outgoing_MT_Field_);
+    end if;*/
+
+    if o_Mt.F53C_Mfo is not null or o_Mt.F53C_Acc is not null then
+      MT.Insert_Outgoing_MT_Field(
+        OMRec.Outgoing_Mt, ':53C:', o_Mt.F53C_Mfo || '/' || o_Mt.F53C_Acc, 3, Outgoing_MT_Field_);
+    end if;
+
+    /*if o_Mt.F54B_Mfo is not null then
+      MT.Insert_Outgoing_MT_Field(
+        OMRec.Outgoing_Mt, ':54B:', o_Mt.F54B_Mfo, 3, Outgoing_MT_Field_);
+    end if;*/
+
+    /*if o_Mt.F54C_Mfo is not null or o_Mt.F54C_Acc is not null then
+        MT.Insert_Outgoing_MT_Field(
+          OMRec.Outgoing_Mt, ':54C:', o_Mt.F54C_Mfo || '/' || o_Mt.F54C_Acc, 3, Outgoing_MT_Field_);
+    end if;*/
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, ':57B:', o_Mt.F57B_Benef_Bank_Mfo, 3, Outgoing_MT_Field_);
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, ':59:', o_Mt.F59_Benef_Account, 3, Outgoing_MT_Field_);
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/NAME/', Adm.Funcs.To_Dos(o_Mt.F59_Benef_Name), 3, Outgoing_MT_Field_);
+
+    if Is_Trans_Idn_ = 0 then
+      MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/RNN/', o_Mt.F59_Benef_RNN, 3, Outgoing_MT_Field_);
+    else
+      MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/IDN/', o_Mt.F59_Benef_RNN, 3, Outgoing_MT_Field_);
+    end if;
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/IRS/', o_Mt.F59_Benef_Resid, 3, Outgoing_MT_Field_);
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/SECO/', o_Mt.F59_Benef_Econ_Sect, 3, Outgoing_MT_Field_);
+
+    /*MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, ':70:', '/NUM/' || o_Mt.F70_Doc_Num, 3, Outgoing_MT_Field_);*/
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, ':70:', to_char(Null), 3, Outgoing_MT_Field_);
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/NUM/', o_Mt.F70_Doc_Num, 3, Outgoing_MT_Field_);
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/DATE/', o_Mt.F70_Doc_Date, 3, Outgoing_MT_Field_);
+
+    if o_Mt.F70_Oper_Type is not null then
+      MT.Insert_Outgoing_MT_Field(
+        OMRec.Outgoing_Mt, '/VO/', o_Mt.F70_Oper_Type, 3, Outgoing_MT_Field_);
+    else
+      MT.Insert_Outgoing_MT_Field(
+        OMRec.Outgoing_Mt, '/VO/', '01', 3, Outgoing_MT_Field_);
+    end if;
+
+    /*if o_Mt.ZO_Sign = 1 then -- если  ЗО --
+      MT.Insert_Outgoing_MT_Field(
+        OMRec.Outgoing_Mt, '/PSO/', '02', 3, Outgoing_MT_Field_);
+    else*/
+      MT.Insert_Outgoing_MT_Field(
+        OMRec.Outgoing_Mt, '/PSO/', '01', 3, Outgoing_MT_Field_);
+    /*end if;*/
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/SEND/', '07', 3, Outgoing_MT_Field_);
+
+    MT.Insert_Outgoing_MT_Field(
+      OMRec.Outgoing_Mt, '/KNP/', o_Mt.F70_KNP, 3, Outgoing_MT_Field_);
+
+    /*if o_Mt.Period is not null then
+      MT.Insert_Outgoing_MT_Field(
+        OMRec.Outgoing_Mt, '/PERIOD/', o_Mt.Period, 3, Outgoing_MT_Field_);
+    end if;*/
+
+    if o_Mt.F70_KBK is not null then
+      MT.Insert_Outgoing_MT_Field(
+        OMRec.Outgoing_Mt, '/BCLASS/', o_Mt.F70_KBK, 3, Outgoing_MT_Field_);
+    end if;
+
+    if o_Mt.F70_PRT is not null then
+      MT.Insert_Outgoing_MT_Field(
+        OMRec.Outgoing_Mt, '/PRT/', lpad(to_char(o_Mt.F70_PRT), 2, '0'), 3, Outgoing_MT_Field_);
+    end if;
+
+    if o_Mt.F70_Pay_Assign is not null then
+      MT.Insert_Outgoing_MT_Field(
+    		OMRec.Outgoing_Mt, '/ASSIGN/', Adm.Funcs.Hyphen_Str(replace(replace(Adm.Funcs.To_Dos(o_Mt.F70_Pay_Assign), chr(13), ' '), chr(10)), 60, 50), 3, Outgoing_MT_Field_);
+    end if;
+
+    -- Вставляем поля в Outgoing_MT_Field дополнительных блоков 102 --
+    declare
+      Prefix_  varchar2(2);
+      s_       varchar2(250);
+    begin
+      --if o_Mt.k_pay_doc_kind in (10, 11) then
+        /* Для зарплаты */
+        --Prefix_ := '/';
+      --else
+        /* Для пенсии */
+       -- if Is_Trans_Idn_ = 0 then
+          --Prefix_ := '//';
+        --else
+          Prefix_ := '/';
+        --end if;
+      --end if;
+
+  		for rec in (select *
+                    from Main.O_MT102
+                   where O_MT = o_Mt.o_Mt
+                   order by to_number(f21))
+      loop
+
+        if rec.F21 is not null then
+          MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, ':21:', Rec.F21, 4, Rec.o_Mt102, Outgoing_MT_Field_);
+        end if;
+
+        if rec.Summ is not null then
+          MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, ':32B:',
+             rec.Currency_Code || replace(to_char(Rec.Summ, SummMask), '.', ','), 4, Rec.o_Mt102, Outgoing_MT_Field_);
+        end if;
+
+        MT.Insert_Outgoing_MT_Field
+        	(OMRec.Outgoing_Mt, ':70:', to_char(null), 4, Rec.o_Mt102, Outgoing_MT_Field_);
+
+        if rec.Opv is not null then
+          MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, '/OPV/', rec.OPV, 4, Rec.o_Mt102, Outgoing_MT_Field_);
+        end if;
+
+        if rec.Fm is not null then
+          s_ := rec.Fm;
+          if rec.Fm_reg is not null then
+            s_ := s_ || '/' || rec.Fm_reg;
+          end if;
+          MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, Prefix_ ||'FM/', Adm.Funcs.To_Dos(s_), 4, Rec.o_Mt102, Outgoing_MT_Field_);
+        end if;
+
+        if rec.Nm is not null then
+          s_ := rec.Nm;
+          if rec.Nm_reg is not null then
+            s_ := s_ || '/' || rec.Nm_reg;
+          end if;
+          MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, Prefix_ || 'NM/', Adm.Funcs.To_Dos(s_), 4, Rec.o_Mt102, Outgoing_MT_Field_);
+        end if;
+
+        if rec.Ft is not null then
+          s_ := rec.Ft;
+          if rec.Ft_reg is not null then
+            s_ := s_ || '/' || rec.Ft_reg;
+          end if;
+          MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, Prefix_ || 'FT/', Adm.Funcs.To_Dos(s_), 4, Rec.o_Mt102, Outgoing_MT_Field_);
+        end if;
+
+        if rec.Dt is not null then
+          MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, Prefix_ || 'DT/', to_char(Trunc(rec.Dt), 'YYYYMMDD'), 4, Rec.o_Mt102, Outgoing_MT_Field_);
+        end if;
+
+        if rec.Rnn is not null then
+          if Is_Trans_Idn_ = 0 then
+          	 MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, Prefix_ || 'RNN/', rec.Rnn, 4, Rec.o_Mt102, Outgoing_MT_Field_);
+          else
+            MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, Prefix_ || 'IDN/', rec.Rnn, 4, Rec.o_Mt102, Outgoing_MT_Field_);
+          end if;
+        end if;
+
+        if rec.La is not null then
+          MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, Prefix_ || 'LA/', rec.La, 4, Rec.o_Mt102, Outgoing_MT_Field_);
+        end if;
+
+        if rec.Assign is not null then
+          MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, '/ASSIGN/', rec.Assign, 4, Rec.o_Mt102, Outgoing_MT_Field_);
+        end if;
+        if rec.period is not null then
+          MT.Insert_Outgoing_MT_Field
+          	(OMRec.Outgoing_Mt, '/PERIOD/', rec.period, 4, Outgoing_MT_Field_);
+        end if;
+
+    	end loop;
+
+    	MT.Insert_Outgoing_MT_Field
+    	  (OMRec.Outgoing_Mt, ':32A:',
+        to_char(o_Mt.F32A_Curr_Date, 'YYMMDD') || o_Mt.F32A_Curr_Code || replace(to_char(o_Mt.F32A_Summ, SummMask), '.', ','),
+        2, Outgoing_MT_Field_);
+    end;
+  end;
+
+  if Do_Commit_ = 1 then
+    commit;
+  end if;
+
+exception
+  when Types.E_Force_Exit then
+    if Do_Commit_ = 1 then
+      rollback;
+    end if;
+  when others then
+    if Do_Commit_ = 1 then
+      rollback;
+    end if;
+    Err_Code := -20500;
+    Err_Msg  := ProcName || Adm.Error_Pack.Get_Err_Msg('8803', Err_Code, SqlErrM);
+end;

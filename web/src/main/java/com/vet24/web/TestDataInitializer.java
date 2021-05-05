@@ -56,6 +56,7 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void medicineInitialize() {
         medicineService.persist(new Medicine("sinopharm", "sputnik", "sdasd", "protiv covid"));
+        medicineService.getByKey(1L);
     }
 
     @Override
