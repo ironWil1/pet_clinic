@@ -1,0 +1,30 @@
+CREATE OR REPLACE PROCEDURE O_Outgoing_MT_Field_List(
+  Outgoing_MT_                         in  outgoing_mt_field.outgoing_mt%type,
+  --
+  Cur                                  out Types.Tcur,
+  Err_Code                             out Types.Terr_Code,
+  Err_Msg                              out Types.Terr_Msg
+  )
+is
+  ProcName                             CONSTANT  Types.Tproc_Name := 'O_Outgoing_MT_Field_List';
+begin
+
+  open Cur for
+    select OUTGOING_MT_FIELD, F_CODE, adm.funcs.To_Win(F_VALUE) as F_VALUE, LARGE_SIGN, TAG
+    from main.Outgoing_Mt_Field omf
+    where omf.Outgoing_Mt = Outgoing_MT_;
+
+  exception
+    when adm.types.E_ExecError then
+      rollback;
+      open Cur for
+        select null from dual;
+    when others then
+      Err_Code := sqlcode;
+      Err_Msg  := ProcName || ' 00' || Adm.Error_Pack.Get_Err_Msg('0000', Err_Code, SQLERRM);
+      rollback;
+      open Cur for
+        select null from dual;
+end O_Outgoing_MT_Field_List;
+
+

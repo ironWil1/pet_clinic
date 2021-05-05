@@ -5,6 +5,4 @@ public interface ResourceService {
     String getContentTypeByFileName(String filename);
 
     byte[] loadAsByteArray(String filename);
-
-    byte[] loadIconAsByteArray(String url);
 }
