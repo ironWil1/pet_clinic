@@ -2,7 +2,7 @@ package com.vet24.web.controllers.medicine;
 
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.medicine.MedicineDto;
-import com.vet24.models.mappers.MapStructMapper;
+import com.vet24.models.mappers.MedicineMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
@@ -33,32 +33,31 @@ import java.util.List;
 public class MedicineController {
 
     private final MedicineService medicineService;
-    private final MapStructMapper mapStructMapper;
+    private final MedicineMapper medicineMapper;
     private final ResourceService resourceService;
     private final UploadService uploadService;
 
-    public MedicineController(MedicineService medicineService
-            , MapStructMapper mapStructMapper
-            , ResourceService resourceService
-            , UploadService uploadService) {
+    public MedicineController(MedicineService medicineService, MedicineMapper medicineMapper, ResourceService resourceService, UploadService uploadService) {
         this.medicineService = medicineService;
-        this.mapStructMapper = mapStructMapper;
+        this.medicineMapper = medicineMapper;
         this.resourceService = resourceService;
         this.uploadService = uploadService;
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<MedicineDto> getOne(@PathVariable("id") Long id) {
-        MedicineDto medicineDto = mapStructMapper
-                .medicineToMedicineDto(medicineService.getMedicineById(id));
-        return medicineDto != null
-                ? new ResponseEntity<>(medicineDto, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<MedicineDto> getById(@PathVariable("id") Long id) {
+        Medicine medicine = medicineService.getMedicineById(id);
+        if (medicine == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            MedicineDto medicineDto = medicineMapper.medicineToMedicineDto(medicine);
+            return new ResponseEntity<>(medicineDto, HttpStatus.OK);
+        }
     }
 
     @DeleteMapping(value = "/{id}")
-    public  ResponseEntity<Void> delete(@PathVariable(name = "id") Long id) {
+    public  ResponseEntity<Void> deleteById(@PathVariable(name = "id") Long id) {
         if (medicineService.getMedicineById(id) == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
@@ -74,10 +73,7 @@ public class MedicineController {
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            medicine.setManufactureName(medicineDto.getManufactureName());
-            medicine.setName(medicineDto.getName());
-            medicine.setIcon(medicineDto.getIcon());
-            medicine.setDescription(medicineDto.getDescription());
+            medicine = medicineMapper.medicineDtoToMedicine(medicineDto);
             medicineService.editMedicine(medicine);
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -85,7 +81,7 @@ public class MedicineController {
 
     @PostMapping(value = "")
     public ResponseEntity<MedicineDto> save(@RequestBody MedicineDto medicineDto) {
-        Medicine medicine = mapStructMapper.medicineDtoToMedicine(medicineDto);
+        Medicine medicine = medicineMapper.medicineDtoToMedicine(medicineDto);
         medicineService.addMedicine(medicine);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
