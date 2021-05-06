@@ -19,6 +19,7 @@ Stop and remove containers
 ```docker-compose down```
 
 - Our database is available on the local computer under port 5433 and container port 5432
+- **Port for test database is 5434.**
 
 - - -
 ## *How to create Dao and Service for new Entities guide*
