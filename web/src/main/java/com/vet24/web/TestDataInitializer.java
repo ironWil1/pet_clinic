@@ -1,14 +1,11 @@
 package com.vet24.web;
 
-<<<<<<< HEAD
-import com.vet24.models.medicine.Medicine;
-=======
 import com.vet24.models.enums.RoleNameEnum;
->>>>>>> 98b0b42b01fbc8dd82224c5e290023c04b7e22a6
 import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
 import com.vet24.models.user.User;
+import com.vet24.models.medicine.Medicine;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.RoleService;
@@ -89,6 +86,7 @@ public class TestDataInitializer implements ApplicationRunner {
                 || environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create-drop")) {
             roleInitialize();
             userInitialize();
+            medicineInitialize();
 
             //userUpdateMethod();
             //userDeleteMethod();

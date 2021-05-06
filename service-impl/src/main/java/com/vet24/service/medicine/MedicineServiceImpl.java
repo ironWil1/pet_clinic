@@ -1,6 +1,5 @@
 package com.vet24.service.medicine;
 
-import com.vet24.dao.ReadOnlyDaoImpl;
 import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.medicine.MedicineDao;
 import com.vet24.models.medicine.Medicine;
@@ -16,18 +15,18 @@ public class MedicineServiceImpl extends ReadWriteServiceImpl<Long, Medicine> im
 
     private final MedicineDao medicineDao;
 
-    protected MedicineServiceImpl(ReadOnlyDaoImpl<Long, Medicine> readOnlyDao, ReadWriteDaoImpl<Long, Medicine> readWriteDao, MedicineDao medicineDao) {
-        super(readOnlyDao, readWriteDao);
+    public MedicineServiceImpl(ReadWriteDaoImpl<Long, Medicine> readWriteDao, MedicineDao medicineDao) {
+        super(readWriteDao);
         this.medicineDao = medicineDao;
     }
 
     @Transactional
     @Override
-    public List<Medicine> searchFull(String manufactureName, String name, String searchtext) {
-        if (searchtext.equals("")) {
+    public List<Medicine> searchFull(String manufactureName, String name, String searchText) {
+        if (searchText.equals("")) {
             return medicineDao.search(manufactureName, name);
         } else {
-            return  medicineDao.searchFull(manufactureName, name, searchtext);
+            return  medicineDao.searchFull(manufactureName, name, searchText);
         }
     }
 }

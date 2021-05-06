@@ -1,4 +1,4 @@
-package com.vet24.models.mappers;
+package com.vet24.models.mappers.medicine;
 
 import com.vet24.models.dto.medicine.MedicineDto;
 import com.vet24.models.medicine.Medicine;

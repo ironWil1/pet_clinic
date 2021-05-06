@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface MedicineDao extends ReadWriteDao<Long, Medicine> {
 
-    List<Medicine> searchFull(String manufactureName, String name, String searchtext);
+    List<Medicine> searchFull(String manufactureName, String name, String searchText);
     List<Medicine> search(String manufactureName, String name);
 }

@@ -3,7 +3,7 @@ package com.vet24.web.controllers.medicine;
 
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.medicine.MedicineDto;
-import com.vet24.models.mappers.MedicineMapper;
+import com.vet24.models.mappers.medicine.MedicineMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
@@ -120,8 +120,8 @@ public class MedicineController {
     public ResponseEntity<List<Medicine>> search(
             @RequestParam(required = false, name = "manufactureName", defaultValue = "") String manufactureName
             ,@RequestParam(required = false, name = "name", defaultValue = "") String name
-            , @RequestParam(required = false, name = "searchtext", defaultValue = "") String searchtext) {
-        List<Medicine> medicineList = medicineService.searchFull(manufactureName, name, searchtext);
+            , @RequestParam(required = false, name = "searchText", defaultValue = "") String searchText) {
+        List<Medicine> medicineList = medicineService.searchFull(manufactureName, name, searchText);
         return new ResponseEntity<>(medicineList, HttpStatus.OK);
     }
 }

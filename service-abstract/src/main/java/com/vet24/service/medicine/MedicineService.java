@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface MedicineService extends ReadWriteService<Long, Medicine> {
 
-    List<Medicine> searchFull(String manufactureName, String name, String searchtext);
+    List<Medicine> searchFull(String manufactureName, String name, String searchText);
 }

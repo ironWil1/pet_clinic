@@ -9,8 +9,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames = {"manufactureName" , "name"})})
+@Data
+@NoArgsConstructor
 public class Medicine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,53 +32,10 @@ public class Medicine {
     @Column(nullable = false)
     private String description;
 
-
-    public Medicine() {}
-
     public Medicine(String manufactureName, String name, String icon, String description) {
         this.manufactureName = manufactureName;
         this.name = name;
         this.icon = icon;
-        this.description = description;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getManufactureName() {
-        return manufactureName;
-    }
-
-    public void setManufactureName(String manufactureName) {
-        this.manufactureName = manufactureName;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
     }
 }
