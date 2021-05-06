@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleServiceImpl extends ReadWriteServiceImpl<Long, Role> implements RoleService {
 
-    protected RoleServiceImpl(ReadOnlyDaoImpl<Long, Role> readOnlyDao, ReadWriteDaoImpl<Long, Role> readWriteDao) {
-        super(readOnlyDao, readWriteDao);
+    protected RoleServiceImpl(ReadWriteDaoImpl<Long, Role> readWriteDao) {
+        super(readWriteDao);
     }
 }
