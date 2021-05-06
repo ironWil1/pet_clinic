@@ -2,6 +2,9 @@ package com.vet24.models.user;
 
 import com.vet24.models.enums.RoleNameEnum;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
@@ -13,6 +16,9 @@ import javax.persistence.Id;
 
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role implements GrantedAuthority {
 
     @Id
@@ -22,39 +28,13 @@ public class Role implements GrantedAuthority {
     @Enumerated(value = EnumType.STRING)
     private RoleNameEnum name;
 
-
-    public Role(){};
-
     public Role(RoleNameEnum name) {
         this.name = name;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public RoleNameEnum getName() {
-        return name;
-    }
-
-    public void setName(RoleNameEnum name) {
-        this.name = name;
-    }
-
 
     @Override
     public String getAuthority() {
         return name.toString();
     }
 
-    @Override
-    public String toString() {
-        return "Role{" +
-                "name=" + name.toString() +
-                '}';
-    }
 }
