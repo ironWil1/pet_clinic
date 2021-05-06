@@ -11,7 +11,7 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
 
     private final ClientDao clientDao;
 
-    protected ClientServiceImpl(ReadWriteDaoImpl<Long, Client> readWriteDao, ClientDao clientDao) {
+    public ClientServiceImpl(ReadWriteDaoImpl<Long, Client> readWriteDao, ClientDao clientDao) {
         super(readWriteDao);
         this.clientDao = clientDao;
     }

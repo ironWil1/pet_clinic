@@ -14,7 +14,7 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
 
     private final UserDao userDao;
 
-    protected UserServiceImpl(ReadWriteDaoImpl<Long, User> readWriteDao, UserDao userDao) {
+    public UserServiceImpl(ReadWriteDaoImpl<Long, User> readWriteDao, UserDao userDao) {
         super(readWriteDao);
         this.userDao = userDao;
     }
