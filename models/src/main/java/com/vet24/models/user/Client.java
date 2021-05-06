@@ -3,6 +3,7 @@ package com.vet24.models.user;
 import com.vet24.models.pet.Pet;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.Set;
 
@@ -32,5 +33,13 @@ public class Client extends User {
         super(firstname, lastname, login, password, role);
         this.pets = pets;
     }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "pets=" + pets + " login " + super.getLogin() + " " + super.getRole() +
+                '}';
+    }
+
 
 }

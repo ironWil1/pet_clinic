@@ -1,9 +1,7 @@
 package com.vet24.models.user;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +28,7 @@ import javax.persistence.Table;
 @Entity
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "user_entities")
@@ -40,15 +39,19 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
     @Column(nullable = false)
     private String firstname;
 
+    @NonNull
     @Column(nullable = false)
     private String lastname;
 
+    @NonNull
     @Column(nullable = false)
     private String login;
 
+    @NonNull
     @Column(nullable = false)
     private String password;
 
@@ -57,18 +60,11 @@ public class User implements UserDetails {
 
     private Boolean enabled;
 
+    @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Role role;
-
-    public User(String firstname, String lastname, String login, String password, Role role) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.login = login;
-        this.password = password;
-        this.role = role;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -78,12 +74,12 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
+    public @NonNull String getPassword() {
         return password;
     }
 
     @Override
-    public String getUsername() {
+    public @NonNull String getUsername() {
         return login;
     }
 
