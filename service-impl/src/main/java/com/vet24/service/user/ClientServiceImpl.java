@@ -1,10 +1,8 @@
 package com.vet24.service.user;
 
-import com.vet24.dao.ReadOnlyDaoImpl;
 import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.user.ClientDao;
 import com.vet24.models.user.Client;
-
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.stereotype.Service;
 

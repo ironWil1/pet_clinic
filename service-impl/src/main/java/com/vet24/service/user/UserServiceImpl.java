@@ -1,6 +1,5 @@
 package com.vet24.service.user;
 
-import com.vet24.dao.ReadOnlyDaoImpl;
 import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.user.UserDao;
 import com.vet24.models.user.User;
