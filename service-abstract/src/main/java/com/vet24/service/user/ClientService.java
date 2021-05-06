@@ -2,15 +2,9 @@ package com.vet24.service.user;
 
 
 import com.vet24.models.user.Client;
+import com.vet24.service.ReadWriteService;
 
-import java.util.List;
 
-
-public interface ClientService {
-    Client getClientById(Long id);
+public interface ClientService extends ReadWriteService<Long, Client> {
     Client getClientByLogin(String login);
-    List<Client> getAllClients();
-    void addClient(Client client);
-    void editClient(Client client);
-    void deleteClient(Long id);
 }

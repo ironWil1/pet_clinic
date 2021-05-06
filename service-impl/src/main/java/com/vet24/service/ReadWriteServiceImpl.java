@@ -1,6 +1,5 @@
 package com.vet24.service;
 
-import com.vet24.dao.ReadOnlyDaoImpl;
 import com.vet24.dao.ReadWriteDaoImpl;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,8 +10,8 @@ public abstract class ReadWriteServiceImpl<K extends Serializable, T> extends Re
 
     private final ReadWriteDaoImpl<K, T> readWriteDao;
 
-    protected ReadWriteServiceImpl(ReadOnlyDaoImpl<K, T> readOnlyDao, ReadWriteDaoImpl<K, T> readWriteDao) {
-        super(readOnlyDao);
+    protected ReadWriteServiceImpl(ReadWriteDaoImpl<K, T> readWriteDao) {
+        super(readWriteDao);
         this.readWriteDao = readWriteDao;
     }
 
