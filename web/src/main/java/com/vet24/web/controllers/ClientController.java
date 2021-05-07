@@ -46,7 +46,7 @@ public class ClientController {
 
     // GET /api/client/avatar  получение изображения аватарки
     @GetMapping("/{id}/avatar")
-    public ResponseEntity<byte[]> getAvatar(@PathVariable("id") Long id) {
+    public ResponseEntity<byte[]> getClientAvatar(@PathVariable("id") Long id) {
         Client client = clientService.getByKey(id);
         if (client == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -63,8 +63,8 @@ public class ClientController {
 
     // POST /api/client/avatar сохранение новой аватарки
     @PostMapping(value = "/{id}/avatar", consumes = {"multipart/form-data"})
-    public ResponseEntity<UploadedFileDto> persistAvatar(@PathVariable("id") Long id,
-                                                         @RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<UploadedFileDto> persistClientAvatar(@PathVariable("id") Long id,
+                                                               @RequestParam("file") MultipartFile file) throws IOException {
         Client client = clientService.getByKey(id);
         if (client == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -113,14 +113,46 @@ public class ClientController {
         if (client != null && pet != null) {
             // petDto convert to Pet updatedPet(it's abstract, can't)
             // petService.update(updatedPet)
-            //
+            Pet updatedPet = mapStructMapper.PetDtoToPet(petDto);
+            petService.update(updatedPet);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-
     // GET /api/client/pet/{petId}/avatar  получение аватара питомца
+    @GetMapping(value = "/{clientId}/pet/{petId}/avatar")
+    public ResponseEntity<byte[]> getPetAvatar(@PathVariable("clientId") Long clientId,
+                                               @PathVariable("petId") Long petId) {
+        Client client = clientService.getByKey(clientId);
+        Pet pet = petService.findById(petId);
+        if (client != null & pet != null) {
+            String url = pet.getAvatar();
+            String filename = StringUtils.substringAfterLast(url, File.separator);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", resourceService.getContentTypeByFileName(filename));
+            return url != null
+                    ? new ResponseEntity<>(resourceService.loadAsByteArray(url), headers, HttpStatus.OK)
+                    : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     // POST /api/client/pet/{petId}/avatar  сохранение новой аватарки питомца
+    @PostMapping(value = "/{clientId}/pet/{petId}/avatar", consumes = {"multipart/form-data"})
+    public ResponseEntity<UploadedFileDto> persistPetAvatar(@PathVariable("clientId") Long clientId,
+                                                            @PathVariable("petId") Long petId,
+                                                            @RequestParam("file") MultipartFile file) throws IOException {
+        Client client = clientService.getByKey(clientId);
+        Pet pet = petService.findById(petId);
+        if (client != null && pet != null) {
+            UploadedFileDto uploadedFileDto = uploadService.store(file);
+            pet.setAvatar(uploadedFileDto.getUrl());
+            petService.update(pet);
+            return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

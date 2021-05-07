@@ -30,6 +30,14 @@ public interface MapStructMapper {
         return null;
     }
 
+    default <T extends Pet> T PetDtoToPet(PetDto petDto) {
+        if (Objects.equals(petDto.getType().getType(), "DOG")) {
+            return (T) DogDtoToDog(PetDtoToDogDto(petDto));
+        }
+        return null;
+    }
+
+    DogDto PetDtoToDogDto(PetDto petDto);
 
     Dog DogDtoToDog(DogDto dogDto);
 
