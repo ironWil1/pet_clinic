@@ -3,21 +3,12 @@ package com.vet24.models.pet;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.user.Client;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -26,6 +17,7 @@ import java.time.LocalDate;
 @DiscriminatorColumn(name = "pet_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
+@EqualsAndHashCode
 public abstract class Pet {
 
     @Id
@@ -65,14 +57,18 @@ public abstract class Pet {
     @Column
     private String description;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Client client;
+
     public Pet() {
     }
 
-    public Pet(String name, LocalDate birthDay, PetType petType, Gender gender, String breed) {
+    public Pet(String name, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client) {
         this.name = name;
         this.birthDay = birthDay;
         this.petType = petType;
         this.gender = gender;
         this.breed = breed;
+        this.client = client;
     }
 }

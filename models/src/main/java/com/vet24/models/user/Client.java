@@ -2,23 +2,24 @@ package com.vet24.models.user;
 
 import com.vet24.models.pet.Pet;
 
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 
 @Entity
 @DiscriminatorValue("CLIENT")
 public class Client extends User {
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "client_pets", joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "pet_id"))
-    private Set<Pet> pets;
+    @OneToMany(
+            mappedBy = "client",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<Pet> pets = new HashSet<>();
 
     public Client() {
         super();
@@ -27,6 +28,16 @@ public class Client extends User {
     public Client(String firstname, String lastname, String login, String password, Role role, Set<Pet> pets) {
         super(firstname, lastname, login, password, role);
         this.pets = pets;
+    }
+
+    public void addPet(Pet pet) {
+        pets.add(pet);
+        pet.setClient(this);
+    }
+
+    public void removePet(Pet pet) {
+        pets.remove(pet);
+        pet.setClient(null);
     }
 
     public Set<Pet> getPets() {

@@ -2,6 +2,7 @@ package com.vet24.models.pet;
 
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.user.Client;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,8 +20,8 @@ public class Dog extends Pet {
         super();
     }
 
-    public Dog(String name, LocalDate birthDay, PetType petType, Gender gender, String breed) {
-        super(name, birthDay, PetType.DOG, gender, breed);
+    public Dog(String name, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client) {
+        super(name, birthDay, PetType.DOG, gender, breed, client);
     }
 
     // add later when ready

@@ -56,17 +56,21 @@ public class TestDataInitializer implements ApplicationRunner {
         userService.addUser(new User("Petr", "Petrov", "Petr",
                 "123456", roleService.getRoleById(2L)));
         clientService.addClient(new Client("John", "Smith", "clientLogin",
-                "123456", roleService.getRoleById(3L), pets));
+                "123456", roleService.getRoleById(3L), new HashSet<>()));
 
     }
 
     public void petInitialize() {
-        Dog dog1 = new Dog("Delilah", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier");
-        Dog dog2 = new Dog("Buddy", LocalDate.now(), PetType.DOG, Gender.MALE, "Golden Retriever");
+        Dog dog1 = new Dog("Delilah", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier",
+                clientService.getClientById(3L));
+        Dog dog2 = new Dog("Buddy", LocalDate.now(), PetType.DOG, Gender.MALE, "Golden Retriever",
+                clientService.getClientById(3L));
         petService.save(dog1);
         petService.save(dog2);
-        pets.add(dog1);
-        pets.add(dog2);
+
+//        Client client = (Client) new User("Dmitrii", "Testov", "DmitriiTest", "password",
+//                roleService.getRoleById(3L));
+//        client.addPet();
     }
 
     @Override
@@ -74,9 +78,9 @@ public class TestDataInitializer implements ApplicationRunner {
         if (Objects.requireNonNull(environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create")
                 || Objects.requireNonNull(
                         environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop")) {
-            petInitialize();
             roleInitialize();
             userInitialize();
+            petInitialize();
         }
     }
 }
