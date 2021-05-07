@@ -37,7 +37,7 @@ public abstract class Procedure implements Serializable {
     @Column
     private Integer periodDays;
 
-    @Column
+//    @Column
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medicine_id")
     private Medicine medicine;

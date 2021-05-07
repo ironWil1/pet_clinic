@@ -2,11 +2,17 @@ package com.vet24.web;
 
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.pet.Pet;
+import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
+import com.vet24.models.pet.procedure.Procedure;
+import com.vet24.models.pet.procedure.VaccinationProcedure;
+import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
 import com.vet24.models.user.User;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.service.medicine.MedicineService;
+import com.vet24.service.pet.procedure.ProcedureService;
+import com.vet24.service.pet.reproduction.ReproductionService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.UserService;
@@ -16,6 +22,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 
 
@@ -26,17 +33,22 @@ public class TestDataInitializer implements ApplicationRunner {
     private UserService userService;
     private ClientService clientService;
     private MedicineService medicineService;
+    private ProcedureService procedureService;
+    private ReproductionService reproductionService;
 
     @Autowired
     Environment environment;
 
-
     @Autowired
-    public TestDataInitializer(RoleService roleService, UserService userService, ClientService clientService, MedicineService medicineService) {
+    public TestDataInitializer(RoleService roleService, UserService userService,
+                               ClientService clientService, MedicineService medicineService,
+                               ProcedureService procedureService, ReproductionService reproductionService) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
         this.medicineService = medicineService;
+        this.procedureService = procedureService;
+        this.reproductionService = reproductionService;
     }
 
     public void roleInitialize() {
@@ -80,6 +92,26 @@ public class TestDataInitializer implements ApplicationRunner {
         medicineService.getByKey(1L);
     }
 
+    public void procedureInitializer(){
+        procedureService.persist(new VaccinationProcedure(
+                LocalDate.now(), "nbr3br3n", false, null,
+                medicineService.getByKey(1L)
+        ));
+        procedureService.persist(new ExternalParasiteProcedure(
+                LocalDate.now(), "43h5j3", true, 20,
+                medicineService.getByKey(1L)
+        ));
+        procedureService.getByKey(1L);
+        procedureService.getByKey(2L);
+    }
+
+    public void reproductionInitializer(){
+        reproductionService.persist(new Reproduction(
+                LocalDate.now(), LocalDate.now(), LocalDate.now(), 2
+        ));
+        reproductionService.getByKey(1L);
+    }
+
     @Override
     public void run(ApplicationArguments args) {
         if (environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create")
@@ -92,6 +124,9 @@ public class TestDataInitializer implements ApplicationRunner {
             //userDeleteMethod();
             //roleUpdateMethod();
             //roleDeleteMethod();
+
+            procedureInitializer();
+            reproductionInitializer();
         }
     }
 }
