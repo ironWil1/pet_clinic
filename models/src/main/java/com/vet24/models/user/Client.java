@@ -1,6 +1,9 @@
 package com.vet24.models.user;
 
 import com.vet24.models.pet.Pet;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.Set;
 
@@ -12,6 +15,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 
 @Entity
+@Data
+@EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue("CLIENT")
 public class Client extends User {
 
@@ -29,18 +34,12 @@ public class Client extends User {
         this.pets = pets;
     }
 
-    public Set<Pet> getPets() {
-        return pets;
-    }
-
-    public void setPets(Set<Pet> pets) {
-        this.pets = pets;
-    }
-
     @Override
     public String toString() {
         return "Client{" +
                 "pets=" + pets + " login " + super.getLogin() + " " + super.getRole() +
                 '}';
     }
+
+
 }
