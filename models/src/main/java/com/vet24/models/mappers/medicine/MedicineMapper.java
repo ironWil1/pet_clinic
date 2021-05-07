@@ -5,6 +5,8 @@ import com.vet24.models.medicine.Medicine;
 
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 
 @Mapper(componentModel = "spring")
 public interface MedicineMapper {
@@ -12,4 +14,6 @@ public interface MedicineMapper {
     MedicineDto medicineToMedicineDto(Medicine medicine);
 
     Medicine medicineDtoToMedicine(MedicineDto medicineDto);
+
+    List<MedicineDto> medicineListToMedicineDto(List<Medicine> medicineList);
 }

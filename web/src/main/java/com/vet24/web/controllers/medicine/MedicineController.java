@@ -10,6 +10,7 @@ import com.vet24.service.media.UploadService;
 import com.vet24.service.medicine.MedicineService;
 
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -39,7 +40,8 @@ public class MedicineController {
     private final ResourceService resourceService;
     private final UploadService uploadService;
 
-    public MedicineController(MedicineService medicineService, MedicineMapper medicineMapper, ResourceService resourceService, UploadService uploadService) {
+    public MedicineController(MedicineService medicineService, MedicineMapper medicineMapper,
+                              ResourceService resourceService, UploadService uploadService) {
         this.medicineService = medicineService;
         this.medicineMapper = medicineMapper;
         this.resourceService = resourceService;
@@ -97,8 +99,10 @@ public class MedicineController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             String url = medicine.getIcon();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", resourceService.getContentTypeByFileName(url));
             return url != null
-                    ? new ResponseEntity<>(resourceService.loadAsByteArray(url), HttpStatus.OK)
+                    ? new ResponseEntity<>(resourceService.loadAsByteArray(url), headers, HttpStatus.OK)
                     : new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -123,9 +127,7 @@ public class MedicineController {
             @RequestParam(required = false, name = "name", defaultValue = "") String name,
             @RequestParam(required = false, name = "searchText", defaultValue = "") String searchText) {
         List<Medicine> medicineList = medicineService.searchFull(manufactureName, name, searchText);
-        List<MedicineDto> medicineDtoList = medicineList.stream()
-                .map(medicine -> medicineMapper.medicineToMedicineDto(medicine))
-                .collect(Collectors.toList());
+        List<MedicineDto> medicineDtoList = medicineMapper.medicineListToMedicineDto(medicineList);
         return new ResponseEntity<>(medicineDtoList, HttpStatus.OK);
     }
 }
