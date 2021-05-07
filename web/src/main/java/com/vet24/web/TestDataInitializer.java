@@ -28,7 +28,6 @@ import java.util.Set;
 @Component
 public class TestDataInitializer implements ApplicationRunner {
 
-    private final Set<Pet> pets = new HashSet<>();
     private final RoleService roleService;
     private final UserService userService;
     private final ClientService clientService;
@@ -45,32 +44,51 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void roleInitialize() {
-        roleService.addRole(new Role(RoleNameEnum.ADMIN));
-        roleService.addRole(new Role(RoleNameEnum.MANAGER));
-        roleService.addRole(new Role(RoleNameEnum.CLIENT));
+        roleService.persist(new Role(RoleNameEnum.ADMIN));
+        roleService.persist(new Role(RoleNameEnum.MANAGER));
+        roleService.persist(new Role(RoleNameEnum.CLIENT));
     }
 
     public void userInitialize() {
-        userService.addUser(new User("Ivan", "Ivanov", "Ivan",
-                "123456", roleService.getRoleById(1L)));
-        userService.addUser(new User("Petr", "Petrov", "Petr",
-                "123456", roleService.getRoleById(2L)));
-        clientService.addClient(new Client("John", "Smith", "clientLogin",
-                "123456", roleService.getRoleById(3L), new HashSet<>()));
-
+        userService.persist(new User("Ivan", "Ivanov", "Ivan",
+                "123456", roleService.getByKey(1L)));
+        userService.persist(new User("Petr", "Petrov", "Petr",
+                "123456", roleService.getByKey(2L)));
+        clientService.persist(new Client("John", "Smith", "clientLogin",
+                "123456", roleService.getByKey(3L), new HashSet<>()));
     }
 
     public void petInitialize() {
         Dog dog1 = new Dog("Delilah", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier",
-                clientService.getClientById(3L));
+                clientService.getByKey(3L));
         Dog dog2 = new Dog("Buddy", LocalDate.now(), PetType.DOG, Gender.MALE, "Golden Retriever",
-                clientService.getClientById(3L));
+                clientService.getByKey(3L));
         petService.save(dog1);
         petService.save(dog2);
+    }
 
-//        Client client = (Client) new User("Dmitrii", "Testov", "DmitriiTest", "password",
-//                roleService.getRoleById(3L));
-//        client.addPet();
+    public void userUpdateMethod() {
+        User user = new User("Test", "Testov", "TestLogin",
+                "TestPassword", roleService.getByKey(2L));
+        user.setId(1L);
+        userService.update(user);
+    }
+
+    public void roleUpdateMethod() {
+        Role role = new Role(RoleNameEnum.ADMIN);
+        role.setId(3L);
+        roleService.update(role);
+    }
+
+    public void userDeleteMethod() {
+        User user = userService.getByKey(1L);
+        userService.delete(user);
+    }
+
+    //Delete method doesn't work if user with this.Role exists in DB.
+    public void roleDeleteMethod() {
+        Role role = roleService.getByKey(3L);
+        roleService.delete(role);
     }
 
     @Override
@@ -81,6 +99,10 @@ public class TestDataInitializer implements ApplicationRunner {
             roleInitialize();
             userInitialize();
             petInitialize();
+            //userUpdateMethod();
+            //userDeleteMethod();
+            //roleUpdateMethod();
+            //roleDeleteMethod();
         }
     }
 }
