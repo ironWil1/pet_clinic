@@ -8,5 +8,4 @@ import lombok.Data;
 public class UploadedFileDto {
     private String filename;
     private String url;
-
 }
