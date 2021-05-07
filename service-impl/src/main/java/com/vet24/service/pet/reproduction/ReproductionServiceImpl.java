@@ -2,16 +2,22 @@ package com.vet24.service.pet.reproduction;
 
 import com.vet24.dao.ReadOnlyDaoImpl;
 import com.vet24.dao.ReadWriteDaoImpl;
+import com.vet24.dao.pet.procedure.ProcedureDao;
+import com.vet24.dao.pet.reproduction.ReproductionDao;
+import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ReproductionServiceImpl extends ReadWriteServiceImpl<Reproduction, Long> {
+public class ReproductionServiceImpl extends ReadWriteServiceImpl<Long, Reproduction> implements ReproductionService {
+
+    private final ReproductionDao reproductionDao;
 
     @Autowired
-    protected ReproductionServiceImpl(ReadOnlyDaoImpl<Reproduction, Long> readOnlyDao, ReadWriteDaoImpl<Reproduction, Long> readWriteDao) {
-        super(readOnlyDao, readWriteDao);
+    public ReproductionServiceImpl(ReadWriteDaoImpl<Long, Reproduction> readWriteDao, ReproductionDao reproductionDao) {
+        super(readWriteDao);
+        this.reproductionDao = reproductionDao;
     }
 }

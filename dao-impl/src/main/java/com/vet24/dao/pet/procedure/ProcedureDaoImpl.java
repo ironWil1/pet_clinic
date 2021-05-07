@@ -5,5 +5,5 @@ import com.vet24.models.pet.procedure.Procedure;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ProcedureDaoImpl extends ReadWriteDaoImpl<Procedure, Long> {
+public class ProcedureDaoImpl extends ReadWriteDaoImpl<Long, Procedure> implements  ProcedureDao {
 }
