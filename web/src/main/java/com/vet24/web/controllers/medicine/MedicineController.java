@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -117,12 +118,15 @@ public class MedicineController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Medicine>> search(
+    public ResponseEntity<List<MedicineDto>> search(
             @RequestParam(required = false, name = "manufactureName", defaultValue = "") String manufactureName
             ,@RequestParam(required = false, name = "name", defaultValue = "") String name
             , @RequestParam(required = false, name = "searchText", defaultValue = "") String searchText) {
         List<Medicine> medicineList = medicineService.searchFull(manufactureName, name, searchText);
-        return new ResponseEntity<>(medicineList, HttpStatus.OK);
+        List<MedicineDto> medicineDtoList = medicineList.stream()
+                .map(medicine -> medicineMapper.medicineToMedicineDto(medicine))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(medicineDtoList, HttpStatus.OK);
     }
 }
 
