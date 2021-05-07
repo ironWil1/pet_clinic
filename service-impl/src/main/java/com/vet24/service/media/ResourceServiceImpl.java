@@ -64,11 +64,11 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public byte[] loadAsByteArray(String filename) {
-        try (InputStream is = new FileSystemResource(uploadFolder + File.separator + filename).getInputStream()) {
+    public byte[] loadAsByteArray(String url) {
+        try (InputStream is = new FileSystemResource(url).getInputStream()) {
             return StreamUtils.copyToByteArray(is);
         } catch (IOException e) {
-            throw new StorageException("File not found: " + filename, e);
+            throw new StorageException("File not found: " + url, e);
         }
     }
 }
