@@ -1,11 +1,11 @@
 package com.vet24.models.enums;
 
-public enum ProcedureTypeEnum {
+public enum ProcedureType {
     VACCINATION(Values.VACCINATION),
     ECHINOCOCCUS(Values.ECHINOCOCCUS),
     EXTERNAL_PARASITE(Values.EXTERNAL_PARASITE);
 
-    private ProcedureTypeEnum(String val) {
+    private ProcedureType(String val) {
         if (!this.name().equals(val))
             throw new IllegalArgumentException("Incorrect use of ProcedureTypeEnum");
     }

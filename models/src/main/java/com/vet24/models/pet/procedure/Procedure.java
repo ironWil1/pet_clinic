@@ -1,8 +1,9 @@
 package com.vet24.models.pet.procedure;
 
+import com.vet24.models.medicine.Medicine;
 import lombok.Data;
 
-import com.vet24.models.enums.ProcedureTypeEnum;
+import com.vet24.models.enums.ProcedureType;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,9 +22,9 @@ public abstract class Procedure implements Serializable {
     @Column
     private LocalDate date;
 
-    @Column(nullable = false, insertable = false, updatable = false)
+    @Column(name = "type", nullable = false, insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
-    public ProcedureTypeEnum type;
+    public ProcedureType type;
 
     @Column
     private String medicineBatchNumber;
@@ -34,6 +35,8 @@ public abstract class Procedure implements Serializable {
     @Column
     private Integer periodDays;
 
-//    @Column
-//    private Medicine medicine;
+    @Column
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "medicine_id")
+    private Medicine medicine;
 }
