@@ -4,6 +4,7 @@ import com.vet24.models.dtos.*;
 import com.vet24.models.mappers.MapStructMapper;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
+import com.vet24.models.user.Client;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.user.ClientService;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class ClientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ClientDto> getClientById(@PathVariable("id") Long id) {
-        ClientDto clientDto = mapStructMapper.clientToClientDto(clientService.getClientById(id));
+        ClientDto clientDto = mapStructMapper.clientToClientDto(clientService.getByKey(id));
         return clientDto != null ? ResponseEntity.ok(clientDto) : ResponseEntity.notFound().build();
     }
 
@@ -34,13 +35,17 @@ public class ClientController {
     @PostMapping("/{clientId}/pet/add")
     public ResponseEntity<AbstractNewPetDto> persistPet(@PathVariable("clientId") Long clientId,
                                                         @RequestBody AbstractNewPetDto petDto) {
-        if (petDto instanceof DogDto) {
-            Dog dog = mapStructMapper.DogDtoToDog((DogDto) petDto);
-            dog.setClient(clientService.getClientById(clientId));
-            petService.save(dog);
-            return ResponseEntity.ok(petDto);
+        Client client = clientService.getByKey(clientId);
+        if (client != null) {
+            if (petDto instanceof DogDto) {
+                Dog dog = mapStructMapper.DogDtoToDog((DogDto) petDto);
+                dog.setClient(client);
+                petService.save(dog);
+                return ResponseEntity.ok(petDto);
+            }
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.notFound().build();
     }
 
     // DELETE /api/client/pet/{petId} само собой удалить можно только своего питомца
