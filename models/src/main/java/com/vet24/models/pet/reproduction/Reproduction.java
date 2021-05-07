@@ -1,12 +1,17 @@
 package com.vet24.models.pet.reproduction;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class Reproduction implements Serializable {
 
@@ -25,4 +30,11 @@ public class Reproduction implements Serializable {
 
     @Column
     private Integer childCount;
+
+    public Reproduction(LocalDate estrusStart, LocalDate mating, LocalDate dueDate, Integer childCount) {
+        this.estrusStart = estrusStart;
+        this.mating = mating;
+        this.dueDate = dueDate;
+        this.childCount = childCount;
+    }
 }
