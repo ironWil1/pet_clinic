@@ -29,3 +29,7 @@ Stop and remove containers
 3. Each Dao implementation class should extend generic abstract class ReadOnlyDaoImpl<K,T> or ReadWriteDaoImpl<K, T> and implement their own interface.
 4. There are a few simple realization of methods in generic Dao. New methods should be created in Dao interface of current entity. 
 5. Same rules for Service classes except one thing. Service implementation should create constructor super.
+
+- - -
+## This project uses Lombok
+- - -

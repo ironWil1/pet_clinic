@@ -119,9 +119,9 @@ public class MedicineController {
 
     @GetMapping("/search")
     public ResponseEntity<List<MedicineDto>> search(
-            @RequestParam(required = false, name = "manufactureName", defaultValue = "") String manufactureName
-            ,@RequestParam(required = false, name = "name", defaultValue = "") String name
-            , @RequestParam(required = false, name = "searchText", defaultValue = "") String searchText) {
+            @RequestParam(required = false, name = "manufactureName", defaultValue = "") String manufactureName,
+            @RequestParam(required = false, name = "name", defaultValue = "") String name,
+            @RequestParam(required = false, name = "searchText", defaultValue = "") String searchText) {
         List<Medicine> medicineList = medicineService.searchFull(manufactureName, name, searchText);
         List<MedicineDto> medicineDtoList = medicineList.stream()
                 .map(medicine -> medicineMapper.medicineToMedicineDto(medicine))
