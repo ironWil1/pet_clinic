@@ -115,7 +115,7 @@ public class ClientController {
         if (client != null) {
             Pet pet = mapStructMapper.AbstractNewPetDtoToPet(petDto);
             pet.setClient(client);
-            petService.save(pet);
+            petService.persist(pet);
             return ResponseEntity.ok(petDto);
         }
         return ResponseEntity.notFound().build();
@@ -129,11 +129,11 @@ public class ClientController {
     })
     @DeleteMapping("/{clientId}/pet/{petId}")
     public ResponseEntity<Void> deletePet(@PathVariable("clientId") Long clientId, @PathVariable("petId") Long petId) {
-        Pet pet = petService.findById(petId);
+        Pet pet = petService.getByKey(petId);
         if (pet == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else if (pet.getClient().getId().equals(clientId)) {
-            petService.delete(petId);
+            petService.delete(pet);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -150,7 +150,7 @@ public class ClientController {
     public ResponseEntity<PetDto> updatePet(@PathVariable("clientId") Long clientId, @PathVariable("petId") Long petId,
                                             @RequestBody PetDto petDto) {
         Client client = clientService.getByKey(clientId);
-        Pet pet = petService.findById(petId);
+        Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(clientId)) {
                 // petDto convert to Pet updatedPet(it's abstract, can't)
@@ -173,7 +173,7 @@ public class ClientController {
     public ResponseEntity<byte[]> getPetAvatar(@PathVariable("clientId") Long clientId,
                                                @PathVariable("petId") Long petId) {
         Client client = clientService.getByKey(clientId);
-        Pet pet = petService.findById(petId);
+        Pet pet = petService.getByKey(petId);
         if (client != null & pet != null) {
             String url = pet.getAvatar();
             HttpHeaders headers = null;
@@ -202,7 +202,7 @@ public class ClientController {
                                                             @PathVariable("petId") Long petId,
                                                             @RequestParam("file") MultipartFile file) throws IOException {
         Client client = clientService.getByKey(clientId);
-        Pet pet = petService.findById(petId);
+        Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             UploadedFileDto uploadedFileDto = uploadService.store(file);
             pet.setAvatar(uploadedFileDto.getUrl());

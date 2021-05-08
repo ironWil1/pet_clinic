@@ -63,8 +63,8 @@ public class TestDataInitializer implements ApplicationRunner {
                 clientService.getByKey(3L));
         Dog dog2 = new Dog("Buddy", LocalDate.now(), PetType.DOG, Gender.MALE, "Golden Retriever",
                 clientService.getByKey(3L));
-        petService.save(dog1);
-        petService.save(dog2);
+        petService.persist(dog1);
+        petService.persist(dog2);
     }
 
     public void userUpdateMethod() {
