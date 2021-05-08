@@ -1,11 +1,9 @@
-package com.vet24.models.mappers;
-import com.vet24.models.dtos.AbstractNewPetDto;
-import com.vet24.models.dtos.ClientDto;
-import com.vet24.models.dtos.DogDto;
-import com.vet24.models.dtos.PetDto;
+package com.vet24.models.mappers.pet;
+import com.vet24.models.dto.pet.AbstractNewPetDto;
+import com.vet24.models.dto.pet.DogDto;
+import com.vet24.models.dto.pet.PetDto;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
-import com.vet24.models.user.Client;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -13,12 +11,9 @@ import org.mapstruct.factory.Mappers;
 import java.util.Objects;
 
 @Mapper(componentModel = "spring")
-public interface MapStructMapper {
+public interface PetMapper {
 
-    MapStructMapper INSTANCE = Mappers.getMapper(MapStructMapper.class);
-
-    @Mapping(source = "login", target = "username")
-    ClientDto clientToClientDto(Client client);
+    PetMapper INSTANCE = Mappers.getMapper(PetMapper.class);
 
     @Mapping(source = "petType", target = "type")
     PetDto petToPetDto(Pet pet);

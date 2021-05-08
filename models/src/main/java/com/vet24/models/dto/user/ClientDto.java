@@ -1,5 +1,6 @@
-package com.vet24.models.dtos;
+package com.vet24.models.dto.user;
 
+import com.vet24.models.dto.pet.PetDto;
 import lombok.Getter;
 import lombok.Setter;
 

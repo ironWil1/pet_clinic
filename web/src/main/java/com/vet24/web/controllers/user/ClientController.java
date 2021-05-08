@@ -1,8 +1,11 @@
-package com.vet24.web.controllers;
+package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.media.UploadedFileDto;
-import com.vet24.models.dtos.*;
-import com.vet24.models.mappers.MapStructMapper;
+import com.vet24.models.dto.pet.AbstractNewPetDto;
+import com.vet24.models.dto.pet.PetDto;
+import com.vet24.models.dto.user.ClientDto;
+import com.vet24.models.mappers.pet.PetMapper;
+import com.vet24.models.mappers.user.UserMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Client;
 import com.vet24.service.media.ResourceService;
@@ -32,15 +35,17 @@ public class ClientController {
 
     private final ClientService clientService;
     private final PetService petService;
-    private final MapStructMapper mapStructMapper;
+    private final PetMapper petMapper;
+    private final UserMapper userMapper;
     private final UploadService uploadService;
     private final ResourceService resourceService;
 
-    public ClientController(ClientService clientService, PetService petService, MapStructMapper mapStructMapper,
-                            UploadService uploadService, ResourceService resourceService) {
+    public ClientController(ClientService clientService, PetService petService, PetMapper petMapper,
+                            UserMapper userMapper, UploadService uploadService, ResourceService resourceService) {
         this.clientService = clientService;
         this.petService = petService;
-        this.mapStructMapper = mapStructMapper;
+        this.petMapper = petMapper;
+        this.userMapper = userMapper;
         this.uploadService = uploadService;
         this.resourceService = resourceService;
     }
@@ -53,7 +58,7 @@ public class ClientController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<ClientDto> getClientById(@PathVariable("id") Long id) {
-        ClientDto clientDto = mapStructMapper.clientToClientDto(clientService.getByKey(id));
+        ClientDto clientDto = userMapper.clientToClientDto(clientService.getByKey(id));
         return clientDto != null ? ResponseEntity.ok(clientDto) : ResponseEntity.notFound().build();
     }
 
@@ -113,7 +118,7 @@ public class ClientController {
                                                         @RequestBody AbstractNewPetDto petDto) {
         Client client = clientService.getByKey(clientId);
         if (client != null) {
-            Pet pet = mapStructMapper.AbstractNewPetDtoToPet(petDto);
+            Pet pet = petMapper.AbstractNewPetDtoToPet(petDto);
             pet.setClient(client);
             petService.persist(pet);
             return ResponseEntity.ok(petDto);
@@ -155,7 +160,7 @@ public class ClientController {
             if (pet.getClient().getId().equals(clientId)) {
                 // petDto convert to Pet updatedPet(it's abstract, can't)
                 // petService.update(updatedPet)
-                Pet updatedPet = mapStructMapper.PetDtoToPet(petDto);
+                Pet updatedPet = petMapper.PetDtoToPet(petDto);
                 petService.update(updatedPet);
                 return new ResponseEntity<>(HttpStatus.OK);
             }

@@ -1,4 +1,4 @@
-package com.vet24.models.dtos;
+package com.vet24.models.dto.pet;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
