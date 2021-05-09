@@ -38,7 +38,7 @@ Stop and remove containers
 ### Use Lombok annotations to generate code
 Don't write boilerplate code. Use [Lombok](https://javarush.ru/groups/posts/2753-biblioteka-lombok) annotations to generate it for you.
 
-```
+```text
 @NoArgsConstructor // Generates constructor that take no arguments.
 @AllArgsConstructor // Generates constructor that take one argument per final / non-nullfield.
 @RequiredArgsConstructor // Generates constructor that take one argument for every field.
@@ -46,6 +46,7 @@ Don't write boilerplate code. Use [Lombok](https://javarush.ru/groups/posts/2753
 @Setter // Never write setters again.
 @EqualsAndHashCode // Generates hashCode and equals implementations from the fields of your object.
 @ToString // Generates a toString.
+@Data // Combines @ToString, @EqualsAndHashCode, @Getter, @Setter, and @RequiredArgsConstructor
 ```
 
 
