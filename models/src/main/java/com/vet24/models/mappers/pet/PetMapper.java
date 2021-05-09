@@ -1,14 +1,15 @@
 package com.vet24.models.mappers.pet;
+
 import com.vet24.models.dto.pet.AbstractNewPetDto;
+import com.vet24.models.dto.pet.CatDto;
 import com.vet24.models.dto.pet.DogDto;
 import com.vet24.models.dto.pet.PetDto;
+import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-
-import java.util.Objects;
 
 @Mapper(componentModel = "spring")
 public interface PetMapper {
@@ -19,15 +20,26 @@ public interface PetMapper {
     PetDto petToPetDto(Pet pet);
 
     default <T extends Pet> T AbstractNewPetDtoToPet(AbstractNewPetDto petDto) {
-        if (Objects.equals(petDto.getPetType().getType(), "DOG")) {
-            return (T) DogDtoToDog((DogDto) petDto);
+        T pet = null;
+        String petType = petDto.getPetType().getType();
+        switch (petType) {
+            case "DOG":
+                pet = (T) DogDtoToDog((DogDto) petDto);
+                break;
+            case "CAT":
+                pet = (T) CatDtoToCat((CatDto) petDto);
+                break;
+            default:
+                break;
         }
-        return null;
+        return pet;
     }
-
-    DogDto PetDtoToDogDto(PetDto petDto);
 
     Dog DogDtoToDog(DogDto dogDto);
 
     DogDto DogToDogDto(Dog dog);
+
+    Cat CatDtoToCat(CatDto catDto);
+
+    CatDto CatToCatDto(Cat cat);
 }
