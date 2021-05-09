@@ -153,14 +153,14 @@ public class ClientController {
     })
     @PutMapping("/{clientId}/pet/{petId}")
     public ResponseEntity<PetDto> updatePet(@PathVariable("clientId") Long clientId, @PathVariable("petId") Long petId,
-                                            @RequestBody PetDto petDto) {
+                                            @RequestBody AbstractNewPetDto petDto) {
         Client client = clientService.getByKey(clientId);
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(clientId)) {
-                // petDto convert to Pet updatedPet(it's abstract, can't)
-                // petService.update(updatedPet)
-                Pet updatedPet = petMapper.PetDtoToPet(petDto);
+                Pet updatedPet = petMapper.AbstractNewPetDtoToPet(petDto);
+                updatedPet.setId(pet.getId());
+                updatedPet.setClient(client);
                 petService.update(updatedPet);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
