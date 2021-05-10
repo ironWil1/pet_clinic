@@ -1,7 +1,6 @@
 package com.vet24.models.dto.pet;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
@@ -22,7 +21,7 @@ public class CatDto extends AbstractNewPetDto {
     }
 
     @JsonCreator
-    public CatDto(String name, @JsonProperty PetType petType, LocalDate birthDay,
+    public CatDto(String name, PetType petType, LocalDate birthDay,
                   Gender gender, String breed, String color,
                   PetSize size, Double weight, String description,
                   String avatar, Integer notificationCount) {

@@ -2,18 +2,18 @@ package com.vet24.web;
 
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Dog;
-import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.User;
+import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.UserService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 
 @Component
@@ -32,14 +31,17 @@ public class TestDataInitializer implements ApplicationRunner {
     private final UserService userService;
     private final ClientService clientService;
     private final PetService petService;
+    private final MedicineService medicineService;
     private final Environment environment;
 
     public TestDataInitializer(RoleService roleService, UserService userService,
-                               ClientService clientService, PetService petService, Environment environment) {
+                               ClientService clientService, PetService petService,
+                               MedicineService medicineService, Environment environment) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
         this.petService = petService;
+        this.medicineService = medicineService;
         this.environment = environment;
     }
 
@@ -91,6 +93,13 @@ public class TestDataInitializer implements ApplicationRunner {
         roleService.delete(role);
     }
 
+    public void medicineInitialize() {
+        medicineService.persist(new Medicine("sinopharm", "sputnik", "sdasd",
+                "protiv covid"));
+        medicineService.getByKey(1L);
+    }
+
+
     @Override
     public void run(ApplicationArguments args) {
         if (Objects.requireNonNull(environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create")
@@ -99,6 +108,8 @@ public class TestDataInitializer implements ApplicationRunner {
             roleInitialize();
             userInitialize();
             petInitialize();
+            medicineInitialize();
+
             //userUpdateMethod();
             //userDeleteMethod();
             //roleUpdateMethod();

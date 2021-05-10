@@ -18,7 +18,7 @@ public interface PetMapper {
 
     default <T extends Pet> T AbstractNewPetDtoToPet(AbstractNewPetDto petDto) {
         T pet = null;
-        String petType = petDto.getPetType().getType();
+        String petType = petDto.getPetType().name();
         switch (petType) {
             case "DOG":
                 pet = (T) DogDtoToDog((DogDto) petDto);
