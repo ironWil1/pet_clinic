@@ -14,7 +14,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "petType")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "petType")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DogDto.class, name = "DOG"),
         @JsonSubTypes.Type(value = CatDto.class, name = "CAT")
@@ -32,9 +32,9 @@ public abstract class AbstractNewPetDto {
     private String description;
 
     @JsonCreator
-    public AbstractNewPetDto(@JsonProperty String name, @JsonProperty PetType petType, @JsonProperty LocalDate birthDay,
-                             @JsonProperty Gender gender, @JsonProperty String breed, @JsonProperty String color,
-                             @JsonProperty PetSize size, @JsonProperty Double weight, @JsonProperty String description) {
+    protected AbstractNewPetDto(String name, @JsonProperty PetType petType, LocalDate birthDay,
+                                Gender gender, String breed, String color,
+                                PetSize size, Double weight, String description) {
         this.name = name;
         this.petType = petType;
         this.birthDay = birthDay;
@@ -45,7 +45,8 @@ public abstract class AbstractNewPetDto {
         this.weight = weight;
         this.description = description;
     }
-    public AbstractNewPetDto() {
+
+    protected AbstractNewPetDto() {
 
     }
 }

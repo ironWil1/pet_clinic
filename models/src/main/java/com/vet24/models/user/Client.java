@@ -1,6 +1,7 @@
 package com.vet24.models.user;
 
 import com.vet24.models.pet.Pet;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 @DiscriminatorValue("CLIENT")
+@EqualsAndHashCode(callSuper = true, exclude = "pets")
 public class Client extends User {
 
     @OneToMany(

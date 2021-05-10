@@ -22,10 +22,10 @@ public class CatDto extends AbstractNewPetDto {
     }
 
     @JsonCreator
-    public CatDto(@JsonProperty String name, @JsonProperty PetType petType, @JsonProperty LocalDate birthDay,
-                  @JsonProperty Gender gender, @JsonProperty String breed, @JsonProperty String color,
-                  @JsonProperty PetSize size, @JsonProperty Double weight, @JsonProperty String description,
-                  @JsonProperty String avatar, @JsonProperty Integer notificationCount) {
+    public CatDto(String name, @JsonProperty PetType petType, LocalDate birthDay,
+                  Gender gender, String breed, String color,
+                  PetSize size, Double weight, String description,
+                  String avatar, Integer notificationCount) {
         super(name, PetType.CAT, birthDay, gender, breed, color, size, weight, description);
         this.avatar = avatar;
         this.notificationCount = notificationCount;
