@@ -38,7 +38,7 @@ Stop and remove containers
 ### Use Lombok annotations to generate code
 Don't write boilerplate code. Use [Lombok](https://javarush.ru/groups/posts/2753-biblioteka-lombok) annotations to generate it for you.
 
-```text
+```
 @NoArgsConstructor // Generates constructor that take no arguments.
 @AllArgsConstructor // Generates constructor that take one argument per final / non-nullfield.
 @RequiredArgsConstructor // Generates constructor that take one argument for every field.
@@ -51,9 +51,12 @@ Don't write boilerplate code. Use [Lombok](https://javarush.ru/groups/posts/2753
 
 
 # Swagger Guide
-### Interact with APIs using browser
+### Interact with our APIs using browser
 http://localhost:8080/swagger-ui.html
 
 ### Generate API documentation based on annotations
 Quick and easy way to document your APIs.
-[Live demos](https://github.com/springdoc/springdoc-openapi-demos) with source code.
+
+[Live demo](http://158.101.164.60:8081/) — see how it works
+
+[Source code](https://github.com/springdoc/springdoc-openapi-demos/blob/master/springdoc-openapi-spring-boot-2-webmvc/src/main/java/org/springdoc/demo/app2/api/UserApi.java) — check what annotations are used
