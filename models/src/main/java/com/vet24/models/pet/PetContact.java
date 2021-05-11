@@ -1,8 +1,10 @@
 package com.vet24.models.pet;
 
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -10,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class PetContact {
-    // связь с Pet через оне то оне
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,13 +21,15 @@ public class PetContact {
     private String ownerName;
 
     @NonNull
-    private String address; //определиться с наиболее подходящими типами данных
+    private String address;
 
     @NonNull
+    @Column(unique = true)
     private Long phone;
 
     @NonNull
-    private Long uniqCode; // уникальный код для животного, генерируется на сервере при создании этой сущности.
+    @Column(unique = true)
+    private String uniqCode; // уникальный код для животного, генерируется на сервере при создании этой сущности.
 
     @OneToOne(mappedBy = "petContact")
     private Pet pet;

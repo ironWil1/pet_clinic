@@ -20,9 +20,7 @@ public abstract class Pet {
     @NonNull
     private String petName;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)//, cascade = CascadeType.ALL
-    @JoinTable(name = "pet_petcontact", joinColumns = @JoinColumn(name = "pet_id"),
-            inverseJoinColumns = @JoinColumn(name = "petcontact_id"))
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private PetContact petContact;
 
 }

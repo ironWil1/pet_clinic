@@ -4,6 +4,7 @@ import com.vet24.models.user.Role;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -13,7 +14,6 @@ import java.util.Set;
 //@AllArgsConstructor
 //@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@DiscriminatorValue("CAT")
 public class Cat extends Pet{
 
     /*@Id
@@ -24,8 +24,10 @@ public class Cat extends Pet{
     /*@NonNull
     private String petName;*/
 
-    @NonNull
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    //@NonNull
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    /*@JoinTable(name = "cat_petcontact", joinColumns = @JoinColumn(name = "pet_id"),
+            inverseJoinColumns = @JoinColumn(name = "petcontact_id"))*/
     private PetContact petContact;
 
     public Cat() {
