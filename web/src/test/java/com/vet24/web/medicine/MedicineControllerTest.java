@@ -19,7 +19,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URISyntaxException;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
