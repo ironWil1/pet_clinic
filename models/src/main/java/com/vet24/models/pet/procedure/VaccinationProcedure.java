@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import java.time.LocalDate;
 
 @Entity
-@DiscriminatorValue(ProcedureType.Values.VACCINATION)
+@DiscriminatorValue("VACCINATION")
 public class VaccinationProcedure extends Procedure {
 
     public VaccinationProcedure() {

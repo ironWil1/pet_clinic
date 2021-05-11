@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import java.time.LocalDate;
 
 @Entity
-@DiscriminatorValue(ProcedureType.Values.EXTERNAL_PARASITE)
+@DiscriminatorValue("EXTERNAL_PARASITE")
 public class ExternalParasiteProcedure extends Procedure {
 
     public ExternalParasiteProcedure() {

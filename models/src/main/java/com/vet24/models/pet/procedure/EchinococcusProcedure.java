@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import java.time.LocalDate;
 
 @Entity
-@DiscriminatorValue(ProcedureType.Values.ECHINOCOCCUS)
+@DiscriminatorValue("ECHINOCOCCUS")
 public class EchinococcusProcedure extends Procedure {
 
     public EchinococcusProcedure() {
