@@ -2,6 +2,7 @@ package com.vet24.web;
 
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.pet.Pet;
+import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
@@ -11,7 +12,10 @@ import com.vet24.models.user.Role;
 import com.vet24.models.user.User;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.service.medicine.MedicineService;
+import com.vet24.service.pet.procedure.EchinococcusProcedureService;
+import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.ProcedureService;
+import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.RoleService;
@@ -33,21 +37,27 @@ public class TestDataInitializer implements ApplicationRunner {
     private UserService userService;
     private ClientService clientService;
     private MedicineService medicineService;
-    private ProcedureService procedureService;
+    private VaccinationProcedureService vaccinationProcedureService;
+    private ExternalParasiteProcedureService externalParasiteProcedureService;
+    private EchinococcusProcedureService echinococcusProcedureService;
     private ReproductionService reproductionService;
 
     @Autowired
     Environment environment;
 
     @Autowired
-    public TestDataInitializer(RoleService roleService, UserService userService,
-                               ClientService clientService, MedicineService medicineService,
-                               ProcedureService procedureService, ReproductionService reproductionService) {
+    public TestDataInitializer(RoleService roleService, UserService userService, ClientService clientService,
+                               MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
+                               ExternalParasiteProcedureService externalParasiteProcedureService,
+                               EchinococcusProcedureService echinococcusProcedureService,
+                               ReproductionService reproductionService) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
         this.medicineService = medicineService;
-        this.procedureService = procedureService;
+        this.vaccinationProcedureService = vaccinationProcedureService;
+        this.externalParasiteProcedureService = externalParasiteProcedureService;
+        this.echinococcusProcedureService = echinococcusProcedureService;
         this.reproductionService = reproductionService;
     }
 
@@ -93,16 +103,23 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void procedureInitializer(){
-        procedureService.persist(new VaccinationProcedure(
+        vaccinationProcedureService.persist(new VaccinationProcedure(
                 LocalDate.now(), "nbr3br3n", false, null,
                 medicineService.getByKey(1L)
         ));
-        procedureService.persist(new ExternalParasiteProcedure(
+        vaccinationProcedureService.getByKey(1L);
+
+        externalParasiteProcedureService.persist(new ExternalParasiteProcedure(
+                LocalDate.now(), "5g567b", true, 40,
+                medicineService.getByKey(1L)
+        ));
+        externalParasiteProcedureService.getByKey(2L);
+
+        echinococcusProcedureService.persist(new EchinococcusProcedure(
                 LocalDate.now(), "43h5j3", true, 20,
                 medicineService.getByKey(1L)
         ));
-        procedureService.getByKey(1L);
-        procedureService.getByKey(2L);
+        echinococcusProcedureService.getByKey(2L);
     }
 
     public void reproductionInitializer(){
