@@ -5,8 +5,6 @@ import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
 import com.vet24.models.user.User;
-import com.vet24.models.medicine.Medicine;
-import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.UserService;
@@ -25,18 +23,16 @@ public class TestDataInitializer implements ApplicationRunner {
     private RoleService roleService;
     private UserService userService;
     private ClientService clientService;
-    private MedicineService medicineService;
 
     @Autowired
     Environment environment;
 
 
     @Autowired
-    public TestDataInitializer(RoleService roleService, UserService userService, ClientService clientService, MedicineService medicineService) {
+    public TestDataInitializer(RoleService roleService, UserService userService, ClientService clientService) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
-        this.medicineService = medicineService;
     }
 
     public void roleInitialize() {
@@ -75,19 +71,12 @@ public class TestDataInitializer implements ApplicationRunner {
         roleService.delete(role);
     }
 
-    public void medicineInitialize() {
-        medicineService.persist(new Medicine("sinopharm", "sputnik", "sdasd", "protiv covid"));
-        medicineService.getByKey(1L);
-    }
-
     @Override
     public void run(ApplicationArguments args) {
         if (environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create")
                 || environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create-drop")) {
             roleInitialize();
             userInitialize();
-            medicineInitialize();
-
             //userUpdateMethod();
             //userDeleteMethod();
             //roleUpdateMethod();

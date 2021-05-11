@@ -2,6 +2,7 @@ package com.vet24.web.controllers.qr_code;
 
 import com.google.zxing.Result;
 import com.vet24.models.pet.Pet;
+import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.QRCodeGenerator;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
@@ -36,8 +37,15 @@ public class QR_CodeController {
     }*/
 
     @GetMapping(value = "/{id}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<BufferedImage> createZxingQRCode(@PathVariable("id") Optional<Long> id) throws Exception {
+    public ResponseEntity<BufferedImage> createZxingQRCode(@PathVariable("id") Long id) throws Exception {
         String barcode = "";
+        PetContact pet = petContactService.getByKey(id);
+        barcode += pet.getPet().getPetName() + ", ";
+        barcode += pet.getOwnerName() + ", ";
+        barcode += pet.getAddress() + ", ";
+        barcode += pet.getPhone() + ", ";
+        barcode += pet.getUniqCode() + ".";
+
             /*if (id.isPresent()) {
                 Pet pet = petService.getPetById(id.get());
             }*/
