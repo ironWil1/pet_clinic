@@ -27,6 +27,6 @@ public class PetContact {
     @NonNull
     private Long uniqCode; // уникальный код для животного, генерируется на сервере при создании этой сущности.
 
-    @OneToOne(mappedBy = "petContact")//(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "petContact")
     private Pet pet;
 }

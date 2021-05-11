@@ -2,35 +2,35 @@ package com.vet24.models.pet;
 
 
 import com.google.zxing.*;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
-import javax.imageio.ImageIO;
-import javax.swing.text.html.ImageView;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class QRCodeGenerator {
-
-    public static BufferedImage generateQRCodeImage(String text) throws Exception {
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+    private static final String QR_CODE_IMAGE_PATH = "./images/QRCode-300x300.png";
+    public static byte[] generateQRCodeImage(String text) throws Exception {
+        /*QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 300, 300);
 
-        return MatrixToImageWriter.toBufferedImage(bitMatrix);
+        return MatrixToImageWriter.toBufferedImage(bitMatrix);*/
+
+        try {
+            Map<EncodeHintType, Object> hints = new HashMap<>();
+            // Установить кодировку
+            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 300, 300, hints);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            MatrixToImageWriter.writeToStream(bitMatrix, "png", byteArrayOutputStream);
+            return byteArrayOutputStream.toByteArray();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     //private static final String QR_CODE_IMAGE_PATH = "./images/QRCode-300x300.png";

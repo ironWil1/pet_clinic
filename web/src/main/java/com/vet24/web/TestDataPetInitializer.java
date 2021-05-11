@@ -49,7 +49,7 @@ public class TestDataPetInitializer implements ApplicationRunner {
         if (environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create")
                 || environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create-drop")) {
             petContactInitialize();
-            petInitialize();
+            //petInitialize();
         }
     }
 }

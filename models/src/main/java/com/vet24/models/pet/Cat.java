@@ -10,19 +10,19 @@ import java.util.Set;
 @Entity
 @Data
 //@NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 //@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue("CAT")
 public class Cat extends Pet{
 
-    @Id
+    /*@Id
     //@GeneratedValue(strategy = GenerationType.TABLE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;*/
 
-    @NonNull
-    private String petName;
+    /*@NonNull
+    private String petName;*/
 
     @NonNull
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

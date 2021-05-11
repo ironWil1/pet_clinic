@@ -1,22 +1,17 @@
 package com.vet24.web.controllers.qr_code;
 
-import com.google.zxing.Result;
-import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.QRCodeGenerator;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.BufferedImageHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
-import java.util.Optional;
+import java.io.OutputStream;
 
 @RestController
 @RequestMapping("/api/client/pet")
@@ -37,26 +32,22 @@ public class QR_CodeController {
     }*/
 
     @GetMapping(value = "/{id}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<BufferedImage> createZxingQRCode(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<byte[]> createZxingQRCode(@PathVariable("id") Long id, HttpServletResponse response) throws Exception {
         String barcode = "";
         PetContact pet = petContactService.getByKey(id);
-        barcode += pet.getPet().getPetName() + ", ";
-        barcode += pet.getOwnerName() + ", ";
-        barcode += pet.getAddress() + ", ";
-        barcode += pet.getPhone() + ", ";
-        barcode += pet.getUniqCode() + ".";
+        //barcode += pet.getPet().getPetName() + ", ";
+        barcode += "Владелец - " + pet.getOwnerName() + ", ";
+        barcode += "Адресс - " + pet.getAddress() + ", ";
+        barcode += "Телефон - " + pet.getPhone() + ", ";
+        barcode += "Уникальный код - " + pet.getUniqCode();
 
-            /*if (id.isPresent()) {
-                Pet pet = petService.getPetById(id.get());
-            }*/
-        /*pet.setId(id);
-        pet.setPetName("Оля");
-        barcode += pet.getPetName();*/
-        //barcode += pet.getPetContact().getOwnerName();
-        //barcode += pet.getPetContact().getAddress();
-        //barcode += pet.getPetContact().getPhone();
-        //barcode += pet.getPetContact().getUniqCode();
         System.out.println(barcode);
+
+        response.setContentType("image/png");
+        OutputStream outputStream = response.getOutputStream();
+        outputStream.write(QRCodeGenerator.generateQRCodeImage(barcode));
+        outputStream.flush();
+        outputStream.close();
         return ResponseEntity.ok(QRCodeGenerator.generateQRCodeImage(barcode));
     }
     //возвращает QR код в котором передана следующая информация:
@@ -68,10 +59,13 @@ public class QR_CodeController {
 
     // GET /api/petFound?{pteCode} // эндпоинт для работы с поиском, пока оставить пустым.
 
-    @PostMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<BufferedImage> zxingQRCode(@RequestBody String barcode) throws Exception {
+    /*@PostMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> zxingQRCode(@RequestBody String barcode) throws Exception {
         return ResponseEntity.ok(QRCodeGenerator.generateQRCodeImage(barcode));
-    }
+
+    }*/
+
+
     // POST api/client/pet/{petId}/qr - добавление информации для создания qrКода. Получает PetContactDto.
 
     /*@Bean
