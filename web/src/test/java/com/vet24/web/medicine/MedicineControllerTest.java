@@ -13,7 +13,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
 
 import java.net.URISyntaxException;
 
@@ -29,11 +31,13 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     final String URI = "http://localhost:8090/api/manager/medicine";
 
+    //test controller exist
     @Test
     public void getMedicineController() throws Exception {
         assertThat(medicineController).isNotNull();
     }
 
+    //get medicine by id
     @Test
     public void testGetMedicineSuccess() throws Exception {
         ResponseEntity<MedicineDto> response = testRestTemplate
@@ -41,6 +45,20 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+    //add medicine
+    @Test
+    public void testAddMedicineSuccess() throws URISyntaxException
+    {
+        Medicine medicine = new Medicine("daulet", "jm", "dsad", "test");
+        MedicineDto medicineDto =  medicineMapper.medicineToMedicineDto(medicine);
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<MedicineDto> request = new HttpEntity<>(medicineDto, headers);
+        ResponseEntity<MedicineDto> response = testRestTemplate
+                .postForEntity(URI, request, MedicineDto.class);
+        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    //put medicine by id
     @Test
     public void testPutMedicineSuccess() throws Exception {
         MedicineDto medicineDto = new MedicineDto();
@@ -55,24 +73,34 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+    //upload icon for medicine by id
+    @Test
+    public void testSetMedicineIconSuccess() throws Exception {
+        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("file", new org.springframework.core.io.ClassPathResource("test.png"));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
+        ResponseEntity<String> response = testRestTemplate
+                .exchange(URI + "/{id}/set-pic", HttpMethod.POST, entity, String.class, 1);
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    //get icon for medicine by id
+    @Test
+    public void testGetMedicineIconSuccess() throws Exception {
+        ResponseEntity<byte[]> response = testRestTemplate
+                .getForEntity(URI + "/{id}/set-pic", byte[].class, 1);
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    //delete medicine by id
     @Test
     public void testDeleteMedicineSuccess() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         ResponseEntity<Void> response =  testRestTemplate
-                .exchange(URI + "/{id}", HttpMethod.DELETE, entity, Void.class, 1);
+                .exchange(URI + "/{id}", HttpMethod.DELETE, entity, Void.class, 2);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Test
-    public void testAddMedicineSuccess() throws URISyntaxException
-    {
-        Medicine medicine = new Medicine("daulet", "jm", "dsad", "test");
-        MedicineDto medicineDto =  medicineMapper.medicineToMedicineDto(medicine);
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<MedicineDto> request = new HttpEntity<>(medicineDto, headers);
-        ResponseEntity<MedicineDto> response = testRestTemplate
-                .postForEntity(URI, request, MedicineDto.class);
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 }
