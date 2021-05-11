@@ -16,8 +16,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -101,6 +103,23 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         ResponseEntity<Void> response =  testRestTemplate
                 .exchange(URI + "/{id}", HttpMethod.DELETE, entity, Void.class, 2);
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    //test search medicine
+    @Test
+    public void testSearch() throws Exception {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(URI + "/search")
+                .queryParam("manufactureName")
+                .queryParam("name")
+                .queryParam("searchText", "covid");
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                builder.build().encode().toUri(),
+                HttpMethod.GET,
+                entity,
+                String.class);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
