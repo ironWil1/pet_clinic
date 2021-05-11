@@ -7,7 +7,9 @@ import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.medicine.MedicineController;
 
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +24,7 @@ import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
@@ -34,13 +37,13 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //test controller exist
     @Test
-    public void getMedicineController() throws Exception {
+    public void getAMedicineController() throws Exception {
         assertThat(medicineController).isNotNull();
     }
 
     //get medicine by id
     @Test
-    public void testGetMedicineSuccess() throws Exception {
+    public void testBGetMedicineSuccess() throws Exception {
         ResponseEntity<MedicineDto> response = testRestTemplate
                 .getForEntity(URI + "/{id}", MedicineDto.class, 1);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -48,7 +51,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //add medicine
     @Test
-    public void testAddMedicineSuccess() throws URISyntaxException
+    public void testCAddMedicineSuccess() throws URISyntaxException
     {
         Medicine medicine = new Medicine("daulet", "jm", "dsad", "test");
         MedicineDto medicineDto =  medicineMapper.medicineToMedicineDto(medicine);
@@ -61,7 +64,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //put medicine by id
     @Test
-    public void testPutMedicineSuccess() throws Exception {
+    public void testDPutMedicineSuccess() throws Exception {
         MedicineDto medicineDto = new MedicineDto();
         medicineDto.setName("jm");
         medicineDto.setDescription("java");
@@ -76,7 +79,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //upload icon for medicine by id
     @Test
-    public void testSetMedicineIconSuccess() throws Exception {
+    public void testESetMedicineIconSuccess() throws Exception {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("file", new org.springframework.core.io.ClassPathResource("test.png"));
         HttpHeaders headers = new HttpHeaders();
@@ -89,7 +92,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get icon for medicine by id
     @Test
-    public void testGetMedicineIconSuccess() throws Exception {
+    public void testFGetMedicineIconSuccess() throws Exception {
         ResponseEntity<byte[]> response = testRestTemplate
                 .getForEntity(URI + "/{id}/set-pic", byte[].class, 1);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -97,7 +100,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //delete medicine by id
     @Test
-    public void testDeleteMedicineSuccess() throws Exception {
+    public void testGDeleteMedicineSuccess() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         ResponseEntity<Void> response =  testRestTemplate
@@ -107,11 +110,11 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //test search medicine
     @Test
-    public void testSearch() throws Exception {
+    public void testHSearch() throws Exception {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(URI + "/search")
                 .queryParam("manufactureName")
                 .queryParam("name")
-                .queryParam("searchText", "covid");
+                .queryParam("searchText", "java");
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = testRestTemplate.exchange(
