@@ -22,6 +22,7 @@ import com.vet24.service.user.ClientService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.UserService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
@@ -45,7 +46,6 @@ public class TestDataInitializer implements ApplicationRunner {
     private final PetService petService;
     private final MedicineService medicineService;
 
-    @Autowired
     private final Environment environment;
 
     @Autowired
@@ -53,7 +53,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
-                               ReproductionService reproductionService) {
+                               ReproductionService reproductionService, Environment environment) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
@@ -63,6 +63,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.externalParasiteProcedureService = externalParasiteProcedureService;
         this.echinococcusProcedureService = echinococcusProcedureService;
         this.reproductionService = reproductionService;
+        this.environment = environment;
     }
 
     public void roleInitialize() {
