@@ -20,5 +20,4 @@ public abstract class Pet {
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private PetContact petContact;
-
 }
