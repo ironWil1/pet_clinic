@@ -10,9 +10,6 @@ import javax.persistence.OneToOne;
 
 @Entity
 @Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Dog extends Pet{
 

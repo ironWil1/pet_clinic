@@ -11,9 +11,6 @@ import javax.persistence.OneToOne;
 
 @Entity
 @Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Cat extends Pet{
 
