@@ -1,10 +1,7 @@
 package com.vet24.service.pet.procedure;
 
-import com.vet24.dao.ReadOnlyDaoImpl;
 import com.vet24.dao.ReadWriteDaoImpl;
-import com.vet24.dao.medicine.MedicineDao;
 import com.vet24.dao.pet.procedure.ProcedureDao;
-import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
