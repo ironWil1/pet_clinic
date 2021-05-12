@@ -23,16 +23,13 @@ public class Dog extends Pet{
         super();
     }
 
+    public Dog(String petName, PetContact petContact) {
+        super(petName);
+        this.petContact = petContact;
+    }
+
     public Dog(String petName, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client, PetContact petContact) {
         super(petName, birthDay, PetType.DOG, gender, breed, client);
         this.petContact = petContact;
     }
-
-    // add later when ready
-
-    //    List<Vaccinations> vaccinations;
-    //    List<echinococcus> echinococcus;
-    //    List<externalParasite> externalParasite;
-    //    List<Reproduction> reproduction;
-
 }

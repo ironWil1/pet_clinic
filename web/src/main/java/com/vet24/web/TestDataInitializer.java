@@ -60,15 +60,6 @@ public class TestDataInitializer implements ApplicationRunner {
                 "123456", roleService.getByKey(3L), new HashSet<>()));
     }
 
-    public void petInitialize() {
-        Dog dog1 = new Dog("Delilah", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier",
-                clientService.getByKey(3L));
-        Dog dog2 = new Dog("Buddy", LocalDate.now(), PetType.DOG, Gender.MALE, "Golden Retriever",
-                clientService.getByKey(3L));
-        petService.persist(dog1);
-        petService.persist(dog2);
-    }
-
     public void userUpdateMethod() {
         User user = new User("Test", "Testov", "TestLogin",
                 "TestPassword", roleService.getByKey(2L));
@@ -107,7 +98,6 @@ public class TestDataInitializer implements ApplicationRunner {
                         environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop")) {
             roleInitialize();
             userInitialize();
-            petInitialize();
             medicineInitialize();
 
             //userUpdateMethod();

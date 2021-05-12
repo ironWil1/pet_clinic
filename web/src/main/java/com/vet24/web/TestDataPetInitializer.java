@@ -1,16 +1,21 @@
 package com.vet24.web;
 
+import com.vet24.models.enums.Gender;
+import com.vet24.models.enums.PetType;
 import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.PetContact;
 import com.vet24.service.pet.CatService;
 import com.vet24.service.pet.DogService;
 import com.vet24.service.pet.PetContactService;
+import com.vet24.service.user.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 @Component
 public class TestDataPetInitializer implements ApplicationRunner {
@@ -18,15 +23,17 @@ public class TestDataPetInitializer implements ApplicationRunner {
     private final PetContactService petContactService;
     private final CatService catService;
     private final DogService dogService;
+    private final ClientService clientService;
 
     @Autowired
     Environment environment;
 
     @Autowired
-    public TestDataPetInitializer(PetContactService petContactService, CatService catService, DogService dogService) {
+    public TestDataPetInitializer(PetContactService petContactService, CatService catService, DogService dogService, ClientService clientService) {
         this.petContactService = petContactService;
         this.catService = catService;
         this.dogService = dogService;
+        this.clientService = clientService;
     }
 
     public void petContactInitializer() {
@@ -39,19 +46,19 @@ public class TestDataPetInitializer implements ApplicationRunner {
     }
 
     public void catInitializer() {
-        catService.persist(new Cat("Феликс", petContactService.getByKey(1L)));
-        catService.persist(new Cat("Тихон", petContactService.getByKey(2L)));
-        catService.persist(new Cat("Беляш", petContactService.getByKey(3L)));
+        catService.persist(new Cat("Феликс", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(1L)));
+        catService.persist(new Cat("Тихон", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(2L)));
+        catService.persist(new Cat("Беляш", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(3L)));
     }
 
     public void dogInitializer() {
-        dogService.persist(new Dog("Жук", petContactService.getByKey(4L)));
-        dogService.persist(new Dog("Рекс", petContactService.getByKey(5L)));
-        dogService.persist(new Dog("Туман", petContactService.getByKey(6L)));
+        dogService.persist(new Dog("Жук", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(4L)));
+        dogService.persist(new Dog("Рекс", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Golden Retriever", clientService.getByKey(3L),  petContactService.getByKey(5L)));
+        dogService.persist(new Dog("Туман", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(6L)));
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         if (environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create")
                 || environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create-drop")) {
             petContactInitializer();
