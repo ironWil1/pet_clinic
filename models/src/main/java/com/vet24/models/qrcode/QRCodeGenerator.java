@@ -1,4 +1,4 @@
-package com.vet24.models.pet;
+package com.vet24.models.qrcode;
 
 
 import com.google.zxing.BarcodeFormat;
@@ -15,14 +15,8 @@ public class QRCodeGenerator {
     private static final String QR_CODE_IMAGE_PATH = "./images/QRCode-300x300.png";
 
     public static byte[] generateQRCodeImage(String text) throws Exception {
-        /*QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 300, 300);
-
-        return MatrixToImageWriter.toBufferedImage(bitMatrix);*/
-
         try {
             Map<EncodeHintType, Object> hints = new HashMap<>();
-            // Установить кодировку
             hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 300, 300, hints);
@@ -32,6 +26,10 @@ public class QRCodeGenerator {
         } catch (Exception e) {
             return null;
         }
+        /*QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 300, 300);
+
+        return MatrixToImageWriter.toBufferedImage(bitMatrix);*/
     }
 }
 

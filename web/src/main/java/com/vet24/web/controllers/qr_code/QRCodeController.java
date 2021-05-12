@@ -3,9 +3,10 @@ package com.vet24.web.controllers.qr_code;
 import com.vet24.models.dto.contact.PetContactDto;
 import com.vet24.models.mappers.PetContactMapper;
 import com.vet24.models.pet.PetContact;
-import com.vet24.models.pet.QRCodeGenerator;
+import com.vet24.models.qrcode.QRCodeGenerator;
 import com.vet24.service.pet.PetContactService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,6 @@ public class QRCodeController {
 
     @Autowired
     private PetContactMapper petContactMapper;
-
-    private PetContactDto petContactDto;
 
     /*@GetMapping("/{id}")
     public ResponseEntity<byte[]> getQRCode (@PathVariable long id) {}*/
@@ -51,19 +50,19 @@ public class QRCodeController {
     // GET /api/petFound?{pteCode} // эндпоинт для работы с поиском, пока оставить пустым.
 
     @PostMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> postZxingQRCode(@RequestParam("petName") String petName,
-                                                  @RequestParam("ownerName") String ownerName,
-                                                  @RequestParam("address") String address,
-                                                  @RequestParam("phone") String phone) throws Exception {
-        System.err.println(petName + ", " + ownerName + ", " + address + ", " + phone);
-        String barcode = "";
-        petContactDto.setPetName(petName);
-        petContactDto.setOwnerName(ownerName);
-        petContactDto.setAddress(address);
-        petContactDto.setPhone(phone);
-        //petContactService.persist(petContactDto);
+    public ResponseEntity<PetContactDto> savePetContact (@RequestBody PetContactDto petContactDto) throws Exception {
+        System.err.println(petContactDto);
+        String petName = petContactDto.getPetName();
+
         PetContact petContact = petContactMapper.petContactDtoToPetContact(petContactDto);
-        return ResponseEntity.ok(QRCodeGenerator.generateQRCodeImage(barcode));
+        petContact.setUniqCode(petContactService.randomUniqueCode());
+
+        //petContact.setPet(new Cat(petName, petContact);
+        //petContact.setPet(petName);
+
+        petContactService.persist(petContact);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
     // POST api/client/pet/{petId}/qr - добавление информации для создания qrКода. Получает PetContactDto.
     /*PetContactDto {
