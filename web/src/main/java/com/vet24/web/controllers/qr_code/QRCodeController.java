@@ -21,14 +21,6 @@ public class QRCodeController {
     @Autowired
     private PetContactMapper petContactMapper;
 
-    /*@GetMapping("/{id}")
-    public ResponseEntity<byte[]> getQRCode (@PathVariable long id) {}*/
-
-    /*@GetMapping(value = "/{id}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<BufferedImage> createZxingQRCode(@PathVariable("id") String barcode) throws Exception {
-        return ResponseEntity.ok(QRCodeGenerator.generateQRCodeImage(barcode));
-    }*/
-
     @GetMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> createZxingQRCode(@PathVariable("id") Long id) throws Exception {
         final String URL = "/api/petFound?petCode={petCode}";
@@ -40,7 +32,7 @@ public class QRCodeController {
         barcode += "Телефон - " + pet.getPhone() + ". ";
         barcode += "Чтобы сообщить владельцу о находке перейдите по адресу - " + URL;
 
-        //url = /api/petFound?petCode={petCode} - ссылка, на которую надо
+        //URL = /api/petFound?petCode={petCode} - ссылка, на которую надо
         //будет перейти для оповещения владельца. petCode берется из базы.
 
         System.out.println(barcode);
