@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class DogDaoImpl extends ReadWriteDaoImpl<Long, Dog> implements DogDao {
+
 }
