@@ -4,7 +4,6 @@ import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.pet.PetContactDao;
 import com.vet24.models.pet.PetContact;
 import com.vet24.service.ReadWriteServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -46,7 +45,7 @@ public class PetContactServiceImpl extends ReadWriteServiceImpl<Long, PetContact
             PetContact pet = petContactDao.getByKey(i);
             if (pet.getUniqCode().equals(sb.toString())) {
                 for (int j = 0; j < 3; j++) {
-                    sb.deleteCharAt(random.nextInt());
+                    sb.deleteCharAt(random.nextInt(20));
                 }
                 for (int k = 0; k < 3; k++) {
                     sb.append(SYMBOLS.charAt( random.nextInt(SYMBOLS.length())));
@@ -56,12 +55,11 @@ public class PetContactServiceImpl extends ReadWriteServiceImpl<Long, PetContact
         // проверка по уникальному номеру
         List<String> allUniqueCode = petContactDao.getAllUniqueCode();
         for(String uniqueCode : allUniqueCode) {
-            System.out.println(uniqueCode);
             if (uniqueCode.equals(sb.toString())) {
-                for (int j = 0; j < 3; j++) {
-                    sb.deleteCharAt(random.nextInt());
+                for (int j = 1; j <= 3; j++) {
+                    sb.deleteCharAt(random.nextInt(20));
                 }
-                for (int k = 0; k < 3; k++) {
+                for (int k = 1; k <= 3; k++) {
                     sb.append(SYMBOLS.charAt( random.nextInt(SYMBOLS.length())));
                 }
             }

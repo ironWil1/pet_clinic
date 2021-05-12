@@ -1,12 +1,12 @@
 package com.vet24.models.pet;
 
-import com.vet24.models.user.Role;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 
 @Entity
 @Data
@@ -14,16 +14,16 @@ import java.util.Set;
 //@AllArgsConstructor
 //@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Cat extends Pet{
+public class Dog extends Pet{
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private PetContact petContact;
 
-    public Cat() {
+    public Dog() {
         super();
     }
 
-    public Cat(String petName, PetContact petContact) {
+    public Dog(String petName, PetContact petContact) {
         super(petName);
         this.petContact = petContact;
     }
