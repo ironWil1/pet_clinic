@@ -109,7 +109,7 @@ public class ClientController {
                                                         @RequestBody AbstractNewPetDto petDto) {
         Client client = clientService.getByKey(clientId);
         if (client != null) {
-            Pet pet = petMapper.AbstractNewPetDtoToPet(petDto);
+            Pet pet = petMapper.abstractNewPetDtoToPet(petDto);
             pet.setClient(client);
             petService.persist(pet);
             return ResponseEntity.ok(petDto);
@@ -149,7 +149,7 @@ public class ClientController {
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(clientId)) {
-                Pet updatedPet = petMapper.AbstractNewPetDtoToPet(petDto);
+                Pet updatedPet = petMapper.abstractNewPetDtoToPet(petDto);
                 updatedPet.setId(pet.getId());
                 updatedPet.setClient(client);
                 petService.update(updatedPet);
