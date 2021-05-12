@@ -17,3 +17,4 @@ public interface PetContactMapper {
 
     List<PetContactDto> petContactListToPetContactDto(List<PetContact> petContactList);
 }
+
