@@ -3,16 +3,9 @@ package com.vet24.models.user;
 import com.vet24.models.pet.Pet;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
+import javax.persistence.*;
 import java.util.Set;
-
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 
 @Entity
 @Data

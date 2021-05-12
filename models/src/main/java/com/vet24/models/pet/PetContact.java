@@ -1,10 +1,9 @@
 package com.vet24.models.pet;
 
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.UUID;
+
 
 @Entity
 @Data
@@ -29,7 +28,7 @@ public class PetContact {
 
     @NonNull
     @Column(unique = true)
-    private String uniqCode; // уникальный код для животного, генерируется на сервере при создании этой сущности.
+    private String uniqCode;
 
     @OneToOne(mappedBy = "petContact")
     private Pet pet;

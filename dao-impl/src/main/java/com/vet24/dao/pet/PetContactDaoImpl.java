@@ -6,7 +6,6 @@ import com.vet24.models.pet.PetContact;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository

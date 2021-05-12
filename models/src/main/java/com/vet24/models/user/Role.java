@@ -1,16 +1,10 @@
 package com.vet24.models.user;
 
 import com.vet24.models.enums.RoleNameEnum;
-
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 
 @Entity
