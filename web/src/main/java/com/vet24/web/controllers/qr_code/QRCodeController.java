@@ -1,6 +1,7 @@
 package com.vet24.web.controllers.qr_code;
 
 import com.vet24.models.dto.contact.PetContactDto;
+import com.vet24.models.mappers.PetContactMapper;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.QRCodeGenerator;
 import com.vet24.service.pet.PetContactService;
@@ -15,6 +16,9 @@ public class QRCodeController {
 
     @Autowired
     private PetContactService petContactService;
+
+    @Autowired
+    private PetContactMapper petContactMapper;
 
     private PetContactDto petContactDto;
 
@@ -58,6 +62,7 @@ public class QRCodeController {
         petContactDto.setAddress(address);
         petContactDto.setPhone(phone);
         //petContactService.persist(petContactDto);
+        PetContact petContact = petContactMapper.petContactDtoToPetContact(petContactDto);
         return ResponseEntity.ok(QRCodeGenerator.generateQRCodeImage(barcode));
     }
     // POST api/client/pet/{petId}/qr - добавление информации для создания qrКода. Получает PetContactDto.
