@@ -44,11 +44,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
     private final EchinococcusProcedureService echinococcusProcedureService;
     private final ReproductionService reproductionService;
-    private final RoleService roleService;
-    private final UserService userService;
-    private final ClientService clientService;
     private final PetService petService;
-    private final MedicineService medicineService;
     private final Environment environment;
 
     @Autowired
@@ -145,7 +141,7 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void reproductionInitializer(){
         reproductionService.persist(new Reproduction(
-                LocalDate.now(), LocalDate.now(), LocalDate.now(), 2
+                LocalDate.now(), LocalDate.now(), LocalDate.now(), 2, petService.getByKey(1L)
         ));
         reproductionService.getByKey(1L);
     }
