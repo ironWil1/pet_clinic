@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 
 
@@ -50,7 +49,7 @@ public class MedicineController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<MedicineDto> getById(@PathVariable("id") Long id) throws IOException, GeneralSecurityException {
+    public ResponseEntity<MedicineDto> getById(@PathVariable("id") Long id) {
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
