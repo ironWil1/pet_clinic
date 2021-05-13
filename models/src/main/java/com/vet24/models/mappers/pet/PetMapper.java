@@ -21,7 +21,7 @@ public abstract class PetMapper {
     private CatMapper catMapper;
 
     @Mapping(source = "petType", target = "type")
-    abstract PetDto petToPetDto(Pet pet);
+    public abstract PetDto petToPetDto(Pet pet);
 
     public Pet abstractNewPetDtoToPet(AbstractNewPetDto petDto) {
         Pet pet = null;
