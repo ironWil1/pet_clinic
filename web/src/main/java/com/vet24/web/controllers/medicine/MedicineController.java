@@ -5,7 +5,6 @@ import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.medicine.MedicineDto;
 import com.vet24.models.mappers.medicine.MedicineMapper;
 import com.vet24.models.medicine.Medicine;
-import com.vet24.service.calendar.CalendarService;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.medicine.MedicineService;
@@ -30,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -41,15 +39,13 @@ public class MedicineController {
     private final MedicineMapper medicineMapper;
     private final ResourceService resourceService;
     private final UploadService uploadService;
-    private final CalendarService calendarService;
 
     public MedicineController(MedicineService medicineService, MedicineMapper medicineMapper,
-                              ResourceService resourceService, UploadService uploadService, CalendarService calendarService) {
+                              ResourceService resourceService, UploadService uploadService) {
         this.medicineService = medicineService;
         this.medicineMapper = medicineMapper;
         this.resourceService = resourceService;
         this.uploadService = uploadService;
-        this.calendarService = calendarService;
     }
 
 
@@ -60,7 +56,6 @@ public class MedicineController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
             MedicineDto medicineDto = medicineMapper.medicineToMedicineDto(medicine);
-            calendarService.createEvent("daulet.zholdasbek@gmail.com", "dasdas", "Moscow", "dasdre");
             return new ResponseEntity<>(medicineDto, HttpStatus.OK);
         }
     }
