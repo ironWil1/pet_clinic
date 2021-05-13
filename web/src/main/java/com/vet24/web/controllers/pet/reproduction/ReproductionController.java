@@ -1,7 +1,7 @@
 package com.vet24.web.controllers.pet.reproduction;
 
-import com.vet24.models.dto.pet.reproduction.PetReproductionDto;
-import com.vet24.models.mappers.pet.reproduction.PetReproductionMapper;
+import com.vet24.models.dto.pet.reproduction.ReproductionDto;
+import com.vet24.models.mappers.pet.reproduction.ReproductionMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.service.pet.PetService;
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/client/pet/{petId}/reproduction")
-public class PetReproductionController {
+public class ReproductionController {
 
     private final PetService petService;
     private final ReproductionService reproductionService;
-    private final PetReproductionMapper reproductionMapper;
+    private final ReproductionMapper reproductionMapper;
 
     @Autowired
-    public PetReproductionController(ReproductionService reproductionService, PetReproductionMapper reproductionMapper, PetService petService) {
+    public ReproductionController(ReproductionService reproductionService, ReproductionMapper reproductionMapper, PetService petService) {
         this.reproductionService = reproductionService;
         this.reproductionMapper = reproductionMapper;
         this.petService = petService;
@@ -34,12 +34,12 @@ public class PetReproductionController {
 
     @Operation(summary = "get reproduction by id")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "ok", content = @Content(schema = @Schema(implementation = PetReproductionDto.class))),
+            @ApiResponse(responseCode = "200", description = "ok", content = @Content(schema = @Schema(implementation = ReproductionDto.class))),
             @ApiResponse(responseCode = "400", description = "reproduction not assigned to this pet"),
             @ApiResponse(responseCode = "404", description = "reproduction or pet with this id not found"),
     })
     @GetMapping("/{reproductionId}")
-    public ResponseEntity<PetReproductionDto> getById(@PathVariable Long petId, @PathVariable Long reproductionId) {
+    public ResponseEntity<ReproductionDto> getById(@PathVariable Long petId, @PathVariable Long reproductionId) {
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
         if (pet == null || reproduction == null) {
@@ -47,7 +47,7 @@ public class PetReproductionController {
         } else if (!pet.getReproductions().contains(reproduction)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            PetReproductionDto reproductionDto = reproductionMapper.reproductionToReproductionDto(reproduction);
+            ReproductionDto reproductionDto = reproductionMapper.reproductionToReproductionDto(reproduction);
             return new ResponseEntity<>(reproductionDto, HttpStatus.OK);
         }
     }
@@ -60,7 +60,7 @@ public class PetReproductionController {
     })
     @PostMapping("")
     public ResponseEntity<Void> save(@PathVariable Long petId,
-                                                   @RequestBody PetReproductionDto reproductionDto) {
+                                                   @RequestBody ReproductionDto reproductionDto) {
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.reproductionDtoToReproduction(reproductionDto);
         if (pet == null) {
@@ -81,7 +81,7 @@ public class PetReproductionController {
     })
     @PutMapping("/{reproductionId}")
     public ResponseEntity<Void> update(@PathVariable Long petId, @PathVariable Long reproductionId,
-                                                     @RequestBody PetReproductionDto reproductionDto) {
+                                                     @RequestBody ReproductionDto reproductionDto) {
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
 

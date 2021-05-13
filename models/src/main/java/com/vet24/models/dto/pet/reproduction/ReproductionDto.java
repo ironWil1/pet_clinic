@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PetReproductionDto {
+public class ReproductionDto {
     private LocalDate estrusStart;
     private LocalDate mating;
     private LocalDate dueDate;
