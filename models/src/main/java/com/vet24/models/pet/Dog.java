@@ -16,12 +16,15 @@ import java.time.LocalDate;
 @Setter
 public class Dog extends Pet {
 
+    private PetType petType;
+
     public Dog() {
         super();
     }
 
     public Dog(String name, LocalDate birthDay, Gender gender, String breed, Client client) {
         super(name, birthDay, gender, breed, client);
+        this.petType = PetType.DOG;
     }
 
     // add later when ready
