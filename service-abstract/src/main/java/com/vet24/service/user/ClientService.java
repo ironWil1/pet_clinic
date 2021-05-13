@@ -7,4 +7,6 @@ import com.vet24.service.ReadWriteService;
 
 public interface ClientService extends ReadWriteService<Long, Client> {
     Client getClientByLogin(String login);
+
+    Client getCurrentClient(); // temporary solution. Always returns Client with id = 3
 }
