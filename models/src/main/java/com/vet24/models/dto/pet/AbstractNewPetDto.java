@@ -31,11 +31,10 @@ public abstract class AbstractNewPetDto {
     private String description;
 
     @JsonCreator
-    protected AbstractNewPetDto(String name, PetType petType, LocalDate birthDay,
+    protected AbstractNewPetDto(String name, LocalDate birthDay,
                                 Gender gender, String breed, String color,
                                 PetSize size, Double weight, String description) {
         this.name = name;
-        this.petType = petType;
         this.birthDay = birthDay;
         this.gender = gender;
         this.breed = breed;

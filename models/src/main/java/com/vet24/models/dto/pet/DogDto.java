@@ -15,18 +15,20 @@ public class DogDto extends AbstractNewPetDto {
 
     private String avatar;
     private Integer notificationCount;
+    private PetType petType;
 
     public DogDto() {
         super();
     }
 
     @JsonCreator
-    public DogDto(String name, PetType petType, LocalDate birthDay,
+    public DogDto(String name, LocalDate birthDay,
                   Gender gender, String breed, String color,
                   PetSize size, Double weight, String description,
                   String avatar, Integer notificationCount) {
-        super(name, PetType.DOG, birthDay, gender, breed, color, size, weight, description);
+        super(name, birthDay, gender, breed, color, size, weight, description);
         this.avatar = avatar;
         this.notificationCount = notificationCount;
+        this.petType = PetType.DOG;
     }
 }
