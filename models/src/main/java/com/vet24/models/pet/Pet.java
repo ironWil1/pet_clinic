@@ -79,7 +79,7 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private PetContact petContact;
 
     protected Pet(String petName, PetContact petContact) {
@@ -87,10 +87,10 @@ public abstract class Pet {
         this.petContact = petContact;
 
     }
-    protected Pet(String petName, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client, PetContact petContact) {
+
+    protected Pet(String petName, LocalDate birthDay, Gender gender, String breed, Client client, PetContact petContact) {
         this.petName = petName;
         this.birthDay = birthDay;
-        this.petType = petType;
         this.gender = gender;
         this.breed = breed;
         this.client = client;

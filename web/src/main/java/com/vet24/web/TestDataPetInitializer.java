@@ -1,7 +1,6 @@
 package com.vet24.web;
 
 import com.vet24.models.enums.Gender;
-import com.vet24.models.enums.PetType;
 import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.PetContact;
@@ -46,15 +45,15 @@ public class TestDataPetInitializer implements ApplicationRunner {
     }
 
     public void catInitializer() {
-        catService.persist(new Cat("Феликс", LocalDate.now(), PetType.CAT, Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(1L)));
-        catService.persist(new Cat("Тихон", LocalDate.now(), PetType.CAT, Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(2L)));
-        catService.persist(new Cat("Беляш", LocalDate.now(), PetType.CAT, Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(3L)));
+        catService.persist(new Cat("Феликс", LocalDate.now(), Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(1L)));
+        catService.persist(new Cat("Тихон", LocalDate.now(), Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(2L)));
+        catService.persist(new Cat("Беляш", LocalDate.now(), Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(3L)));
     }
 
     public void dogInitializer() {
-        dogService.persist(new Dog("Жук", LocalDate.now(), PetType.DOG, Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(4L)));
-        dogService.persist(new Dog("Рекс", LocalDate.now(), PetType.DOG, Gender.MALE, "Golden Retriever", clientService.getByKey(3L),  petContactService.getByKey(5L)));
-        dogService.persist(new Dog("Туман", LocalDate.now(), PetType.DOG, Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(6L)));
+        dogService.persist(new Dog("Жук", LocalDate.now(), Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(4L)));
+        dogService.persist(new Dog("Рекс", LocalDate.now(), Gender.MALE, "Golden Retriever", clientService.getByKey(3L),  petContactService.getByKey(5L)));
+        dogService.persist(new Dog("Туман", LocalDate.now(), Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L),  petContactService.getByKey(6L)));
     }
 
     @Override

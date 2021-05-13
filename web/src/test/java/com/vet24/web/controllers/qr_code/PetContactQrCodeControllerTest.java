@@ -16,14 +16,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @FixMethodOrder
-public class QRCodeControllerTest extends ControllerAbstractIntegrationTest {
+public class PetContactQrCodeControllerTest extends ControllerAbstractIntegrationTest {
 
     final String URL_GET = "/api/client/pet/1/qr";
     final String URL_POST = "/api/client/pet/1/qr";
     final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
     @Autowired
-    private QRCodeController qrCodeController;
+    private PetContactQrCodeController petContactQrCodeController;
 
     /*@Autowired
     private WebApplicationContext wac;
@@ -35,7 +35,7 @@ public class QRCodeControllerTest extends ControllerAbstractIntegrationTest {
 
     @Test
     public void getQRCodeController() {
-        assertThat(qrCodeController).isNotNull();
+        assertThat(petContactQrCodeController).isNotNull();
     }
 
     @Test

@@ -1,5 +1,4 @@
-package com.vet24.models.qrcode;
-
+package com.vet24.util.qrcode;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -11,9 +10,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class QRCodeGenerator {
+public class PetContactQrCodeGenerator {
 
-    public static byte[] generateQRCodeImage(String text) {
+    public static byte[] generatePetContactQrCodeImage(String text) {
         try {
             Map<EncodeHintType, Object> hints = new HashMap<>();
             hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");

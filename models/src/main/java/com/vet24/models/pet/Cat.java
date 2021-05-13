@@ -1,7 +1,6 @@
 package com.vet24.models.pet;
 
 import com.vet24.models.enums.Gender;
-import com.vet24.models.enums.PetType;
 import com.vet24.models.user.Client;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,7 +23,7 @@ public class Cat extends Pet {
         super(petName, petContact);
     }
 
-    public Cat(String petName, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client, PetContact petContact) {
-        super(petName, birthDay, PetType.CAT, gender, breed, client, petContact);
+    public Cat(String petName, LocalDate birthDay, Gender gender, String breed, Client client, PetContact petContact) {
+        super(petName, birthDay, gender, breed, client, petContact);
     }
 }

@@ -24,7 +24,7 @@ public class Dog extends Pet{
         super(petName, petContact);
     }
 
-    public Dog(String petName, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client, PetContact petContact) {
-        super(petName, birthDay, PetType.DOG, gender, breed, client, petContact);
+    public Dog(String petName, LocalDate birthDay, Gender gender, String breed, Client client, PetContact petContact) {
+        super(petName, birthDay, gender, breed, client, petContact);
     }
 }
