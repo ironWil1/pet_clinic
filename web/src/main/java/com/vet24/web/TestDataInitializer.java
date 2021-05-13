@@ -36,33 +36,34 @@ import java.util.Objects;
 @Component
 public class TestDataInitializer implements ApplicationRunner {
 
-    private final RoleService roleService;
-    private final UserService userService;
-    private final ClientService clientService;
-    private final MedicineService medicineService;
     private final VaccinationProcedureService vaccinationProcedureService;
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
     private final EchinococcusProcedureService echinococcusProcedureService;
     private final ReproductionService reproductionService;
+    private final RoleService roleService;
+    private final UserService userService;
+    private final ClientService clientService;
     private final PetService petService;
+    private final MedicineService medicineService;
+
     private final Environment environment;
 
     @Autowired
-    public TestDataInitializer(Environment environment, PetService petService, RoleService roleService, UserService userService, ClientService clientService,
+    public TestDataInitializer(PetService petService, RoleService roleService, UserService userService, ClientService clientService,
                                MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
-                               ReproductionService reproductionService) {
+                               ReproductionService reproductionService, Environment environment) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
         this.petService = petService;
         this.medicineService = medicineService;
-        this.environment = environment;
         this.vaccinationProcedureService = vaccinationProcedureService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
         this.echinococcusProcedureService = echinococcusProcedureService;
         this.reproductionService = reproductionService;
+        this.environment = environment;
     }
 
     public void roleInitialize() {
