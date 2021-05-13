@@ -117,8 +117,7 @@ public class PetController {
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             String url = pet.getAvatar();
-            boolean isValidUrl = (url != null);
-            if (isValidUrl) {
+            if (url != null) {
                 return new ResponseEntity<>(resourceService.loadAsByteArray(url), addContentHeaders(url), HttpStatus.OK);
             }
         }

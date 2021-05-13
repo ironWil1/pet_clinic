@@ -61,8 +61,7 @@ public class ClientController {
         Client client = clientService.getCurrentClient();
         if (client != null) {
             String url = client.getAvatar();
-            boolean isValidUrl = (url != null);
-            if (isValidUrl) {
+            if (url != null) {
                 return new ResponseEntity<>(resourceService.loadAsByteArray(url), addContentHeaders(url), HttpStatus.OK);
             }
         }
