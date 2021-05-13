@@ -1,5 +1,6 @@
 package com.vet24.models.pet.reproduction;
 
+import com.vet24.models.pet.Pet;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,10 +32,14 @@ public class Reproduction implements Serializable {
     @Column
     private Integer childCount;
 
-    public Reproduction(LocalDate estrusStart, LocalDate mating, LocalDate dueDate, Integer childCount) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Pet pet;
+
+    public Reproduction(LocalDate estrusStart, LocalDate mating, LocalDate dueDate, Integer childCount, Pet pet) {
         this.estrusStart = estrusStart;
         this.mating = mating;
         this.dueDate = dueDate;
         this.childCount = childCount;
+        this.pet = pet;
     }
 }
