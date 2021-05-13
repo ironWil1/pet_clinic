@@ -1,37 +1,17 @@
 package com.vet24.web.controllers.qr_code;
 
-
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vet24.models.dto.contact.PetContactDto;
-import com.vet24.models.mappers.PetContactMapper;
-import com.vet24.models.pet.PetContact;
-import com.vet24.service.pet.PetContactService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-
 import java.nio.charset.Charset;
-
-import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder.*;
-import static org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder.*;
-import static org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder.*;
-
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder
