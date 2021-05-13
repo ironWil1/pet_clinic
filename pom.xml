@@ -91,15 +91,6 @@
             <artifactId>google-oauth-client-jetty</artifactId>
             <version>1.31.5</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-rest-core -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-rest-core</artifactId>
-            <version>3.4.7</version>
-        </dependency>
-
-
-
     </dependencies>
 
     <build>
