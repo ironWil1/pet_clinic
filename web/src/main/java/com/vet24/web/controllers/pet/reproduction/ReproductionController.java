@@ -44,7 +44,7 @@ public class ReproductionController {
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
         if (pet == null || reproduction == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else if (!pet.getReproductions().contains(reproduction)) {
+        } else if (!reproduction.getPet().getId().equals(pet.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             ReproductionDto reproductionDto = reproductionMapper.reproductionToReproductionDto(reproduction);
@@ -87,7 +87,7 @@ public class ReproductionController {
 
         if (pet == null || reproduction == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else if (!pet.getReproductions().contains(reproduction)) {
+        } else if (!reproduction.getPet().getId().equals(pet.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             reproduction = reproductionMapper.reproductionDtoToReproduction(reproductionDto);
@@ -112,7 +112,7 @@ public class ReproductionController {
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
         if (pet == null || reproduction == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else if (!pet.getReproductions().contains(reproduction)) {
+        } else if (!reproduction.getPet().getId().equals(pet.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             pet.removeReproduction(reproduction);
