@@ -2,7 +2,7 @@ package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.user.ClientDto;
-import com.vet24.models.mappers.user.UserMapper;
+import com.vet24.models.mappers.user.ClientMapper;
 import com.vet24.models.user.Client;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
@@ -27,14 +27,14 @@ import java.io.IOException;
 public class ClientController {
 
     private final ClientService clientService;
-    private final UserMapper userMapper;
+    private final ClientMapper clientMapper;
     private final UploadService uploadService;
     private final ResourceService resourceService;
 
-    public ClientController(ClientService clientService, UserMapper userMapper, UploadService uploadService,
+    public ClientController(ClientService clientService, ClientMapper clientMapper, UploadService uploadService,
                             ResourceService resourceService) {
         this.clientService = clientService;
-        this.userMapper = userMapper;
+        this.clientMapper = clientMapper;
         this.uploadService = uploadService;
         this.resourceService = resourceService;
     }
@@ -47,7 +47,7 @@ public class ClientController {
     })
     @GetMapping()
     public ResponseEntity<ClientDto> getCurrentClient() {
-        ClientDto clientDto = userMapper.clientToClientDto(clientService.getCurrentClient());
+        ClientDto clientDto = clientMapper.clientToClientDto(clientService.getCurrentClient());
         return clientDto != null ? ResponseEntity.ok(clientDto) : ResponseEntity.notFound().build();
     }
 

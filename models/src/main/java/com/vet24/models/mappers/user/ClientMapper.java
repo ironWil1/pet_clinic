@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring", uses = {PetMapper.class})
 @Component
-public interface UserMapper {
+public interface ClientMapper {
 
     @Mapping(source = "login", target = "username")
     ClientDto clientToClientDto(Client client);

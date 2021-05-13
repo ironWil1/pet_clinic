@@ -8,10 +8,8 @@ import com.vet24.models.pet.Pet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
-@Component
 public abstract class PetMapper {
 
     @Autowired
