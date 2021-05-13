@@ -46,8 +46,10 @@ public class NotificationController {
     private static HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     private static JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_EVENTS);
+
     //must be email of authorize user
     private String USER = "Petclinic";
+
     private String CALLBACK_URI = "http://localhost:8080/oauth";
     private String gdSecretKeys = "/credentials.json";
     private String credentialsFolder = "tokens";
