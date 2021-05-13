@@ -45,7 +45,6 @@ public class QRCodeController {
     // POST api/client/pet/{petId}/qr - добавление информации для создания qrКода. Получает PetContactDto.
     @PostMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<PetContactDto> savePetContact (@RequestBody PetContactDto petContactDto) {
-        System.err.println(petContactDto);
         PetContact petContact = petContactMapper.petContactDtoToPetContact(petContactDto);
         petContact.setUniqCode(petContactService.randomUniqueCode());
         petContactService.persist(petContact);
