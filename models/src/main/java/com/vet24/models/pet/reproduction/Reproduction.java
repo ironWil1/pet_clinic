@@ -12,8 +12,8 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = "pet")
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 public class Reproduction implements Serializable {
 
