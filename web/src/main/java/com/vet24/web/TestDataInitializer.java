@@ -82,9 +82,9 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void petInitialize() {
-        Dog dog1 = new Dog("Delilah", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier",
+        Dog dog1 = new Dog("Delilah", LocalDate.now(), Gender.FEMALE, "Yorkshire Terrier",
                 clientService.getByKey(3L));
-        Dog dog2 = new Dog("Buddy", LocalDate.now(), PetType.DOG, Gender.MALE, "Golden Retriever",
+        Dog dog2 = new Dog("Buddy", LocalDate.now(), Gender.MALE, "Golden Retriever",
                 clientService.getByKey(3L));
         petService.persist(dog1);
         petService.persist(dog2);
