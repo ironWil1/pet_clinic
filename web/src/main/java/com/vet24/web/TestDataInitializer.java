@@ -1,9 +1,6 @@
 package com.vet24.web;
 
-import com.vet24.models.enums.Gender;
-import com.vet24.models.enums.PetType;
 import com.vet24.models.medicine.Medicine;
-import com.vet24.models.pet.Dog;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
 import com.vet24.models.enums.RoleNameEnum;
@@ -19,7 +16,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 

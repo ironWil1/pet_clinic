@@ -16,20 +16,15 @@ import java.time.LocalDate;
 @DiscriminatorValue("DOG")
 public class Dog extends Pet{
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    private PetContact petContact;
-
     public Dog() {
         super();
     }
 
     public Dog(String petName, PetContact petContact) {
-        super(petName);
-        this.petContact = petContact;
+        super(petName, petContact);
     }
 
     public Dog(String petName, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client, PetContact petContact) {
-        super(petName, birthDay, PetType.DOG, gender, breed, client);
-        this.petContact = petContact;
+        super(petName, birthDay, PetType.DOG, gender, breed, client, petContact);
     }
 }

@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-
 @EntityScan({"com.vet24.models"})
 @EnableJpaRepositories("com.vet24.dao")
 @SpringBootApplication(scanBasePackages = "com.vet24")

@@ -5,7 +5,6 @@ import com.vet24.models.mappers.PetContactMapper;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.qrcode.QRCodeGenerator;
 import com.vet24.service.pet.PetContactService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -6,7 +6,6 @@ import org.hibernate.engine.jdbc.internal.FormatStyle;
 
 import java.util.Locale;
 
-
 public class MySqlFormat implements MessageFormattingStrategy {
 
     @Override

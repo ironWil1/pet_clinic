@@ -12,9 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class QRCodeGenerator {
-    private static final String QR_CODE_IMAGE_PATH = "./images/QRCode-300x300.png";
 
-    public static byte[] generateQRCodeImage(String text) throws Exception {
+    public static byte[] generateQRCodeImage(String text) {
         try {
             Map<EncodeHintType, Object> hints = new HashMap<>();
             hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
@@ -26,20 +25,5 @@ public class QRCodeGenerator {
         } catch (Exception e) {
             return null;
         }
-        /*QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 300, 300);
-
-        return MatrixToImageWriter.toBufferedImage(bitMatrix);*/
     }
 }
-
-    //private static final String QR_CODE_IMAGE_PATH = "./images/QRCode-300x300.png";
-    /*private static final Resource QRCode = new ClassPathResource("static/images/QRCode-300x300.png");
-
-    private static void generateQRCodeImage(String text, int width, int height, Resource filePath)
-            throws WriterException, IOException {
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
-
-        Path path = FileSystems.getDefault().getPath(String.valueOf(filePath));
-        MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);*/

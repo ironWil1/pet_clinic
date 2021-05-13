@@ -4,9 +4,28 @@ import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.user.Client;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
@@ -68,12 +87,13 @@ public abstract class Pet {
         this.petContact = petContact;
 
     }
-    protected Pet(String petName, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client) {
+    protected Pet(String petName, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client, PetContact petContact) {
         this.petName = petName;
         this.birthDay = birthDay;
         this.petType = petType;
         this.gender = gender;
         this.breed = breed;
         this.client = client;
+        this.petContact = petContact;
     }
 }
