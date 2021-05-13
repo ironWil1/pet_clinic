@@ -1,25 +1,27 @@
 package com.vet24.web;
 
 import com.vet24.models.enums.RoleNameEnum;
-import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
-import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
+import com.vet24.models.enums.Gender;
+import com.vet24.models.enums.PetType;
+import com.vet24.models.medicine.Medicine;
+import com.vet24.models.pet.Dog;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
 import com.vet24.models.user.User;
-import com.vet24.models.medicine.Medicine;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.procedure.EchinococcusProcedureService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
-import com.vet24.service.pet.procedure.ProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
+import com.vet24.service.pet.PetService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -28,25 +30,29 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 
 
 @Component
 public class TestDataInitializer implements ApplicationRunner {
 
-    private RoleService roleService;
-    private UserService userService;
-    private ClientService clientService;
-    private MedicineService medicineService;
-    private VaccinationProcedureService vaccinationProcedureService;
-    private ExternalParasiteProcedureService externalParasiteProcedureService;
-    private EchinococcusProcedureService echinococcusProcedureService;
-    private ReproductionService reproductionService;
+    private final RoleService roleService;
+    private final UserService userService;
+    private final ClientService clientService;
+    private final MedicineService medicineService;
+    private final VaccinationProcedureService vaccinationProcedureService;
+    private final ExternalParasiteProcedureService externalParasiteProcedureService;
+    private final EchinococcusProcedureService echinococcusProcedureService;
+    private final ReproductionService reproductionService;
+    private final RoleService roleService;
+    private final UserService userService;
+    private final ClientService clientService;
+    private final PetService petService;
+    private final MedicineService medicineService;
+    private final Environment environment;
 
     @Autowired
-    Environment environment;
-
-    @Autowired
-    public TestDataInitializer(RoleService roleService, UserService userService, ClientService clientService,
+    public TestDataInitializer(Environment environment, PetService petService, RoleService roleService, UserService userService, ClientService clientService,
                                MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
@@ -54,7 +60,9 @@ public class TestDataInitializer implements ApplicationRunner {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
+        this.petService = petService;
         this.medicineService = medicineService;
+        this.environment = environment;
         this.vaccinationProcedureService = vaccinationProcedureService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
         this.echinococcusProcedureService = echinococcusProcedureService;
@@ -68,14 +76,26 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userInitialize() {
-        userService.persist(new User("Ivan", "Ivanov", "Ivan", "123456", roleService.getByKey(1L)));
-        userService.persist(new User("Petr", "Petrov", "Petr", "123456", roleService.getByKey(2L)));
-        clientService.persist(new Client("Jm", "Jm", "Jm", "123456", roleService.getByKey(3L), new HashSet<Pet>()));
+        userService.persist(new User("Ivan", "Ivanov", "Ivan",
+                "123456", roleService.getByKey(1L)));
+        userService.persist(new User("Petr", "Petrov", "Petr",
+                "123456", roleService.getByKey(2L)));
+        clientService.persist(new Client("John", "Smith", "clientLogin",
+                "123456", roleService.getByKey(3L), new HashSet<>()));
+    }
 
+    public void petInitialize() {
+        Dog dog1 = new Dog("Delilah", LocalDate.now(), PetType.DOG, Gender.FEMALE, "Yorkshire Terrier",
+                clientService.getByKey(3L));
+        Dog dog2 = new Dog("Buddy", LocalDate.now(), PetType.DOG, Gender.MALE, "Golden Retriever",
+                clientService.getByKey(3L));
+        petService.persist(dog1);
+        petService.persist(dog2);
     }
 
     public void userUpdateMethod() {
-        User user = new User("Test", "Testov", "TestLogin", "TestPassword", roleService.getByKey(2L));
+        User user = new User("Test", "Testov", "TestLogin",
+                "TestPassword", roleService.getByKey(2L));
         user.setId(1L);
         userService.update(user);
     }
@@ -98,7 +118,8 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void medicineInitialize() {
-        medicineService.persist(new Medicine("sinopharm", "sputnik", "sdasd", "protiv covid"));
+        medicineService.persist(new Medicine("sinopharm", "sputnik", "sdasd",
+                "protiv covid"));
         medicineService.getByKey(1L);
     }
 
@@ -129,12 +150,15 @@ public class TestDataInitializer implements ApplicationRunner {
         reproductionService.getByKey(1L);
     }
 
+
     @Override
     public void run(ApplicationArguments args) {
-        if (environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create")
-                || environment.getProperty("spring.jpa.hibernate.ddl-auto").equals("create-drop")) {
+        if (Objects.requireNonNull(environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create")
+                || Objects.requireNonNull(
+                        environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop")) {
             roleInitialize();
             userInitialize();
+            petInitialize();
             medicineInitialize();
 
             //userUpdateMethod();
