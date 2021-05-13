@@ -20,6 +20,7 @@ public class Cat extends Pet {
 
     public Cat() {
         super();
+        this.petType = PetType.CAT;
     }
 
     public Cat(String name, LocalDate birthDay, Gender gender, String breed, Client client) {
