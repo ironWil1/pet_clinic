@@ -20,7 +20,7 @@ public class Cat extends Pet {
         super();
     }
 
-    public Cat(String name, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client) {
-        super(name, birthDay, PetType.CAT, gender, breed, client);
+    public Cat(String name, LocalDate birthDay, Gender gender, String breed, Client client) {
+        super(name, birthDay, gender, breed, client);
     }
 }
