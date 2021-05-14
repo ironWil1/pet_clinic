@@ -114,7 +114,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
     //delete medicine by id
     @Test
     @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
-    public void testGDeleteMedicineSuccess() throws Exception {
+    public void shouldBeDeleteMedicine() throws Exception {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
         HttpEntity<Void> entity = new HttpEntity<>(headers);
