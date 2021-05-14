@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -22,7 +22,6 @@ import javax.persistence.OneToOne;
 public class PetContact {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NonNull
@@ -39,6 +38,8 @@ public class PetContact {
     @Column(unique = true)
     private String uniqCode;
 
+    @MapsId
     @OneToOne(mappedBy = "petContact")
+    @JoinColumn(name = "id")
     private Pet pet;
 }

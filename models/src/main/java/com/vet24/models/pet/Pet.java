@@ -40,6 +40,7 @@ public abstract class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
     private Long id;
 
     @NonNull
@@ -85,7 +86,6 @@ public abstract class Pet {
     protected Pet(String petName, PetContact petContact) {
         this.petName = petName;
         this.petContact = petContact;
-
     }
 
     protected Pet(String petName, LocalDate birthDay, Gender gender, String breed, Client client, PetContact petContact) {
