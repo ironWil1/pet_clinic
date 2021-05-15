@@ -1,10 +1,7 @@
 package com.vet24.models.pet.reproduction;
 
 import com.vet24.models.pet.Pet;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +11,7 @@ import java.time.LocalDate;
 @Setter
 @EqualsAndHashCode(exclude = "pet")
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Reproduction implements Serializable {
 
