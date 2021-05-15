@@ -42,7 +42,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // get reproduction by id - success
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testA1GetReproductionSuccess() {
+    public void testGetReproductionSuccess() {
         ReproductionDto dtoFromDao = reproductionMapper.reproductionToReproductionDto(reproductionDao.getByKey(1L));
         ResponseEntity<ReproductionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ReproductionDto.class, 1, 1);
@@ -54,7 +54,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // get reproduction by id -  error 404 reproduction not found
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testA2GetReproductionError404() {
+    public void testGetReproductionError404reproduction() {
         ResponseEntity<ReproductionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ReproductionDto.class, 1, 11);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -63,7 +63,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // get reproduction by id -  error 404 pet not found
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testA3GetReproductionError404() {
+    public void testGetReproductionError404pet() {
         ResponseEntity<ReproductionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ReproductionDto.class, 11, 1);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -72,7 +72,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // get reproduction by id -  error 400 reproduction not assigned to pet
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testA4GetReproductionError400() {
+    public void testGetReproductionError400() {
         ResponseEntity<ReproductionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ReproductionDto.class, 2, 1);
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -82,25 +82,26 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true,
             executeStatementsBefore = "ALTER SEQUENCE reproduction_id_seq RESTART WITH 3;")
-    public void testB1AddReproductionSuccess() {
+    public void testAddReproductionSuccess() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
-        ResponseEntity<Void> response = testRestTemplate
-                .postForEntity(URI + "/{petId}/reproduction", request, Void.class, 2);
+        ResponseEntity<ReproductionDto> response = testRestTemplate
+                .postForEntity(URI + "/{petId}/reproduction", request, ReproductionDto.class, 2);
         int afterCount = reproductionDao.getAll().size();
 
         Assert.assertEquals(++beforeCount, afterCount);
+        Assert.assertNotNull(response.getBody());
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     // add reproduction - error 404 pet not found
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testB2AddReproductionError404() {
+    public void testAddReproductionError404() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
-        ResponseEntity<Void> response = testRestTemplate
-                .postForEntity(URI + "/{petId}/reproduction", request, Void.class, 11);
+        ResponseEntity<ReproductionDto> response = testRestTemplate
+                .postForEntity(URI + "/{petId}/reproduction", request, ReproductionDto.class, 11);
         int afterCount = reproductionDao.getAll().size();
 
         Assert.assertEquals(beforeCount, afterCount);
@@ -110,45 +111,44 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // put reproduction by id - success
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testC1PutReproductionSuccess() throws Exception {
+    public void testPutReproductionSuccess() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
-        ResponseEntity<Void> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, Void.class, 1, 2);
+        ResponseEntity<ReproductionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ReproductionDto.class, 1, 2);
         int afterCount = reproductionDao.getAll().size();
-        Reproduction afterReproduction = reproductionDao.getByKey(2L);
 
         Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(reproduction, afterReproduction);
+        Assert.assertEquals(reproductionDto, response.getBody());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     // put reproduction by id - error 404 pet not found
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testC2PutReproductionError404() {
+    public void testPutReproductionError404reproduction() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
-        ResponseEntity<Void> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, Void.class, 11, 2);
+        ResponseEntity<ReproductionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ReproductionDto.class, 11, 2);
         int afterCount = reproductionDao.getAll().size();
-        Reproduction afterReproduction = reproductionDao.getByKey(2L);
 
+        Assert.assertNull(response.getBody());
         Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertNotEquals(reproduction, afterReproduction);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // put reproduction by id - error 404 reproduction not found
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testC3PutReproductionError404() {
+    public void testPutReproductionError404pet() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
-        ResponseEntity<Void> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, Void.class, 1, 22);
+        ResponseEntity<ReproductionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ReproductionDto.class, 1, 22);
         int afterCount = reproductionDao.getAll().size();
 
+        Assert.assertNull(response.getBody());
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -156,23 +156,22 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // put reproduction by id - error 400 reproduction not assigned to pet
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testC4PutReproductionError400() {
+    public void testPutReproductionError400() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
-        ResponseEntity<Void> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, Void.class, 2, 1);
+        ResponseEntity<ReproductionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ReproductionDto.class, 2, 1);
         int afterCount = reproductionDao.getAll().size();
-        Reproduction afterReproduction = reproductionDao.getByKey(1L);
 
+        Assert.assertNull(response.getBody());
         Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertNotEquals(reproduction, afterReproduction);
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // delete reproduction by id - success
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testD1DeleteReproductionSuccess() {
+    public void testDeleteReproductionSuccess() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
         ResponseEntity<Void> response = testRestTemplate
@@ -188,7 +187,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // delete reproduction by id - error 404 pet not found
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testD2DeleteReproductionError404() {
+    public void testDeleteReproductionError404reproduction() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
         ResponseEntity<Void> response = testRestTemplate
@@ -204,7 +203,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // delete reproduction by id - error 404 reproduction not found
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testD3DeleteReproductionError404() {
+    public void testDeleteReproductionError404pet() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
         ResponseEntity<Void> response = testRestTemplate
@@ -218,7 +217,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // delete reproduction by id - reproduction not assigned to pet
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testD4DeleteReproductionError400() {
+    public void testDeleteReproductionError400() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
         ResponseEntity<Void> response = testRestTemplate

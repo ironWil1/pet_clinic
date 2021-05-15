@@ -59,17 +59,18 @@ public class ReproductionController {
             @ApiResponse(responseCode = "404", description = "pet with this id not found"),
     })
     @PostMapping("")
-    public ResponseEntity<Void> save(@PathVariable Long petId,
-                                                   @RequestBody ReproductionDto reproductionDto) {
+    public ResponseEntity<ReproductionDto> save(@PathVariable Long petId,
+                                     @RequestBody ReproductionDto reproductionDto) {
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.reproductionDtoToReproduction(reproductionDto);
         if (pet == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        reproduction.setId(null);
         pet.addReproduction(reproduction);
         petService.update(pet);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(reproductionMapper.reproductionToReproductionDto(reproduction), HttpStatus.CREATED);
     }
 
 
@@ -77,25 +78,24 @@ public class ReproductionController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "reproduction successful updated"),
             @ApiResponse(responseCode = "404", description = "reproduction or pet with this id not found"),
-            @ApiResponse(responseCode = "400", description = "reproduction not assigned to this pet"),
+            @ApiResponse(responseCode = "400", description = "reproduction not assigned to this pet OR reproductionId in path and in body not equals"),
     })
     @PutMapping("/{reproductionId}")
-    public ResponseEntity<Void> update(@PathVariable Long petId, @PathVariable Long reproductionId,
-                                                     @RequestBody ReproductionDto reproductionDto) {
+    public ResponseEntity<ReproductionDto> update(@PathVariable Long petId, @PathVariable Long reproductionId,
+                                       @RequestBody ReproductionDto reproductionDto) {
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
 
         if (pet == null || reproduction == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else if (!reproduction.getPet().getId().equals(pet.getId())) {
+        } else if (!reproduction.getPet().getId().equals(pet.getId()) || !reproductionId.equals(reproductionDto.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             reproduction = reproductionMapper.reproductionDtoToReproduction(reproductionDto);
             reproduction.setPet(pet);
-            reproduction.setId(reproductionId);
             reproductionService.update(reproduction);
 
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(reproductionMapper.reproductionToReproductionDto(reproduction), HttpStatus.OK);
         }
     }
 

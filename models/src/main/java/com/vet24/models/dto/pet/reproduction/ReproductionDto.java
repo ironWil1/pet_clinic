@@ -10,8 +10,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReproductionDto {
-    private LocalDate estrusStart;
-    private LocalDate mating;
-    private LocalDate dueDate;
-    private Integer childCount;
+    Long id;
+    LocalDate estrusStart;
+    LocalDate mating;
+    LocalDate dueDate;
+    Integer childCount;
 }
