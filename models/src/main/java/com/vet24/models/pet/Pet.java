@@ -73,10 +73,9 @@ public abstract class Pet {
     protected Pet() {
     }
 
-    protected Pet(String name, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client) {
+    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client) {
         this.name = name;
         this.birthDay = birthDay;
-        this.petType = petType;
         this.gender = gender;
         this.breed = breed;
         this.client = client;
