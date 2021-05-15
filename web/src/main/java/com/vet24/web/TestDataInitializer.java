@@ -1,32 +1,31 @@
 package com.vet24.web;
 
 import com.vet24.models.enums.Gender;
-import com.vet24.models.enums.PetType;
+import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.medicine.Medicine;
-import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
-import com.vet24.models.pet.procedure.VaccinationProcedure;
-import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
+import com.vet24.models.pet.procedure.EchinococcusProcedure;
+import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
+import com.vet24.models.pet.procedure.VaccinationProcedure;
+import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
-import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.User;
 import com.vet24.service.medicine.MedicineService;
-import com.vet24.service.pet.procedure.EchinococcusProcedureService;
-import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
-import com.vet24.service.pet.procedure.VaccinationProcedureService;
-import com.vet24.service.pet.reproduction.ReproductionService;
 import com.vet24.service.pet.CatService;
 import com.vet24.service.pet.DogService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
+import com.vet24.service.pet.procedure.EchinococcusProcedureService;
+import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
+import com.vet24.service.pet.procedure.VaccinationProcedureService;
+import com.vet24.service.pet.reproduction.ReproductionService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.UserService;
-
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
@@ -56,7 +55,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final Environment environment;
 
     public TestDataInitializer(RoleService roleService, UserService userService,
-                               ClientService clientService, PetService petService,
+                               ClientService clientService,
                                MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
@@ -65,7 +64,6 @@ public class TestDataInitializer implements ApplicationRunner {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
-        this.petService = petService;
         this.medicineService = medicineService;
         this.vaccinationProcedureService = vaccinationProcedureService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;

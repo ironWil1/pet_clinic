@@ -74,13 +74,9 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
-    protected Pet() {
-    }
-
-    protected Pet(String petName, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client) {
+    protected Pet(String petName, LocalDate birthDay, Gender gender, String breed, Client client) {
         this.petName = petName;
         this.birthDay = birthDay;
-        this.petType = petType;
         this.gender = gender;
         this.breed = breed;
         this.client = client;

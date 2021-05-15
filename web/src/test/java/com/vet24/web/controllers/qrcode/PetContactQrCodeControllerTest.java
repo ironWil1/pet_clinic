@@ -7,11 +7,12 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+
 import java.nio.charset.Charset;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +40,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     public void savePetContact() throws Exception {
         PetContactDto petContact = new PetContactDto("Мария", "Невского 17", "4854789899");
         String body = (new ObjectMapper()).valueToTree(petContact).toString();
-        this.mockMvc.perform(post(URL_POST).content(body).contentType(APPLICATION_JSON_UTF8)).andExpect(status().isCreated()).andDo(print());
+        this.mockMvc.perform(post(URL_POST).content(body).contentType(APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated()).andDo(print());
     }
 }
