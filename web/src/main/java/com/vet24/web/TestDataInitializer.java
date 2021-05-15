@@ -113,27 +113,28 @@ public class TestDataInitializer implements ApplicationRunner {
         dogService.persist(new Dog("Жук", LocalDate.now(), Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L)));
         dogService.persist(new Dog("Туман", LocalDate.now(), Gender.MALE, "Golden Retriever", clientService.getByKey(3L)));
         dogService.persist(new Dog("Рекс", LocalDate.now(), Gender.MALE, "Немецкая овчарка", clientService.getByKey(3L)));
-
+        // для тестирования сохранения в пост методе PetContact контроллера
+        dogService.persist(new Dog("Рекс", LocalDate.now(), Gender.MALE, "Немецкая овчарка", clientService.getByKey(3L)));
     }
 
     public void petContactInitializer() {
         Pet pet1 = petService.getByKey(1L);
-        PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_180L, petContactService.randomPetContactUniqueCode(1L));
+        PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_18_00L, petContactService.randomPetContactUniqueCode(1L));
         petContact1.setPet(pet1);
         petContactService.persist(petContact1);
 
         Pet pet2 = petService.getByKey(2L);
-        PetContact petContact2 = new PetContact("Мария", "Парниковое 7", 8_748_585_555L, petContactService.randomPetContactUniqueCode(2L));
+        PetContact petContact2 = new PetContact("Мария", "Парниковое 7", 8_748_585_55_55L, petContactService.randomPetContactUniqueCode(2L));
         petContact2.setPet(pet2);
         petContactService.persist(petContact2);
 
         Pet pet3 = petService.getByKey(3L);
-        PetContact petContact3 = new PetContact("Олег", "Садовое 27", 8_696_777_424L, petContactService.randomPetContactUniqueCode(3L));
+        PetContact petContact3 = new PetContact("Олег", "Садовое 27", 8_696_777_42_42L, petContactService.randomPetContactUniqueCode(3L));
         petContact3.setPet(pet3);
         petContactService.persist(petContact3);
 
         Pet pet4 = petService.getByKey(4L);
-        PetContact petContact4 = new PetContact("Дмитрий", "Липовая 3", 8_962_478_020L, petContactService.randomPetContactUniqueCode(4L));
+        PetContact petContact4 = new PetContact("Дмитрий", "Липовая 3", 8_962_478_02_02L, petContactService.randomPetContactUniqueCode(4L));
         petContact4.setPet(pet4);
         petContactService.persist(petContact4);
 

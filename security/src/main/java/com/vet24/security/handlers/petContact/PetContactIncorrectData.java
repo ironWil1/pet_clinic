@@ -1,4 +1,4 @@
-package com.vet24.security.handlers;
+package com.vet24.security.handlers.petContact;
 
 //Класс, который вовзращает info, если было некорректное обращение к URL
 public class PetContactIncorrectData {
