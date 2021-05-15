@@ -9,6 +9,10 @@ import com.vet24.security.exceptions.petContact.NoSuchPetForPetContactException;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import com.vet24.util.qrcode.PetContactQrCodeGenerator;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +37,12 @@ public class PetContactQrCodeController {
         this.petContactMapper = petContactMapper;
     }
 
+    @Operation(summary = "Encode and create qr code for pet contact")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully create the qr code", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "PetContact ID is not found"),
+            @ApiResponse(responseCode = "400", description = "Entered PetContact ID not valid")
+    })
     @GetMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("id") Long id)
             throws NoSuchPetContactIdException, NumberFormatException {
@@ -46,10 +56,19 @@ public class PetContactQrCodeController {
                     "Чтобы сообщить владельцу о находке перейдите по адресу - " + UrlToAlertPetContact;
             return ResponseEntity.ok(PetContactQrCodeGenerator.generatePetContactQrCodeImage(sb));
         } catch (RuntimeException e) {
-            throw new NoSuchPetContactIdException("Пользователь с ID = " + id + " не найден");
+            throw new NoSuchPetContactIdException("Контакт с ID = " + id + " не найден");
         }
     }
 
+    @Operation(summary = "Create and update PetContact for qr code")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully update the PetContact",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "201", description = "Successfully create the PetContact",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "PetContact is expecting a pet for persist command"),
+            @ApiResponse(responseCode = "400", description = "Entered PetContact ID not valid")
+    })
     @PostMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@RequestBody PetContactDto petContactDto,
                                                                 @PathVariable("id") Long id)
