@@ -20,4 +20,10 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     public Client getClientByLogin(String login) {
         return clientDao.getClientByLogin(login);
     }
+
+    // Always returns Client with id = 3
+    @Override
+    public Client getCurrentClient() {
+        return clientDao.getByKey(3L);
+    }
 }

@@ -7,8 +7,6 @@ import com.vet24.models.user.Client;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -33,7 +31,6 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 public abstract class Pet {
 
     @Id
@@ -41,7 +38,6 @@ public abstract class Pet {
     @Column(name="id")
     private Long id;
 
-    @NonNull
     @Column(nullable = false)
     private String petName;
 
@@ -78,9 +74,13 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
-    protected Pet(String petName, LocalDate birthDay, Gender gender, String breed, Client client) {
+    protected Pet() {
+    }
+
+    protected Pet(String petName, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client) {
         this.petName = petName;
         this.birthDay = birthDay;
+        this.petType = petType;
         this.gender = gender;
         this.breed = breed;
         this.client = client;

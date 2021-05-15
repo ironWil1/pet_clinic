@@ -1,85 +1,96 @@
 package com.vet24.web.medicine;
 
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.spring.api.DBRider;
+import com.vet24.dao.medicine.MedicineDaoImpl;
 import com.vet24.models.dto.medicine.MedicineDto;
 import com.vet24.models.mappers.medicine.MedicineMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.medicine.MedicineController;
-
 import org.junit.Assert;
-import org.junit.FixMethodOrder;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@DBRider
 public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
-    MedicineMapper medicineMapper;
-
+    private MedicineMapper medicineMapper;
     @Autowired
-    MedicineController medicineController;
+    private MedicineController medicineController;
+    @Autowired
+    private MedicineDaoImpl medicineDao;
+    private final String URI = "http://localhost:8090/api/manager/medicine";
+    private HttpHeaders headers = new HttpHeaders();
+    private Medicine medicine;
+    private MedicineDto medicineDto;
 
-    final String URI = "http://localhost:8090/api/manager/medicine";
+    @Before
+    public void createNewMedicineAndMedicineDto() {
+        medicine = new Medicine("daulet", "jm", "dsad", "test");
+        medicine.setId(1L);
+        medicineDto = medicineMapper.medicineToMedicineDto(medicine);
+    }
 
     //test controller exist
     @Test
-    public void getAMedicineController() throws Exception {
+    public void shouldBeMedicineController() throws Exception {
         assertThat(medicineController).isNotNull();
     }
 
     //get medicine by id
     @Test
-    public void testBGetMedicineSuccess() throws Exception {
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    public void shouldBeGetMedicineById() throws Exception {
+        Medicine medicine = medicineDao.getByKey(2L);
         ResponseEntity<MedicineDto> response = testRestTemplate
-                .getForEntity(URI + "/{id}", MedicineDto.class, 1);
+                .getForEntity(URI + "/{id}", MedicineDto.class, 2);
+
+        assertThat(medicine).isNotNull();
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //add medicine
     @Test
-    public void testCAddMedicineSuccess() throws URISyntaxException
-    {
-        Medicine medicine = new Medicine("daulet", "jm", "dsad", "test");
-        MedicineDto medicineDto =  medicineMapper.medicineToMedicineDto(medicine);
-        HttpHeaders headers = new HttpHeaders();
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    public void shouldBeAddMedicine() throws URISyntaxException {
+        List<Medicine> medicineListBefore = medicineDao.getAll();
+        int countRow = medicineListBefore.size();
         HttpEntity<MedicineDto> request = new HttpEntity<>(medicineDto, headers);
         ResponseEntity<MedicineDto> response = testRestTemplate
                 .postForEntity(URI, request, MedicineDto.class);
+        List<Medicine> medicineList = medicineDao.getAll();
+        int resultRow = medicineList.size();
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        Assert.assertEquals(++countRow, resultRow);
     }
 
     //put medicine by id
     @Test
-    public void testDPutMedicineSuccess() throws Exception {
-        MedicineDto medicineDto = new MedicineDto();
-        medicineDto.setName("jm");
-        medicineDto.setDescription("java");
-        medicineDto.setManufactureName("mentor");
-        medicineDto.setId(1L);
-        HttpHeaders headers = new HttpHeaders();
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    public void shouldBeUpdateMedicineById() throws Exception {
         HttpEntity<MedicineDto> entity = new HttpEntity<>(medicineDto, headers);
         ResponseEntity<MedicineDto> response =  testRestTemplate
                 .exchange(URI + "/{id}", HttpMethod.PUT, entity, MedicineDto.class, 1);
+        Medicine updateMedicine = medicineDao.getByKey(1L);
+        Assert.assertEquals(medicine, updateMedicine);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //upload icon for medicine by id
     @Test
-    public void testESetMedicineIconSuccess() throws Exception {
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    public void shouldBeUpdateMedicineIcon() throws Exception {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("file", new org.springframework.core.io.ClassPathResource("test.png"));
         HttpHeaders headers = new HttpHeaders();
@@ -92,7 +103,9 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get icon for medicine by id
     @Test
-    public void testFGetMedicineIconSuccess() throws Exception {
+    @DataSet(value = "/datasets/medicine.yml")
+    public void shouldBeGetMedicineIconById() throws Exception {
+        shouldBeUpdateMedicineIcon();
         ResponseEntity<byte[]> response = testRestTemplate
                 .getForEntity(URI + "/{id}/set-pic", byte[].class, 1);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -100,22 +113,27 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //delete medicine by id
     @Test
-    public void testGDeleteMedicineSuccess() throws Exception {
-        HttpHeaders headers = new HttpHeaders();
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    public void shouldBeDeleteMedicine() throws Exception {
+        List<Medicine> medicineListBefore = medicineDao.getAll();
+        int countRow = medicineListBefore.size();
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         ResponseEntity<Void> response =  testRestTemplate
-                .exchange(URI + "/{id}", HttpMethod.DELETE, entity, Void.class, 2);
+                .exchange(URI + "/{id}", HttpMethod.DELETE, entity, Void.class, 1);
+        List<Medicine> medicineListAfter = medicineDao.getAll();
+        int resultRow = medicineListAfter.size();
+        Assert.assertEquals(--countRow, resultRow);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //test search medicine
     @Test
-    public void testHSearch() throws Exception {
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    public void shouldBeSearchMedicine() throws Exception {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(URI + "/search")
                 .queryParam("manufactureName")
                 .queryParam("name")
                 .queryParam("searchText", "java");
-        HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = testRestTemplate.exchange(
                 builder.build().encode().toUri(),

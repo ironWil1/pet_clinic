@@ -46,6 +46,12 @@
             <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.database-rider</groupId>
+            <artifactId>rider-spring</artifactId>
+            <version>1.23.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
