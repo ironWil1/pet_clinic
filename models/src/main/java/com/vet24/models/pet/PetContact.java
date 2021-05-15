@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
@@ -36,10 +38,10 @@ public class PetContact {
 
     @NonNull
     @Column(unique = true)
-    private String uniqCode;
+    private String petCode;
 
     @MapsId
-    @OneToOne(mappedBy = "petContact")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "id")
     private Pet pet;
 }

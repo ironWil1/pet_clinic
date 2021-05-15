@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -24,7 +23,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDate;
 
@@ -80,20 +78,11 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    private PetContact petContact;
-
-    protected Pet(String petName, PetContact petContact) {
-        this.petName = petName;
-        this.petContact = petContact;
-    }
-
-    protected Pet(String petName, LocalDate birthDay, Gender gender, String breed, Client client, PetContact petContact) {
+    protected Pet(String petName, LocalDate birthDay, Gender gender, String breed, Client client) {
         this.petName = petName;
         this.birthDay = birthDay;
         this.gender = gender;
         this.breed = breed;
         this.client = client;
-        this.petContact = petContact;
     }
 }

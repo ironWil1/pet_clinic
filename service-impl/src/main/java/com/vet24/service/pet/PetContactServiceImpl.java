@@ -6,15 +6,22 @@ import com.vet24.models.pet.PetContact;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.xml.bind.DatatypeConverter;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.List;
 
 @Service
 public class PetContactServiceImpl extends ReadWriteServiceImpl<Long, PetContact> implements PetContactService {
-
-    static final String SYMBOLS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    static final int LENGTH = 25;
-    static SecureRandom random = new SecureRandom();
 
     private final PetContactDao petContactDao;
 
@@ -34,36 +41,31 @@ public class PetContactServiceImpl extends ReadWriteServiceImpl<Long, PetContact
     }
 
     @Override
-    public String randomUniqueCode(){
-        StringBuilder sb = new StringBuilder(LENGTH);
-        for (int i = 0; i < LENGTH; i++) {
-            sb.append(SYMBOLS.charAt( random.nextInt(SYMBOLS.length())));
+    public String randomPetContactUniqueCode(Long id) {
+
+        try {
+            SecureRandom random = SecureRandom.getInstanceStrong();
+            byte[] rnd = new byte[16];
+            random.nextBytes(rnd);
+            IvParameterSpec ivSpec = new IvParameterSpec(rnd);
+            // Prepare key
+            KeyGenerator keygen = KeyGenerator.getInstance("AES");
+            keygen.init(256);
+            SecretKey secretKey = keygen.generateKey();
+            //Encrypt key
+            String encryptValue = id.toString();
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec);
+            byte[] enc = cipher.doFinal(encryptValue.getBytes());
+            // Decrypt key. Just in case.
+            /*cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
+            String result = new String(cipher.doFinal(enc));
+            System.err.println(result);*/
+            return DatatypeConverter.printHexBinary(enc);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new IllegalStateException("Fail to generate secret key", e);
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new IllegalStateException("Cipher generator init error", e);
         }
-        //проверка по ид
-        /*int countId = getCountId();
-        for (long i = 1L; i < countId; i++) {
-            PetContact pet = petContactDao.getByKey(i);
-            if (pet.getUniqCode().equals(sb.toString())) {
-                for (int j = 0; j < 3; j++) {
-                    sb.deleteCharAt(random.nextInt(20));
-                }
-                for (int k = 0; k < 3; k++) {
-                    sb.append(SYMBOLS.charAt( random.nextInt(SYMBOLS.length())));
-                }
-            }
-        }*/
-        // проверка по уникальному номеру
-        List<String> allUniqueCode = petContactDao.getAllUniqueCode();
-        for(String uniqueCode : allUniqueCode) {
-            if (uniqueCode.equals(sb.toString())) {
-                for (int j = 1; j <= 3; j++) {
-                    sb.deleteCharAt(random.nextInt(20));
-                }
-                for (int k = 1; k <= 3; k++) {
-                    sb.append(SYMBOLS.charAt( random.nextInt(SYMBOLS.length())));
-                }
-            }
-        }
-        return sb.toString();
     }
 }

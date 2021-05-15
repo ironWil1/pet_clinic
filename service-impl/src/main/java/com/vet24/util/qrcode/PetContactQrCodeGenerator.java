@@ -22,7 +22,7 @@ public class PetContactQrCodeGenerator {
             MatrixToImageWriter.writeToStream(bitMatrix, "png", byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
         } catch (Exception e) {
-            return null;
+            throw new IllegalStateException("Fail to encode qr code", e);
         }
     }
 }

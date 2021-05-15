@@ -1,4 +1,4 @@
-package com.vet24.web.controllers.qr_code;
+package com.vet24.web.controllers.qrcode;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vet24.models.dto.contact.PetContactDto;
