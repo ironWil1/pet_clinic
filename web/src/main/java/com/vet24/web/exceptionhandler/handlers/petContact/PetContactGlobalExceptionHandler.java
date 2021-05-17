@@ -10,11 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class PetContactGlobalExceptionHandler {
 
-//     Обработка ошибок:
-//     ResponseEntity - обёртка HTTP response
-//     <PetContactIncorrectData> - Тип объекта, который добавляется в HTTP response body
-//     NoSuchPetContactException - exception, на который должен реагировать данный метод
-
     @ExceptionHandler
     public ResponseEntity<PetContactExceptionDto> handleException(NoSuchPetContactIdException exception) {
         PetContactExceptionDto data = new PetContactExceptionDto();
