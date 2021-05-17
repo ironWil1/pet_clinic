@@ -10,8 +10,8 @@ import java.time.LocalDate;
 public class EchinococcusDto extends AbstractNewProcedureDto {
 
     @JsonCreator
-    public EchinococcusDto(Long id, LocalDate date, Long medicineId,
+    public EchinococcusDto(LocalDate date, Long medicineId,
                            String medicineBatchNumber, Boolean isPeriodical, Integer periodDays) {
-        super(id, date, ProcedureType.ECHINOCOCCUS, medicineId, medicineBatchNumber, isPeriodical, periodDays);
+        super(date, ProcedureType.ECHINOCOCCUS, medicineId, medicineBatchNumber, isPeriodical, periodDays);
     }
 }

@@ -1,15 +1,10 @@
 package com.vet24.models.mappers.pet.procedure;
 
-import com.vet24.models.dto.pet.PetDto;
-import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
-import com.vet24.models.dto.pet.procedure.EchinococcusDto;
-import com.vet24.models.dto.pet.procedure.ExternalParasiteDto;
-import com.vet24.models.dto.pet.procedure.VaccinationDto;
-import com.vet24.models.pet.Pet;
+import com.vet24.models.dto.pet.procedure.*;
 import com.vet24.models.pet.procedure.Procedure;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
 public abstract class ProcedureMapper {
@@ -23,8 +18,27 @@ public abstract class ProcedureMapper {
     @Autowired
     private EchinococcusMapper echinococcusMapper;
 
-    @Mapping(source = "petType", target = "type")
-    public abstract PetDto petToPetDto(Pet pet);
+    public abstract ProcedureDto procedureToProcedureDto(Procedure procedure);
+
+    public Procedure procedureDtoToProcedure(ProcedureDto procedureDto) {
+        Procedure procedure = null;
+        String procedureType = procedureDto.getType().name();
+        switch (procedureType) {
+            case "VACCINATION":
+                procedure = vaccinationMapper.procedureDtoToVaccination(procedureDto);
+                break;
+            case "EXTERNAL_PARASITE":
+                procedure = externalParasiteMapper.procedureDtoToExternalParasite(procedureDto);
+                break;
+            case "ECHINOCOCCUS":
+                procedure = echinococcusMapper.procedureDtoToEchinococcus(procedureDto);
+                break;
+            default:
+                break;
+        }
+
+        return procedure;
+    }
 
     public Procedure abstractNewProcedureDtoToProcedure(AbstractNewProcedureDto procedureDto) {
         Procedure procedure = null;

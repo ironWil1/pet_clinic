@@ -10,8 +10,8 @@ import java.time.LocalDate;
 public class ExternalParasiteDto extends AbstractNewProcedureDto {
 
     @JsonCreator
-    public ExternalParasiteDto(Long id, LocalDate date, Long medicineId,
+    public ExternalParasiteDto(LocalDate date, Long medicineId,
                                String medicineBatchNumber, Boolean isPeriodical, Integer periodDays) {
-        super(id, date, ProcedureType.EXTERNAL_PARASITE, medicineId, medicineBatchNumber, isPeriodical, periodDays);
+        super(date, ProcedureType.EXTERNAL_PARASITE, medicineId, medicineBatchNumber, isPeriodical, periodDays);
     }
 }

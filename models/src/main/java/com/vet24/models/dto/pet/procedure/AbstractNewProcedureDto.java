@@ -19,7 +19,6 @@ import java.time.LocalDate;
         @JsonSubTypes.Type(value = EchinococcusDto.class, name = "ECHINOCOCCUS")
 })
 public abstract class AbstractNewProcedureDto {
-    Long id;
     LocalDate date; //if null or blank set now
     ProcedureType type;
     Long medicineId;
@@ -28,9 +27,8 @@ public abstract class AbstractNewProcedureDto {
     Integer periodDays;
 
     @JsonCreator
-    protected AbstractNewProcedureDto(Long id, LocalDate date, ProcedureType type, Long medicineId,
+    protected AbstractNewProcedureDto(LocalDate date, ProcedureType type, Long medicineId,
                                       String medicineBatchNumber, Boolean isPeriodical, Integer periodDays) {
-        this.id = id;
         this.date = date;
         this.type = type;
         this.medicineId = medicineId;
