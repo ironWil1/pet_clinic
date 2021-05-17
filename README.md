@@ -63,5 +63,4 @@ Quick and easy way to document your APIs.
 [Source code](https://github.com/springdoc/springdoc-openapi-demos/blob/master/springdoc-openapi-spring-boot-2-webmvc/src/main/java/org/springdoc/demo/app2/api/UserApi.java) — check what annotations are used
 
 # Database Diagram
-Based on 15.05 TestDataInitializer entities  
 https://dbdiagram.io/d/609f92fbb29a09603d14f8b8
