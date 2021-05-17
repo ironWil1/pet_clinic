@@ -42,7 +42,7 @@ public class PetContactQrCodeController {
             @ApiResponse(responseCode = "400", description = "Entered PetContact ID not valid")
     })
     @GetMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("id") Long id) throws NumberFormatException {
+    public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("id") Long id) {
         if (petContactService.isExistByKey(id)) {
             PetContact petContact = petContactService.getByKey(id);
             String UrlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
@@ -52,8 +52,10 @@ public class PetContactQrCodeController {
                     "Телефон - " + petContact.getPhone() + ". " +
                     "Чтобы сообщить владельцу о находке перейдите по адресу - " + UrlToAlertPetContact;
             return ResponseEntity.ok(PetContactQrCodeGenerator.generatePetContactQrCodeImage(sb));
-        } else {
+        } else if (!petContactService.isExistByKey(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -68,7 +70,7 @@ public class PetContactQrCodeController {
     })
     @PostMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@RequestBody PetContactDto petContactDto,
-                                                                @PathVariable("id") Long id) throws NumberFormatException {
+                                                                @PathVariable("id") Long id) {
         if (petContactService.isExistByKey(id)) {
             PetContact petContactNew = petContactMapper.petContactDtoToPetContact(petContactDto);
             PetContact petContactOld = petContactService.getByKey(id);
@@ -77,15 +79,17 @@ public class PetContactQrCodeController {
             petContactOld.setPhone(petContactNew.getPhone());
             petContactService.update(petContactOld);
             return new ResponseEntity<>(HttpStatus.CREATED);
-        } else if (!petContactService.isExistByKey(id) || petService.isExistByKey(id)) {
+        } else if (!petContactService.isExistByKey(id) && petService.isExistByKey(id)) {
             Pet pet = petService.getByKey(id);
             PetContact petContact = petContactMapper.petContactDtoToPetContact(petContactDto);
             petContact.setPetCode(petContactService.randomPetContactUniqueCode(id));
             petContact.setPet(pet);
             petContactService.persist(petContact);
             return new ResponseEntity<>(HttpStatus.CREATED);
-        } else {
+        } else if (!petService.isExistByKey(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }
