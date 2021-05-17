@@ -61,11 +61,11 @@ public class ReproductionController {
         if (reproduction == null) {
             throw new NotFoundException("reproduction not found");
         }
-        if (!reproduction.getPet().getId().equals(pet.getId())) {
-            throw new BadRequestException("reproduction not assigned to this pet");
-        }
         if (!pet.getClient().getId().equals(client.getId())) {
             throw new BadRequestException("pet not yours");
+        }
+        if (!reproduction.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException("reproduction not assigned to this pet");
         }
         ReproductionDto reproductionDto = reproductionMapper.reproductionToReproductionDto(reproduction);
 
@@ -129,14 +129,14 @@ public class ReproductionController {
         if (reproduction == null) {
             throw new NotFoundException("reproduction not found");
         }
+        if (!pet.getClient().getId().equals(client.getId())) {
+            throw new BadRequestException("pet not yours");
+        }
         if (!reproduction.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("reproduction not assigned to this pet");
         }
         if (!reproductionId.equals(reproductionDto.getId())) {
             throw new BadRequestException("reproductionId in path and in body not equals");
-        }
-        if (!pet.getClient().getId().equals(client.getId())) {
-            throw new BadRequestException("pet not yours");
         }
         reproduction = reproductionMapper.reproductionDtoToReproduction(reproductionDto);
         reproduction.setPet(pet);
@@ -167,11 +167,11 @@ public class ReproductionController {
         if (reproduction == null) {
             throw new NotFoundException("reproduction not found");
         }
-        if (!reproduction.getPet().getId().equals(pet.getId())) {
-            throw new BadRequestException("reproduction not assigned to this pet");
-        }
         if (!pet.getClient().getId().equals(client.getId())) {
             throw new BadRequestException("pet not yours");
+        }
+        if (!reproduction.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException("reproduction not assigned to this pet");
         }
         pet.removeReproduction(reproduction);
         petService.update(pet);

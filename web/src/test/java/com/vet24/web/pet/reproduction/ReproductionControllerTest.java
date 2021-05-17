@@ -75,10 +75,20 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // get reproduction by id -  error 400 reproduction not assigned to pet
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testGetReproductionError400() {
+    public void testGetReproductionError400refPetReproduction() {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 2, 1);
         Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    // get reproduction by id -  error 400 pet not yours
+    @Test
+    @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
+    public void testGetReproductionError400refClientPet() {
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 3, 3);
+        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
@@ -111,6 +121,21 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    // add reproduction - error 400 pet not yours
+    @Test
+    @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
+    public void testAddReproductionError400() {
+        int beforeCount = reproductionDao.getAll().size();
+        HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .postForEntity(URI + "/{petId}/reproduction", request, ExceptionDto.class, 3);
+        int afterCount = reproductionDao.getAll().size();
+
+        Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // put reproduction by id - success
@@ -161,7 +186,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // put reproduction by id - error 400 reproduction not assigned to pet
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testPutReproductionError400() {
+    public void testPutReproductionError400refPetReproduction() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
         ResponseEntity<ExceptionDto> response = testRestTemplate
@@ -169,6 +194,42 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         int afterCount = reproductionDao.getAll().size();
 
         Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
+        Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    // put reproduction by id - error 400 reproductionId in path and in body not equals
+    @Test
+    @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
+    public void testPutReproductionError400idInPathAndBody() {
+        ReproductionDto newDto = reproductionMapper.reproductionToReproductionDto(reproduction);
+        newDto.setId(3L);
+
+        int beforeCount = reproductionDao.getAll().size();
+        HttpEntity<ReproductionDto> request = new HttpEntity<>(newDto, HEADERS);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 1, 2);
+        int afterCount = reproductionDao.getAll().size();
+
+        Assert.assertEquals(response.getBody(), new ExceptionDto("reproductionId in path and in body not equals"));
+        Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    // put reproduction by id - error 400 pet not yours
+    @Test
+    @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
+    public void testPutReproductionError400refClientPet() {
+        ReproductionDto newDto = reproductionMapper.reproductionToReproductionDto(reproduction);
+        newDto.setId(3L);
+
+        int beforeCount = reproductionDao.getAll().size();
+        HttpEntity<ReproductionDto> request = new HttpEntity<>(newDto, HEADERS);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 3, 3);
+        int afterCount = reproductionDao.getAll().size();
+
+        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -221,10 +282,10 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    // delete reproduction by id - reproduction not assigned to pet
+    // delete reproduction by id - error reproduction not assigned to pet
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
-    public void testDeleteReproductionError400() {
+    public void testDeleteReproductionError400refPetReproduction() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
         ResponseEntity<ExceptionDto> response = testRestTemplate
@@ -235,6 +296,23 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         Assert.assertNotNull(afterReproduction);
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    // delete reproduction by id - error pet not yours
+    @Test
+    @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
+    public void testDeleteReproductionError400refClientPet() {
+        int beforeCount = reproductionDao.getAll().size();
+        HttpEntity<Void> request = new HttpEntity<>(HEADERS);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, ExceptionDto.class, 3, 3);
+        int afterCount = reproductionDao.getAll().size();
+        Reproduction afterReproduction = reproductionDao.getByKey(3L);
+
+        Assert.assertNotNull(afterReproduction);
+        Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
