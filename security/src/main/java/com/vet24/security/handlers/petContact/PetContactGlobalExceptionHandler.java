@@ -13,7 +13,7 @@ public class PetContactGlobalExceptionHandler {
 //     Обработка ошибок:
 //     ResponseEntity - обёртка HTTP response
 //     <PetContactIncorrectData> - Тип объекта, который добавляется в HTTP response body
-//     NoSuchUserException - exception, на который должен реагировать данный метод
+//     NoSuchPetContactException - exception, на который должен реагировать данный метод
 
     @ExceptionHandler
     public ResponseEntity<PetContactIncorrectData> handleException(NoSuchPetContactIdException exception) {
