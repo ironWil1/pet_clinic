@@ -4,8 +4,6 @@ import com.vet24.models.dto.contact.PetContactDto;
 import com.vet24.models.mappers.PetContactMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
-import com.vet24.web.exceptionhandler.exceptions.petContact.NoSuchPetContactIdException;
-import com.vet24.web.exceptionhandler.exceptions.petContact.NoSuchPetForPetContactException;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import com.vet24.util.qrcode.PetContactQrCodeGenerator;
@@ -44,8 +42,7 @@ public class PetContactQrCodeController {
             @ApiResponse(responseCode = "400", description = "Entered PetContact ID not valid")
     })
     @GetMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("id") Long id)
-            throws NoSuchPetContactIdException, NumberFormatException {
+    public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("id") Long id) throws NumberFormatException {
         if (petContactService.isExistByKey(id)) {
             PetContact petContact = petContactService.getByKey(id);
             String UrlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
@@ -56,7 +53,7 @@ public class PetContactQrCodeController {
                     "Чтобы сообщить владельцу о находке перейдите по адресу - " + UrlToAlertPetContact;
             return ResponseEntity.ok(PetContactQrCodeGenerator.generatePetContactQrCodeImage(sb));
         } else {
-            throw new NoSuchPetContactIdException("Контакт с ID = " + id + " не найден");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -71,8 +68,7 @@ public class PetContactQrCodeController {
     })
     @PostMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@RequestBody PetContactDto petContactDto,
-                                                                @PathVariable("id") Long id)
-            throws NoSuchPetForPetContactException, NumberFormatException {
+                                                                @PathVariable("id") Long id) throws NumberFormatException {
         if (petContactService.isExistByKey(id)) {
             PetContact petContactNew = petContactMapper.petContactDtoToPetContact(petContactDto);
             PetContact petContactOld = petContactService.getByKey(id);
@@ -89,7 +85,7 @@ public class PetContactQrCodeController {
             petContactService.persist(petContact);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
-            throw new NoSuchPetForPetContactException("Предварительно заведите карточку питомца для " + petContactDto.getOwnerName());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
