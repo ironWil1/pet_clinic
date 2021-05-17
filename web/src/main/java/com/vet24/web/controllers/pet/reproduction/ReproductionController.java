@@ -1,6 +1,8 @@
 package com.vet24.web.controllers.pet.reproduction;
 
+import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.reproduction.ReproductionDto;
+import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.reproduction.ReproductionMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.reproduction.Reproduction;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
 
 @RestController
 @RequestMapping("/api/client/pet/{petId}/reproduction")
@@ -39,32 +42,45 @@ public class ReproductionController {
 
     @Operation(summary = "get reproduction by id")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "ok", content = @Content(schema = @Schema(implementation = ReproductionDto.class))),
-            @ApiResponse(responseCode = "400", description = "reproduction not assigned to this pet or pet not yours"),
-            @ApiResponse(responseCode = "404", description = "reproduction or pet with this id not found"),
+            @ApiResponse(responseCode = "200", description = "ok",
+                    content = @Content(schema = @Schema(implementation = ReproductionDto.class))),
+            @ApiResponse(responseCode = "400", description = "reproduction not assigned to this pet or pet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "404", description = "reproduction or pet with this id not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @GetMapping("/{reproductionId}")
     public ResponseEntity<ReproductionDto> getById(@PathVariable Long petId, @PathVariable Long reproductionId) {
-        Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
         Client client = clientService.getCurrentClient();
+        Pet pet = petService.getByKey(petId);
 
-        if (pet == null || reproduction == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else if (!reproduction.getPet().getId().equals(pet.getId()) || !pet.getClient().getId().equals(client.getId())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            ReproductionDto reproductionDto = reproductionMapper.reproductionToReproductionDto(reproduction);
-            return new ResponseEntity<>(reproductionDto, HttpStatus.OK);
+        if (pet == null) {
+            throw new NotFoundException("pet not found");
         }
+        if (reproduction == null) {
+            throw new NotFoundException("reproduction not found");
+        }
+        if (!reproduction.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException("reproduction not assigned to this pet");
+        }
+        if (!pet.getClient().getId().equals(client.getId())) {
+            throw new BadRequestException("pet not yours");
+        }
+        ReproductionDto reproductionDto = reproductionMapper.reproductionToReproductionDto(reproduction);
+
+        return new ResponseEntity<>(reproductionDto, HttpStatus.OK);
     }
 
 
     @Operation(summary = "add new reproduction")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "reproduction successful created"),
-            @ApiResponse(responseCode = "404", description = "pet with this id not found"),
-            @ApiResponse(responseCode = "400", description = "pet not yours"),
+            @ApiResponse(responseCode = "201", description = "reproduction successful created",
+                    content = @Content(schema = @Schema(implementation = ReproductionDto.class))),
+            @ApiResponse(responseCode = "404", description = "pet with this id not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "pet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @PostMapping("")
     public ResponseEntity<ReproductionDto> save(@PathVariable Long petId,
@@ -74,10 +90,12 @@ public class ReproductionController {
         Client client = clientService.getCurrentClient();
 
         if (pet == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else if (!pet.getClient().getId().equals(client.getId())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new NotFoundException("pet not found");
         }
+        if (!pet.getClient().getId().equals(client.getId())) {
+            throw new BadRequestException("pet not yours");
+        }
+
         reproduction.setId(null);
         reproductionService.persist(reproduction);
 
@@ -90,11 +108,13 @@ public class ReproductionController {
 
     @Operation(summary = "update reproduction by id")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "reproduction successful updated"),
-            @ApiResponse(responseCode = "404", description = "reproduction or pet with this id not found"),
+            @ApiResponse(responseCode = "200", description = "reproduction successful updated",
+                    content = @Content(schema = @Schema(implementation = ReproductionDto.class))),
+            @ApiResponse(responseCode = "404", description = "reproduction or pet with this id not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "reproduction not assigned to this pet OR \n" +
-                    "reproductionId in path and in body not equals OR \n" +
-                    "pet not yours"),
+                    "reproductionId in path and in body not equals OR \npet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @PutMapping("/{reproductionId}")
     public ResponseEntity<ReproductionDto> update(@PathVariable Long petId, @PathVariable Long reproductionId,
@@ -103,27 +123,37 @@ public class ReproductionController {
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
         Client client = clientService.getCurrentClient();
 
-        if (pet == null || reproduction == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else if (!reproduction.getPet().getId().equals(pet.getId()) ||
-                !reproductionId.equals(reproductionDto.getId()) ||
-                !pet.getClient().getId().equals(client.getId())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            reproduction = reproductionMapper.reproductionDtoToReproduction(reproductionDto);
-            reproduction.setPet(pet);
-            reproductionService.update(reproduction);
-
-            return new ResponseEntity<>(reproductionMapper.reproductionToReproductionDto(reproduction), HttpStatus.OK);
+        if (pet == null) {
+            throw new NotFoundException("pet not found");
         }
+        if (reproduction == null) {
+            throw new NotFoundException("reproduction not found");
+        }
+        if (!reproduction.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException("reproduction not assigned to this pet");
+        }
+        if (!reproductionId.equals(reproductionDto.getId())) {
+            throw new BadRequestException("reproductionId in path and in body not equals");
+        }
+        if (!pet.getClient().getId().equals(client.getId())) {
+            throw new BadRequestException("pet not yours");
+        }
+        reproduction = reproductionMapper.reproductionDtoToReproduction(reproductionDto);
+        reproduction.setPet(pet);
+        reproductionService.update(reproduction);
+
+        return new ResponseEntity<>(reproductionMapper.reproductionToReproductionDto(reproduction), HttpStatus.OK);
+
     }
 
 
     @Operation(summary = "delete reproduction by id")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "reproduction successful deleted"),
-            @ApiResponse(responseCode = "404", description = "reproduction or pet with this id not found"),
-            @ApiResponse(responseCode = "400", description = "reproduction not assigned to this pet OR pet not yours"),
+            @ApiResponse(responseCode = "404", description = "reproduction or pet with this id not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "reproduction not assigned to this pet OR pet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @DeleteMapping(value = "/{reproductionId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long petId, @PathVariable Long reproductionId) {
@@ -131,15 +161,21 @@ public class ReproductionController {
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
         Client client = clientService.getCurrentClient();
 
-        if (pet == null || reproduction == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else if (!reproduction.getPet().getId().equals(pet.getId()) ||
-                !pet.getClient().getId().equals(client.getId())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            pet.removeReproduction(reproduction);
-            petService.update(pet);
-            return new ResponseEntity<>(HttpStatus.OK);
+        if (pet == null) {
+            throw new NotFoundException("pet not found");
         }
+        if (reproduction == null) {
+            throw new NotFoundException("reproduction not found");
+        }
+        if (!reproduction.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException("reproduction not assigned to this pet");
+        }
+        if (!pet.getClient().getId().equals(client.getId())) {
+            throw new BadRequestException("pet not yours");
+        }
+        pet.removeReproduction(reproduction);
+        petService.update(pet);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

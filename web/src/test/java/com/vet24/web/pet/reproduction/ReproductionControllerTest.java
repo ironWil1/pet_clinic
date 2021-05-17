@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.vet24.dao.pet.PetDao;
 import com.vet24.dao.pet.reproduction.ReproductionDao;
+import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.reproduction.ReproductionDto;
 import com.vet24.models.mappers.pet.reproduction.ReproductionMapper;
 import com.vet24.models.pet.reproduction.Reproduction;
@@ -55,8 +56,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
     public void testGetReproductionError404reproduction() {
-        ResponseEntity<ReproductionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/reproduction/{id}", ReproductionDto.class, 1, 11);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 1, 11);
+        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -64,8 +66,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
     public void testGetReproductionError404pet() {
-        ResponseEntity<ReproductionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/reproduction/{id}", ReproductionDto.class, 11, 1);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 11, 1);
+        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -73,8 +76,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true)
     public void testGetReproductionError400() {
-        ResponseEntity<ReproductionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/reproduction/{id}", ReproductionDto.class, 2, 1);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 2, 1);
+        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
@@ -100,11 +104,12 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testAddReproductionError404() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
-        ResponseEntity<ReproductionDto> response = testRestTemplate
-                .postForEntity(URI + "/{petId}/reproduction", request, ReproductionDto.class, 11);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .postForEntity(URI + "/{petId}/reproduction", request, ExceptionDto.class, 11);
         int afterCount = reproductionDao.getAll().size();
 
         Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -129,11 +134,11 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testPutReproductionError404reproduction() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
-        ResponseEntity<ReproductionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ReproductionDto.class, 11, 2);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 11, 2);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertNull(response.getBody());
+        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -144,11 +149,11 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testPutReproductionError404pet() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
-        ResponseEntity<ReproductionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ReproductionDto.class, 1, 22);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 1, 22);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertNull(response.getBody());
+        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -159,11 +164,11 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testPutReproductionError400() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
-        ResponseEntity<ReproductionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ReproductionDto.class, 2, 1);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 2, 1);
         int afterCount = reproductionDao.getAll().size();
 
-        Assert.assertNull(response.getBody());
+        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -190,13 +195,14 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testDeleteReproductionError404reproduction() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<Void> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, Void.class, 11, 2);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, ExceptionDto.class, 11, 2);
         int afterCount = reproductionDao.getAll().size();
         Reproduction afterReproduction = reproductionDao.getByKey(2L);
 
         Assert.assertNotNull(afterReproduction);
         Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -206,11 +212,12 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testDeleteReproductionError404pet() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<Void> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, Void.class, 1, 22);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, ExceptionDto.class, 1, 22);
         int afterCount = reproductionDao.getAll().size();
 
         Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -220,13 +227,14 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testDeleteReproductionError400() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<Void> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, Void.class, 2, 1);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, ExceptionDto.class, 2, 1);
         int afterCount = reproductionDao.getAll().size();
         Reproduction afterReproduction = reproductionDao.getByKey(1L);
 
         Assert.assertNotNull(afterReproduction);
         Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
