@@ -81,7 +81,7 @@ public class PetContactQrCodeController {
             petContactOld.setPhone(petContactNew.getPhone());
             petContactService.update(petContactOld);
             return new ResponseEntity<>(HttpStatus.CREATED);
-        } else if (petService.isExistByKey(id)) {
+        } else if (!petContactService.isExistByKey(id) || petService.isExistByKey(id)) {
             Pet pet = petService.getByKey(id);
             PetContact petContact = petContactMapper.petContactDtoToPetContact(petContactDto);
             petContact.setPetCode(petContactService.randomPetContactUniqueCode(id));
