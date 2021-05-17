@@ -81,7 +81,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     // add reproduction - success
     @Test
     @DataSet(value = "/datasets/reproduction.yml", cleanBefore = true, disableConstraints = true,
-            executeStatementsBefore = "ALTER SEQUENCE reproduction_id_seq RESTART WITH 3;")
+            executeStatementsBefore = "ALTER SEQUENCE reproduction_id_seq RESTART WITH 4;")
     public void testAddReproductionSuccess() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto, HEADERS);
