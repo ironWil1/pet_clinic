@@ -4,8 +4,8 @@ import com.vet24.models.dto.contact.PetContactDto;
 import com.vet24.models.mappers.PetContactMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
-import com.vet24.security.exceptions.petContact.NoSuchPetContactIdException;
-import com.vet24.security.exceptions.petContact.NoSuchPetForPetContactException;
+import com.vet24.web.exceptionhandler.exceptions.petContact.NoSuchPetContactIdException;
+import com.vet24.web.exceptionhandler.exceptions.petContact.NoSuchPetForPetContactException;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import com.vet24.util.qrcode.PetContactQrCodeGenerator;
@@ -46,7 +46,7 @@ public class PetContactQrCodeController {
     @GetMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("id") Long id)
             throws NoSuchPetContactIdException, NumberFormatException {
-        try {
+        if (petContactService.isExistByKey(id)) {
             PetContact petContact = petContactService.getByKey(id);
             String UrlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
             String sb = "Имя питомца - " + petContact.getPet().getPetName() + ", " +
@@ -55,7 +55,7 @@ public class PetContactQrCodeController {
                     "Телефон - " + petContact.getPhone() + ". " +
                     "Чтобы сообщить владельцу о находке перейдите по адресу - " + UrlToAlertPetContact;
             return ResponseEntity.ok(PetContactQrCodeGenerator.generatePetContactQrCodeImage(sb));
-        } catch (RuntimeException e) {
+        } else {
             throw new NoSuchPetContactIdException("Контакт с ID = " + id + " не найден");
         }
     }
@@ -81,19 +81,15 @@ public class PetContactQrCodeController {
             petContactOld.setPhone(petContactNew.getPhone());
             petContactService.update(petContactOld);
             return new ResponseEntity<>(HttpStatus.CREATED);
+        } else if (petService.isExistByKey(id)) {
+            Pet pet = petService.getByKey(id);
+            PetContact petContact = petContactMapper.petContactDtoToPetContact(petContactDto);
+            petContact.setPetCode(petContactService.randomPetContactUniqueCode(id));
+            petContact.setPet(pet);
+            petContactService.persist(petContact);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
-            // Создаёт PetContact только при условии что Pet уже создан либо операции выполняются транзакционально.
-            // Без Pet падает с ошибкой "attempted to assign id from null one-to-one property" из-за @OneToOne с @MapsId.
-            try {
-                Pet pet = petService.getByKey(id);
-                PetContact petContact = petContactMapper.petContactDtoToPetContact(petContactDto);
-                petContact.setPetCode(petContactService.randomPetContactUniqueCode(id));
-                petContact.setPet(pet);
-                petContactService.persist(petContact);
-                return new ResponseEntity<>(HttpStatus.CREATED);
-            } catch (RuntimeException e) {
-                throw new NoSuchPetForPetContactException("Предварительно заведите карточку питомца для " + petContactDto.getOwnerName());
-            }
+            throw new NoSuchPetForPetContactException("Предварительно заведите карточку питомца для " + petContactDto.getOwnerName());
         }
     }
 }

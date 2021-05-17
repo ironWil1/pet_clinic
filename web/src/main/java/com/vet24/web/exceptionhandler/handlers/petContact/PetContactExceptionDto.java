@@ -1,11 +1,11 @@
-package com.vet24.security.handlers.petContact;
+package com.vet24.web.exceptionhandler.handlers.petContact;
 
 //Класс, который вовзращает info, если было некорректное обращение к URL
-public class PetContactIncorrectData {
+public class PetContactExceptionDto {
 
     private String info;
 
-    public PetContactIncorrectData() {
+    public PetContactExceptionDto() {
     }
 
     public String getInfo() {

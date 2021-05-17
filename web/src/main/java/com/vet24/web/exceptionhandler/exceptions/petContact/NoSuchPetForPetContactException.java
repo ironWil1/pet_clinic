@@ -1,4 +1,4 @@
-package com.vet24.security.exceptions.petContact;
+package com.vet24.web.exceptionhandler.exceptions.petContact;
 
 public class NoSuchPetForPetContactException extends RuntimeException {
 
