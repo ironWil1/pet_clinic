@@ -1,11 +1,21 @@
 package com.vet24.service.notification;
 
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventAttendee;
+import com.google.api.services.calendar.model.EventDateTime;
+import com.google.api.services.calendar.model.EventReminder;
+
 import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.notification.NotificationDao;
 import com.vet24.models.notification.Notification;
 import com.vet24.service.ReadWriteServiceImpl;
 
+import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.util.Arrays;
 
 @Service
 public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notification> implements NotificationService {
@@ -16,4 +26,39 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
         super(readWriteDao);
         this.notificationDao = notificationDao;
     }
+
+    @Override
+    public Event createEvent(Notification notification) {
+        Event event = new Event()
+                .setSummary(String.valueOf(notification.getSummary()))
+                .setLocation("Moscow, Moskvorechie str 2")
+                .setDescription(notification.getDescription());
+
+        DateTime startDateTime = new DateTime(notification.getStartDate());
+        EventDateTime start = new EventDateTime()
+                .setDateTime(startDateTime)
+                .setTimeZone("Europe/Moscow");
+        event.setStart(start);
+
+        DateTime endDateTime = new DateTime(notification.getEndDate());
+        EventDateTime end = new EventDateTime()
+                .setDateTime(endDateTime)
+                .setTimeZone("Europe/Moscow");
+        event.setEnd(end);
+        EventReminder[] reminderOverrides = new EventReminder[] {
+                new EventReminder().setMethod("email").setMinutes(30),
+        };
+        Event.Reminders reminders = new Event.Reminders()
+                .setUseDefault(false)
+                .setOverrides(Arrays.asList(reminderOverrides));
+        event.setReminders(reminders);
+
+        EventAttendee[] attendees = new EventAttendee[] {
+                new EventAttendee().setEmail(notification.getUser().getLogin()),
+        };
+        event.setAttendees(Arrays.asList(attendees));
+        return event;
+    }
+
+
 }

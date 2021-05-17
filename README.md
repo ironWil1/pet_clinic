@@ -61,3 +61,9 @@ Quick and easy way to document your APIs.
 [Live demo](http://158.101.164.60:8081/) — see how it works
 
 [Source code](https://github.com/springdoc/springdoc-openapi-demos/blob/master/springdoc-openapi-spring-boot-2-webmvc/src/main/java/org/springdoc/demo/app2/api/UserApi.java) — check what annotations are used
+
+
+# Google API Guide
+Go to http://localhost:8080/notification in browser to redirect to google auth
+
+Create notification in swagger /notification/create to post event in Calendar

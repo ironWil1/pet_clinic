@@ -56,7 +56,7 @@ public class TestDataInitializer implements ApplicationRunner {
                 "123456", roleService.getByKey(1L)));
         userService.persist(new User("Petr", "Petrov", "Petr",
                 "123456", roleService.getByKey(2L)));
-        clientService.persist(new Client("John", "Smith", "clientLogin",
+        clientService.persist(new Client("Petclinic", "Smith", "petclinic.vet24@gmail.com",
                 "123456", roleService.getByKey(3L), new HashSet<>()));
     }
 

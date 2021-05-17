@@ -9,19 +9,20 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventAttendee;
-import com.google.api.services.calendar.model.EventDateTime;
-import com.google.api.services.calendar.model.EventReminder;
 
+import com.vet24.models.dto.notification.NotificationDto;
+import com.vet24.models.mappers.notification.NotificationMapper;
 import com.vet24.models.notification.Notification;
+import com.vet24.models.user.User;
 import com.vet24.service.notification.NotificationService;
+import com.vet24.service.user.UserService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,18 +37,30 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 @RestController
 public class NotificationController {
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
+    private final NotificationMapper notificationMapper;
+    private final UserService userService;
+
+    public NotificationController(NotificationService notificationService, NotificationMapper notificationMapper, UserService userService) {
+        this.notificationMapper = notificationMapper;
+        this.notificationService = notificationService;
+        this.userService = userService;
+    }
 
     private static HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     private static JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_EVENTS);
 
     //must be email of authorize user
-    private String USER = "Petclinic";
+    private String USER = "petclinic.vet24@gmail.com";
+    String calendarId = "primary";
 
     private String CALLBACK_URI = "http://localhost:8080/oauth";
     private String gdSecretKeys = "/credentials.json";
@@ -62,7 +74,9 @@ public class NotificationController {
         flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, secrets, SCOPES)
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(credentialsFolder))).build();
     }
+
     //redirect for google
+    @Operation(summary = "redirect for google authorization window")
     @GetMapping(value = {"/notification"})
     public void doGoogleSignIn(HttpServletResponse response) throws IOException {
 
@@ -70,7 +84,9 @@ public class NotificationController {
         String redirectURL = url.setRedirectUri(CALLBACK_URI).setAccessType("offline").build();
         response.sendRedirect(redirectURL);
     }
+
     //redirect back to server with accesstoken
+    @Operation(summary = "receive and save auth token")
     @GetMapping(value = {"/oauth"})
     public void saveAuthorizationCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String code = request.getParameter("code");
@@ -79,53 +95,42 @@ public class NotificationController {
         }
         response.sendRedirect("/");
     }
+
     //save token
     private void saveToken(String code) throws IOException {
         GoogleTokenResponse response = flow.newTokenRequest(code).setRedirectUri(CALLBACK_URI).execute();
         flow.createAndStoreCredential(response, USER);
     }
+
     //create event
-    @PostMapping(value = {"/create"})
-    private void createEvent(@RequestBody Notification notification) throws  Exception {
-        Credential credential = flow.loadCredential(USER);
-        Calendar calendar = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName("Petclinic").build();
-        notification.setId(null);
-        notificationService.persist(notification);
-        Event event = new Event()
-                .setSummary(String.valueOf(notification.getSummary()))
-                .setLocation("Moscow, Moskvorechie str 2")
-                .setDescription(notification.getDescription());
+    @Operation(summary = "create event on clients google calendar")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully created"),
+            @ApiResponse(responseCode = "400", description = "Dont have access for this users"),
+    })
+    @PostMapping(value = {"/notification/create"})
+    private ResponseEntity<NotificationDto> createEvent(@RequestBody NotificationDto notificationDto) throws  Exception {
+        List<User> listUser = notificationDto.getListUser();
+        int count = 0;
+        for (int i = 0; i < listUser.size(); i++) {
+            Credential credential = flow.loadCredential(listUser.get(i).getLogin());
+            if (credential == null) {
+                continue;
+            }
+            Calendar calendar = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                    .setApplicationName("Petclinic").build();
+            Notification notification = notificationMapper.notificationDtoToNotification(notificationDto);
+            notification.setUser(listUser.get(i));
+            notificationService.persist(notification);
+            Event event = notificationService.createEvent(notification);
+            calendar.events().insert(calendarId, event).setSendNotifications(true).execute();
+            count++;
+        }
+        if (count >= 1) {
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-        DateTime startDateTime = new DateTime(notification.getStartDate());
-        EventDateTime start = new EventDateTime()
-                .setDateTime(startDateTime)
-                .setTimeZone("Europe/Moscow");
-        event.setStart(start);
-
-        DateTime endDateTime = new DateTime(notification.getEndDate());
-        EventDateTime end = new EventDateTime()
-                .setDateTime(endDateTime)
-                .setTimeZone("Europe/Moscow");
-        event.setEnd(end);
-        EventReminder[] reminderOverrides = new EventReminder[] {
-                new EventReminder().setMethod("email").setMinutes(30),
-        };
-        Event.Reminders reminders = new Event.Reminders()
-                .setUseDefault(false)
-                .setOverrides(Arrays.asList(reminderOverrides));
-        event.setReminders(reminders);
-
-        EventAttendee[] attendees = new EventAttendee[] {
-                new EventAttendee().setEmail(notification.getEmail()),
-        };
-        event.setAttendees(Arrays.asList(attendees));
-
-
-        String calendarId = "primary";
-        event = calendar.events().insert(calendarId, event).setSendNotifications(true).execute();
-        System.out.printf("Event created: %s\n", event.getHtmlLink());
     }
-
-
-
 }
