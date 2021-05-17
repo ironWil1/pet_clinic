@@ -3,6 +3,7 @@ package com.vet24.models.pet;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,6 +11,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -60,6 +63,13 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "pet_procedure",
+            joinColumns = @JoinColumn(name = "pet_id"),
+            inverseJoinColumns = @JoinColumn(name = "procedure_id")
+    )
+    private Set<Procedure> procedures = new HashSet<>();
+
     protected Pet() {
     }
 
@@ -69,5 +79,14 @@ public abstract class Pet {
         this.gender = gender;
         this.breed = breed;
         this.client = client;
+    }
+
+    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client, Set<Procedure> procedures) {
+        this.name = name;
+        this.birthDay = birthDay;
+        this.gender = gender;
+        this.breed = breed;
+        this.client = client;
+        this.procedures = procedures;
     }
 }
