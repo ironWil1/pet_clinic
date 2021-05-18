@@ -83,7 +83,7 @@ public class ProcedureController {
             @ApiResponse(responseCode = "400", description = "pet not yours",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<ProcedureDto> save(@PathVariable Long petId,
                                              @RequestBody AbstractNewProcedureDto newProcedureDto) {
         Client client = clientService.getCurrentClient();
