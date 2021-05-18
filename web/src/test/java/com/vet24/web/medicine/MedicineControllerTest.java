@@ -50,11 +50,11 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get medicine by id
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "TRUNCATE medicine RESTART IDENTITY CASCADE;")
+    @DataSet(value = {"/datasets/medicine.yml"})
     public void shouldBeGetMedicineById() throws Exception {
-        Medicine medicine = medicineDao.getByKey(2L);
+        Medicine medicine = medicineDao.getByKey(100L);
         ResponseEntity<MedicineDto> response = testRestTemplate
-                .getForEntity(URI + "/{id}", MedicineDto.class, 2);
+                .getForEntity(URI + "/{id}", MedicineDto.class, 100);
 
         assertThat(medicine).isNotNull();
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -62,12 +62,13 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //add medicine
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = {
-            "TRUNCATE medicine RESTART IDENTITY CASCADE;", "ALTER SEQUENCE medicine_id_seq RESTART WITH 3"
-    })
+    @DataSet(value = {"/datasets/medicine.yml"})
     public void shouldBeAddMedicine() throws URISyntaxException {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
+        Medicine medicine = new Medicine("tetetete", "etetete", "ttrtrt", "ttrrtr");
+        medicine.setId(3L);
+        MedicineDto medicineDto = medicineMapper.medicineToMedicineDto(medicine);
         HttpEntity<MedicineDto> request = new HttpEntity<>(medicineDto, headers);
         ResponseEntity<MedicineDto> response = testRestTemplate
                 .postForEntity(URI, request, MedicineDto.class);
@@ -79,19 +80,21 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //put medicine by id
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "TRUNCATE medicine RESTART IDENTITY CASCADE;")
+    @DataSet(value = {"/datasets/medicine.yml"})
     public void shouldBeUpdateMedicineById() throws Exception {
+        medicineDto.setId(101L);
         HttpEntity<MedicineDto> entity = new HttpEntity<>(medicineDto, headers);
         ResponseEntity<MedicineDto> response =  testRestTemplate
-                .exchange(URI + "/{id}", HttpMethod.PUT, entity, MedicineDto.class, 1);
-        Medicine updateMedicine = medicineDao.getByKey(1L);
+                .exchange(URI + "/{id}", HttpMethod.PUT, entity, MedicineDto.class, 101);
+        Medicine updateMedicine = medicineDao.getByKey(101L);
+        medicine.setId(101L);
         Assert.assertEquals(medicine, updateMedicine);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //upload icon for medicine by id
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "TRUNCATE medicine RESTART IDENTITY CASCADE;")
+    @DataSet(value = {"/datasets/medicine.yml"})
     public void shouldBeUpdateMedicineIcon() throws Exception {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("file", new org.springframework.core.io.ClassPathResource("test.png"));
@@ -99,29 +102,29 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
         ResponseEntity<String> response = testRestTemplate
-                .exchange(URI + "/{id}/set-pic", HttpMethod.POST, entity, String.class, 1);
+                .exchange(URI + "/{id}/set-pic", HttpMethod.POST, entity, String.class, 100);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //get icon for medicine by id
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "TRUNCATE medicine RESTART IDENTITY CASCADE;")
+    @DataSet(value = {"/datasets/medicine.yml"})
     public void shouldBeGetMedicineIconById() throws Exception {
         shouldBeUpdateMedicineIcon();
         ResponseEntity<byte[]> response = testRestTemplate
-                .getForEntity(URI + "/{id}/set-pic", byte[].class, 1);
+                .getForEntity(URI + "/{id}/set-pic", byte[].class, 100);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //delete medicine by id
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "TRUNCATE medicine RESTART IDENTITY CASCADE;")
+    @DataSet(value = {"/datasets/medicine.yml"})
     public void shouldBeDeleteMedicine() throws Exception {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         ResponseEntity<Void> response =  testRestTemplate
-                .exchange(URI + "/{id}", HttpMethod.DELETE, entity, Void.class, 1);
+                .exchange(URI + "/{id}", HttpMethod.DELETE, entity, Void.class, 100);
         List<Medicine> medicineListAfter = medicineDao.getAll();
         int resultRow = medicineListAfter.size();
         Assert.assertEquals(--countRow, resultRow);
@@ -130,7 +133,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //test search medicine
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "TRUNCATE medicine RESTART IDENTITY CASCADE;")
+    @DataSet(value = {"/datasets/medicine.yml"}, cleanBefore = true)
     public void shouldBeSearchMedicine() throws Exception {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(URI + "/search")
                 .queryParam("manufactureName")
