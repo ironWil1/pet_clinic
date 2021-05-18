@@ -1,0 +1,33 @@
+USER_ENTITIES:
+  - ID: 1
+    USER_TYPE: "ADMIN"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Admin"
+    LASTNAME: "Admin"
+    LOGIN: "admin"
+    PASSWORD: "admin"
+  - ID: 2
+    USER_TYPE: "MANAGER"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Manager"
+    LASTNAME: "Manager"
+    LOGIN: "manager"
+    PASSWORD: "manager"
+  - ID: 3
+    USER_TYPE: "CLIENT"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Ivan"
+    LASTNAME: "Ivanov"
+    LOGIN: "user3"
+    PASSWORD: "user3"
+  - ID: 4
+    USER_TYPE: "CLIENT"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Petr"
+    LASTNAME: "Petrov"
+    LOGIN: "user4"
+    PASSWORD: "user4"
