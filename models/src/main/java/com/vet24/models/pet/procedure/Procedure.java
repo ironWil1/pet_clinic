@@ -48,8 +48,8 @@ public abstract class Procedure implements Serializable {
     @JoinColumn(name = "medicine_id")
     private Medicine medicine;
 
-    @ManyToMany(mappedBy = "procedures")
-    private Set<Pet> pets = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Pet pet;
 
     protected Procedure(LocalDate date, ProcedureType type, String medicineBatchNumber,
                      Boolean isPeriodical, Integer periodDays, Medicine medicine) {
@@ -62,13 +62,8 @@ public abstract class Procedure implements Serializable {
     }
 
     protected Procedure(LocalDate date, ProcedureType type, String medicineBatchNumber,
-                        Boolean isPeriodical, Integer periodDays, Medicine medicine, Set<Pet> pets) {
-        this.date = date;
-        this.type = type;
-        this.medicineBatchNumber = medicineBatchNumber;
-        this.isPeriodical = isPeriodical;
-        this.periodDays = periodDays;
-        this.medicine = medicine;
-        this.pets = pets;
+                        Boolean isPeriodical, Integer periodDays, Medicine medicine, Pet pet) {
+        this(date, type, medicineBatchNumber, isPeriodical, periodDays, medicine);
+        this.pet = pet;
     }
 }

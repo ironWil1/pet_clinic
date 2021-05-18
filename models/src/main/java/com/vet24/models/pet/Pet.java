@@ -63,10 +63,10 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "pet_procedure",
-            joinColumns = @JoinColumn(name = "pet_id"),
-            inverseJoinColumns = @JoinColumn(name = "procedure_id")
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private Set<Procedure> procedures = new HashSet<>();
 
@@ -82,11 +82,17 @@ public abstract class Pet {
     }
 
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client, Set<Procedure> procedures) {
-        this.name = name;
-        this.birthDay = birthDay;
-        this.gender = gender;
-        this.breed = breed;
-        this.client = client;
+        this(name, birthDay, gender, breed, client);
         this.procedures = procedures;
+    }
+
+    public void addProcedure(Procedure procedure) {
+        procedures.add(procedure);
+        procedure.setPet(this);
+    }
+
+    public void removeProcedure(Procedure procedure) {
+        procedures.remove(procedure);
+        procedure.setPet(null);
     }
 }
