@@ -50,7 +50,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get medicine by id
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine", cleanBefore = true, disableConstraints = true)
     public void shouldBeGetMedicineById() throws Exception {
         Medicine medicine = medicineDao.getByKey(2L);
         ResponseEntity<MedicineDto> response = testRestTemplate
@@ -62,7 +62,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //add medicine
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine", cleanBefore = true, disableConstraints = true)
     public void shouldBeAddMedicine() throws URISyntaxException {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
@@ -77,7 +77,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //put medicine by id
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine", cleanBefore = true, disableConstraints = true)
     public void shouldBeUpdateMedicineById() throws Exception {
         HttpEntity<MedicineDto> entity = new HttpEntity<>(medicineDto, headers);
         ResponseEntity<MedicineDto> response =  testRestTemplate
@@ -89,7 +89,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //upload icon for medicine by id
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine", cleanBefore = true, disableConstraints = true)
     public void shouldBeUpdateMedicineIcon() throws Exception {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("file", new org.springframework.core.io.ClassPathResource("test.png"));
@@ -103,7 +103,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get icon for medicine by id
     @Test
-    @DataSet(value = "/datasets/medicine.yml")
+    @DataSet(value = "/datasets/medicine.yml", cleanBefore = true, disableConstraints = true)
     public void shouldBeGetMedicineIconById() throws Exception {
         shouldBeUpdateMedicineIcon();
         ResponseEntity<byte[]> response = testRestTemplate
@@ -113,7 +113,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //delete medicine by id
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine", cleanBefore = true, disableConstraints = true)
     public void shouldBeDeleteMedicine() throws Exception {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
@@ -128,7 +128,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //test search medicine
     @Test
-    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine")
+    @DataSet(value = "/datasets/medicine.yml", executeStatementsBefore = "delete from medicine", cleanBefore = true, disableConstraints = true)
     public void shouldBeSearchMedicine() throws Exception {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(URI + "/search")
                 .queryParam("manufactureName")
