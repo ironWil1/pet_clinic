@@ -3,8 +3,8 @@ package com.vet24.models.mappers.pet.procedure;
 import com.vet24.models.dto.pet.procedure.*;
 import com.vet24.models.pet.procedure.Procedure;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
 public abstract class ProcedureMapper {
@@ -18,6 +18,7 @@ public abstract class ProcedureMapper {
     @Autowired
     private EchinococcusMapper echinococcusMapper;
 
+    @Mapping(source = "medicine.id", target = "medicineId")
     public abstract ProcedureDto procedureToProcedureDto(Procedure procedure);
 
     public Procedure procedureDtoToProcedure(ProcedureDto procedureDto) {
