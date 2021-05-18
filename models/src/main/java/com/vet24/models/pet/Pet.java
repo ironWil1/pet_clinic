@@ -89,9 +89,11 @@ public abstract class Pet {
         this.client = client;
     }
 
-    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client, Set<Procedure> procedures) {
+    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
+                  Set<Procedure> procedures, Set<Reproduction> reproductions) {
         this(name, birthDay, gender, breed, client);
         this.procedures = procedures;
+        this.reproductions = reproductions;
     }
 
     public void addProcedure(Procedure procedure) {
@@ -102,12 +104,6 @@ public abstract class Pet {
     public void removeProcedure(Procedure procedure) {
         procedures.remove(procedure);
         procedure.setPet(null);
-    }
-
-    protected Pet(String name, LocalDate birthDay, Gender gender, String breed,
-                  Client client, Set<Reproduction> reproductions) {
-        this(name, birthDay, gender, breed, client);
-        this.reproductions = reproductions;
     }
 
     public void addReproduction(Reproduction reproduction){
