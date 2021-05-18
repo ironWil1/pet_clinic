@@ -70,3 +70,5 @@ Quick and easy way to document your APIs.
 4. @DataSet could be with [possible values](https://database-rider.github.io/getting-started/#configuration). 
 5. For more information check [official Database Rider documentation](https://database-rider.github.io/database-rider/1.23.0/documentation.html)
 
+# Database Diagram
+https://dbdiagram.io/d/609f92fbb29a09603d14f8b8

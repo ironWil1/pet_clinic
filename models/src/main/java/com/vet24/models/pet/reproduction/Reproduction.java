@@ -1,9 +1,7 @@
 package com.vet24.models.pet.reproduction;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.vet24.models.pet.Pet;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,8 +9,9 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = "pet")
 @NoArgsConstructor
-@EqualsAndHashCode
+@AllArgsConstructor
 @Entity
 public class Reproduction implements Serializable {
 
@@ -32,10 +31,14 @@ public class Reproduction implements Serializable {
     @Column
     private Integer childCount;
 
-    public Reproduction(LocalDate estrusStart, LocalDate mating, LocalDate dueDate, Integer childCount) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Pet pet;
+
+    public Reproduction(LocalDate estrusStart, LocalDate mating, LocalDate dueDate, Integer childCount, Pet pet) {
         this.estrusStart = estrusStart;
         this.mating = mating;
         this.dueDate = dueDate;
         this.childCount = childCount;
+        this.pet = pet;
     }
 }
