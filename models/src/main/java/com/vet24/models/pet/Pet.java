@@ -38,7 +38,7 @@ public abstract class Pet {
     private Long id;
 
     @Column(nullable = false)
-    private String petName;
+    private String name;
 
     @Column
     private String avatar;
@@ -73,8 +73,8 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
-    protected Pet(String petName, LocalDate birthDay, Gender gender, String breed, Client client) {
-        this.petName = petName;
+    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client) {
+        this.name = name;
         this.birthDay = birthDay;
         this.gender = gender;
         this.breed = breed;

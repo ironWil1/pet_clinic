@@ -13,13 +13,13 @@ public class PetContactDaoImpl extends ReadWriteDaoImpl<Long, PetContact> implem
 
     @Override
     public List<String> getAllUniqueCode() {
-        Query query = manager.createQuery("SELECT petContact.petCode FROM PetContact as petContact");
+        Query query = manager.createQuery("SELECT petContact.petCode FROM PetContact AS petContact");
         return query.getResultList();
     }
 
     @Override
     public int getCountId() {
-        Query query = manager.createQuery("SELECT count(distinct petContact.id) FROM PetContact as petContact");
+        Query query = manager.createQuery("SELECT DISTINCT (petContact.id) FROM PetContact AS petContact");
         return query.getResultList().size();
     }
 }

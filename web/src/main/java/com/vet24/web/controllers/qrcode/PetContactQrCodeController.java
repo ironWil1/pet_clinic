@@ -39,23 +39,20 @@ public class PetContactQrCodeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully create the qr code", content = @Content()),
             @ApiResponse(responseCode = "404", description = "PetContact ID is not found"),
-            @ApiResponse(responseCode = "400", description = "Entered PetContact ID not valid")
     })
     @GetMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("id") Long id) {
         if (petContactService.isExistByKey(id)) {
             PetContact petContact = petContactService.getByKey(id);
             String UrlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
-            String sb = "Имя питомца - " + petContact.getPet().getPetName() + ", " +
+            String sb = "Имя питомца - " + petContact.getPet().getName() + ", " +
                     "Владелец - " + petContact.getOwnerName() + ", " +
                     "Адрес - " + petContact.getAddress() + ", " +
                     "Телефон - " + petContact.getPhone() + ". " +
                     "Чтобы сообщить владельцу о находке перейдите по адресу - " + UrlToAlertPetContact;
             return ResponseEntity.ok(PetContactQrCodeGenerator.generatePetContactQrCodeImage(sb));
-        } else if (!petContactService.isExistByKey(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -66,7 +63,6 @@ public class PetContactQrCodeController {
             @ApiResponse(responseCode = "201", description = "Successfully create the PetContact",
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "PetContact is expecting a pet for persist command"),
-            @ApiResponse(responseCode = "400", description = "Entered PetContact ID not valid")
     })
     @PostMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@RequestBody PetContactDto petContactDto,
@@ -86,10 +82,8 @@ public class PetContactQrCodeController {
             petContact.setPet(pet);
             petContactService.persist(petContact);
             return new ResponseEntity<>(HttpStatus.CREATED);
-        } else if (!petService.isExistByKey(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

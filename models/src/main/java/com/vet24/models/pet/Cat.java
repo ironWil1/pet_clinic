@@ -23,8 +23,8 @@ public class Cat extends Pet {
         this.petType = PetType.CAT;
     }
 
-    public Cat(String petName, LocalDate birthDay, Gender gender, String breed, Client client) {
-        super(petName, birthDay, gender, breed, client);
+    public Cat(String name, LocalDate birthDay, Gender gender, String breed, Client client) {
+        super(name, birthDay, gender, breed, client);
         this.petType = PetType.CAT;
     }
 }
