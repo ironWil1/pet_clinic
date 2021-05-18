@@ -64,7 +64,7 @@ public class PetContactQrCodeController {
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "PetContact is expecting a pet for persist command"),
     })
-    @PostMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
+    @PostMapping(value = "/{id}/qr")
     public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@RequestBody PetContactDto petContactDto,
                                                                 @PathVariable("id") Long id) {
         if (petContactService.isExistByKey(id)) {
