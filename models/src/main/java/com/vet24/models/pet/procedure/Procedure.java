@@ -12,13 +12,11 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"pet","medicine"})
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
@@ -45,25 +43,19 @@ public abstract class Procedure implements Serializable {
     private Integer periodDays;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "medicine_id")
     private Medicine medicine;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Pet pet;
 
     protected Procedure(LocalDate date, ProcedureType type, String medicineBatchNumber,
-                     Boolean isPeriodical, Integer periodDays, Medicine medicine) {
+                        Boolean isPeriodical, Integer periodDays, Medicine medicine, Pet pet) {
         this.date = date;
         this.type = type;
         this.medicineBatchNumber = medicineBatchNumber;
         this.isPeriodical = isPeriodical;
         this.periodDays = periodDays;
         this.medicine = medicine;
-    }
-
-    protected Procedure(LocalDate date, ProcedureType type, String medicineBatchNumber,
-                        Boolean isPeriodical, Integer periodDays, Medicine medicine, Pet pet) {
-        this(date, type, medicineBatchNumber, isPeriodical, periodDays, medicine);
         this.pet = pet;
     }
 }
