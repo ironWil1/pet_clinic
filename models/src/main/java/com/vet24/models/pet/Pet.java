@@ -3,11 +3,13 @@ package com.vet24.models.pet;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -21,16 +23,19 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "pet_entities")
 @DiscriminatorColumn(name = "pet_type", discriminatorType = DiscriminatorType.STRING)
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
 public abstract class Pet {
 
     @Id
@@ -73,11 +78,42 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<Reproduction> reproductions = new HashSet<>();
+
+    protected Pet() {
+    }
+
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client) {
         this.name = name;
         this.birthDay = birthDay;
         this.gender = gender;
         this.breed = breed;
         this.client = client;
+    }
+
+    protected Pet(String name, LocalDate birthDay, PetType petType, Gender gender, String breed,
+                  Client client, Set<Reproduction> reproductions) {
+        this.name = name;
+        this.birthDay = birthDay;
+        this.petType = petType;
+        this.gender = gender;
+        this.breed = breed;
+        this.client = client;
+        this.reproductions = reproductions;
+    }
+
+    public void addReproduction(Reproduction reproduction){
+        reproductions.add(reproduction);
+        reproduction.setPet(this);
+    }
+
+    public void removeReproduction(Reproduction reproduction) {
+        reproductions.remove(reproduction);
+        reproduction.setPet(null);
     }
 }
