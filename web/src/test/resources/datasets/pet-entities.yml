@@ -1,5 +1,5 @@
 PET_ENTITIES:
-  - ID: 1
+  - ID: 100
     PET_TYPE: "DOG"
     AVATAR: "test.png"
     BIRTH_DAY: "2020-05-13"
@@ -11,7 +11,7 @@ PET_ENTITIES:
     PET_SIZE: "MEDIUM"
     WEIGHT: 10
     CLIENT_ID: 4
-  - ID: 2
+  - ID: 101
     PET_TYPE: "CAT"
     AVATAR: "test.png"
     BIRTH_DAY: "2019-05-13"
@@ -23,7 +23,7 @@ PET_ENTITIES:
     PET_SIZE: "SMALL"
     WEIGHT: 3
     CLIENT_ID: 3
-  - ID: 3
+  - ID: 102
     PET_TYPE: "DOG"
     AVATAR: "test.png"
     BIRTH_DAY: "2018-05-13"
