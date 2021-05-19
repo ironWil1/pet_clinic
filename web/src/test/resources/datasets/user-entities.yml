@@ -1,5 +1,5 @@
 USER_ENTITIES:
-  - ID: 1
+  - ID: 100
     USER_TYPE: "ADMIN"
     AVATAR: "test.png"
     ENABLED: true
@@ -7,7 +7,7 @@ USER_ENTITIES:
     LASTNAME: "Admin"
     LOGIN: "admin"
     PASSWORD: "admin"
-  - ID: 2
+  - ID: 101
     USER_TYPE: "MANAGER"
     AVATAR: "test.png"
     ENABLED: true
