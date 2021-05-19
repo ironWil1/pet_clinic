@@ -63,6 +63,7 @@ public class PetContactQrCodeController {
             @ApiResponse(responseCode = "201", description = "Successfully create the PetContact",
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "PetContact is expecting a pet for persist command"),
+            @ApiResponse(responseCode = "400", description = "PetContact is expecting a pet for persist command"),
     })
     @PostMapping(value = "/{id}/qr")
     public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@RequestBody PetContactDto petContactDto,
@@ -75,7 +76,7 @@ public class PetContactQrCodeController {
             petContactOld.setPhone(petContactNew.getPhone());
             petContactService.update(petContactOld);
             return new ResponseEntity<>(HttpStatus.CREATED);
-        } else if (!petContactService.isExistByKey(id) && petService.isExistByKey(id)) {
+        } else if (petService.isExistByKey(id)) {
             Pet pet = petService.getByKey(id);
             PetContact petContact = petContactMapper.petContactDtoToPetContact(petContactDto);
             petContact.setPetCode(petContactService.randomPetContactUniqueCode(id));
