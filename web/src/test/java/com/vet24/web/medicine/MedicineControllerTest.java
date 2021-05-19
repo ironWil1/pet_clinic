@@ -50,7 +50,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get medicine by id
     @Test
-    @DataSet(value = {"/datasets/medicine.yml"})
+    @DataSet(value = {"/datasets/medicine.yml", "datasets/procedure.yml"})
     public void shouldBeGetMedicineById() throws Exception {
         Medicine medicine = medicineDao.getByKey(100L);
         ResponseEntity<MedicineDto> response = testRestTemplate
@@ -62,7 +62,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //add medicine
     @Test
-    @DataSet(value = {"/datasets/medicine.yml"})
+    @DataSet(value = {"/datasets/medicine.yml", "datasets/procedure.yml"})
     public void shouldBeAddMedicine() throws URISyntaxException {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();

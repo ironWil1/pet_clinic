@@ -181,7 +181,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
 
     // UPDATE  procedure - 404 ERROR "pet not found"
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testUpdateProcedureErrorPetNotFound() {
         int beforeCount = procedureDao.getAll().size();
         HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto3, HEADERS);
@@ -196,7 +196,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
 
     // UPDATE  procedure - 404 ERROR "procedure not found"
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testUpdateProcedureErrorProcedureNotFound() {
         int beforeCount = procedureDao.getAll().size();
         HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto3, HEADERS);
@@ -211,7 +211,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
 
     // UPDATE  procedure - 400 ERROR "pet not yours"
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testUpdateProcedureErrorPetForbidden() {
         int beforeCount = procedureDao.getAll().size();
         HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto1, HEADERS);

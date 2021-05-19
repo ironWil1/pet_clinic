@@ -50,7 +50,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // get reproduction by id - success
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testGetReproductionSuccess() {
         ReproductionDto dtoFromDao = reproductionMapper.reproductionToReproductionDto(reproductionDao.getByKey(3L));
         ResponseEntity<ReproductionDto> response = testRestTemplate
@@ -62,7 +62,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // get reproduction by id -  error 404 pet not found
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testGetReproductionError404pet() {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 33, 3);
@@ -72,7 +72,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // get reproduction by id -  error 404 reproduction not found
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testGetReproductionError404reproduction() {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 3, 33);
@@ -82,7 +82,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // get reproduction by id -  error 400 reproduction not assigned to pet
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testGetReproductionError400refPetReproduction() {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 2, 3);
@@ -92,7 +92,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // get reproduction by id -  error 400 pet not yours
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testGetReproductionError400refClientPet() {
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 1, 1);
@@ -102,7 +102,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // add reproduction - success
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testAddReproductionSuccess() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDtoNew, HEADERS);
@@ -118,7 +118,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // add reproduction - error 404 pet not found
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testAddReproductionError404() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto3, HEADERS);
@@ -133,7 +133,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // add reproduction - error 400 pet not yours
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testAddReproductionError400() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDtoNew, HEADERS);
@@ -148,7 +148,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // put reproduction by id - success
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testPutReproductionSuccess() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto3, HEADERS);
@@ -163,7 +163,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // put reproduction by id - error 404 pet not found
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testPutReproductionError404reproduction() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto3, HEADERS);
@@ -178,7 +178,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // put reproduction by id - error 404 reproduction not found
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testPutReproductionError404pet() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto3, HEADERS);
@@ -193,7 +193,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // put reproduction by id - error 400 reproduction not assigned to pet
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testPutReproductionError400refPetReproduction() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto3, HEADERS);
@@ -208,7 +208,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // put reproduction by id - error 400 reproductionId in path and in body not equals
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testPutReproductionError400idInPathAndBody() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto1, HEADERS);
@@ -223,7 +223,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // put reproduction by id - error 400 pet not yours
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testPutReproductionError400refClientPet() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto1, HEADERS);
@@ -238,7 +238,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // delete reproduction by id - success
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testDeleteReproductionSuccess() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
@@ -254,7 +254,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // delete reproduction by id - error 404 pet not found
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testDeleteReproductionError404reproduction() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
@@ -271,7 +271,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // delete reproduction by id - error 404 reproduction not found
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testDeleteReproductionError404pet() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
@@ -286,7 +286,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // delete reproduction by id - error reproduction not assigned to pet
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testDeleteReproductionError400refPetReproduction() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
@@ -303,7 +303,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     // delete reproduction by id - error pet not yours
     @Test
-    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml", "datasets/procedure.yml"})
     public void testDeleteReproductionError400refClientPet() {
         int beforeCount = reproductionDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
