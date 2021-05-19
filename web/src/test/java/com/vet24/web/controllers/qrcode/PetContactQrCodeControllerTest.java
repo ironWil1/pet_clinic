@@ -70,5 +70,4 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
     }
-
 }
