@@ -50,7 +50,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get medicine by id
     @Test
-    @DataSet(value = {"/datasets/medicine.yml", "datasets/procedure.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
     public void shouldBeGetMedicineById() throws Exception {
         Medicine medicine = medicineDao.getByKey(100L);
         ResponseEntity<MedicineDto> response = testRestTemplate
@@ -62,7 +62,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //add medicine
     @Test
-    @DataSet(value = {"/datasets/medicine.yml", "datasets/procedure.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
     public void shouldBeAddMedicine() throws URISyntaxException {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
@@ -80,7 +80,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //put medicine by id
     @Test
-    @DataSet(value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
     public void shouldBeUpdateMedicineById() throws Exception {
         medicineDto.setId(101L);
         HttpEntity<MedicineDto> entity = new HttpEntity<>(medicineDto, headers);
@@ -94,7 +94,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //upload icon for medicine by id
     @Test
-    @DataSet(value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
     public void shouldBeUpdateMedicineIcon() throws Exception {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("file", new org.springframework.core.io.ClassPathResource("test.png"));
@@ -108,7 +108,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get icon for medicine by id
     @Test
-    @DataSet(value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
     public void shouldBeGetMedicineIconById() throws Exception {
         shouldBeUpdateMedicineIcon();
         ResponseEntity<byte[]> response = testRestTemplate
@@ -118,7 +118,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //delete medicine by id
     @Test
-    @DataSet(value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
     public void shouldBeDeleteMedicine() throws Exception {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
@@ -133,7 +133,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //test search medicine
     @Test
-    @DataSet(value = {"/datasets/medicine.yml"}, cleanBefore = true)
+    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
     public void shouldBeSearchMedicine() throws Exception {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(URI + "/search")
                 .queryParam("manufactureName")
