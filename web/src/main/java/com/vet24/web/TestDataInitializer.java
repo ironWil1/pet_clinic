@@ -85,7 +85,7 @@ public class TestDataInitializer implements ApplicationRunner {
         Dog dog1 = new Dog("Delilah", LocalDate.now(), Gender.FEMALE, "Yorkshire Terrier",
                 clientService.getByKey(3L));
         Dog dog2 = new Dog("Buddy", LocalDate.now(), Gender.MALE, "Golden Retriever",
-                clientService.getByKey(3L));
+                clientService.getByKey(4L));
         petService.persist(dog1);
         petService.persist(dog2);
     }
@@ -122,21 +122,21 @@ public class TestDataInitializer implements ApplicationRunner {
     public void procedureInitializer(){
         vaccinationProcedureService.persist(new VaccinationProcedure(
                 LocalDate.now(), "nbr3br3n", false, null,
-                medicineService.getByKey(1L)
+                medicineService.getByKey(1L), petService.getByKey(1L)
         ));
         vaccinationProcedureService.getByKey(1L);
 
         externalParasiteProcedureService.persist(new ExternalParasiteProcedure(
                 LocalDate.now(), "5g567b", true, 40,
-                medicineService.getByKey(1L)
+                medicineService.getByKey(1L), petService.getByKey(1L)
         ));
         externalParasiteProcedureService.getByKey(2L);
 
         echinococcusProcedureService.persist(new EchinococcusProcedure(
                 LocalDate.now(), "43h5j3", true, 20,
-                medicineService.getByKey(1L)
+                medicineService.getByKey(1L), petService.getByKey(2L)
         ));
-        echinococcusProcedureService.getByKey(2L);
+        echinococcusProcedureService.getByKey(3L);
     }
 
     public void reproductionInitializer(){

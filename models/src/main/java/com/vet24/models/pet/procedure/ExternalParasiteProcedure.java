@@ -2,6 +2,7 @@ package com.vet24.models.pet.procedure;
 
 import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.medicine.Medicine;
+import com.vet24.models.pet.Pet;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -15,8 +16,7 @@ public class ExternalParasiteProcedure extends Procedure {
         super();
     }
 
-    public ExternalParasiteProcedure(LocalDate date, String medicineBatchNumber,
-                                     Boolean isPeriodical, Integer periodDays, Medicine medicine) {
-        super(date, ProcedureType.EXTERNAL_PARASITE, medicineBatchNumber, isPeriodical, periodDays, medicine);
+    public ExternalParasiteProcedure(LocalDate date, String medicineBatchNumber, Boolean isPeriodical, Integer periodDays, Medicine medicine, Pet pet) {
+        super(date, ProcedureType.EXTERNAL_PARASITE, medicineBatchNumber, isPeriodical, periodDays, medicine, pet);
     }
 }
