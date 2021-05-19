@@ -1,6 +1,8 @@
 package com.vet24.web.user;
 
 
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.spring.api.DBRider;
 import com.vet24.models.dto.user.RegisterDto;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.user.RegistrationController;
@@ -10,48 +12,64 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @Slf4j
+@DBRider
 public class RegistrationControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
     RegistrationController registrationController;
 
     final String URI = "http://localhost:8090/api/registration";
-    //test controller exist
-    @Test
-    public void getRegistrationController() {
-        assertThat(registrationController).isNotNull();
-    }
-    //POST new client through registration
-    @Test
-    public void testPostNewClient(){
 
+    @Test
+    public void shouldBeNotAcceptableWrongEmail() {
         RegisterDto registerDto = new RegisterDto("342354234.com","Vera","P",
                 "Congo","Congo");
 
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<RegisterDto> entity = new HttpEntity<>(registerDto, headers);
-        ResponseEntity<RegisterDto> responseWrong1 =  testRestTemplate
+        ResponseEntity<RegisterDto> responseEntity =  testRestTemplate
                 .exchange(URI, HttpMethod.POST, entity, RegisterDto.class);
-        Assert.assertEquals(HttpStatus.NOT_ACCEPTABLE, responseWrong1.getStatusCode());
+        Assert.assertEquals(HttpStatus.NOT_ACCEPTABLE, responseEntity.getStatusCode());
+    }
 
-        entity.getBody().setEmail("vpcat3@gmail.com");
-        entity.getBody().setConfirmPassword("Congo2");
-        ResponseEntity<RegisterDto> responseWrong2 =  testRestTemplate
+    @Test
+    public void shouldBeNotAcceptablePasswords(){
+        RegisterDto registerDto = new RegisterDto("342354234.com","Vera","P",
+                "Congo","Congo2");
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<RegisterDto> entity = new HttpEntity<>(registerDto, headers);
+        ResponseEntity<RegisterDto> responseEntity =  testRestTemplate
                 .exchange(URI, HttpMethod.POST, entity, RegisterDto.class);
-        Assert.assertEquals(HttpStatus.NOT_ACCEPTABLE, responseWrong2.getStatusCode());
+        Assert.assertEquals(HttpStatus.NOT_ACCEPTABLE, responseEntity.getStatusCode());
+    }
 
+    @Test
+    @DataSet(value = "/datasets/registration.yml", cleanBefore = true, disableConstraints = true)
+    public void shouldBeBadRequestBecauseOfDuplicate()  {
+        RegisterDto registerDto = new RegisterDto("Thomas@gmail.com","Vera","P",
+                "Congo","Congo");
 
-        entity.getBody().setConfirmPassword("Congo");
-        ResponseEntity<RegisterDto> responseSuccess =  testRestTemplate
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<RegisterDto> entity = new HttpEntity<>(registerDto, headers);
+        ResponseEntity<RegisterDto> responseEntity =  testRestTemplate
                 .exchange(URI, HttpMethod.POST, entity, RegisterDto.class);
-        Assert.assertEquals(HttpStatus.CREATED, responseSuccess.getStatusCode());
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
 
-        ResponseEntity<RegisterDto> responseDuplicate =  testRestTemplate
+    @Test
+    @DataSet(value = "/datasets/registration.yml", cleanBefore = true, disableConstraints = true)
+    public void shouldBeCreated()  {
+        RegisterDto registerDto = new RegisterDto("342354234@gmail.com","Vera","P",
+                "Congo","Congo");
+
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<RegisterDto> entity = new HttpEntity<>(registerDto, headers);
+        ResponseEntity<RegisterDto> responseEntity =  testRestTemplate
                 .exchange(URI, HttpMethod.POST, entity, RegisterDto.class);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseDuplicate.getStatusCode());
-
+        Assert.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
     }
 }
