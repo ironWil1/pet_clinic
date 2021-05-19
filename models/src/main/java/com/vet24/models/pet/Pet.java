@@ -4,6 +4,7 @@ import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.pet.reproduction.Reproduction;
+import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -68,6 +69,13 @@ public abstract class Pet {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    private Set<Procedure> procedures = new HashSet<>();
+
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Set<Reproduction> reproductions = new HashSet<>();
 
     protected Pet() {
@@ -81,15 +89,21 @@ public abstract class Pet {
         this.client = client;
     }
 
-    protected Pet(String name, LocalDate birthDay, PetType petType, Gender gender, String breed,
-                  Client client, Set<Reproduction> reproductions) {
-        this.name = name;
-        this.birthDay = birthDay;
-        this.petType = petType;
-        this.gender = gender;
-        this.breed = breed;
-        this.client = client;
+    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
+                  Set<Procedure> procedures, Set<Reproduction> reproductions) {
+        this(name, birthDay, gender, breed, client);
+        this.procedures = procedures;
         this.reproductions = reproductions;
+    }
+
+    public void addProcedure(Procedure procedure) {
+        procedures.add(procedure);
+        procedure.setPet(this);
+    }
+
+    public void removeProcedure(Procedure procedure) {
+        procedures.remove(procedure);
+        procedure.setPet(null);
     }
 
     public void addReproduction(Reproduction reproduction){
