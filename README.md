@@ -78,3 +78,8 @@ To change login via google-account petclinic.vet24@gmail.com
 Last update 20.05.2021 12:50
 
 https://dbdiagram.io/d/60a62c9db29a09603d15bc72
+
+# Google API Guide
+Go to http://localhost:8080/notification in browser to redirect to google auth
+
+Create notification in swagger /notification/create to post event in Calendar
