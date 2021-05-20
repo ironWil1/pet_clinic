@@ -1,15 +1,15 @@
 package com.vet24.models.user;
 
+import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.pet.Pet;
 import lombok.EqualsAndHashCode;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @DiscriminatorValue("CLIENT")
@@ -27,8 +27,8 @@ public class Client extends User {
         super();
     }
 
-    public Client(String firstname, String lastname, String login, String password, Role role, Set<Pet> pets) {
-        super(firstname, lastname, login, password, role);
+    public Client(String firstname, String lastname, String email, String password,Role role,  Set<Pet> pets) {
+        super(firstname, lastname, email, password, role);
         this.pets = pets;
     }
 
@@ -53,7 +53,7 @@ public class Client extends User {
     @Override
     public String toString() {
         return "Client{" +
-                "pets=" + pets + " login " + super.getLogin() + " " + super.getRole() +
+                "pets=" + pets + " login " + super.getEmail() + " " + super.getRole() +
                 '}';
     }
 }
