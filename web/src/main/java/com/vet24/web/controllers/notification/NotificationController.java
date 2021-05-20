@@ -12,7 +12,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
-import com.google.api.services.calendar.model.Event;
 
 import com.vet24.models.dto.notification.NotificationDto;
 import com.vet24.models.mappers.notification.NotificationMapper;
@@ -60,7 +59,6 @@ public class NotificationController {
 
     //must be email of authorize user
     private String USER = "petclinic.vet24@gmail.com";
-    String calendarId = "primary";
 
     private String CALLBACK_URI = "http://localhost:8080/oauth";
     private String gdSecretKeys = "/credentials.json";
@@ -113,24 +111,22 @@ public class NotificationController {
         List<User> listUser = notificationDto.getListUser();
         int count = 0;
         for (int i = 0; i < listUser.size(); i++) {
-            Credential credential = flow.loadCredential(listUser.get(i).getLogin());
-            if (credential == null) {
-                continue;
-            }
+            User user = userService.getByKey(listUser.get(i).getId());
+            if (user == null) { continue; }
+            Credential credential = flow.loadCredential(user.getLogin());
+            if (credential == null) { continue; }
             Calendar calendar = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                     .setApplicationName("Petclinic").build();
             Notification notification = notificationMapper.notificationDtoToNotification(notificationDto);
-            notification.setUser(listUser.get(i));
+            notification.setUser(user);
             notificationService.persist(notification);
-            Event event = notificationService.createEvent(notification);
-            calendar.events().insert(calendarId, event).setSendNotifications(true).execute();
+            notificationService.createEvent(notification, calendar);
             count++;
         }
         if (count >= 1) {
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(notificationDto, HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(notificationDto, HttpStatus.BAD_REQUEST);
         }
-
     }
 }
