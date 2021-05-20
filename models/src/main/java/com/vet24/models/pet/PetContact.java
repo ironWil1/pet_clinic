@@ -40,10 +40,6 @@ public class PetContact {
     @Column(unique = true)
     private String petCode;
 
-    @NonNull
-    @Column(unique = true)
-    private String email;
-
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "id")

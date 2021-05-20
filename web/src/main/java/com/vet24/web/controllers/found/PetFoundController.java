@@ -6,6 +6,12 @@ import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.PetFound;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetFoundService;
+import com.vet24.service.user.ClientService;
+import com.vet24.util.mailSender.PetFoundMailSender;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,28 +27,51 @@ public class PetFoundController {
     private final PetFoundService petFoundService;
     private final PetContactService petContactService;
     private final PetFoundMapper petFoundMapper;
+    private final ClientService clientService;
+    private final PetFoundMailSender petFoundMailSender;
 
-    public PetFoundController(PetFoundService petFoundService, PetContactService petContactService, PetFoundMapper petFoundMapper) {
+    public PetFoundController(PetFoundService petFoundService, PetContactService petContactService,
+                              PetFoundMapper petFoundMapper, ClientService clientService, PetFoundMailSender petFoundMailSender) {
         this.petFoundService = petFoundService;
         this.petContactService = petContactService;
         this.petFoundMapper = petFoundMapper;
+        this.clientService = clientService;
+        this.petFoundMailSender = petFoundMailSender;
     }
 
+    /* Запрос может выглядеть следующим образом.
+    {
+        "latitude" : "1.2345678",
+        "longitude" : "2.3456789",
+        "text" : "Какой-то текст"
+    }*/
+    @Operation(summary = "Save data found pet and create with send owner message about pet")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully save data found and create message", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "PetContact petCode is not found"),
+    })
     @GetMapping(value = "/petFound")
-    public ResponseEntity<PetFoundDto> saveOrUpdatePetContact(@RequestBody PetFoundDto petFoundDto,
+    public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestBody PetFoundDto petFoundDto,
                                                               @RequestParam(value = "petCode", required = false) String petCode) {
         if (petContactService.isExistByPetCode(petCode)) {
             PetFound petFound = petFoundMapper.petFoundDtoToPetFound(petFoundDto);
-
+            String text = petFound.getText();
+            String latitude = petFound.getLatitude();
+            String longitude = petFound.getLongitude();
             petFoundService.persist(petFound);
 
             PetContact petContact = petContactService.getByPetCode(petCode);
-            String email = petContact.getEmail();
-
+            String clientEmail = petContact.getPet().getClient().getEmail();
+            String clientName = petContact.getPet().getClient().getFirstname();
+            String petName = petContact.getPet().getName();
+            String message = String.format("%s, добрый день! Ваш %s нашёлся!\n\n Кто-то отсканировал QR код" +
+                    " на ошейнике вашего питомца и отправил вам следующее сообщение: \n\"%s\"\n\n" +
+                    "Перейдите по ссылке для просмотра местонахождения питомца: https://www.google.com/maps/place/%s+%s",
+                    clientName, petName, text, latitude, longitude);
+            petFoundMailSender.sendTextAndGeolocationPet(clientEmail, "Информация о вашем питомце", message);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
 }

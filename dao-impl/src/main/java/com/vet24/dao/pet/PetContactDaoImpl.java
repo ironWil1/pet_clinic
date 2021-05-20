@@ -21,10 +21,15 @@ public class PetContactDaoImpl extends ReadWriteDaoImpl<Long, PetContact> implem
     @Override
     public boolean isExistByPetCode(String petCode) {
         try {
-            PetContact petContact = (PetContact) manager.createQuery("FROM PetContact WHERE petCode = :petCode")
-                    .setParameter("petCode", petCode)
-                    .getSingleResult();
-            return true;
+            boolean result = false;
+            if (petCode != null) {
+                String query = "SELECT CASE WHEN (1 > 0) then true else false end FROM PetContact WHERE petCode = :id";
+                result = manager
+                        .createQuery(query, Boolean.class)
+                        .setParameter("id", petCode)
+                        .getSingleResult();
+            }
+            return result;
         } catch (NoResultException e) {
             return false;
         }
