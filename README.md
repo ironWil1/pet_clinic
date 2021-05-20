@@ -62,5 +62,17 @@ Quick and easy way to document your APIs.
 
 [Source code](https://github.com/springdoc/springdoc-openapi-demos/blob/master/springdoc-openapi-spring-boot-2-webmvc/src/main/java/org/springdoc/demo/app2/api/UserApi.java) — check what annotations are used
 
+# Integration Test Guide
+
+1. IT class should extend ControllerAbstractIntegrationTest.class
+2. IT class should be annotated with @DBRider.
+3. Test method should use @DataSet for generation database content.  
+4. @DataSet could be with [possible values](https://database-rider.github.io/getting-started/#configuration). 
+5. For more information check [official Database Rider documentation](https://database-rider.github.io/database-rider/1.23.0/documentation.html)
+
 # Database Diagram
-https://dbdiagram.io/d/609f92fbb29a09603d14f8b8
+To change login via google-account petclinic.vet24@gmail.com
+
+Last update 20.05.2021 12:50
+
+https://dbdiagram.io/d/60a62c9db29a09603d15bc72

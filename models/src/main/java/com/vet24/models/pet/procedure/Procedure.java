@@ -3,6 +3,7 @@ package com.vet24.models.pet.procedure;
 import com.vet24.models.medicine.Medicine;
 
 import com.vet24.models.enums.ProcedureType;
+import com.vet24.models.pet.Pet;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"pet","medicine"})
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
@@ -42,16 +43,19 @@ public abstract class Procedure implements Serializable {
     private Integer periodDays;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "medicine_id")
     private Medicine medicine;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Pet pet;
+
     protected Procedure(LocalDate date, ProcedureType type, String medicineBatchNumber,
-                     Boolean isPeriodical, Integer periodDays, Medicine medicine) {
+                        Boolean isPeriodical, Integer periodDays, Medicine medicine, Pet pet) {
         this.date = date;
         this.type = type;
         this.medicineBatchNumber = medicineBatchNumber;
         this.isPeriodical = isPeriodical;
         this.periodDays = periodDays;
         this.medicine = medicine;
+        this.pet = pet;
     }
 }

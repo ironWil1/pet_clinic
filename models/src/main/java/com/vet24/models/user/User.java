@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +25,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,8 +53,9 @@ public class User implements UserDetails {
     private String lastname;
 
     @NonNull
-    @Column(nullable = false)
-    private String login;
+    @NaturalId
+    @Column(nullable = false,unique = true)
+    private String email;
 
     @NonNull
     @Column(nullable = false)
@@ -66,12 +69,12 @@ public class User implements UserDetails {
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+            inverseJoinColumns = @JoinColumn(name = "role_name"))
     private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
+        List<GrantedAuthority> list = new ArrayList<>();
         list.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
         return list;
     }
@@ -83,7 +86,7 @@ public class User implements UserDetails {
 
     @Override
     public @NonNull String getUsername() {
-        return login;
+        return email;
     }
 
     @Override

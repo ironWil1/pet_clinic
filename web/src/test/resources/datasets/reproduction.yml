@@ -1,65 +1,19 @@
-USER_ENTITIES:
-  - ID: 3
-    USER_TYPE: "CLIENT"
-    AVATAR: "test.png"
-    ENABLED: "true"
-    FIRSTNAME: "Ivanov"
-    LASTNAME: "Ivan"
-    LOGIN: "ivan007"
-    PASSWORD: "123456"
-PET_ENTITIES:
-  - ID: 1
-    PET_TYPE: "DOG"
-    AVATAR: "test.png"
-    BIRTH_DAY: "2021-05-13"
-    BREED: "Yorkshire Terrier"
-    COLOR: "BLACK"
-    DESCRIPTION: "some description"
-    GENDER: "FEMALE"
-    NAME: "Delilah"
-    PET_SIZE: "MEDIUM"
-    WEIGHT: 10
-    CLIENT_ID: 3
-  - ID: 2
-    PET_TYPE: "DOG"
-    AVATAR: "test.png"
-    BIRTH_DAY: "2021-05-13"
-    BREED: "Yorkshire Terrier"
-    COLOR: "YELLOW"
-    DESCRIPTION: "some description"
-    GENDER: "MALE"
-    NAME: "Bobby"
-    PET_SIZE: "BIG"
-    WEIGHT: 21
-    CLIENT_ID: 3
-  - ID: 3
-    PET_TYPE: "DOG"
-    AVATAR: "test.png"
-    BIRTH_DAY: "2021-05-13"
-    BREED: "Yorkshire Terrier"
-    COLOR: "YELLOW"
-    DESCRIPTION: "some description"
-    GENDER: "MALE"
-    NAME: "Bobby"
-    PET_SIZE: "BIG"
-    WEIGHT: 21
-    CLIENT_ID: 2
 REPRODUCTION:
-  - ID: 1
+  - ID: 100
+    PET_ID: 100
+    CHILD_COUNT: 100
     ESTRUS_START: "2020-01-01"
     MATING: "2020-01-01"
     DUE_DATE: "2020-01-01"
-    CHILD_COUNT: 1
-    PET_ID: 1
-  - ID: 2
+  - ID: 101
+    PET_ID: 101
+    CHILD_COUNT: 101
     ESTRUS_START: "2020-02-01"
     MATING: "2020-02-01"
     DUE_DATE: "2020-02-01"
-    CHILD_COUNT: 2
-    PET_ID: 1
-  - ID: 3
-    ESTRUS_START: "2020-02-01"
-    MATING: "2020-02-01"
-    DUE_DATE: "2020-02-01"
-    CHILD_COUNT: 2
-    PET_ID: 3
+  - ID: 102
+    PET_ID: 102
+    CHILD_COUNT: 102
+    ESTRUS_START: "2020-03-01"
+    MATING: "2020-03-01"
+    DUE_DATE: "2020-03-01"

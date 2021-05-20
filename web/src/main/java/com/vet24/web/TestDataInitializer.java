@@ -54,6 +54,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final PetService petService;
     private final Environment environment;
 
+    @Autowired
     public TestDataInitializer(RoleService roleService, UserService userService,
                                ClientService clientService,
                                MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
@@ -83,24 +84,23 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userInitialize() {
-        userService.persist(new User("Ivan", "Ivanov", "Ivan",
-                "123456", roleService.getByKey(1L)));
-        userService.persist(new User("Petr", "Petrov", "Petr",
-                "123456", roleService.getByKey(2L)));
-        clientService.persist(new Client("John", "Smith", "clientLogin",
-                "123456", roleService.getByKey(3L), new HashSet<>()));
+        userService.persist(new User("Ivan", "Ivanov", "Ivan@gmail.com",
+                "123456", new Role(RoleNameEnum.ADMIN)));
+        userService.persist(new User("Petr", "Petrov", "Petr@gmail.com",
+                "123456",  new Role(RoleNameEnum.MANAGER)));
+        clientService.persist(new Client("John", "Smith", "clientLogin@gmail.com",
+                "123456",  new Role(RoleNameEnum.CLIENT), new HashSet<>()));
     }
 
     public void userUpdateMethod() {
         User user = new User("Test", "Testov", "TestLogin",
-                "TestPassword", roleService.getByKey(2L));
+                "TestPassword", new Role(RoleNameEnum.MANAGER));
         user.setId(1L);
         userService.update(user);
     }
 
     public void roleUpdateMethod() {
         Role role = new Role(RoleNameEnum.ADMIN);
-        role.setId(3L);
         roleService.update(role);
     }
 
@@ -111,7 +111,7 @@ public class TestDataInitializer implements ApplicationRunner {
 
     //Delete method doesn't work if user with this.Role exists in DB.
     public void roleDeleteMethod() {
-        Role role = roleService.getByKey(3L);
+        Role role = new Role(RoleNameEnum.CLIENT);
         roleService.delete(role);
     }
 
@@ -124,21 +124,21 @@ public class TestDataInitializer implements ApplicationRunner {
     public void procedureInitializer(){
         vaccinationProcedureService.persist(new VaccinationProcedure(
                 LocalDate.now(), "nbr3br3n", false, null,
-                medicineService.getByKey(1L)
+                medicineService.getByKey(1L), petService.getByKey(1L)
         ));
         vaccinationProcedureService.getByKey(1L);
 
         externalParasiteProcedureService.persist(new ExternalParasiteProcedure(
                 LocalDate.now(), "5g567b", true, 40,
-                medicineService.getByKey(1L)
+                medicineService.getByKey(1L), petService.getByKey(1L)
         ));
         externalParasiteProcedureService.getByKey(2L);
 
         echinococcusProcedureService.persist(new EchinococcusProcedure(
                 LocalDate.now(), "43h5j3", true, 20,
-                medicineService.getByKey(1L)
+                medicineService.getByKey(1L), petService.getByKey(2L)
         ));
-        echinococcusProcedureService.getByKey(2L);
+        echinococcusProcedureService.getByKey(3L);
     }
 
     public void reproductionInitializer(){
@@ -147,7 +147,6 @@ public class TestDataInitializer implements ApplicationRunner {
         ));
         reproductionService.getByKey(1L);
     }
-
     public void catInitializer() {
         catService.persist(new Cat("Феликс", LocalDate.now(), Gender.MALE, "Дворовой", clientService.getByKey(3L)));
         catService.persist(new Cat("Тихон", LocalDate.now(), Gender.MALE, "Британский", clientService.getByKey(3L)));

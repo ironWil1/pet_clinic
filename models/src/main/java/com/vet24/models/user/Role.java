@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,16 +22,13 @@ import javax.persistence.Id;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@AllArgsConstructor
 @ToString(of = {"name"})
 public class Role implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @NonNull
     @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "varchar(25)")
     private RoleNameEnum name;
 
     @Override

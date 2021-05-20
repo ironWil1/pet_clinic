@@ -22,5 +22,5 @@ public abstract class ControllerAbstractIntegrationTest {
     protected TestRestTemplate testRestTemplate;
 
     @Autowired
-    protected MockMvc mockMvc;
+    protected MockMvc mvc;
 }
