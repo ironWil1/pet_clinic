@@ -48,7 +48,7 @@ public class PetFoundController {
     @Operation(summary = "Save data found pet and create with send owner message about pet")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully save data found and create message", content = @Content()),
-            @ApiResponse(responseCode = "404", description = "PetContact petCode is not found"),
+            @ApiResponse(responseCode = "404", description = "PetContact by petCode is not found"),
     })
     @GetMapping(value = "/petFound")
     public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestBody PetFoundDto petFoundDto,
