@@ -22,11 +22,12 @@ public class PetFound {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonSerialize(using = PointToJsonSerializer.class)
+    /*@JsonSerialize(using = PointToJsonSerializer.class)
     @JsonDeserialize(using = JsonToPointDeserializer.class)
     @Column(columnDefinition = "Point")
-    private Point location; // посмотреть в каком формате лучше всего данные о местонахождении передавать
-
+    private Point location;*/ // посмотреть в каком формате лучше всего данные о местонахождении передавать
+    private String latitude;
+    private String longitude;
     private String text; // текст сообщения, в котором будет написан текст нашедшим питомца
 }
 

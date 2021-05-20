@@ -31,8 +31,13 @@ public class PetContactServiceImpl extends ReadWriteServiceImpl<Long, PetContact
     }
 
     @Override
-    public List<String> getAllUniqueCode() {
-        return petContactDao.getAllUniqueCode();
+    public List<String> getAllPetCode() {
+        return petContactDao.getAllPetCode();
+    }
+
+    @Override
+    public boolean isExistByPetCode(String petCode) {
+        return petContactDao.isExistByPetCode(petCode);
     }
 
     @Override

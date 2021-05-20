@@ -10,4 +10,3 @@ public interface PetFoundMapper {
     PetFound petFoundDtoToPetFound(PetFoundDto petFoundDto);
     PetFoundDto petFoundToPetFoundDto(PetFound petFound);
 }
-

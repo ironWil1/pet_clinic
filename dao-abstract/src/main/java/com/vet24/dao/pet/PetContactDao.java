@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface PetContactDao extends ReadWriteDao<Long, PetContact> {
 
-    List<String> getAllUniqueCode();
+    List<String> getAllPetCode();
+    boolean isExistByPetCode(String petCode);
     int getCountId();
 }
