@@ -104,29 +104,25 @@ public class NotificationController {
     @Operation(summary = "create event on clients google calendar")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created"),
-            @ApiResponse(responseCode = "400", description = "Dont have access for this users"),
     })
     @PostMapping(value = {"/notification/create"})
     private ResponseEntity<NotificationDto> createEvent(@RequestBody NotificationDto notificationDto) throws  Exception {
         List<User> listUser = notificationDto.getListUser();
-        int count = 0;
         for (int i = 0; i < listUser.size(); i++) {
             User user = userService.getByKey(listUser.get(i).getId());
             if (user == null) { continue; }
             Credential credential = flow.loadCredential(user.getLogin());
-            if (credential == null) { continue; }
             Calendar calendar = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                     .setApplicationName("Petclinic").build();
             Notification notification = notificationMapper.notificationDtoToNotification(notificationDto);
             notification.setUser(user);
+            if (notificationService.createEvent(notification, calendar)) {
+                notification.setSent(true);
+            } else {
+                notification.setSent(false);
+            }
             notificationService.persist(notification);
-            notificationService.createEvent(notification, calendar);
-            count++;
         }
-        if (count >= 1) {
-            return new ResponseEntity<>(notificationDto, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(notificationDto, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(notificationDto, HttpStatus.CREATED);
     }
 }

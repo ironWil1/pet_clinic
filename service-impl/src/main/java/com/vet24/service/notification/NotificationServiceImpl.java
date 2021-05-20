@@ -28,7 +28,7 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
     }
 
     @Override
-    public void createEvent(Notification notification, Calendar calendar) throws IOException {
+    public Boolean createEvent(Notification notification, Calendar calendar) {
         Event event = new Event()
                 .setSummary(String.valueOf(notification.getSummary()))
                 .setLocation("Moscow, Moskvorechie str 2")
@@ -57,6 +57,11 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
                 new EventAttendee().setEmail(notification.getUser().getLogin()),
         };
         event.setAttendees(Arrays.asList(attendees));
-        calendar.events().insert("primary", event).setSendNotifications(true).execute();
+        try {
+            calendar.events().insert("primary", event).setSendNotifications(true).execute();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 }

@@ -3,6 +3,8 @@ package com.vet24.models.pet;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.pet.reproduction.Reproduction;
+import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,6 +12,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -60,15 +64,55 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<Procedure> procedures = new HashSet<>();
+
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<Reproduction> reproductions = new HashSet<>();
+
     protected Pet() {
     }
 
-    protected Pet(String name, LocalDate birthDay, PetType petType, Gender gender, String breed, Client client) {
+    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client) {
         this.name = name;
         this.birthDay = birthDay;
-        this.petType = petType;
         this.gender = gender;
         this.breed = breed;
         this.client = client;
+    }
+
+    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
+                  Set<Procedure> procedures, Set<Reproduction> reproductions) {
+        this(name, birthDay, gender, breed, client);
+        this.procedures = procedures;
+        this.reproductions = reproductions;
+    }
+
+    public void addProcedure(Procedure procedure) {
+        procedures.add(procedure);
+        procedure.setPet(this);
+    }
+
+    public void removeProcedure(Procedure procedure) {
+        procedures.remove(procedure);
+        procedure.setPet(null);
+    }
+
+    public void addReproduction(Reproduction reproduction){
+        reproductions.add(reproduction);
+        reproduction.setPet(this);
+    }
+
+    public void removeReproduction(Reproduction reproduction) {
+        reproductions.remove(reproduction);
+        reproduction.setPet(null);
     }
 }

@@ -8,10 +8,8 @@ import com.vet24.models.pet.Pet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
-@Component
 public abstract class PetMapper {
 
     @Autowired
@@ -21,17 +19,17 @@ public abstract class PetMapper {
     private CatMapper catMapper;
 
     @Mapping(source = "petType", target = "type")
-    abstract PetDto petToPetDto(Pet pet);
+    public abstract PetDto petToPetDto(Pet pet);
 
-    public <T extends Pet> T abstractNewPetDtoToPet(AbstractNewPetDto petDto) {
-        T pet = null;
+    public Pet abstractNewPetDtoToPet(AbstractNewPetDto petDto) {
+        Pet pet = null;
         String petType = petDto.getPetType().name();
         switch (petType) {
             case "DOG":
-                pet = (T) dogMapper.dogDtoToDog((DogDto) petDto);
+                pet = dogMapper.dogDtoToDog((DogDto) petDto);
                 break;
             case "CAT":
-                pet = (T) catMapper.catDtoToCat((CatDto) petDto);
+                pet = catMapper.catDtoToCat((CatDto) petDto);
                 break;
             default:
                 break;

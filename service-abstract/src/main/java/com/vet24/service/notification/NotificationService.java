@@ -10,5 +10,5 @@ import java.io.IOException;
 
 public interface NotificationService extends ReadWriteService<Long, Notification> {
 
-    void createEvent(Notification notification, Calendar calendar) throws IOException;
+    Boolean createEvent(Notification notification, Calendar calendar) throws IOException;
 }
