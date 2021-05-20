@@ -1,4 +1,4 @@
-package com.vet24.models.dto.contact;
+package com.vet24.models.dto.pet;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

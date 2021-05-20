@@ -1,6 +1,6 @@
 package com.vet24.web.controllers.qrcode;
 
-import com.vet24.models.dto.contact.PetContactDto;
+import com.vet24.models.dto.pet.PetContactDto;
 import com.vet24.models.mappers.PetContactMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;

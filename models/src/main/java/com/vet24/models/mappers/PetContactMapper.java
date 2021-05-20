@@ -1,6 +1,6 @@
 package com.vet24.models.mappers;
 
-import com.vet24.models.dto.contact.PetContactDto;
+import com.vet24.models.dto.pet.PetContactDto;
 import com.vet24.models.pet.PetContact;
 import org.mapstruct.Mapper;
 
