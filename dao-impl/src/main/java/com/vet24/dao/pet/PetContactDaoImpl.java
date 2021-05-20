@@ -19,15 +19,23 @@ public class PetContactDaoImpl extends ReadWriteDaoImpl<Long, PetContact> implem
     }
 
     @Override
-    public boolean isExistByPetCode(String code) {
+    public boolean isExistByPetCode(String petCode) {
         try {
             PetContact petContact = (PetContact) manager.createQuery("FROM PetContact WHERE petCode = :petCode")
-                    .setParameter("petCode", code)
+                    .setParameter("petCode", petCode)
                     .getSingleResult();
             return true;
         } catch (NoResultException e) {
             return false;
         }
+    }
+
+    @Override
+    public PetContact getByPetCode(String petCode) {
+        PetContact petContact = (PetContact) manager.createQuery("FROM PetContact WHERE petCode = :petCode")
+                .setParameter("petCode", petCode)
+                .getSingleResult();
+        return petContact;
     }
 
     @Override

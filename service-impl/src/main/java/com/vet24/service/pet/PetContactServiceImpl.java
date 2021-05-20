@@ -41,6 +41,11 @@ public class PetContactServiceImpl extends ReadWriteServiceImpl<Long, PetContact
     }
 
     @Override
+    public PetContact getByPetCode(String petCode) {
+        return petContactDao.getByPetCode(petCode);
+    }
+
+    @Override
     public int getCountId() {
         return petContactDao.getCountId();
     }
