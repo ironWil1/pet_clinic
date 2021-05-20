@@ -54,7 +54,7 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
         event.setReminders(reminders);
 
         EventAttendee[] attendees = new EventAttendee[] {
-                new EventAttendee().setEmail(notification.getUser().getLogin()),
+                new EventAttendee().setEmail(notification.getUser().getEmail()),
         };
         event.setAttendees(Arrays.asList(attendees));
         try {

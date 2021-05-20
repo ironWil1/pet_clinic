@@ -111,7 +111,7 @@ public class NotificationController {
         for (int i = 0; i < listUser.size(); i++) {
             User user = userService.getByKey(listUser.get(i).getId());
             if (user == null) { continue; }
-            Credential credential = flow.loadCredential(user.getLogin());
+            Credential credential = flow.loadCredential(user.getEmail());
             Calendar calendar = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                     .setApplicationName("Petclinic").build();
             Notification notification = notificationMapper.notificationDtoToNotification(notificationDto);
