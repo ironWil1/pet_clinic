@@ -71,4 +71,8 @@ Quick and easy way to document your APIs.
 5. For more information check [official Database Rider documentation](https://database-rider.github.io/database-rider/1.23.0/documentation.html)
 
 # Database Diagram
-https://dbdiagram.io/d/609f92fbb29a09603d14f8b8
+To change login via google-account petclinic.vet24@gmail.com
+
+Last update 20.05.2021 12:50
+
+https://dbdiagram.io/d/60a62c9db29a09603d15bc72
