@@ -78,27 +78,21 @@ public class RegistrationController {
             throw new BadRequestException(passwordsInvalidMsg);
         }
 
-        Client found = clientService.getClientByEmail(inputDto.getEmail());
-        Client toRegister;
-        if(found == null){
-            toRegister = clientMapper.registerDtoToClient(inputDto);
+        Client foundOrNew = clientService.getClientByEmail(inputDto.getEmail());
+        if(foundOrNew == null){
+            foundOrNew = clientMapper.registerDtoToClient(inputDto);
         }
-        else if(found.getRole().getName()!=RoleNameEnum.UNVERIFIED_CLIENT) {
+        else if(foundOrNew.getRole().getName()!=RoleNameEnum.UNVERIFIED_CLIENT) {
             throw new RepeatedRegistrationException(repeatedRegistrationMsg);
-        }else{
-            toRegister =  found;
-            toRegister.setPassword(inputDto.getPassword());
-            toRegister.setFirstname(inputDto.getFirstname());
-            toRegister.setLastname(inputDto.getLastname());
         }
 
-        toRegister.setRole(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
+        foundOrNew.setRole(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
 
         String tokenLink = environmentUtil.getServerUrlPrefix() +
                 request.getContextPath() +
                 RegistrationController.confirmationAPI +
                 "?userCode=" +
-                verificationService.createVerificationTokenDisplayCode(toRegister);
+                verificationService.createVerificationTokenDisplayCode(foundOrNew);
 
         mailService.sendWelcomeMessage(inputDto.getEmail(),inputDto.getFirstname(), tokenLink);
 
