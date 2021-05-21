@@ -18,8 +18,8 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     }
 
     @Override
-    public Client getClientByLogin(String login) {
-        return clientDao.getClientByLogin(login);
+    public Client getClientByEmail(String email) {
+        return clientDao.getClientByEmail(email);
     }
 
     // Always returns Client with id = 3

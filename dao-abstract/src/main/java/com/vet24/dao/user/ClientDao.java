@@ -7,7 +7,7 @@ import com.vet24.models.user.Client;
 
 public interface ClientDao extends ReadWriteDao<Long, Client> {
 
-    Client getClientByLogin(String login);
+    Client getClientByEmail(String login);
 
     Client testGetCurrentClientEagerly();
 }
