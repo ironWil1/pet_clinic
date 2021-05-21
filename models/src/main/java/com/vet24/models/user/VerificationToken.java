@@ -18,7 +18,7 @@ public class VerificationToken {
 
     @NonNull
     @OneToOne(targetEntity = Client.class,cascade =
-            {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH},
+            {CascadeType.PERSIST,CascadeType.REFRESH},
             fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_id")
     private Client client;
