@@ -8,6 +8,7 @@ import java.io.IOException;
 
 public interface GoogleEventService {
 
-    void createEvent(GoogleEventDto googleEventDto, Credential credential) throws IOException;
+    String createEvent(GoogleEventDto googleEventDto, Credential credential) throws IOException;
+
 
 }

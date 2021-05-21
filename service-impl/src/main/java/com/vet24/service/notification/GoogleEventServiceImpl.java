@@ -31,7 +31,10 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     }
 
     @Override
-    public void createEvent(GoogleEventDto googleEventDto, Credential credential) throws IOException {
+    public String createEvent(GoogleEventDto googleEventDto, Credential credential) throws IOException {
+        if (credential == null) {
+            throw new IOException("dont have credential for this user");
+        }
         Event event = new Event()
                 .setSummary(String.valueOf(googleEventDto.getSummary()))
                 .setLocation(googleEventDto.getLocation())
@@ -63,10 +66,11 @@ public class GoogleEventServiceImpl implements GoogleEventService {
         };
         event.setAttendees(Arrays.asList(attendees));
         try {
-            buildCalendar(credential).events().insert("primary", event)
+            event = buildCalendar(credential).events().insert("primary", event)
                     .setSendNotifications(true).execute();
         } catch (IOException e) {
             throw new IOException("cannot create event");
         }
+        return event.getId();
     }
 }

@@ -14,7 +14,6 @@ import com.google.api.services.calendar.CalendarScopes;
 
 import com.vet24.models.dto.googleEvent.GoogleEventDto;
 import com.vet24.service.notification.GoogleEventService;
-import com.vet24.service.user.UserService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,16 +44,16 @@ public class NotificationController {
         this.googleEventService = googleEventService;
     }
 
-    private static HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-    private static JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_EVENTS);
 
     //must be email of authorize user
     private String USER = "petclinic.vet24@gmail.com";
 
-    private String CALLBACK_URI = "http://localhost:8080/oauth";
-    private String gdSecretKeys = "/credentials.json";
-    private String credentialsFolder = "tokens";
+    private final String CALLBACK_URI = "http://localhost:8080/oauth";
+    private final String gdSecretKeys = "/credentials.json";
+    private final String credentialsFolder = "tokens";
     private GoogleAuthorizationCodeFlow flow;
 
     //inizialization
@@ -92,15 +91,19 @@ public class NotificationController {
         flow.createAndStoreCredential(response, USER);
     }
 
+    private Credential getCredential(String email) throws IOException {
+        return flow.loadCredential(email);
+    }
+
+
     //create event
     @Operation(summary = "create event on clients google calendar")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully created"),
+            @ApiResponse(responseCode = "200", description = "Successfully sent"),
     })
     @PostMapping(value = {"/notification/create"})
     private ResponseEntity<GoogleEventDto> createEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
-        Credential credential = flow.loadCredential(googleEventDto.getEmail());
-        googleEventService.createEvent(googleEventDto, credential);
-        return new ResponseEntity<>(googleEventDto, HttpStatus.CREATED);
+        googleEventService.createEvent(googleEventDto, getCredential(googleEventDto.getEmail()));
+        return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
     }
 }
