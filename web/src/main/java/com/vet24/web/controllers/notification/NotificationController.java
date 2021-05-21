@@ -10,14 +10,10 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 
-import com.vet24.models.dto.notification.NotificationDto;
-import com.vet24.models.mappers.notification.NotificationMapper;
-import com.vet24.models.notification.Notification;
-import com.vet24.models.user.User;
-import com.vet24.service.notification.NotificationService;
+import com.vet24.models.dto.googleEvent.GoogleEventDto;
+import com.vet24.service.notification.GoogleEventService;
 import com.vet24.service.user.UserService;
 
 import org.springframework.http.HttpStatus;
@@ -43,14 +39,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RestController
 public class NotificationController {
 
-    private final NotificationService notificationService;
-    private final NotificationMapper notificationMapper;
-    private final UserService userService;
+    private final GoogleEventService googleEventService;
 
-    public NotificationController(NotificationService notificationService, NotificationMapper notificationMapper, UserService userService) {
-        this.notificationMapper = notificationMapper;
-        this.notificationService = notificationService;
-        this.userService = userService;
+    public NotificationController(GoogleEventService googleEventService) {
+        this.googleEventService = googleEventService;
     }
 
     private static HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
@@ -106,23 +98,9 @@ public class NotificationController {
             @ApiResponse(responseCode = "201", description = "Successfully created"),
     })
     @PostMapping(value = {"/notification/create"})
-    private ResponseEntity<NotificationDto> createEvent(@RequestBody NotificationDto notificationDto) throws  Exception {
-        List<User> listUser = notificationDto.getListUser();
-        for (int i = 0; i < listUser.size(); i++) {
-            User user = userService.getByKey(listUser.get(i).getId());
-            if (user == null) { continue; }
-            Credential credential = flow.loadCredential(user.getEmail());
-            Calendar calendar = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-                    .setApplicationName("Petclinic").build();
-            Notification notification = notificationMapper.notificationDtoToNotification(notificationDto);
-            notification.setUser(user);
-            if (notificationService.createEvent(notification, calendar)) {
-                notification.setSent(true);
-            } else {
-                notification.setSent(false);
-            }
-            notificationService.persist(notification);
-        }
-        return new ResponseEntity<>(notificationDto, HttpStatus.CREATED);
+    private ResponseEntity<GoogleEventDto> createEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
+        Credential credential = flow.loadCredential(googleEventDto.getEmail());
+        googleEventService.createEvent(googleEventDto, credential);
+        return new ResponseEntity<>(googleEventDto, HttpStatus.CREATED);
     }
 }
