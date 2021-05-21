@@ -1,7 +1,0 @@
-ROLE:
-  - ID: 1
-    NAME: "ADMIN"
-  - ID: 2
-    NAME: "MANAGER"
-  - ID: 3
-    NAME: "CLIENT"

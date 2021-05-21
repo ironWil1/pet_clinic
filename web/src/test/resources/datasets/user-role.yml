@@ -1,9 +1,0 @@
-USER_ROLE:
-  - ROLE_ID: 1
-    USER_ID: 100
-  - ROLE_ID: 2
-    USER_ID: 101
-  - ROLE_ID: 3
-    USER_ID: 3
-  - ROLE_ID: 3
-    USER_ID: 4

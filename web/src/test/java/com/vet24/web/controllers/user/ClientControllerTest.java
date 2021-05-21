@@ -2,16 +2,11 @@ package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
-import com.vet24.dao.user.ClientDao;
 import com.vet24.models.dto.user.ClientDto;
-import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.mappers.user.ClientMapper;
-import com.vet24.models.user.Client;
-import com.vet24.models.user.Role;
 import com.vet24.service.user.ClientService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -22,8 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
-
-import java.util.HashSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,26 +32,7 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     private ClientService clientService;
 
-    @Autowired
-    private ClientDao clientDao;
-
     private final String URI = "http://localhost:8090/api/client";
-
-//    @BeforeEach
-//    @DataSet("/datasets/clients.yml")
-//    public void setUpUsers() {
-//    }
-
-//    @AfterEach
-//    @DataSet("emptyUsers.yml")
-//    public static void cleanUp() {
-//    }
-
-    @Before
-    public void createNewClient() {
-        Client client = new Client("firstname", "lastname", "email@email.com", "password",
-                new Role(RoleNameEnum.CLIENT), new HashSet<>());
-    }
 
     @Test
     public void doesClientControllerExist() {
@@ -68,7 +42,7 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void getCurrentClient() {
-        ClientDto clientDto = clientMapper.clientToClientDto(clientService.getCurrentClient());
+        ClientDto clientDto = clientMapper.clientToClientDto(clientService.testGetCurrentClientEagerly());
         ResponseEntity<ClientDto> response = testRestTemplate
                 .getForEntity(URI, ClientDto.class);
 
@@ -78,8 +52,7 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/role.yml",
-            "/datasets/user-role.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void getClientAvatar() {
         persistClientAvatar();
         ResponseEntity<byte[]> response = testRestTemplate
@@ -89,8 +62,7 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/role.yml",
-            "/datasets/user-role.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void persistClientAvatar() {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("file", new ClassPathResource("test.png"));
