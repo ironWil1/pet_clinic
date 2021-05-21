@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserDaoImpl extends ReadWriteDaoImpl<Long, User> implements UserDao {
     @Override
-    public User getUserByLogin(String login) {
+    public User getUserByEmail(String email) {
         return manager
-                .createQuery("from User where login =:login", User.class)
-                .setParameter("login", login).getSingleResult();
+                .createQuery("from User where email =:email", User.class)
+                .setParameter("email", email).getSingleResult();
     }
 }

@@ -53,7 +53,7 @@ public class Client extends User {
     @Override
     public String toString() {
         return "Client{" +
-                "pets=" + pets + " login " + super.getEmail() + " " + super.getRole() +
+                "pets=" + pets + " email " + super.getEmail() + " " + super.getRole() +
                 '}';
     }
 }

@@ -70,6 +70,7 @@ public class TestDataInitializer implements ApplicationRunner {
         roleService.persist(new Role(RoleNameEnum.ADMIN));
         roleService.persist(new Role(RoleNameEnum.MANAGER));
         roleService.persist(new Role(RoleNameEnum.CLIENT));
+        roleService.persist(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
     }
 
     public void userInitialize() {

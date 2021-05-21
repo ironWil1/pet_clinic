@@ -10,7 +10,6 @@ import java.util.Set;
 @Setter
 public class ClientDto {
 
-    private String username;
     private String avatar;
     private String email;
     private Set<PetDto> pets;
