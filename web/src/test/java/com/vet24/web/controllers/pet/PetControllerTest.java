@@ -173,9 +173,11 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void getPetAvatarButPetDoesNotExistNotFound() {
+        Pet pet = petDao.getByKey(69000L);
         ResponseEntity<byte[]> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/avatar", byte[].class, 69000);
 
+        Assert.assertNull(pet);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -210,6 +212,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void persistPetAvatarButPetDoesNotExistNotFound() {
+        Pet pet = petDao.getByKey(69000L);
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("file", new ClassPathResource("test.png"));
         HttpHeaders headers = new HttpHeaders();
@@ -218,6 +221,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<String> response = testRestTemplate
                 .exchange(URI + "/{petId}/avatar", HttpMethod.POST, entity, String.class, 69000);
 
+        Assert.assertNull(pet);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }
