@@ -18,6 +18,7 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Client getClientByEmail(String email) {
         return clientDao.getClientByEmail(email);
     }
@@ -30,7 +31,7 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Client testGetCurrentClientEagerly() {
         return clientDao.testGetCurrentClientEagerly();
     }
