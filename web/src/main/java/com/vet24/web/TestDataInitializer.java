@@ -183,12 +183,12 @@ public class TestDataInitializer implements ApplicationRunner {
         petContactService.persist(petContact4);
 
         Pet pet5 = petService.getByKey(5L);
-        PetContact petContact5 = new PetContact("Кирилл", "Виноградная 20", 8_696_222_322L, petContactService.randomPetContactUniqueCode(5L));
+        PetContact petContact5 = new PetContact("Кирилл", "Виноградная 20", 8_696_222_32_23L, petContactService.randomPetContactUniqueCode(5L));
         petContact5.setPet(pet5);
         petContactService.persist(petContact5);
 
         Pet pet6 = petService.getByKey(6L);
-        PetContact petContact6 = new PetContact("Александр", "Стрелковая 70", 8_962_969_103L, petContactService.randomPetContactUniqueCode(6L));
+        PetContact petContact6 = new PetContact("Александр", "Стрелковая 70", 8_962_969_10_30L, petContactService.randomPetContactUniqueCode(6L));
         petContact6.setPet(pet6);
         petContactService.persist(petContact6);
     }
