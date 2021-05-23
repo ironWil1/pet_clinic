@@ -5,9 +5,11 @@ import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
+import com.vet24.models.notification.Notification;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
+import com.vet24.service.notification.NotificationService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.ProcedureService;
 import com.vet24.service.user.ClientService;
@@ -23,6 +25,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @RestController
 @RequestMapping("api/client/pet/{petId}/procedure")
 @Tag(name = "procedure-controller", description = "operations with Procedures")
@@ -32,14 +38,17 @@ public class ProcedureController {
     private final ProcedureService procedureService;
     private final ProcedureMapper procedureMapper;
     private final ClientService clientService;
+    private final NotificationService notificationService;
 
     @Autowired
     public ProcedureController(PetService petService, ProcedureService procedureService,
-                               ProcedureMapper procedureMapper, ClientService clientService) {
+                               ProcedureMapper procedureMapper, ClientService clientService,
+                               NotificationService notificationService) {
         this.petService = petService;
         this.procedureService = procedureService;
         this.procedureMapper = procedureMapper;
         this.clientService = clientService;
+        this.notificationService = notificationService;
     }
 
     @Operation(summary = "get a Procedure")
@@ -96,9 +105,21 @@ public class ProcedureController {
         if (!pet.getClient().getId().equals(client.getId())) {
             throw new BadRequestException("pet not yours");
         }
+        if (procedure.getIsPeriodical()) {
+            Notification notification = new Notification();
+            notification.setStartDate(Timestamp.valueOf(LocalDateTime.of(
+                    procedure.getDate(), LocalTime.MIDNIGHT)));
+            notification.setEndDate(Timestamp.valueOf(LocalDateTime.of(
+                    procedure.getDate(), LocalTime.MAX)));
+            notification.setText("Procedure '" + procedure.getType().name().toLowerCase() + "' for pet " + pet.getName());
+            // calendarDto = new CalendarDto(?, ?, ?, ?, ?);
+            // calendarService.save(calendarDto);
+            notificationService.persist(notification);
+            procedure.setNotification(notification);
+            pet.getNotifications().add(notification);
+        }
 
         procedureService.persist(procedure);
-
         pet.addProcedure(procedure);
         petService.update(pet);
 
@@ -116,7 +137,7 @@ public class ProcedureController {
     })
     @PutMapping("/{procedureId}")
     public ResponseEntity<ProcedureDto> update(@PathVariable Long petId, @PathVariable Long procedureId,
-                                         @RequestBody ProcedureDto procedureDto) {
+                                               @RequestBody ProcedureDto procedureDto) {
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = procedureService.getByKey(procedureId);
