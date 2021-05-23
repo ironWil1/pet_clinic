@@ -3,6 +3,7 @@ package com.vet24.models.pet;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.notification.Notification;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
@@ -78,6 +79,13 @@ public abstract class Pet {
     )
     private Set<Reproduction> reproductions = new HashSet<>();
 
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<Notification> notifications = new HashSet<>();
+
     protected Pet() {
     }
 
@@ -90,10 +98,11 @@ public abstract class Pet {
     }
 
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
-                  Set<Procedure> procedures, Set<Reproduction> reproductions) {
+                  Set<Procedure> procedures, Set<Reproduction> reproductions, Set<Notification> notifications) {
         this(name, birthDay, gender, breed, client);
         this.procedures = procedures;
         this.reproductions = reproductions;
+        this.notifications = notifications;
     }
 
     public void addProcedure(Procedure procedure) {

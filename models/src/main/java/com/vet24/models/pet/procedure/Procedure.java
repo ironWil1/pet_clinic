@@ -3,6 +3,7 @@ package com.vet24.models.pet.procedure;
 import com.vet24.models.medicine.Medicine;
 
 import com.vet24.models.enums.ProcedureType;
+import com.vet24.models.notification.Notification;
 import com.vet24.models.pet.Pet;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -47,6 +48,9 @@ public abstract class Procedure implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Pet pet;
+
+    @OneToOne(mappedBy = "procedure", fetch = FetchType.LAZY)
+    private Notification notification;
 
     protected Procedure(LocalDate date, ProcedureType type, String medicineBatchNumber,
                         Boolean isPeriodical, Integer periodDays, Medicine medicine, Pet pet) {
