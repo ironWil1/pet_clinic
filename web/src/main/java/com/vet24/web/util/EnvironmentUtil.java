@@ -31,7 +31,7 @@ public class EnvironmentUtil {
         return hostname;
     }
 
-    public String getServerUrlPrefix()  {
-        return "http://localhost"  + ":" + getPort()+"/";
+    public String getServerUrlPrefix(){
+        return "http://localhost:" + getPort()+"/";
     }
 }
