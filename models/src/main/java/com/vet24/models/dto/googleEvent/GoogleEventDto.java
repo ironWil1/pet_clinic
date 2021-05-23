@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class GoogleEventDto {
+    String id;
     String summary;
     String location;
     String description;

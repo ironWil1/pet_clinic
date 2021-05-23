@@ -1,14 +1,16 @@
 package com.vet24.service.notification;
 
-import com.google.api.client.auth.oauth2.Credential;
-
 import com.vet24.models.dto.googleEvent.GoogleEventDto;
 
 import java.io.IOException;
 
 public interface GoogleEventService {
 
-    String createEvent(GoogleEventDto googleEventDto, Credential credential) throws IOException;
+    void createEvent(GoogleEventDto googleEventDto) throws IOException;
+    void editEvent(GoogleEventDto googleEventDto) throws IOException;
+    void deleteEvent(GoogleEventDto googleEventDto) throws IOException;
+    String getRedirectUrl();
+    void saveToken(String code, String user) throws IOException;
 
 
 }

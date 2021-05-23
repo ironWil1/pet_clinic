@@ -1,17 +1,5 @@
 package com.vet24.web.controllers.notification;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.calendar.CalendarScopes;
-
 import com.vet24.models.dto.googleEvent.GoogleEventDto;
 import com.vet24.service.notification.GoogleEventService;
 
@@ -23,11 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,33 +28,14 @@ public class NotificationController {
         this.googleEventService = googleEventService;
     }
 
-    private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_EVENTS);
-
     //must be email of authorize user
-    private String USER = "petclinic.vet24@gmail.com";
+    private String user = "petclinic.vet24@gmail.com";
 
-    private final String CALLBACK_URI = "http://localhost:8080/oauth";
-    private final String gdSecretKeys = "/credentials.json";
-    private final String credentialsFolder = "tokens";
-    private GoogleAuthorizationCodeFlow flow;
 
-    //inizialization
-    @PostConstruct
-    public void init() throws IOException {
-        GoogleClientSecrets secrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(NotificationController.class.getResourceAsStream(gdSecretKeys)));
-        flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, secrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(credentialsFolder))).build();
-    }
-
-    //redirect for google
     @Operation(summary = "redirect for google authorization window")
     @GetMapping(value = {"/notification"})
     public void doGoogleSignIn(HttpServletResponse response) throws IOException {
-
-        GoogleAuthorizationCodeRequestUrl url = flow.newAuthorizationUrl();
-        String redirectURL = url.setRedirectUri(CALLBACK_URI).setAccessType("offline").build();
+        String redirectURL = googleEventService.getRedirectUrl();
         response.sendRedirect(redirectURL);
     }
 
@@ -80,30 +45,38 @@ public class NotificationController {
     public void saveAuthorizationCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String code = request.getParameter("code");
         if (code != null) {
-            saveToken(code);
+            googleEventService.saveToken(code, user);
         }
         response.sendRedirect("/");
     }
 
-    //save token
-    private void saveToken(String code) throws IOException {
-        GoogleTokenResponse response = flow.newTokenRequest(code).setRedirectUri(CALLBACK_URI).execute();
-        flow.createAndStoreCredential(response, USER);
-    }
-
-    private Credential getCredential(String email) throws IOException {
-        return flow.loadCredential(email);
-    }
-
-
-    //create event
     @Operation(summary = "create event on clients google calendar")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully sent"),
     })
     @PostMapping(value = {"/notification/create"})
     private ResponseEntity<GoogleEventDto> createEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
-        googleEventService.createEvent(googleEventDto, getCredential(googleEventDto.getEmail()));
+        googleEventService.createEvent(googleEventDto);
+        return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "edit event on clients google calendar")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully edited"),
+    })
+    @PostMapping(value = {"/notification/edit"})
+    private ResponseEntity<GoogleEventDto> editEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
+        googleEventService.editEvent(googleEventDto);
+        return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "delete event on clients google calendar")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deleted"),
+    })
+    @PostMapping(value = {"/notification/delete"})
+    private ResponseEntity<GoogleEventDto> deleteEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
+        googleEventService.deleteEvent(googleEventDto);
         return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
     }
 }
