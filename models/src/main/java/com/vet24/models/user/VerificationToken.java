@@ -6,12 +6,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Data
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class VerificationToken {
+public class VerificationToken  implements Serializable {
     @Id
     @NonNull
     private Long id;

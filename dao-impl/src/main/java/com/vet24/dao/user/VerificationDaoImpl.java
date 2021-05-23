@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class VerificationDaoImpl extends ReadWriteDaoImpl<Long, VerificationToken>  implements VerificationDao{
-
 }

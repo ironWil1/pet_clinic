@@ -2,8 +2,6 @@ package com.vet24.service.media;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -19,11 +17,8 @@ import java.util.Locale;
 import java.util.Map;
 
 @Service
-
 public class MailServiceImpl implements MailService{
 
-    private String port;
-    private String hostname;
 
     @Value("${spring.mail.username}")
     private String mailFrom;
@@ -31,9 +26,6 @@ public class MailServiceImpl implements MailService{
     private String mailLocation;
     @Value("${spring.mail.sign}")
     private String mailSign;
-
-    @Autowired
-    Environment environment;
 
     @Autowired
     private JavaMailSender emailSender;
@@ -62,11 +54,4 @@ public class MailServiceImpl implements MailService{
         helper.setFrom(mailFrom);
         emailSender.send(message);
     }
-
-    public String getPort() {
-        if (port == null) port = environment.getProperty("local.server.port");
-        return port;
-    }
-
-
 }
