@@ -6,7 +6,9 @@ import com.vet24.service.ReadWriteService;
 
 public interface VerificationService extends ReadWriteService<Long, VerificationToken> {
 
-     String createVerificationTokenDisplayCode(Client client);
+     String createVerificationToken(Client client);
 
      VerificationToken getVerificationToken(String token);
+
+     void removeToken(VerificationToken token);
 }

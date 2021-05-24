@@ -18,8 +18,7 @@ public class VerificationToken  implements Serializable {
     private Long id;
 
     @NonNull
-    @OneToOne(targetEntity = Client.class,cascade =
-            {CascadeType.PERSIST,CascadeType.REFRESH},
+    @OneToOne(targetEntity = Client.class,cascade = {CascadeType.PERSIST},
             fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_id")
     private Client client;

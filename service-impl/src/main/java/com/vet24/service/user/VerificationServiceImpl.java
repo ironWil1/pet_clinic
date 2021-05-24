@@ -9,32 +9,47 @@ import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.UUID;
 
 @Service
 public class VerificationServiceImpl extends ReadWriteServiceImpl<Long, VerificationToken>
         implements VerificationService{
+    private final VerificationDao verificationDao;
 
     @Autowired
     protected VerificationServiceImpl(ReadWriteDaoImpl<Long, VerificationToken> readWriteDao,
                                       VerificationDao  verificationDao) {
         super(readWriteDao);
+        this.verificationDao = verificationDao;
+
     }
 
     @Override
     @Transactional
-    public  String createVerificationTokenDisplayCode(Client client){
+    public  String createVerificationToken(Client client){
         UUID randomUUID =  UUID.randomUUID();
         Long tokenId = randomUUID.getLeastSignificantBits()*37+11;
-        VerificationToken vt = new VerificationToken(tokenId,client);
-        super.persist(vt);
+        persistTokenWithClient(client,tokenId);
         return FastUUID.toString(randomUUID);
+    }
+
+
+    private  void persistTokenWithClient(Client client,Long tokenId){
+        VerificationToken vt = new VerificationToken(tokenId,client);
+        verificationDao.persist(vt);
     }
 
     @Override
     @Transactional(readOnly = true)
     public VerificationToken getVerificationToken(String token) {
         Long tokenId = FastUUID.parseUUID(token).getLeastSignificantBits()*37+11;
-        return super.getByKey(tokenId);
+        return verificationDao.getByKey(tokenId);
+    }
+
+    @Override
+    @Transactional
+    public void removeToken(VerificationToken token) {
+        verificationDao.delete(token);
     }
 }
