@@ -1,6 +1,8 @@
 package com.vet24.web.controllers.notification;
 
 import com.vet24.models.dto.googleEvent.GoogleEventDto;
+import com.vet24.models.exception.CredentialException;
+import com.vet24.models.exception.EventException;
 import com.vet24.service.notification.GoogleEventService;
 
 import org.springframework.http.HttpStatus;
@@ -53,30 +55,48 @@ public class NotificationController {
     @Operation(summary = "create event on clients google calendar")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully sent"),
+            @ApiResponse(responseCode = "400", description = "Dont have credential for this user"),
+            @ApiResponse(responseCode = "502", description = "Cannot create event"),
     })
     @PostMapping(value = {"/notification/create"})
     private ResponseEntity<GoogleEventDto> createEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
-        googleEventService.createEvent(googleEventDto);
-        return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
+        try {
+            googleEventService.createEvent(googleEventDto);
+            return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
+        } catch (CredentialException e) {
+            return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_REQUEST);
+        } catch (EventException e) {
+            return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_GATEWAY);
+        }
     }
 
     @Operation(summary = "edit event on clients google calendar")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully edited"),
+            @ApiResponse(responseCode = "502", description = "Cannot edit event"),
     })
     @PostMapping(value = {"/notification/edit"})
     private ResponseEntity<GoogleEventDto> editEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
-        googleEventService.editEvent(googleEventDto);
-        return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
+        try {
+            googleEventService.editEvent(googleEventDto);
+            return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
+        } catch (EventException e) {
+            return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_GATEWAY);
+        }
     }
 
     @Operation(summary = "delete event on clients google calendar")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted"),
+            @ApiResponse(responseCode = "502", description = "Cannot delete event"),
     })
     @PostMapping(value = {"/notification/delete"})
     private ResponseEntity<GoogleEventDto> deleteEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
-        googleEventService.deleteEvent(googleEventDto);
-        return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
+        try {
+            googleEventService.deleteEvent(googleEventDto);
+            return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
+        } catch (EventException e) {
+            return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_GATEWAY);
+        }
     }
 }
