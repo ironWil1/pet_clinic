@@ -19,6 +19,8 @@ import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
 
 import com.vet24.models.dto.googleEvent.GoogleEventDto;
+import com.vet24.models.exception.CredentialException;
+import com.vet24.models.exception.EventException;
 
 import org.springframework.stereotype.Service;
 
@@ -43,7 +45,10 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     private final String credentialsFolder = "tokens";
     private GoogleAuthorizationCodeFlow flow;
 
-
+    /**
+     * Inizializaciya potoka avtorizacii v google
+     * @throws IOException
+     */
     @PostConstruct
     public void init() throws IOException {
         GoogleClientSecrets secrets = GoogleClientSecrets.load(JSON_FACTORY,
@@ -52,6 +57,10 @@ public class GoogleEventServiceImpl implements GoogleEventService {
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(credentialsFolder))).build();
     }
 
+    /**
+     *
+     * @return vozvrawaet URL, na kotorii proishodit redirect
+     */
     @Override
     public String getRedirectUrl() {
         GoogleAuthorizationCodeRequestUrl url = flow.newAuthorizationUrl();
@@ -59,17 +68,33 @@ public class GoogleEventServiceImpl implements GoogleEventService {
         return redirectURL;
     }
 
+    /**
+     *
+     * @param code kod k tokenu, prihodyawii ot google
+     * @param user pol'zovatel, k kotoromu sohranit' token avtorizacii
+     * @throws IOException
+     */
     @Override
     public void saveToken(String code, String user) throws IOException {
         GoogleTokenResponse response = flow.newTokenRequest(code).setRedirectUri(CALLBACK_URI).execute();
         flow.createAndStoreCredential(response, user);
     }
 
+    /**
+     * Inicializaciya kalendarya
+     * @param credential avtorizacionnyi token polzovatelya, k kalendaru kotorogo obrawaemsya
+     * @return obiekt kalendar
+     */
     private Calendar buildCalendar(Credential credential) {
         return new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                 .setApplicationName("Petclinic").build();
     }
 
+    /**
+     *
+     * @param timestamp iz DTO
+     * @return vremya v formate google sobitiya
+     */
     private EventDateTime getTime(Timestamp timestamp) {
         DateTime dateTime = new DateTime(timestamp);
         EventDateTime time = new EventDateTime()
@@ -78,11 +103,19 @@ public class GoogleEventServiceImpl implements GoogleEventService {
         return time;
     }
 
+    /**
+     * Sozdanie sobitiya
+     * @param googleEventDto
+     * @throws CredentialException
+     * @throws EventException
+     */
     @Override
-    public void createEvent(GoogleEventDto googleEventDto) throws IOException {
-        Credential credential = flow.loadCredential(googleEventDto.getEmail());
-        if (credential == null) {
-            throw new IOException("dont have credential for this user");
+    public void createEvent(GoogleEventDto googleEventDto) throws CredentialException, EventException {
+        Credential credential;
+        try {
+            credential = flow.loadCredential(googleEventDto.getEmail());
+        } catch (IOException e) {
+            throw new CredentialException("dont have credential for this user", googleEventDto.getEmail());
         }
         Event event = new Event()
                 .setSummary(String.valueOf(googleEventDto.getSummary()))
@@ -110,38 +143,44 @@ public class GoogleEventServiceImpl implements GoogleEventService {
             event = buildCalendar(credential).events().insert("primary", event)
                     .setSendNotifications(true).execute();
         } catch (IOException e) {
-            throw new IOException("cannot create event");
+            throw new EventException("cannot create event");
         }
         googleEventDto.setId(event.getId());
     }
 
+    /**
+     * redaktirovanie sobitiya
+     * @param googleEventDto
+     * @throws IOException
+     */
     @Override
     public void editEvent(GoogleEventDto googleEventDto) throws IOException {
         Credential credential = flow.loadCredential(googleEventDto.getEmail());
-        EventAttendee[] attendees = new EventAttendee[] {
-                new EventAttendee().setEmail(googleEventDto.getEmail()),
-        };
         Event changes = new Event().setSummary(googleEventDto.getSummary())
                 .setDescription(googleEventDto.getDescription())
                 .setLocation(googleEventDto.getLocation())
                 .setStart(getTime(googleEventDto.getStartDate()))
-                .setEnd(getTime(googleEventDto.getEndDate()))
-                .setAttendees(Arrays.asList(attendees));
+                .setEnd(getTime(googleEventDto.getEndDate()));
         try {
             buildCalendar(credential).events().patch("primary",
                     googleEventDto.getId(), changes).execute();
         } catch (IOException e) {
-            throw new IOException("cannot change event");
+            throw new EventException("cannot change event");
         }
     }
 
+    /**
+     * udalenie sobitiya
+     * @param googleEventDto
+     * @throws IOException
+     */
     @Override
     public void deleteEvent(GoogleEventDto googleEventDto) throws IOException {
         Credential credential = flow.loadCredential(googleEventDto.getEmail());
         try {
             buildCalendar(credential).events().delete("primary", googleEventDto.getId()).execute();
         } catch (IOException e) {
-            throw new IOException("cannot delete event");
+            throw new EventException("cannot delete event");
         }
     }
 
