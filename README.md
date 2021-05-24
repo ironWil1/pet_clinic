@@ -81,8 +81,11 @@ https://dbdiagram.io/d/60a62c9db29a09603d15bc72
 
 # Google API Guide
 Go to http://localhost:8080/notification in browser to redirect to google auth
+
 Now we just save authorization token for user petclinic.vet24@gmail.com, choose this google account
+
 After success authorization you will be redirect to /hello page
+
 Now you can create, edit, delete event:
 1) Create notification in swagger /notification/create to post event in Calendar
 - email must be user, whose calendar we want to access(now its only petclinic.vet24@gmail.com)
