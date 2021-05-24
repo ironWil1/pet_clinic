@@ -99,7 +99,7 @@ public class ProcedureController {
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
             @ApiResponse(responseCode = "404", description = "Pet is not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "pet not yours OR cannot create event",
+            @ApiResponse(responseCode = "400", description = "pet not yours OR cannot create event OR need set period days",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("")
@@ -116,28 +116,7 @@ public class ProcedureController {
             throw new BadRequestException("pet not yours");
         }
         if (procedure.getIsPeriodical()) {
-            Notification notification = new Notification(
-                    null, null,
-                    Timestamp.valueOf(LocalDateTime.of(procedure.getDate(), LocalTime.MIDNIGHT)),
-                    Timestamp.valueOf(LocalDateTime.of(procedure.getDate(), LocalTime.MAX)),
-                    "Periodic procedure for your pet",
-                    "Pet clinic",
-                    "Procedure '" + procedure.getType().name().toLowerCase() +
-                            "' \nfor pet " + pet.getName() +
-                            " \n[every " + procedure.getPeriodDays() + " day(s)]"
-            );
-            GoogleEventDto googleEventDto = notificationEventMapper
-                    .notificationWithEmailToGoogleEventDto(notification, client.getEmail());
-
-            try {
-                googleEventService.createEvent(googleEventDto);
-            } catch (IOException exception) {
-                throw new BadRequestException(exception.getMessage(), exception.getCause());
-            }
-
-            notificationService.persist(notification);
-            procedure.setNotification(notification);
-            pet.getNotifications().add(notification);
+            createProcedureNotification(procedure, pet, client);
         }
 
         procedureService.persist(procedure);
@@ -161,28 +140,45 @@ public class ProcedureController {
                                                @RequestBody ProcedureDto procedureDto) {
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
-        Procedure procedure = procedureService.getByKey(procedureId);
+        Procedure oldProcedure = procedureService.getByKey(procedureId);
+        Procedure newProcedure = procedureMapper.procedureDtoToProcedure(procedureDto);
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
-        if (procedure == null) {
+        if (oldProcedure == null) {
             throw new NotFoundException("procedure not found");
         }
         if (!pet.getClient().getId().equals(client.getId())) {
             throw new BadRequestException("pet not yours");
         }
-        if (!procedure.getPet().getId().equals(pet.getId())) {
+        if (!oldProcedure.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("pet not assigned to this procedure");
         }
-        if (!procedureDto.getId().equals(procedureId)) {
+        if (!oldProcedure.getPet().equals(pet)) {
+            throw new BadRequestException("unable to change procedure pet");
+        }
+        if (!newProcedure.getId().equals(procedureId)) {
             throw new BadRequestException("procedureId in path and in body not equals");
         }
-        procedure = procedureMapper.procedureDtoToProcedure(procedureDto);
-        procedure.setPet(pet);
-        procedureService.update(procedure);
 
-        return new ResponseEntity<>(procedureMapper.procedureToProcedureDto(procedure), HttpStatus.OK);
+        // old(not periodical) + new(periodical) -> create notification & event
+        if (!oldProcedure.getIsPeriodical() && newProcedure.getIsPeriodical()) {
+            createProcedureNotification(newProcedure, pet, client);
+        }
+        // old(periodical) + new(periodical) -> update notification & event
+        if (oldProcedure.getIsPeriodical() && newProcedure.getIsPeriodical()) {
+            updateProcedureNotification(newProcedure, pet, client);
+        }
+        // old(periodical) + new(not periodical) -> delete notification & event
+        if (oldProcedure.getIsPeriodical() && !newProcedure.getIsPeriodical()) {
+            deleteProcedureNotification(newProcedure, pet, client);
+        }
+
+        newProcedure.setPet(pet);
+        procedureService.update(newProcedure);
+
+        return new ResponseEntity<>(procedureMapper.procedureToProcedureDto(newProcedure), HttpStatus.OK);
     }
 
     @Operation(summary = "delete a Procedure")
@@ -211,10 +207,93 @@ public class ProcedureController {
         if (!procedure.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("pet not assigned to this procedure");
         }
+
+        if (procedure.getIsPeriodical()) {
+            deleteProcedureNotification(procedure, pet, client);
+        }
+
         pet.removeProcedure(procedure);
         procedureService.delete(procedure);
         petService.update(pet);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void createProcedureNotification(Procedure procedure, Pet pet, Client client) {
+        if (!(procedure.getPeriodDays() > 0)) {
+            throw new BadRequestException("for periodical procedure need to set period days");
+        }
+        Notification notification = new Notification(
+                null,
+                null,
+                Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.MIDNIGHT)),
+                Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.MAX)),
+                "Periodic procedure for your pet",
+                "Pet clinic 1",
+                "Procedure '" + procedure.getType().name().toLowerCase() + "' \n" +
+                        "for pet " + pet.getName() + " \n" +
+                        "[every " + procedure.getPeriodDays() + " day(s)]"
+        );
+        GoogleEventDto googleEventDto = notificationEventMapper
+                .notificationWithEmailToGoogleEventDto(notification, client.getEmail());
+
+        try {
+            googleEventService.createEvent(googleEventDto);
+        } catch (IOException exception) {
+            throw new BadRequestException(exception.getMessage(), exception.getCause());
+        }
+
+        notification.setEvent_id(googleEventDto.getId());
+        notificationService.persist(notification);
+        procedure.setNotification(notification);
+        pet.getNotifications().add(notification);
+    }
+
+    private void updateProcedureNotification(Procedure procedure, Pet pet, Client client) {
+        if (!(procedure.getPeriodDays() > 0)) {
+            throw new BadRequestException("for periodical procedure need to set period days");
+        }
+        Notification notification = new Notification(
+                procedure.getNotification().getId(),
+                procedure.getNotification().getEvent_id(),
+                Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.MIDNIGHT)),
+                Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.MAX)),
+                "Periodic procedure for your pet",
+                "Pet clinic 1",
+                "Procedure '" + procedure.getType().name().toLowerCase() + "' \n" +
+                        "for pet " + pet.getName() + " \n" +
+                        "[every " + procedure.getPeriodDays() + " day(s)]"
+        );
+        GoogleEventDto googleEventDto = notificationEventMapper
+                .notificationWithEmailToGoogleEventDto(notification, client.getEmail());
+
+        try {
+            googleEventService.editEvent(googleEventDto);
+        } catch (IOException exception) {
+            throw new BadRequestException(exception.getMessage(), exception.getCause());
+        }
+
+        notification.setEvent_id(googleEventDto.getId());
+        notificationService.update(notification);
+        procedure.setNotification(notification);
+    }
+
+    private void deleteProcedureNotification(Procedure procedure, Pet pet, Client client) {
+        if (!(procedure.getPeriodDays() > 0)) {
+            throw new BadRequestException("for periodical procedure need to set period days");
+        }
+        GoogleEventDto googleEventDto = new GoogleEventDto();
+        googleEventDto.setId(procedure.getNotification().getEvent_id());
+        googleEventDto.setEmail(client.getEmail());
+
+        try {
+            googleEventService.deleteEvent(googleEventDto);
+        } catch (IOException exception) {
+            throw new BadRequestException(exception.getMessage(), exception.getCause());
+        }
+
+        procedure.setNotification(null);
+        pet.getNotifications().remove(procedure.getNotification());
+        notificationService.delete(procedure.getNotification());
     }
 }
