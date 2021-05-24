@@ -14,7 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,12 +48,13 @@ public class PetFoundController {
     }*/
     @Operation(summary = "Save data found pet and create with send owner message about pet")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully save data found and create message", content = @Content()),
+            @ApiResponse(responseCode = "201", description = "Successfully save data found and create message",
+                    content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "PetContact by petCode is not found"),
     })
-    @GetMapping(value = "/petFound")
-    public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestBody PetFoundDto petFoundDto,
-                                                              @RequestParam(value = "petCode", required = false) String petCode) {
+    @PostMapping(value = "/petFound")
+    public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "petCode", required = false) String petCode,
+                                                                          @RequestBody PetFoundDto petFoundDto) {
         if (petContactService.isExistByPetCode(petCode)) {
             PetFound petFound = petFoundMapper.petFoundDtoToPetFound(petFoundDto);
             String text = petFound.getText();
