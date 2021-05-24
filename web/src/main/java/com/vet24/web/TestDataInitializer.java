@@ -1,29 +1,27 @@
 package com.vet24.web;
 
+import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.RoleNameEnum;
+import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Cat;
+import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
-import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.enums.Gender;
-import com.vet24.models.medicine.Medicine;
-import com.vet24.models.pet.Dog;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
 import com.vet24.models.user.User;
 import com.vet24.service.medicine.MedicineService;
+import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.EchinococcusProcedureService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
-import com.vet24.service.pet.PetService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
