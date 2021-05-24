@@ -77,9 +77,9 @@ public class TestDataInitializer implements ApplicationRunner {
                 "123456", new Role(RoleNameEnum.ADMIN)));
         userService.persist(new User("Petr", "Petrov", "Petr@gmail.com",
                 "123456",  new Role(RoleNameEnum.MANAGER)));
-        clientService.persist(new Client("John", "Smith", "clientLogin@gmail.com",
-                "123456",  new Role(RoleNameEnum.CLIENT), new HashSet<>()));
         clientService.persist(new Client("John", "Smith", "petclinic.vet24@gmail.com",
+                "123456",  new Role(RoleNameEnum.CLIENT), new HashSet<>()));
+        clientService.persist(new Client("John", "Smith", "clientLogin@gmail.com",
                 "123456",  new Role(RoleNameEnum.CLIENT), new HashSet<>()));
     }
 

@@ -158,7 +158,7 @@ public class ProcedureController {
         if (!oldProcedure.getPet().equals(pet)) {
             throw new BadRequestException("unable to change procedure pet");
         }
-        if (!newProcedure.getId().equals(procedureId)) {
+        if (!procedureId.equals(newProcedure.getId())) {
             throw new BadRequestException("procedureId in path and in body not equals");
         }
 
@@ -168,11 +168,11 @@ public class ProcedureController {
         }
         // old(periodical) + new(periodical) -> update notification & event
         if (oldProcedure.getIsPeriodical() && newProcedure.getIsPeriodical()) {
-            updateProcedureNotification(newProcedure, pet, client);
+            updateProcedureNotification(oldProcedure, newProcedure, pet, client);
         }
         // old(periodical) + new(not periodical) -> delete notification & event
         if (oldProcedure.getIsPeriodical() && !newProcedure.getIsPeriodical()) {
-            deleteProcedureNotification(newProcedure, pet, client);
+            deleteProcedureNotification(oldProcedure, pet, client);
         }
 
         newProcedure.setPet(pet);
@@ -232,7 +232,8 @@ public class ProcedureController {
                 "Pet clinic 1",
                 "Procedure '" + procedure.getType().name().toLowerCase() + "' \n" +
                         "for pet " + pet.getName() + " \n" +
-                        "[every " + procedure.getPeriodDays() + " day(s)]"
+                        "[every " + procedure.getPeriodDays() + " day(s)]",
+                pet
         );
         GoogleEventDto googleEventDto = notificationEventMapper
                 .notificationWithEmailToGoogleEventDto(notification, client.getEmail());
@@ -246,23 +247,24 @@ public class ProcedureController {
         notification.setEvent_id(googleEventDto.getId());
         notificationService.persist(notification);
         procedure.setNotification(notification);
-        pet.getNotifications().add(notification);
+        pet.addNotification(notification);
     }
 
-    private void updateProcedureNotification(Procedure procedure, Pet pet, Client client) {
-        if (!(procedure.getPeriodDays() > 0)) {
+    private void updateProcedureNotification(Procedure oldProcedure, Procedure newProcedure, Pet pet, Client client) {
+        if (!(newProcedure.getPeriodDays() > 0)) {
             throw new BadRequestException("for periodical procedure need to set period days");
         }
         Notification notification = new Notification(
-                procedure.getNotification().getId(),
-                procedure.getNotification().getEvent_id(),
-                Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.MIDNIGHT)),
-                Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.MAX)),
+                oldProcedure.getNotification().getId(),
+                oldProcedure.getNotification().getEvent_id(),
+                Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.MIDNIGHT)),
+                Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.MAX)),
                 "Periodic procedure for your pet",
                 "Pet clinic 1",
-                "Procedure '" + procedure.getType().name().toLowerCase() + "' \n" +
+                "Procedure '" + newProcedure.getType().name().toLowerCase() + "' \n" +
                         "for pet " + pet.getName() + " \n" +
-                        "[every " + procedure.getPeriodDays() + " day(s)]"
+                        "[every " + newProcedure.getPeriodDays() + " day(s)]",
+                pet
         );
         GoogleEventDto googleEventDto = notificationEventMapper
                 .notificationWithEmailToGoogleEventDto(notification, client.getEmail());
@@ -273,14 +275,13 @@ public class ProcedureController {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
         }
 
-        notification.setEvent_id(googleEventDto.getId());
         notificationService.update(notification);
-        procedure.setNotification(notification);
+        newProcedure.setNotification(notification);
     }
 
     private void deleteProcedureNotification(Procedure procedure, Pet pet, Client client) {
-        if (!(procedure.getPeriodDays() > 0)) {
-            throw new BadRequestException("for periodical procedure need to set period days");
+        if (procedure.getNotification() == null) {
+            throw new BadRequestException("notification not found");
         }
         GoogleEventDto googleEventDto = new GoogleEventDto();
         googleEventDto.setId(procedure.getNotification().getEvent_id());
@@ -292,8 +293,9 @@ public class ProcedureController {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
         }
 
+        Notification notification = procedure.getNotification();
         procedure.setNotification(null);
-        pet.getNotifications().remove(procedure.getNotification());
-        notificationService.delete(procedure.getNotification());
+        pet.removeNotification(notification);
+        notificationService.delete(notification);
     }
 }
