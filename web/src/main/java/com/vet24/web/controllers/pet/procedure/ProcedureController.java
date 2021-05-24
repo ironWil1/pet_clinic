@@ -1,14 +1,17 @@
 package com.vet24.web.controllers.pet.procedure;
 
 import com.vet24.models.dto.exception.ExceptionDto;
+import com.vet24.models.dto.googleEvent.GoogleEventDto;
 import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.exception.BadRequestException;
+import com.vet24.models.mappers.notification.NotificationEventMapper;
 import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
 import com.vet24.models.notification.Notification;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
+import com.vet24.service.notification.GoogleEventService;
 import com.vet24.service.notification.NotificationService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.ProcedureService;
@@ -25,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,16 +43,22 @@ public class ProcedureController {
     private final ProcedureMapper procedureMapper;
     private final ClientService clientService;
     private final NotificationService notificationService;
+    private final NotificationEventMapper notificationEventMapper;
+    private final GoogleEventService googleEventService;
 
     @Autowired
     public ProcedureController(PetService petService, ProcedureService procedureService,
                                ProcedureMapper procedureMapper, ClientService clientService,
-                               NotificationService notificationService) {
+                               NotificationEventMapper notificationEventMapper,
+                               NotificationService notificationService,
+                               GoogleEventService googleEventService) {
         this.petService = petService;
         this.procedureService = procedureService;
         this.procedureMapper = procedureMapper;
         this.clientService = clientService;
         this.notificationService = notificationService;
+        this.notificationEventMapper = notificationEventMapper;
+        this.googleEventService = googleEventService;
     }
 
     @Operation(summary = "get a Procedure")
@@ -89,7 +99,7 @@ public class ProcedureController {
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
             @ApiResponse(responseCode = "404", description = "Pet is not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "pet not yours",
+            @ApiResponse(responseCode = "400", description = "pet not yours OR cannot create event",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("")
@@ -106,14 +116,25 @@ public class ProcedureController {
             throw new BadRequestException("pet not yours");
         }
         if (procedure.getIsPeriodical()) {
-            Notification notification = new Notification();
-            notification.setStartDate(Timestamp.valueOf(LocalDateTime.of(
-                    procedure.getDate(), LocalTime.MIDNIGHT)));
-            notification.setEndDate(Timestamp.valueOf(LocalDateTime.of(
-                    procedure.getDate(), LocalTime.MAX)));
-            notification.setText("Procedure '" + procedure.getType().name().toLowerCase() + "' for pet " + pet.getName());
-            // calendarDto = new CalendarDto(?, ?, ?, ?, ?);
-            // calendarService.save(calendarDto);
+            Notification notification = new Notification(
+                    null, null,
+                    Timestamp.valueOf(LocalDateTime.of(procedure.getDate(), LocalTime.MIDNIGHT)),
+                    Timestamp.valueOf(LocalDateTime.of(procedure.getDate(), LocalTime.MAX)),
+                    "Periodic procedure for your pet",
+                    "Pet clinic",
+                    "Procedure '" + procedure.getType().name().toLowerCase() +
+                            "' \nfor pet " + pet.getName() +
+                            " \n[every " + procedure.getPeriodDays() + " day(s)]"
+            );
+            GoogleEventDto googleEventDto = notificationEventMapper
+                    .notificationWithEmailToGoogleEventDto(notification, client.getEmail());
+
+            try {
+                googleEventService.createEvent(googleEventDto);
+            } catch (IOException exception) {
+                throw new BadRequestException(exception.getMessage(), exception.getCause());
+            }
+
             notificationService.persist(notification);
             procedure.setNotification(notification);
             pet.getNotifications().add(notification);

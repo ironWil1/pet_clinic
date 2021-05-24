@@ -5,7 +5,9 @@ import com.vet24.models.pet.procedure.Procedure;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 @Mapper(componentModel = "spring")
 public abstract class ProcedureMapper {
 
