@@ -12,7 +12,7 @@ import com.vet24.models.user.VerificationToken;
 import com.vet24.service.media.MailService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.VerificationService;
-import com.vet24.web.util.EnvironmentUtil;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -37,24 +37,26 @@ import java.util.stream.Collectors;
 public class RegistrationController {
 
 
-    private static  final String confirmationAPI ="api/auth/submit";
-    private static final String invalidTokenMsg = "Registration token is invalid";
-    private static final String passwordsInvalidMsg = "Passwords don't match";
+    private static  final String CONFIRMATION_API ="/api/auth/submit";
+    private static final String INVALID_TOKEN_MSG = "Registration token is invalid";
+    private static final String PASSWORDS_UNMATCHED = "Passwords don't match";
     @Value("${registration.repeated.error.msg}")
-    private   String repeatedRegistrationMsg;
+    private  String repeatedRegistrationMsg;
+    @Value("${application.domain.name}")
+    private  String domainPath;
+
     private final ClientService clientService;
     private final MailService mailService;
     private final ClientMapper clientMapper;
     private final VerificationService verificationService;
-    private final EnvironmentUtil environmentUtil;
 
 
-    public RegistrationController(ClientService clientService, MailService mailService, ClientMapper clientMapper, VerificationService verificationService, EnvironmentUtil environmentUtil) {
+    public RegistrationController(ClientService clientService, MailService mailService,
+                                  ClientMapper clientMapper, VerificationService verificationService) {
         this.clientService = clientService;
         this.mailService = mailService;
         this.clientMapper = clientMapper;
         this.verificationService = verificationService;
-        this.environmentUtil = environmentUtil;
     }
 
     @Operation(summary = "Register new client")
@@ -75,7 +77,7 @@ public class RegistrationController {
             throw new BadRequestException(mesBuild);
         }
         if(!inputDto.getPassword().equals(inputDto.getConfirmPassword())){
-            throw new BadRequestException(passwordsInvalidMsg);
+            throw new BadRequestException(PASSWORDS_UNMATCHED);
         }
 
         Client foundOrNew = clientService.getClientByEmail(inputDto.getEmail());
@@ -88,11 +90,11 @@ public class RegistrationController {
 
         foundOrNew.setRole(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
 
-        String tokenLink = environmentUtil.getServerUrlPrefix() +
+        String tokenLink = domainPath +
                 request.getContextPath() +
-                RegistrationController.confirmationAPI +
+                RegistrationController.CONFIRMATION_API +
                 "?userCode=" +
-                verificationService.createVerificationTokenDisplayCode(foundOrNew);
+                verificationService.createVerificationToken(foundOrNew);
 
         mailService.sendWelcomeMessage(inputDto.getEmail(),inputDto.getFirstname(), tokenLink);
 
@@ -102,26 +104,21 @@ public class RegistrationController {
     @Operation(summary = "Confirm email of a new client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "205", description = "Successfully verified new client"),
-            @ApiResponse(responseCode = "400", description = "BadRequestException"),
-            @ApiResponse(responseCode = "204", description = "Client had been already verified before. Nothing to be done.")
+            @ApiResponse(responseCode = "400", description = "BadRequestException")
     })
 
-    @GetMapping(confirmationAPI)
+    @GetMapping(CONFIRMATION_API)
     public ResponseEntity<ClientDto> verifyMail(@RequestParam String userCode) {
 
         VerificationToken token = verificationService.getVerificationToken(userCode);
-
         if (token == null) {
-            throw new BadRequestException(invalidTokenMsg);
+            throw new BadRequestException(INVALID_TOKEN_MSG);
         }
         Client cl = token.getClient();
-        if (cl.getRole().getName() == RoleNameEnum.UNVERIFIED_CLIENT) {
-            cl.setRole(new Role(RoleNameEnum.CLIENT));
-            return  ResponseEntity.status(HttpStatus.RESET_CONTENT).body(
-                    clientMapper.clientToClientDto(clientService.update(cl)));
-        }else{
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        cl.setRole(new Role(RoleNameEnum.CLIENT));
+        ClientDto clientUpdated = clientMapper.clientToClientDto(clientService.update(cl));
+        verificationService.removeToken(token);
+        return  ResponseEntity.status(HttpStatus.RESET_CONTENT).body(clientUpdated);
 
     }
 
