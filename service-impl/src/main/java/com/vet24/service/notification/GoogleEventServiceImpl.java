@@ -71,7 +71,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     /**
      *
      * @param code kod k tokenu, prihodyawii ot google
-     * @param user polzovatel, k kotoromu sohranit token avtorizacii
+     * @param user pol'zovatel, k kotoromu sohranit' token avtorizacii
      * @throws IOException
      */
     @Override
@@ -156,15 +156,11 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     @Override
     public void editEvent(GoogleEventDto googleEventDto) throws IOException {
         Credential credential = flow.loadCredential(googleEventDto.getEmail());
-        EventAttendee[] attendees = new EventAttendee[] {
-                new EventAttendee().setEmail(googleEventDto.getEmail()),
-        };
         Event changes = new Event().setSummary(googleEventDto.getSummary())
                 .setDescription(googleEventDto.getDescription())
                 .setLocation(googleEventDto.getLocation())
                 .setStart(getTime(googleEventDto.getStartDate()))
-                .setEnd(getTime(googleEventDto.getEndDate()))
-                .setAttendees(Arrays.asList(attendees));
+                .setEnd(getTime(googleEventDto.getEndDate()));
         try {
             buildCalendar(credential).events().patch("primary",
                     googleEventDto.getId(), changes).execute();
