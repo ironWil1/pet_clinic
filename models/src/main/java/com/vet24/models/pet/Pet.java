@@ -124,4 +124,14 @@ public abstract class Pet {
         reproductions.remove(reproduction);
         reproduction.setPet(null);
     }
+
+    public void addNotification(Notification notification){
+        notifications.add(notification);
+        notification.setPet(this);
+    }
+
+    public void removeNotification(Notification notification) {
+        notifications.remove(notification);
+        notification.setPet(null);
+    }
 }

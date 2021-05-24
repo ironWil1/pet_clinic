@@ -49,7 +49,8 @@ public abstract class Procedure implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private Pet pet;
 
-    @OneToOne(mappedBy = "procedure", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notification_id")
     private Notification notification;
 
     protected Procedure(LocalDate date, ProcedureType type, String medicineBatchNumber,

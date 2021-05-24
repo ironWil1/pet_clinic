@@ -23,6 +23,7 @@ public abstract class ProcedureMapper {
     @Mapping(source = "medicine.id", target = "medicineId")
     public abstract ProcedureDto procedureToProcedureDto(Procedure procedure);
 
+    @Mapping(source = "id", target = "id")
     public Procedure procedureDtoToProcedure(ProcedureDto procedureDto) {
         Procedure procedure = null;
         String procedureType = procedureDto.getType().name();
