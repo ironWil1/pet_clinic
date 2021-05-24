@@ -227,7 +227,7 @@ public class ProcedureController {
                 null,
                 null,
                 Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.MIDNIGHT)),
-                Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.MAX)),
+                Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.NOON)),
                 "Periodic procedure for your pet",
                 "Pet clinic 1",
                 "Procedure '" + procedure.getType().name().toLowerCase() + "' \n" +
@@ -258,7 +258,7 @@ public class ProcedureController {
                 oldProcedure.getNotification().getId(),
                 oldProcedure.getNotification().getEvent_id(),
                 Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.MIDNIGHT)),
-                Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.MAX)),
+                Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.NOON)),
                 "Periodic procedure for your pet",
                 "Pet clinic 1",
                 "Procedure '" + newProcedure.getType().name().toLowerCase() + "' \n" +
