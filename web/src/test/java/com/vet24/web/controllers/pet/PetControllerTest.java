@@ -26,8 +26,6 @@ import org.springframework.util.LinkedMultiValueMap;
 
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DBRider
 public class PetControllerTest extends ControllerAbstractIntegrationTest {
 
@@ -45,11 +43,6 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void createNewClientAndDog() {
         this.abstractNewPetDto = new DogDto("name", PetType.DOG, LocalDate.now(), Gender.MALE, "breed",
                 "color", PetSize.MEDIUM, 9.3, "description", "test.png", 0);
-    }
-
-    @Test
-    public void doesPetControllerExist() {
-        assertThat(controller).isNotNull();
     }
 
     @Test

@@ -35,11 +35,6 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     private final String URI = "http://localhost:8090/api/client";
 
     @Test
-    public void doesClientControllerExist() {
-        assertThat(controller).isNotNull();
-    }
-
-    @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void getCurrentClient() {
         ClientDto clientDto = clientMapper.clientToClientDto(clientService.testGetCurrentClientEagerly());
