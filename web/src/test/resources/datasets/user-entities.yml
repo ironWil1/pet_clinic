@@ -5,7 +5,7 @@ USER_ENTITIES:
     ENABLED: true
     FIRSTNAME: "Admin"
     LASTNAME: "Admin"
-    LOGIN: "admin"
+    EMAIL: "admin@gmail.com"
     PASSWORD: "admin"
   - ID: 101
     USER_TYPE: "MANAGER"
@@ -13,7 +13,7 @@ USER_ENTITIES:
     ENABLED: true
     FIRSTNAME: "Manager"
     LASTNAME: "Manager"
-    LOGIN: "manager"
+    EMAIL: "manager@gmail.com"
     PASSWORD: "manager"
   - ID: 3
     USER_TYPE: "CLIENT"
@@ -21,7 +21,7 @@ USER_ENTITIES:
     ENABLED: true
     FIRSTNAME: "Ivan"
     LASTNAME: "Ivanov"
-    LOGIN: "user3"
+    EMAIL: "user3@gmail.com"
     PASSWORD: "user3"
   - ID: 4
     USER_TYPE: "CLIENT"
@@ -29,5 +29,5 @@ USER_ENTITIES:
     ENABLED: true
     FIRSTNAME: "Petr"
     LASTNAME: "Petrov"
-    LOGIN: "user4"
+    EMAIL: "user4@gmail.com"
     PASSWORD: "user4"

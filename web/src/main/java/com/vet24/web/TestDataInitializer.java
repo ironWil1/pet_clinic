@@ -73,14 +73,14 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userInitialize() {
-        userService.persist(new User("Ivan", "Ivanov", "Ivan",
-                "123456", roleService.getByKey(1L)));
-        userService.persist(new User("Petr", "Petrov", "Petr",
-                "123456", roleService.getByKey(2L)));
-        clientService.persist(new Client("John", "Smith", "clientLogin",
-                "123456", roleService.getByKey(3L), new HashSet<>()));
-        clientService.persist(new Client("John", "Smith", "clientLogin",
-                "123456", roleService.getByKey(3L), new HashSet<>()));
+        userService.persist(new User("Ivan", "Ivanov", "Ivan@gmail.com",
+                "123456", new Role(RoleNameEnum.ADMIN)));
+        userService.persist(new User("Petr", "Petrov", "Petr@gmail.com",
+                "123456",  new Role(RoleNameEnum.MANAGER)));
+        clientService.persist(new Client("John", "Smith", "clientLogin@gmail.com",
+                "123456",  new Role(RoleNameEnum.CLIENT), new HashSet<>()));
+        clientService.persist(new Client("John", "Smith", "petclinic.vet24@gmail.com",
+                "123456",  new Role(RoleNameEnum.CLIENT), new HashSet<>()));
     }
 
     public void petInitialize() {
@@ -93,15 +93,14 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userUpdateMethod() {
-        User user = new User("Test", "Testov", "TestLogin",
-                "TestPassword", roleService.getByKey(2L));
+        User user = new User("Test", "Testov", "TestLogin@gmail.com",
+                "TestPassword", new Role(RoleNameEnum.MANAGER));
         user.setId(1L);
         userService.update(user);
     }
 
     public void roleUpdateMethod() {
         Role role = new Role(RoleNameEnum.ADMIN);
-        role.setId(3L);
         roleService.update(role);
     }
 
@@ -112,7 +111,7 @@ public class TestDataInitializer implements ApplicationRunner {
 
     //Delete method doesn't work if user with this.Role exists in DB.
     public void roleDeleteMethod() {
-        Role role = roleService.getByKey(3L);
+        Role role = new Role(RoleNameEnum.CLIENT);
         roleService.delete(role);
     }
 
