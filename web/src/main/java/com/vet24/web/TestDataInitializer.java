@@ -83,11 +83,11 @@ public class TestDataInitializer implements ApplicationRunner {
         List<Client> clients = new ArrayList<>();
 
         for (int i = 1; i <= 30; i++) {
-            clients.add(new Client("ClientFirstName" + i, "ClientLastName" + i, "ClientEmail" + i, "ClientPassword" + i, CLIENT, PETS));
-            if(i % 2 == 0) {
-                users.add(new User("AdminFirstName" + i, "AdminLastName" + i, "AdminEmail" + i, "AdminPassword" + i, ADMIN));
+            clients.add(new Client("ClientFirstName" + i, "ClientLastName" + i, "client" + i + "@email.com", "client", CLIENT, PETS));
+            if(i <= 15) {
+                users.add(new User("AdminFirstName" + i, "AdminLastName" + i, "admin" + i + "@email.com", "admin", ADMIN));
             } else {
-                users.add(new User("ManagerFirstName" + i, "ManagerLastName" + i, "ManagerEmail" + i, "ManagerPassword" + i, MANAGER));
+                users.add(new User("ManagerFirstName" + i, "ManagerLastName" + i, "manager" + i + "@email.com", "manager", MANAGER));
             }
         }
         userService.persistAll(users);
@@ -98,7 +98,7 @@ public class TestDataInitializer implements ApplicationRunner {
         List<Pet> pets = new ArrayList<>();
         long id = 31L;
         for (int i = 1; i <= 30; i++) {
-            if (i % 2 == 0) {
+            if (i <= 15) {
                 pets.add(new Dog("DogName" + i, LocalDate.now(), MALE, "DogBreed" + i, clientService.getByKey(id++)));
             } else {
                 pets.add(new Cat("CatName" + i, LocalDate.now(), FEMALE, "CatBreed" + i, clientService.getByKey(id++)));
