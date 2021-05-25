@@ -84,11 +84,6 @@ public class TestDataInitializer implements ApplicationRunner {
 
         for (int i = 1; i <= 30; i++) {
             clients.add(new Client("ClientFirstName" + i, "ClientLastName" + i, "client" + i + "@email.com", "client", CLIENT, PETS));
-            if(i <= 15) {
-                users.add(new User("AdminFirstName" + i, "AdminLastName" + i, "admin" + i + "@email.com", "admin", ADMIN));
-            } else {
-                users.add(new User("ManagerFirstName" + i, "ManagerLastName" + i, "manager" + i + "@email.com", "manager", MANAGER));
-            }
         }
         userService.persistAll(users);
         clientService.persistAll(clients);
@@ -96,12 +91,11 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void petInitialize() {
         List<Pet> pets = new ArrayList<>();
-        long id = 31L;
         for (int i = 1; i <= 30; i++) {
             if (i <= 15) {
-                pets.add(new Dog("DogName" + i, LocalDate.now(), MALE, "DogBreed" + i, clientService.getByKey(id++)));
+                pets.add(new Dog("DogName" + i, LocalDate.now(), MALE, "DogBreed" + i, clientService.getByKey((long) i)));
             } else {
-                pets.add(new Cat("CatName" + i, LocalDate.now(), FEMALE, "CatBreed" + i, clientService.getByKey(id++)));
+                pets.add(new Cat("CatName" + i, LocalDate.now(), FEMALE, "CatBreed" + i, clientService.getByKey((long) i)));
             }
         }
 
