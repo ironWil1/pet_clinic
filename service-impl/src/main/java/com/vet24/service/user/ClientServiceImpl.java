@@ -5,6 +5,7 @@ import com.vet24.dao.user.ClientDao;
 import com.vet24.models.user.Client;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implements ClientService {
@@ -17,13 +18,21 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     }
 
     @Override
-    public Client getClientByEmail(String login) {
-        return clientDao.getClientByEmail(login);
+    @Transactional(readOnly = true)
+    public Client getClientByEmail(String email) {
+        return clientDao.getClientByEmail(email);
     }
 
     // Always returns Client with id = 3
     @Override
+    @Transactional(readOnly = true)
     public Client getCurrentClient() {
         return clientDao.getByKey(3L);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Client testGetCurrentClientEagerly() {
+        return clientDao.testGetCurrentClientEagerly();
     }
 }
