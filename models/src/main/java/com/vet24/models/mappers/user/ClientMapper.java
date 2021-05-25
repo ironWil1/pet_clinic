@@ -13,5 +13,6 @@ public interface ClientMapper {
 
     ClientDto clientToClientDto(Client client);
 
+
     Client registerDtoToClient(RegisterDto dto);
 }
