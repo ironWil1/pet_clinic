@@ -12,7 +12,6 @@ import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
-import com.vet24.models.user.User;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.EchinococcusProcedureService;
@@ -29,7 +28,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 
 @Component
@@ -40,28 +43,24 @@ public class TestDataInitializer implements ApplicationRunner {
     private final EchinococcusProcedureService echinococcusProcedureService;
     private final ReproductionService reproductionService;
     private final RoleService roleService;
-    private final UserService userService;
     private final ClientService clientService;
     private final PetService petService;
     private final MedicineService medicineService;
 
     private final Environment environment;
 
-    private final Role ADMIN = new Role(RoleNameEnum.ADMIN);
-    private final Role MANAGER = new Role(RoleNameEnum.MANAGER);
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Set<Pet> PETS = new HashSet<>();
     private final Gender MALE = Gender.MALE;
     private final Gender FEMALE = Gender.FEMALE;
 
     @Autowired
-    public TestDataInitializer(PetService petService, RoleService roleService, UserService userService, ClientService clientService,
+    public TestDataInitializer(PetService petService, RoleService roleService, ClientService clientService,
                                MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
                                ReproductionService reproductionService, Environment environment) {
         this.roleService = roleService;
-        this.userService = userService;
         this.clientService = clientService;
         this.petService = petService;
         this.medicineService = medicineService;
@@ -79,13 +78,11 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userInitialize() {
-        List<User> users = new ArrayList<>();
         List<Client> clients = new ArrayList<>();
 
         for (int i = 1; i <= 30; i++) {
             clients.add(new Client("ClientFirstName" + i, "ClientLastName" + i, "client" + i + "@email.com", "client", CLIENT, PETS));
         }
-        userService.persistAll(users);
         clientService.persistAll(clients);
     }
 
