@@ -34,8 +34,11 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 @Component
@@ -55,6 +58,12 @@ public class TestDataInitializer implements ApplicationRunner {
     private final PetService petService;
     private final Environment environment;
 
+    private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
+    private final Set<Pet> PETS = new HashSet<>();
+    private final Gender MALE = Gender.MALE;
+    private final Gender FEMALE = Gender.FEMALE;
+
+    @Autowired
     public TestDataInitializer(RoleService roleService, UserService userService,
                                ClientService clientService,
                                MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
@@ -81,71 +90,69 @@ public class TestDataInitializer implements ApplicationRunner {
         roleService.persist(new Role(RoleNameEnum.ADMIN));
         roleService.persist(new Role(RoleNameEnum.MANAGER));
         roleService.persist(new Role(RoleNameEnum.CLIENT));
+        roleService.persist(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
     }
 
     public void userInitialize() {
-        userService.persist(new User("Ivan", "Ivanov", "Ivan@gmail.com",
-                "123456", new Role(RoleNameEnum.ADMIN)));
-        userService.persist(new User("Petr", "Petrov", "Petr@gmail.com",
-                "123456",  new Role(RoleNameEnum.MANAGER)));
-        clientService.persist(new Client("John", "Smith", "kiranlazarev@gmail.com",
-                "123456",  new Role(RoleNameEnum.CLIENT), new HashSet<>()));
+        List<Client> clients = new ArrayList<>();
+
+        for (int i = 1; i <= 30; i++) {
+            clients.add(new Client("ClientFirstName" + i, "ClientLastName" + i, "client" + i + "@email.com", "client", CLIENT, PETS));
+        }
+        clientService.persistAll(clients);
     }
 
-    public void userUpdateMethod() {
-        User user = new User("Test", "Testov", "TestLogin",
-                "TestPassword", new Role(RoleNameEnum.MANAGER));
-        user.setId(1L);
-        userService.update(user);
-    }
-
-    public void roleUpdateMethod() {
-        Role role = new Role(RoleNameEnum.ADMIN);
-        roleService.update(role);
-    }
-
-    public void userDeleteMethod() {
-        User user = userService.getByKey(1L);
-        userService.delete(user);
-    }
-
-    //Delete method doesn't work if user with this.Role exists in DB.
-    public void roleDeleteMethod() {
-        Role role = new Role(RoleNameEnum.CLIENT);
-        roleService.delete(role);
-    }
+    /*public void petInitialize() {
+        List<Pet> pets = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            if (i <= 15) {
+                pets.add(new Dog("DogName" + i, LocalDate.now(), MALE, "DogBreed" + i, clientService.getByKey((long) i)));
+            } else {
+                pets.add(new Cat("CatName" + i, LocalDate.now(), FEMALE, "CatBreed" + i, clientService.getByKey((long) i)));
+            }
+        }
+        petService.persistAll(pets);
+    }*/
 
     public void medicineInitialize() {
-        medicineService.persist(new Medicine("sinopharm", "sputnik", "sdasd",
-                "protiv covid"));
-        medicineService.getByKey(1L);
+        List<Medicine> medicines = new ArrayList<>();
+        for(int i = 1; i <= 30; i++) {
+            medicines.add(new Medicine("manufactureName" + i, "name" + i, "icon" + i, "description" + i));
+        }
+        medicineService.persistAll(medicines);
     }
 
     public void procedureInitializer(){
-        vaccinationProcedureService.persist(new VaccinationProcedure(
-                LocalDate.now(), "nbr3br3n", false, null,
-                medicineService.getByKey(1L), petService.getByKey(1L)
-        ));
-        vaccinationProcedureService.getByKey(1L);
+        List<VaccinationProcedure> vaccination = new ArrayList<>();
+        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
+        List<EchinococcusProcedure> echinococcus = new ArrayList<>();
 
-        externalParasiteProcedureService.persist(new ExternalParasiteProcedure(
-                LocalDate.now(), "5g567b", true, 40,
-                medicineService.getByKey(1L), petService.getByKey(1L)
-        ));
-        externalParasiteProcedureService.getByKey(2L);
+        for (int i = 1; i <= 30; i++) {
+            if (i <= 10) {
+                vaccination.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + i,
+                        false, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+            }
+            if (i > 10 && i <= 20) {
+                externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
+                        true, i, medicineService.getByKey((long)i), petService.getByKey((long) i)));
+            }
+            if (i > 20) {
+                echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
+                        true, i, medicineService.getByKey((long) i),  petService.getByKey((long) i)));
+            }
+        }
 
-        echinococcusProcedureService.persist(new EchinococcusProcedure(
-                LocalDate.now(), "43h5j3", true, 20,
-                medicineService.getByKey(1L), petService.getByKey(2L)
-        ));
-        echinococcusProcedureService.getByKey(3L);
+        vaccinationProcedureService.persistAll(vaccination);
+        externalParasiteProcedureService.persistAll(externalParasite);
+        echinococcusProcedureService.persistAll(echinococcus);
     }
 
     public void reproductionInitializer(){
-        reproductionService.persist(new Reproduction(
-                LocalDate.now(), LocalDate.now(), LocalDate.now(), 2, petService.getByKey(1L)
-        ));
-        reproductionService.getByKey(1L);
+        List<Reproduction> reproductions = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            reproductions.add(new Reproduction(LocalDate.now(), LocalDate.now(), LocalDate.now(), i, petService.getByKey((long) i)));
+        }
+        reproductionService.persistAll(reproductions);
     }
     public void catInitializer() {
         catService.persist(new Cat("Феликс", LocalDate.now(), Gender.MALE, "Дворовой", clientService.getByKey(3L)));
@@ -201,6 +208,7 @@ public class TestDataInitializer implements ApplicationRunner {
                         environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop")) {
             roleInitialize();
             userInitialize();
+            petInitialize();
             medicineInitialize();
             procedureInitializer();
             reproductionInitializer();
