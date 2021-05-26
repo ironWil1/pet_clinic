@@ -102,7 +102,7 @@ public class TestDataInitializer implements ApplicationRunner {
         clientService.persistAll(clients);
     }
 
-    /*public void petInitialize() {
+    public void petInitialize() {
         List<Pet> pets = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             if (i <= 15) {
@@ -112,7 +112,7 @@ public class TestDataInitializer implements ApplicationRunner {
             }
         }
         petService.persistAll(pets);
-    }*/
+    }
 
     public void medicineInitialize() {
         List<Medicine> medicines = new ArrayList<>();
@@ -141,7 +141,6 @@ public class TestDataInitializer implements ApplicationRunner {
                         true, i, medicineService.getByKey((long) i),  petService.getByKey((long) i)));
             }
         }
-
         vaccinationProcedureService.persistAll(vaccination);
         externalParasiteProcedureService.persistAll(externalParasite);
         echinococcusProcedureService.persistAll(echinococcus);
@@ -153,19 +152,6 @@ public class TestDataInitializer implements ApplicationRunner {
             reproductions.add(new Reproduction(LocalDate.now(), LocalDate.now(), LocalDate.now(), i, petService.getByKey((long) i)));
         }
         reproductionService.persistAll(reproductions);
-    }
-    public void catInitializer() {
-        catService.persist(new Cat("Феликс", LocalDate.now(), Gender.MALE, "Дворовой", clientService.getByKey(3L)));
-        catService.persist(new Cat("Тихон", LocalDate.now(), Gender.MALE, "Британский", clientService.getByKey(3L)));
-        catService.persist(new Cat("Лаваш", LocalDate.now(), Gender.MALE, "Бенгальский", clientService.getByKey(3L)));
-    }
-
-    public void dogInitializer() {
-        dogService.persist(new Dog("Жук", LocalDate.now(), Gender.MALE, "Yorkshire Terrier", clientService.getByKey(3L)));
-        dogService.persist(new Dog("Туман", LocalDate.now(), Gender.MALE, "Golden Retriever", clientService.getByKey(3L)));
-        dogService.persist(new Dog("Рекс", LocalDate.now(), Gender.MALE, "Немецкая овчарка", clientService.getByKey(3L)));
-        // для тестирования сохранения в пост методе PetContact контроллера
-        dogService.persist(new Dog("Рекс", LocalDate.now(), Gender.MALE, "Немецкая овчарка", clientService.getByKey(3L)));
     }
 
     public void petContactInitializer() {
@@ -212,8 +198,6 @@ public class TestDataInitializer implements ApplicationRunner {
             medicineInitialize();
             procedureInitializer();
             reproductionInitializer();
-            catInitializer();
-            dogInitializer();
             petContactInitializer();
         }
     }
