@@ -1,16 +1,13 @@
-USER_ENTITIES:
-  - ID: 213
-    USER_TYPE: "CLIENT"
-    AVATAR: "test.png"
-    ENABLED: "true"
-    FIRSTNAME: "Thomas"
-    LASTNAME: "Sawer"
-    EMAIL: "Thomas@gmail.com"
-    PASSWORD: "123456"
 ROLE:
   - NAME: "ADMIN"
   - NAME: "MANAGER"
   - NAME: "CLIENT"
+  - NAME: "UNVERIFIED_CLIENT"
+
+
+
+
+
 
 
 

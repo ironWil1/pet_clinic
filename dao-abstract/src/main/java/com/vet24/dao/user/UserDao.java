@@ -5,5 +5,5 @@ import com.vet24.models.user.User;
 
 public interface UserDao extends ReadWriteDao<Long, User> {
 
-    User getUserByLogin(String login);
+    User getUserByEmail(String login);
 }
