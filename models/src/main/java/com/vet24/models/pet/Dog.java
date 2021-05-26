@@ -27,12 +27,4 @@ public class Dog extends Pet {
         super(name, birthDay, gender, breed, client);
         this.petType = PetType.DOG;
     }
-
-    // add later when ready
-
-    //    List<Vaccinations> vaccinations;
-    //    List<echinococcus> echinococcus;
-    //    List<externalParasite> externalParasite;
-    //    List<Reproduction> reproduction;
-
 }

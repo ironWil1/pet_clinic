@@ -1,9 +1,10 @@
 package com.vet24.dao.pet;
 
 import com.vet24.dao.ReadWriteDaoImpl;
-import com.vet24.models.pet.Pet;
+import com.vet24.models.pet.Cat;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class PetDaoImpl extends ReadWriteDaoImpl<Long, Pet> implements PetDao {
+public class CatDaoImpl extends ReadWriteDaoImpl<Long, Cat> implements CatDao {
+
 }

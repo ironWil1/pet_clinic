@@ -35,3 +35,51 @@ PET_ENTITIES:
     PET_SIZE: "BIG"
     WEIGHT: 21
     CLIENT_ID: 3
+  - ID: 103
+    PET_TYPE: "DOG"
+    AVATAR: "test.png"
+    BIRTH_DAY: "2018-05-13"
+    BREED: "breed4"
+    COLOR: "GREY"
+    DESCRIPTION: "big dog male grey breed4"
+    GENDER: "MALE"
+    NAME: "pet4"
+    PET_SIZE: "BIG"
+    WEIGHT: 21
+    CLIENT_ID: 3
+  - ID: 104
+    PET_TYPE: "CAT"
+    AVATAR: "test.png"
+    BIRTH_DAY: "2018-05-13"
+    BREED: "breed5"
+    COLOR: "GREY"
+    DESCRIPTION: "big dog male grey breed5"
+    GENDER: "MALE"
+    NAME: "pet5"
+    PET_SIZE: "BIG"
+    WEIGHT: 21
+    CLIENT_ID: 3
+  - ID: 105
+    PET_TYPE: "CAT"
+    AVATAR: "test.png"
+    BIRTH_DAY: "2018-05-13"
+    BREED: "breed6"
+    COLOR: "GREY"
+    DESCRIPTION: "big dog male grey breed6"
+    GENDER: "MALE"
+    NAME: "pet6"
+    PET_SIZE: "BIG"
+    WEIGHT: 21
+    CLIENT_ID: 3
+  - ID: 106
+    PET_TYPE: "DOG"
+    AVATAR: "test.png"
+    BIRTH_DAY: "2018-05-13"
+    BREED: "breed7"
+    COLOR: "GREY"
+    DESCRIPTION: "big dog male grey breed7"
+    GENDER: "MALE"
+    NAME: "pet7"
+    PET_SIZE: "BIG"
+    WEIGHT: 21
+    CLIENT_ID: 3
