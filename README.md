@@ -76,3 +76,11 @@ To change login via google-account petclinic.vet24@gmail.com
 Last update 20.05.2021 12:50
 
 https://dbdiagram.io/d/60a62c9db29a09603d15bc72
+
+# Vaadin Guide
+
+For start VaadinPetClinicRunner you should: 
+1. Add vaadin/pom.xml file in your current project. 
+2. Install [required tools](https://vaadin.com/docs/v14/guide/install). 
+3. Reload maven dependencies and type ```npm install``` in the terminal.
+4. Run http://localhost:9090 in a browser.
