@@ -1,7 +1,6 @@
 package com.vet24.service.user;
 
 
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.user.DoctorDao;
 import com.vet24.models.user.Doctor;
 import com.vet24.service.ReadWriteServiceImpl;
@@ -14,11 +13,9 @@ public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implem
     private final DoctorDao doctorDao;
 
     @Autowired
-    public DoctorServiceImpl(ReadWriteDaoImpl<Long, Doctor> readWriteDao,
-                             DoctorDao  doctorDao) {
-        super(readWriteDao);
+    public DoctorServiceImpl(DoctorDao  doctorDao) {
+        super(doctorDao);
         this.doctorDao = doctorDao;
-
     }
 
     public Doctor getOne(Long id){

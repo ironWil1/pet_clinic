@@ -1,10 +1,8 @@
 package com.vet24.service.medicine;
 
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.medicine.MedicineDao;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.service.ReadWriteServiceImpl;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +15,8 @@ public class MedicineServiceImpl extends ReadWriteServiceImpl<Long, Medicine> im
     private final MedicineDao medicineDao;
 
     @Autowired
-    public MedicineServiceImpl(ReadWriteDaoImpl<Long, Medicine> readWriteDao, MedicineDao medicineDao) {
-        super(readWriteDao);
+    public MedicineServiceImpl( MedicineDao medicineDao) {
+        super(medicineDao);
         this.medicineDao = medicineDao;
     }
 
