@@ -97,7 +97,9 @@ public class TestDataInitializer implements ApplicationRunner {
         List<Client> clients = new ArrayList<>();
 
         for (int i = 1; i <= 30; i++) {
-            clients.add(new Client("ClientFirstName" + i, "ClientLastName" + i, "client" + i + "@email.com", "client", CLIENT, PETS));
+            clients.add(new Client("ClientFirstName" + i, "ClientLastName" + i,
+                    (i ==3) ? "petclinic.vet24@gmail.com" : "client" + i + "@email.com",
+                    "client", CLIENT, PETS));
         }
         clientService.persistAll(clients);
     }
