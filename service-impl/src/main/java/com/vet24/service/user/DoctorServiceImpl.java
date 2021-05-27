@@ -18,11 +18,4 @@ public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implem
         this.doctorDao = doctorDao;
     }
 
-    public Doctor getOne(Long id){
-        return doctorDao.getByKey(id);
-    }
-
-    public void persist(Doctor doctor){
-         doctorDao.persist(doctor);
-    }
 }

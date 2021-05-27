@@ -110,7 +110,7 @@ public class TestDataInitializer implements ApplicationRunner {
 
         List<Doctor> doctors = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            doctors.add(new Doctor("DoctorFirstName" + i, "DoctorLastName" + i, "client" + i + "@email.com", "doctor",DOCTOR ));
+            doctors.add(new Doctor("DoctorFirstName" + i, "DoctorLastName" + i, "doctor" + i + "@email.com", "doctor",DOCTOR ));
         }
         doctorService.persistAll(doctors);
     }

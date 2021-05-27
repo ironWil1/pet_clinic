@@ -45,9 +45,4 @@ public class VerificationServiceImpl extends ReadWriteServiceImpl<Long, Verifica
         return verificationDao.getByKey(tokenId);
     }
 
-    @Override
-    @Transactional
-    public void removeToken(VerificationToken token) {
-        verificationDao.delete(token);
-    }
 }
