@@ -62,6 +62,8 @@ public class TestDataInitializer implements ApplicationRunner {
     private final Environment environment;
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
+    private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
+
     private final Set<Pet> PETS = new HashSet<>();
     private final Gender MALE = Gender.MALE;
     private final Gender FEMALE = Gender.FEMALE;
@@ -101,13 +103,16 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void userInitialize() {
         List<Client> clients = new ArrayList<>();
-
         for (int i = 1; i <= 30; i++) {
             clients.add(new Client("ClientFirstName" + i, "ClientLastName" + i, "client" + i + "@email.com", "client", CLIENT, PETS));
         }
         clientService.persistAll(clients);
-        doctorService.persist(new Doctor("DoctorName","DoctorLastName","doctor1@gmail.com","doctorPass",
-                new Role(RoleNameEnum.DOCTOR)));
+
+        List<Doctor> doctors = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            doctors.add(new Doctor("DoctorFirstName" + i, "DoctorLastName" + i, "client" + i + "@email.com", "doctor",DOCTOR ));
+        }
+        doctorService.persistAll(doctors);
     }
 
     public void petInitialize() {

@@ -2,10 +2,15 @@ package com.vet24.service.user;
 
 
 import com.vet24.models.user.Doctor;
+import com.vet24.service.ReadWriteService;
 
-public interface DoctorService {
+import java.util.List;
 
-    public Doctor getOne(Long id);
+public interface DoctorService extends ReadWriteService<Long, Doctor> {
 
-    public void persist(Doctor doctor);
+    Doctor getOne(Long id);
+    
+    void persist(Doctor doctor);
+
+    void persistAll(List<Doctor> entities);
 }
