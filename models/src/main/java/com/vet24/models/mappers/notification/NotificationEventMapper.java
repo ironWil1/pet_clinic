@@ -8,13 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface NotificationEventMapper {
 
-    @Mapping(source = "event_id", target = "id")
-    GoogleEventDto notificationToGoogleEventDto(Notification notification);
-
-    default GoogleEventDto notificationWithEmailToGoogleEventDto(Notification notification, String email) {
-        GoogleEventDto dto = this.notificationToGoogleEventDto(notification);
-        dto.setEmail(email);
-
-        return dto;
-    }
+    @Mapping(source = "notification.event_id", target = "id")
+    @Mapping(source = "email", target = "email")
+    GoogleEventDto notificationToGoogleEventDto(Notification notification, String email);
 }

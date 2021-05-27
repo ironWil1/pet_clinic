@@ -236,7 +236,7 @@ public class ProcedureController {
                 pet
         );
         GoogleEventDto googleEventDto = notificationEventMapper
-                .notificationWithEmailToGoogleEventDto(notification, client.getEmail());
+                .notificationToGoogleEventDto(notification, client.getEmail());
 
         try {
             googleEventService.createEvent(googleEventDto);
@@ -267,7 +267,7 @@ public class ProcedureController {
                 pet
         );
         GoogleEventDto googleEventDto = notificationEventMapper
-                .notificationWithEmailToGoogleEventDto(notification, client.getEmail());
+                .notificationToGoogleEventDto(notification, client.getEmail());
 
         try {
             googleEventService.editEvent(googleEventDto);

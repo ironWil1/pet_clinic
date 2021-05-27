@@ -23,18 +23,15 @@ public abstract class PetMapper {
     @Autowired
     private CatMapper catMapper;
 
-    @Mapping(source = "petType", target = "type")
+    @Mapping(target = "type", source = "petType")
+    @Mapping(target = "notificationCount", source = "pet")
     public abstract PetDto petToPetDto(Pet pet);
 
-    public PetDto petToPetDtoWithWeekNotificationCount(Pet pet) {
-        PetDto dto = this.petToPetDto(pet);
-        int notificationCount = (int) pet.getNotifications().stream()
+    public int petToNotificationCountInt(Pet pet) {
+        return (int) pet.getNotifications().stream()
                 .filter(item -> item.getStartDate().getTime() <
                         Timestamp.valueOf(LocalDateTime.of(LocalDate.now().plusDays(7L), LocalTime.MIDNIGHT)).getTime())
                 .count();
-        dto.setNotificationCount(notificationCount);
-
-        return dto;
     }
 
     public Pet abstractNewPetDtoToPet(AbstractNewPetDto petDto) {

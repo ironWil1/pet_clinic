@@ -68,7 +68,7 @@ public class PetController {
             throw new BadRequestException("pet not yours");
         }
 
-        return new ResponseEntity<>(petMapper.petToPetDtoWithWeekNotificationCount(pet), HttpStatus.OK);
+        return new ResponseEntity<>(petMapper.petToPetDto(pet), HttpStatus.OK);
     }
 
     @Operation(summary = "add a new Pet")
