@@ -175,8 +175,9 @@ public class ProcedureController {
             throw new BadRequestException("pet not assigned to this procedure");
         }
 
-        pet.removeProcedure(procedure);
         procedureService.delete(procedure);
+
+        pet.removeProcedure(procedure);
         petService.update(pet);
 
         return new ResponseEntity<>(HttpStatus.OK);

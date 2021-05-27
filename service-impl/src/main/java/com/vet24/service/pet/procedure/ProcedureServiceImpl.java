@@ -118,8 +118,8 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
         }
 
         Notification notification = entity.getNotification();
+        notificationService.delete(notification);
         entity.setNotification(null);
         entity.getPet().removeNotification(notification);
-        notificationService.delete(notification);
     }
 }
