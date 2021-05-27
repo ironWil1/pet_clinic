@@ -11,11 +11,22 @@ import javax.persistence.NoResultException;
 public class ClientDaoImpl extends ReadWriteDaoImpl<Long, Client> implements ClientDao {
 
     @Override
-    public Client getClientByLogin(String login) {
+    public Client getClientByEmail(String email) {
         try {
             return manager
-                    .createQuery("from Client where login =:login", Client.class)
-                    .setParameter("login", login).getSingleResult();
+                    .createQuery("select c from Client c where c.email =:email", Client.class)
+                    .setParameter("email", email).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Client testGetCurrentClientEagerly() {
+        try {
+            return manager
+                    .createQuery("select c from Client c join fetch c.pets p where p.client.id =:id", Client.class)
+                    .setParameter("id", 3L).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

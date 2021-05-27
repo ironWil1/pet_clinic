@@ -12,6 +12,12 @@
     <artifactId>models</artifactId>
     <packaging>jar</packaging>
 
-
-
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.4.2.Final</version>
+        </dependency>
+    </dependencies>
 </project>

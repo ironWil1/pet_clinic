@@ -5,6 +5,6 @@ import java.io.IOException;
 
 public interface MailService {
 
-    void sendWelcomeMessage (String email, String name)
+    void sendWelcomeMessage (String email, String name,String tokenURL)
             throws IOException, MessagingException;
 }
