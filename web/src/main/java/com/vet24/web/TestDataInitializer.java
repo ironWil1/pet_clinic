@@ -12,6 +12,7 @@ import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
+import com.vet24.models.user.Doctor;
 import com.vet24.models.user.Role;
 import com.vet24.models.user.User;
 import com.vet24.service.medicine.MedicineService;
@@ -24,6 +25,7 @@ import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
 import com.vet24.service.user.ClientService;
+import com.vet24.service.user.DoctorService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +58,12 @@ public class TestDataInitializer implements ApplicationRunner {
     private final CatService catService;
     private final DogService dogService;
     private final PetService petService;
+    private final DoctorService doctorService;
     private final Environment environment;
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
+    private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
+
     private final Set<Pet> PETS = new HashSet<>();
     private final Gender MALE = Gender.MALE;
     private final Gender FEMALE = Gender.FEMALE;
@@ -70,7 +75,8 @@ public class TestDataInitializer implements ApplicationRunner {
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
                                ReproductionService reproductionService, PetContactService petContactService,
-                               CatService catService, DogService dogService, PetService petService, Environment environment) {
+                               CatService catService, DogService dogService, DoctorService doctorService,
+                               PetService petService, Environment environment) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
@@ -83,6 +89,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.catService = catService;
         this.dogService = dogService;
         this.petService = petService;
+        this.doctorService = doctorService;
         this.environment = environment;
     }
 
@@ -91,17 +98,23 @@ public class TestDataInitializer implements ApplicationRunner {
         roleService.persist(new Role(RoleNameEnum.MANAGER));
         roleService.persist(new Role(RoleNameEnum.CLIENT));
         roleService.persist(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
+        roleService.persist(new Role(RoleNameEnum.DOCTOR));
     }
 
     public void userInitialize() {
         List<Client> clients = new ArrayList<>();
-
         for (int i = 1; i <= 30; i++) {
             clients.add(new Client("ClientFirstName" + i, "ClientLastName" + i,
                     (i ==3) ? "petclinic.vet24@gmail.com" : "client" + i + "@email.com",
                     "client", CLIENT, PETS));
         }
         clientService.persistAll(clients);
+
+        List<Doctor> doctors = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            doctors.add(new Doctor("DoctorFirstName" + i, "DoctorLastName" + i, "doctor" + i + "@email.com", "doctor",DOCTOR ));
+        }
+        doctorService.persistAll(doctors);
     }
 
     public void petInitialize() {

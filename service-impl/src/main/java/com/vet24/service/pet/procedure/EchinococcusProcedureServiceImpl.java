@@ -1,6 +1,5 @@
 package com.vet24.service.pet.procedure;
 
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.pet.procedure.EchinococcusProcedureDao;
 import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.service.ReadWriteServiceImpl;
@@ -13,8 +12,8 @@ public class EchinococcusProcedureServiceImpl extends ReadWriteServiceImpl<Long,
     private final EchinococcusProcedureDao echinococcusProcedureDao;
 
     @Autowired
-    public EchinococcusProcedureServiceImpl(ReadWriteDaoImpl<Long, EchinococcusProcedure> readWriteDao, EchinococcusProcedureDao echinococcusProcedureDao) {
-        super(readWriteDao);
+    public EchinococcusProcedureServiceImpl(EchinococcusProcedureDao echinococcusProcedureDao) {
+        super(echinococcusProcedureDao);
         this.echinococcusProcedureDao = echinococcusProcedureDao;
     }
 }

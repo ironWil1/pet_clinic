@@ -1,6 +1,5 @@
 package com.vet24.service.pet;
 
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.pet.DogDao;
 import com.vet24.models.pet.Dog;
 import com.vet24.service.ReadWriteServiceImpl;
@@ -11,8 +10,8 @@ public class DogServiceImpl extends ReadWriteServiceImpl<Long, Dog> implements D
 
     private final DogDao dogDao;
 
-    public DogServiceImpl(ReadWriteDaoImpl<Long, Dog> readWriteDao, DogDao dogDao) {
-        super(readWriteDao);
+    public DogServiceImpl( DogDao dogDao) {
+        super(dogDao);
         this.dogDao = dogDao;
     }
 }

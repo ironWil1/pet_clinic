@@ -1,6 +1,5 @@
 package com.vet24.service.pet.procedure;
 
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.pet.procedure.ProcedureDao;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.notification.Notification;
@@ -22,9 +21,9 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
     private final NotificationService notificationService;
 
     @Autowired
-    public ProcedureServiceImpl(ReadWriteDaoImpl<Long, Procedure> readWriteDao, ProcedureDao procedureDao,
+    public ProcedureServiceImpl(ProcedureDao procedureDao,
                                 NotificationService notificationService) {
-        super(readWriteDao);
+        super(procedureDao);
         this.procedureDao = procedureDao;
         this.notificationService = notificationService;
     }
