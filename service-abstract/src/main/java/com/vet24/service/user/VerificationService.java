@@ -9,6 +9,4 @@ public interface VerificationService extends ReadWriteService<Long, Verification
      String createVerificationToken(Client client);
 
      VerificationToken getVerificationToken(String token);
-
-     void removeToken(VerificationToken token);
 }

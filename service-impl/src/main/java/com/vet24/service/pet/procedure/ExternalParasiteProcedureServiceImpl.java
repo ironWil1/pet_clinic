@@ -1,6 +1,5 @@
 package com.vet24.service.pet.procedure;
 
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.pet.procedure.ExternalParasiteProcedureDao;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.service.ReadWriteServiceImpl;
@@ -13,8 +12,8 @@ public class ExternalParasiteProcedureServiceImpl extends ReadWriteServiceImpl<L
     private final ExternalParasiteProcedureDao externalParasiteProcedureDao;
 
     @Autowired
-    public ExternalParasiteProcedureServiceImpl(ReadWriteDaoImpl<Long, ExternalParasiteProcedure> readWriteDao, ExternalParasiteProcedureDao externalParasiteProcedureDao) {
-        super(readWriteDao);
+    public ExternalParasiteProcedureServiceImpl(ExternalParasiteProcedureDao externalParasiteProcedureDao) {
+        super(externalParasiteProcedureDao);
         this.externalParasiteProcedureDao = externalParasiteProcedureDao;
     }
 }
