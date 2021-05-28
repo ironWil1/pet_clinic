@@ -30,96 +30,96 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
     }
 
     @Override
-    public void persist(Procedure entity) {
-        if (entity.getIsPeriodical()) {
-            persistProcedureNotification(entity);
+    public void persist(Procedure procedure) {
+        if (procedure.getIsPeriodical()) {
+            persistProcedureNotification(procedure);
         }
 
-        super.persist(entity);
+        super.persist(procedure);
     }
 
     @Override
-    public Procedure update(Procedure entity) {
-        Procedure oldEntity = super.getByKey(entity.getId());
+    public Procedure update(Procedure procedure) {
+        Procedure oldEntity = super.getByKey(procedure.getId());
 
         // old(not periodical) + new(periodical) -> create notification & event
-        if (!oldEntity.getIsPeriodical() && entity.getIsPeriodical()) {
-            persistProcedureNotification(entity);
+        if (!oldEntity.getIsPeriodical() && procedure.getIsPeriodical()) {
+            persistProcedureNotification(procedure);
         }
         // old(periodical) + new(periodical) -> update notification & event
-        if (oldEntity.getIsPeriodical() && entity.getIsPeriodical()) {
-            updateProcedureNotification(oldEntity, entity);
+        if (oldEntity.getIsPeriodical() && procedure.getIsPeriodical()) {
+            updateProcedureNotification(oldEntity, procedure);
         }
         // old(periodical) + new(not periodical) -> delete notification & event
-        if (oldEntity.getIsPeriodical() && !entity.getIsPeriodical()) {
+        if (oldEntity.getIsPeriodical() && !procedure.getIsPeriodical()) {
             deleteProcedureNotification(oldEntity);
         }
 
-        return super.update(entity);
+        return super.update(procedure);
     }
 
     @Override
-    public void delete(Procedure entity) {
-        if (entity.getIsPeriodical()) {
-            deleteProcedureNotification(entity);
+    public void delete(Procedure procedure) {
+        if (procedure.getIsPeriodical()) {
+            deleteProcedureNotification(procedure);
         }
 
-        super.delete(entity);
+        super.delete(procedure);
     }
 
-    private void persistProcedureNotification(Procedure entity) {
-        if (!(entity.getPeriodDays() > 0)) {
+    private void persistProcedureNotification(Procedure procedure) {
+        if (!(procedure.getPeriodDays() > 0)) {
             throw new BadRequestException("for periodical procedure need to set period days");
         }
-        Pet pet = entity.getPet();
+        Pet pet = procedure.getPet();
         Notification notification = new Notification(
                 null,
                 null,
-                Timestamp.valueOf(LocalDateTime.of(entity.getDate().plusDays(entity.getPeriodDays()), LocalTime.MIDNIGHT)),
-                Timestamp.valueOf(LocalDateTime.of(entity.getDate().plusDays(entity.getPeriodDays()), LocalTime.NOON)),
+                Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.MIDNIGHT)),
+                Timestamp.valueOf(LocalDateTime.of(procedure.getDate().plusDays(procedure.getPeriodDays()), LocalTime.NOON)),
                 "Periodic procedure for your pet",
                 "Pet clinic 1",
-                "Procedure '" + entity.getType().name().toLowerCase() + "' \n" +
+                "Procedure '" + procedure.getType().name().toLowerCase() + "' \n" +
                         "for pet " + pet.getName() + " \n" +
-                        "[every " + entity.getPeriodDays() + " day(s)]",
+                        "[every " + procedure.getPeriodDays() + " day(s)]",
                 pet
         );
         notificationService.persist(notification);
 
-        entity.setNotification(notification);
+        procedure.setNotification(notification);
         pet.addNotification(notification);
     }
 
-    private void updateProcedureNotification(Procedure oldEntity, Procedure newEntity) {
-        if (!(newEntity.getPeriodDays() > 0)) {
+    private void updateProcedureNotification(Procedure oldProcedure, Procedure newProcedure) {
+        if (!(newProcedure.getPeriodDays() > 0)) {
             throw new BadRequestException("for periodical procedure need to set period days");
         }
-        Pet pet = oldEntity.getPet();
+        Pet pet = oldProcedure.getPet();
         Notification notification = new Notification(
-                oldEntity.getNotification().getId(),
-                oldEntity.getNotification().getEvent_id(),
-                Timestamp.valueOf(LocalDateTime.of(newEntity.getDate().plusDays(newEntity.getPeriodDays()), LocalTime.MIDNIGHT)),
-                Timestamp.valueOf(LocalDateTime.of(newEntity.getDate().plusDays(newEntity.getPeriodDays()), LocalTime.NOON)),
+                oldProcedure.getNotification().getId(),
+                oldProcedure.getNotification().getEvent_id(),
+                Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.MIDNIGHT)),
+                Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.NOON)),
                 "Periodic procedure for your pet",
                 "Pet clinic 1",
-                "Procedure '" + newEntity.getType().name().toLowerCase() + "' \n" +
+                "Procedure '" + newProcedure.getType().name().toLowerCase() + "' \n" +
                         "for pet " + pet.getName() + " \n" +
-                        "[every " + newEntity.getPeriodDays() + " day(s)]",
+                        "[every " + newProcedure.getPeriodDays() + " day(s)]",
                 pet
         );
 
         notificationService.update(notification);
-        newEntity.setNotification(notification);
+        newProcedure.setNotification(notification);
     }
 
-    private void deleteProcedureNotification(Procedure entity) {
-        if (entity.getNotification() == null) {
+    private void deleteProcedureNotification(Procedure procedure) {
+        if (procedure.getNotification() == null) {
             throw new BadRequestException("notification not found");
         }
 
-        Notification notification = entity.getNotification();
+        Notification notification = procedure.getNotification();
         notificationService.delete(notification);
-        entity.setNotification(null);
-        entity.getPet().removeNotification(notification);
+        procedure.setNotification(null);
+        procedure.getPet().removeNotification(notification);
     }
 }

@@ -27,7 +27,7 @@ public abstract class PetMapper {
     @Mapping(target = "notificationCount", source = "pet")
     public abstract PetDto petToPetDto(Pet pet);
 
-    public int petToNotificationCountInt(Pet pet) {
+    protected int petToNotificationCountInt(Pet pet) {
         return (int) pet.getNotifications().stream()
                 .filter(item -> item.getStartDate().getTime() <
                         Timestamp.valueOf(LocalDateTime.of(LocalDate.now().plusDays(7L), LocalTime.MIDNIGHT)).getTime())

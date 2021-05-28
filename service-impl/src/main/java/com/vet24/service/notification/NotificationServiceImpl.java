@@ -29,24 +29,24 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
     }
 
     @Override
-    public void persist(Notification entity) {
+    public void persist(Notification notification) {
         GoogleEventDto googleEventDto = notificationEventMapper
-                .notificationToGoogleEventDto(entity, entity.getPet().getClient().getEmail());
+                .notificationToGoogleEventDto(notification, notification.getPet().getClient().getEmail());
 
         try {
             googleEventService.createEvent(googleEventDto);
         } catch (IOException exception) {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
         }
-        entity.setEvent_id(googleEventDto.getId());
+        notification.setEvent_id(googleEventDto.getId());
 
-        super.persist(entity);
+        super.persist(notification);
     }
 
     @Override
-    public Notification update(Notification entity) {
+    public Notification update(Notification notification) {
         GoogleEventDto googleEventDto = notificationEventMapper
-                .notificationToGoogleEventDto(entity, entity.getPet().getClient().getEmail());
+                .notificationToGoogleEventDto(notification, notification.getPet().getClient().getEmail());
 
         try {
             googleEventService.editEvent(googleEventDto);
@@ -54,14 +54,14 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
             throw new BadRequestException(exception.getMessage(), exception.getCause());
         }
 
-        return super.update(entity);
+        return super.update(notification);
     }
 
     @Override
-    public void delete(Notification entity) {
+    public void delete(Notification notification) {
         GoogleEventDto googleEventDto = new GoogleEventDto();
-        googleEventDto.setId(entity.getEvent_id());
-        googleEventDto.setEmail(entity.getPet().getClient().getEmail());
+        googleEventDto.setId(notification.getEvent_id());
+        googleEventDto.setEmail(notification.getPet().getClient().getEmail());
 
         try {
             googleEventService.deleteEvent(googleEventDto);
@@ -69,6 +69,6 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
             throw new BadRequestException(exception.getMessage(), exception.getCause());
         }
 
-        super.delete(entity);
+        super.delete(notification);
     }
 }
