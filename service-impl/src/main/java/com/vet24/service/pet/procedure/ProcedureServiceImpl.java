@@ -17,14 +17,12 @@ import java.time.LocalTime;
 @Service
 public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> implements ProcedureService {
 
-    private final ProcedureDao procedureDao;
     private final NotificationService notificationService;
 
     @Autowired
     public ProcedureServiceImpl(ProcedureDao procedureDao,
                                 NotificationService notificationService) {
         super(procedureDao);
-        this.procedureDao = procedureDao;
         this.notificationService = notificationService;
     }
 

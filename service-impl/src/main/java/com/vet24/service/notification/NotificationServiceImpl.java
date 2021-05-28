@@ -1,6 +1,5 @@
 package com.vet24.service.notification;
 
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.notification.NotificationDao;
 import com.vet24.models.dto.googleEvent.GoogleEventDto;
 import com.vet24.models.exception.BadRequestException;
@@ -15,15 +14,13 @@ import java.io.IOException;
 @Service
 public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notification> implements NotificationService {
 
-    private final NotificationDao notificationDao;
     private final NotificationEventMapper notificationEventMapper;
     private final GoogleEventService googleEventService;
 
     @Autowired
-    public NotificationServiceImpl(ReadWriteDaoImpl<Long, Notification> readWriteDao, NotificationDao notificationDao,
+    public NotificationServiceImpl(NotificationDao notificationDao,
                                    NotificationEventMapper notificationEventMapper, GoogleEventService googleEventService) {
-        super(readWriteDao);
-        this.notificationDao = notificationDao;
+        super(notificationDao);
         this.notificationEventMapper = notificationEventMapper;
         this.googleEventService = googleEventService;
     }
