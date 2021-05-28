@@ -1,6 +1,6 @@
 package com.vet24.service;
 
-import com.vet24.dao.ReadWriteDaoImpl;
+import com.vet24.dao.ReadWriteDao;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -8,9 +8,9 @@ import java.util.List;
 
 public abstract class ReadWriteServiceImpl<K extends Serializable, T> extends ReadOnlyServiceImpl<K, T> {
 
-    private final ReadWriteDaoImpl<K, T> readWriteDao;
+    private final ReadWriteDao<K, T> readWriteDao;
 
-    protected ReadWriteServiceImpl(ReadWriteDaoImpl<K, T> readWriteDao) {
+    protected ReadWriteServiceImpl(ReadWriteDao<K, T> readWriteDao) {
         super(readWriteDao);
         this.readWriteDao = readWriteDao;
     }

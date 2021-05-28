@@ -1,7 +1,6 @@
 package com.vet24.service.user;
 
 import com.eatthepath.uuid.FastUUID;
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.user.VerificationDao;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.VerificationToken;
@@ -18,9 +17,8 @@ public class VerificationServiceImpl extends ReadWriteServiceImpl<Long, Verifica
     private final VerificationDao verificationDao;
 
     @Autowired
-    protected VerificationServiceImpl(ReadWriteDaoImpl<Long, VerificationToken> readWriteDao,
-                                      VerificationDao  verificationDao) {
-        super(readWriteDao);
+    protected VerificationServiceImpl(VerificationDao  verificationDao) {
+        super(verificationDao);
         this.verificationDao = verificationDao;
 
     }
@@ -47,9 +45,4 @@ public class VerificationServiceImpl extends ReadWriteServiceImpl<Long, Verifica
         return verificationDao.getByKey(tokenId);
     }
 
-    @Override
-    @Transactional
-    public void removeToken(VerificationToken token) {
-        verificationDao.delete(token);
-    }
 }

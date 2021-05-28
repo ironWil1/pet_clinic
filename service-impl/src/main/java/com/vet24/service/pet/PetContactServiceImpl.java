@@ -1,17 +1,11 @@
 package com.vet24.service.pet;
 
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.pet.PetContactDao;
 import com.vet24.models.pet.PetContact;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.InvalidAlgorithmParameterException;
@@ -25,8 +19,8 @@ public class PetContactServiceImpl extends ReadWriteServiceImpl<Long, PetContact
 
     private final PetContactDao petContactDao;
 
-    public PetContactServiceImpl(ReadWriteDaoImpl<Long, PetContact> readWriteDao, PetContactDao petContactDao) {
-        super(readWriteDao);
+    public PetContactServiceImpl(PetContactDao petContactDao) {
+        super(petContactDao);
         this.petContactDao = petContactDao;
     }
 
