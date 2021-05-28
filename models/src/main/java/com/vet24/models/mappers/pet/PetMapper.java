@@ -3,6 +3,7 @@ package com.vet24.models.mappers.pet;
 import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.PetDto;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
 import com.vet24.models.pet.Pet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,8 +30,10 @@ public abstract class PetMapper {
     public abstract PetDto petToPetDto(Pet pet);
 
     public Pet abstractNewPetDtoToPet(AbstractNewPetDto petDto) {
-        return mapperMap.containsKey(petDto.getPetType()) ?
-                mapperMap.get(petDto.getPetType()).transferAbstractPetDto(petDto) :
-                null;
+        if (mapperMap.containsKey(petDto.getPetType())) {
+            return mapperMap.get(petDto.getPetType()).transferAbstractPetDto(petDto);
+        } else {
+            throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petDto);
+        }
     }
 }
