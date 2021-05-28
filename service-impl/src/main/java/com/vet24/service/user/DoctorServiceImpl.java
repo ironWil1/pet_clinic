@@ -1,11 +1,10 @@
 package com.vet24.service.user;
-
-
 import com.vet24.dao.user.DoctorDao;
 import com.vet24.models.user.Doctor;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implements DoctorService{
@@ -18,4 +17,9 @@ public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implem
         this.doctorDao = doctorDao;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Doctor getCurrentDoctor() {
+        return doctorDao.getByKey(33L);
+    }
 }

@@ -1,0 +1,79 @@
+ROLE:
+  - NAME: "ADMIN"
+  - NAME: "MANAGER"
+  - NAME: "DOCTOR"
+  - NAME: "CLIENT"
+  - NAME: "UNVERIFIED_CLIENT"
+
+USER_ENTITIES:
+  - ID: 100
+    USER_TYPE: "ADMIN"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Admin"
+    LASTNAME: "Admin"
+    EMAIL: "admin@gmail.com"
+    PASSWORD: "admin"
+  - ID: 101
+    USER_TYPE: "MANAGER"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Manager"
+    LASTNAME: "Manager"
+    EMAIL: "manager@gmail.com"
+    PASSWORD: "manager"
+  - ID: 3
+    USER_TYPE: "CLIENT"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Ivan"
+    LASTNAME: "Ivanov"
+    EMAIL: "user3@gmail.com"
+    PASSWORD: "user3"
+  - ID: 33
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Petr"
+    LASTNAME: "Petrov"
+    EMAIL: "doctor1@gmail.com"
+    PASSWORD: "user5"
+
+USER_ROLE:
+  - USER_ID: 3
+    ROLE_NAME: "CLIENT"
+
+  - USER_ID: 33
+    ROLE_NAME: "DOCTOR"
+
+PET_ENTITIES:
+  - ID: 100
+    PET_TYPE: "DOG"
+    AVATAR: "test.png"
+    BIRTH_DAY: "2020-05-13"
+    BREED: "breed1"
+    COLOR: "BLACK"
+    DESCRIPTION: "medium dog female black breed1"
+    GENDER: "FEMALE"
+    NAME: "pet1"
+    PET_SIZE: "MEDIUM"
+    WEIGHT: 10
+    CLIENT_ID: 3
+  - ID: 101
+    PET_TYPE: "CAT"
+    AVATAR: "test.png"
+    BIRTH_DAY: "2019-05-13"
+    BREED: "breed2"
+    COLOR: "WHITE"
+    DESCRIPTION: "small cat female white breed2"
+    GENDER: "FEMALE"
+    NAME: "pet2"
+    PET_SIZE: "SMALL"
+    WEIGHT: 3
+    CLIENT_ID: 3
+
+
+
+
+
+

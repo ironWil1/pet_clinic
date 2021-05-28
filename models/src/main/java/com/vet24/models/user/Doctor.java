@@ -1,28 +1,29 @@
 package com.vet24.models.user;
 
+import com.vet24.models.medicine.Diagnosis;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import java.util.List;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Data
 @DiscriminatorValue("DOCTOR")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true,exclude = "comments,diagnoses")
 @AllArgsConstructor
 public class Doctor extends User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(
+            mappedBy = "doctor",
+            cascade = CascadeType.ALL
+    )
+    private Set<Diagnosis> diagnoses = new HashSet<>();
 
     @OneToMany(
             mappedBy = "doctor",
