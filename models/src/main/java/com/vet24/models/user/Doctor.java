@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @Data
 @DiscriminatorValue("DOCTOR")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true,exclude = "diagnoses")
 @AllArgsConstructor
 public class Doctor extends User {
 
@@ -21,6 +21,11 @@ public class Doctor extends User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(
+            mappedBy = "doctor",
+            cascade = CascadeType.ALL
+    )
+    private Set<Diagnosis> diagnoses = new HashSet<>();
 
     public Doctor() {
         super();
