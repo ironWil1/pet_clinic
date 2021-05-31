@@ -2,17 +2,15 @@ package com.vet24.models.medicine;
 
 import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Doctor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Table(name="diagnosis")
