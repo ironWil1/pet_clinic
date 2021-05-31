@@ -80,9 +80,9 @@ public class DoctorController {
         }
         Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
         diagnosisService.persist(diagnosis);
-        Set<Diagnosis> diagnoses = doctorService.getCurrentDoctor().getDiagnoses();
 
-        return new ResponseEntity<>(diagnosisMapper.diagnosisToDiagnosisDto(diagnosis),
+        DiagnosisDto diahnosisDto = diagnosisMapper.diagnosisToDiagnosisDto(diagnosis);
+        return new ResponseEntity<>(diahnosisDto,
                 HttpStatus.CREATED);
     }
 
