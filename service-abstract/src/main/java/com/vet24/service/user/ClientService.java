@@ -10,4 +10,5 @@ public interface ClientService extends ReadWriteService<Long, Client> {
 
     Client getCurrentClient(); // temporary solution. Always returns Client with id = 3
 
+    Client testGetCurrentClientEagerly();
 }
