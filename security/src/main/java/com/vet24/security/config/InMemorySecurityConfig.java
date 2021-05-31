@@ -24,17 +24,12 @@ public class InMemorySecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
     }
 
-    @Bean(name="myUserDetailsService")
+    @Bean
     protected UserDetailsService users () {
         UserDetails admin = User.builder()
                 .username("admin")
                 .password("{noop}admin")
                 .roles("admin")
-                .build();
-        UserDetails doctor = User.builder()
-                .username("doctor")
-                .password("{noop}doctor")
-                .roles("DOCTOR")
                 .build();
         return new InMemoryUserDetailsManager(admin);
     }
