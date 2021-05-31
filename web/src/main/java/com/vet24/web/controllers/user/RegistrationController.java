@@ -117,7 +117,7 @@ public class RegistrationController {
         Client cl = token.getClient();
         cl.setRole(new Role(RoleNameEnum.CLIENT));
         ClientDto clientUpdated = clientMapper.clientToClientDto(clientService.update(cl));
-        verificationService.removeToken(token);
+//        verificationService.removeToken(token);
         return  ResponseEntity.status(HttpStatus.RESET_CONTENT).body(clientUpdated);
 
     }
