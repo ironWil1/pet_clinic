@@ -3,6 +3,8 @@ package com.vet24.service.notification;
 import com.vet24.dao.notification.NotificationDao;
 import com.vet24.models.dto.googleEvent.GoogleEventDto;
 import com.vet24.models.exception.BadRequestException;
+import com.vet24.models.exception.CredentialException;
+import com.vet24.models.exception.EventException;
 import com.vet24.models.mappers.notification.NotificationEventMapper;
 import com.vet24.models.notification.Notification;
 import com.vet24.service.ReadWriteServiceImpl;
@@ -32,10 +34,12 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
 
         try {
             googleEventService.createEvent(googleEventDto);
+            notification.setEventId(googleEventDto.getId());
+        } catch (CredentialException exception) {
+            // It's fine if user dont have credentials
         } catch (IOException exception) {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
         }
-        notification.setEventId(googleEventDto.getId());
 
         super.persist(notification);
     }
@@ -47,6 +51,8 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
 
         try {
             googleEventService.editEvent(googleEventDto);
+        } catch (CredentialException exception) {
+            // It's fine if user dont have credentials
         } catch (IOException exception) {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
         }
@@ -62,6 +68,8 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
 
         try {
             googleEventService.deleteEvent(googleEventDto);
+        } catch (CredentialException exception) {
+            // It's fine if user dont have credentials
         } catch (IOException exception) {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
         }

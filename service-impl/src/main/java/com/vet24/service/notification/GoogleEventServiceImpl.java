@@ -104,7 +104,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     }
 
     /**
-     * Sozdanie sobitiya
+     * create event in user's google calendar
      * @param googleEventDto
      * @throws CredentialException
      * @throws EventException
@@ -149,13 +149,19 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     }
 
     /**
-     * redaktirovanie sobitiya
+     * edit event in user's google calendar by googleEventDto.id
      * @param googleEventDto
      * @throws IOException
      */
     @Override
     public void editEvent(GoogleEventDto googleEventDto) throws IOException {
-        Credential credential = flow.loadCredential(googleEventDto.getEmail());
+        Credential credential;
+        try {
+            credential = flow.loadCredential(googleEventDto.getEmail());
+        } catch (IOException e) {
+            throw new CredentialException("dont have credential for this user", googleEventDto.getEmail());
+        }
+
         Event changes = new Event().setSummary(googleEventDto.getSummary())
                 .setDescription(googleEventDto.getDescription())
                 .setLocation(googleEventDto.getLocation())
@@ -170,13 +176,19 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     }
 
     /**
-     * udalenie sobitiya
+     * delete event from user's google calendar by googleEventDto.id
      * @param googleEventDto
      * @throws IOException
      */
     @Override
     public void deleteEvent(GoogleEventDto googleEventDto) throws IOException {
-        Credential credential = flow.loadCredential(googleEventDto.getEmail());
+        Credential credential;
+        try {
+            credential = flow.loadCredential(googleEventDto.getEmail());
+        } catch (IOException e) {
+            throw new CredentialException("dont have credential for this user", googleEventDto.getEmail());
+        }
+
         try {
             buildCalendar(credential).events().delete("primary", googleEventDto.getId()).execute();
         } catch (IOException e) {
