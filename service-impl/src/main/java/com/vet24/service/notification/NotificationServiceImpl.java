@@ -35,7 +35,7 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
         } catch (IOException exception) {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
         }
-        notification.setEvent_id(googleEventDto.getId());
+        notification.setEventId(googleEventDto.getId());
 
         super.persist(notification);
     }
@@ -57,7 +57,7 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
     @Override
     public void delete(Notification notification) {
         GoogleEventDto googleEventDto = new GoogleEventDto();
-        googleEventDto.setId(notification.getEvent_id());
+        googleEventDto.setId(notification.getEventId());
         googleEventDto.setEmail(notification.getPet().getClient().getEmail());
 
         try {

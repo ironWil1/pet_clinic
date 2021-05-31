@@ -94,7 +94,7 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
         Pet pet = oldProcedure.getPet();
         Notification notification = new Notification(
                 oldProcedure.getNotification().getId(),
-                oldProcedure.getNotification().getEvent_id(),
+                oldProcedure.getNotification().getEventId(),
                 Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.MIDNIGHT)),
                 Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.NOON)),
                 "Periodic procedure for your pet",

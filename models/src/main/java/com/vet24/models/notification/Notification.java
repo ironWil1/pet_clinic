@@ -26,7 +26,7 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String event_id;
+    private String eventId;
 
     private Timestamp startDate;
 
