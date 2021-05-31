@@ -4,9 +4,11 @@ import com.vet24.dao.user.ClientDao;
 import com.vet24.models.user.Client;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implements ClientService {
 
     private final ClientDao clientDao;
@@ -29,9 +31,4 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
         return clientDao.getByKey(3L);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Client testGetCurrentClientEagerly() {
-        return clientDao.testGetCurrentClientEagerly();
-    }
 }
