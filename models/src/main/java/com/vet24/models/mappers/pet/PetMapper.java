@@ -31,7 +31,7 @@ public abstract class PetMapper {
 
     public Pet abstractNewPetDtoToPet(AbstractNewPetDto petDto) {
         if (mapperMap.containsKey(petDto.getPetType())) {
-            return mapperMap.get(petDto.getPetType()).transferAbstractPetDto(petDto);
+            return mapperMap.get(petDto.getPetType()).transformAbstractPetDto(petDto);
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petDto);
         }

@@ -27,12 +27,12 @@ public interface EchinococcusMapper extends AbstractProcedureMapper {
     }
 
     @Override
-    default Procedure transferAbstractProcedureDto(AbstractNewProcedureDto abstractNewProcedureDto) {
+    default Procedure transformAbstractProcedureDto(AbstractNewProcedureDto abstractNewProcedureDto) {
         return echinococcusDtoToEchinococcus((EchinococcusDto) abstractNewProcedureDto);
     }
 
     @Override
-    default Procedure transferProcedureDto(ProcedureDto procedureDto) {
+    default Procedure transformProcedureDto(ProcedureDto procedureDto) {
         return procedureDtoToEchinococcus(procedureDto);
     }
 }

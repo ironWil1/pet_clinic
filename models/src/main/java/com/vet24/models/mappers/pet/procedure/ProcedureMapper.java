@@ -30,7 +30,7 @@ public abstract class ProcedureMapper {
 
     public Procedure procedureDtoToProcedure(ProcedureDto procedureDto) {
         if (mapperMap.containsKey(procedureDto.getType())) {
-            return mapperMap.get(procedureDto.getType()).transferProcedureDto(procedureDto);
+            return mapperMap.get(procedureDto.getType()).transformProcedureDto(procedureDto);
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find mapper for Procedure: " + procedureDto);
         }
@@ -38,7 +38,7 @@ public abstract class ProcedureMapper {
 
     public Procedure abstractNewProcedureDtoToProcedure(AbstractNewProcedureDto procedureDto) {
         if (mapperMap.containsKey(procedureDto.getType())) {
-            return mapperMap.get(procedureDto.getType()).transferAbstractProcedureDto(procedureDto);
+            return mapperMap.get(procedureDto.getType()).transformAbstractProcedureDto(procedureDto);
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find mapper for AbstractNewProcedureDto: " + procedureDto);
         }
