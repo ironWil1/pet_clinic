@@ -13,6 +13,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.selection.MultiSelect;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vet24.vaadin.models.user.Client;
 import com.vet24.vaadin.template.user.ClientTemplateService;
@@ -22,6 +23,7 @@ import java.util.Set;
 
 @Route("/api/client")
 @StyleSheet("./style.css")
+@PageTitle("Client Page")
 public class ClientPage extends VerticalLayout {
 
     private static final String GET_URL_CLIENT = "http://localhost:8080/api/client";

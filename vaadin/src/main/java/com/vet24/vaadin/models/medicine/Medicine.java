@@ -14,5 +14,4 @@ public class Medicine {
     private String icon;
 
     private String description;
-
 }
