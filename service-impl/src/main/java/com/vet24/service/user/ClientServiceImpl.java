@@ -1,6 +1,5 @@
 package com.vet24.service.user;
 
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.user.ClientDao;
 import com.vet24.models.user.Client;
 import com.vet24.service.ReadWriteServiceImpl;
@@ -12,8 +11,8 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
 
     private final ClientDao clientDao;
 
-    public ClientServiceImpl(ReadWriteDaoImpl<Long, Client> readWriteDao, ClientDao clientDao) {
-        super(readWriteDao);
+    public ClientServiceImpl( ClientDao clientDao) {
+        super(clientDao);
         this.clientDao = clientDao;
     }
 

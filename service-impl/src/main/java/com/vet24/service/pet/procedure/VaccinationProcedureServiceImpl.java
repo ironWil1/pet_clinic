@@ -1,6 +1,5 @@
 package com.vet24.service.pet.procedure;
 
-import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.dao.pet.procedure.VaccinationProcedureDao;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.service.ReadWriteServiceImpl;
@@ -13,8 +12,8 @@ public class VaccinationProcedureServiceImpl extends ReadWriteServiceImpl<Long, 
     private final VaccinationProcedureDao vaccinationProcedureDao;
 
     @Autowired
-    public VaccinationProcedureServiceImpl(ReadWriteDaoImpl<Long, VaccinationProcedure> readWriteDao, VaccinationProcedureDao vaccinationProcedureDao) {
-        super(readWriteDao);
+    public VaccinationProcedureServiceImpl(VaccinationProcedureDao vaccinationProcedureDao) {
+        super(vaccinationProcedureDao);
         this.vaccinationProcedureDao = vaccinationProcedureDao;
     }
 }
