@@ -1,6 +1,5 @@
 package com.vet24.models.user;
 
-import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.pet.Pet;
 import lombok.EqualsAndHashCode;
 

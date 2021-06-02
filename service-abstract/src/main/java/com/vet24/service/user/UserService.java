@@ -6,8 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public interface UserService extends UserDetailsService, ReadWriteService<Long, User> {
+public interface UserService extends ReadWriteService<Long, User>, UserDetailsService {
 
-    @Override
-    UserDetails loadUserByUsername(String s) throws UsernameNotFoundException;
 }

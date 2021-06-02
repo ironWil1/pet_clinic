@@ -17,7 +17,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -35,5 +34,4 @@ public class Role implements GrantedAuthority {
     public String getAuthority() {
         return name.toString();
     }
-
 }

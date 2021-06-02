@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-@EnableWebSecurity
+/*@EnableWebSecurity
 public class InMemorySecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -30,4 +30,4 @@ public class InMemorySecurityConfig extends WebSecurityConfigurerAdapter {
                 .build();
         return new InMemoryUserDetailsManager(admin);
     }
-}
+}*/
