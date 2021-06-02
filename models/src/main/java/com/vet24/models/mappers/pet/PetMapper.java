@@ -20,8 +20,14 @@ public abstract class PetMapper {
 
     Map<PetType, AbstractPetMapper> mapperMap;
 
-    @PostConstruct
     @Autowired
+    List<AbstractPetMapper> mapperList;
+
+    @PostConstruct
+    public void init() {
+        this.setMapperMap(mapperList);
+    }
+
     public void setMapperMap(List<AbstractPetMapper> mapperList) {
         mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractPetMapper::getPetType, Function.identity()));
     }
@@ -31,7 +37,7 @@ public abstract class PetMapper {
 
     public Pet abstractNewPetDtoToPet(AbstractNewPetDto petDto) {
         if (mapperMap.containsKey(petDto.getPetType())) {
-            return mapperMap.get(petDto.getPetType()).transformAbstractPetDto(petDto);
+            return mapperMap.get(petDto.getPetType()).AbstractPetDtoToPet(petDto);
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petDto);
         }

@@ -6,7 +6,7 @@ import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.pet.procedure.Procedure;
 
 public interface AbstractProcedureMapper {
-    ProcedureType getType();
-    Procedure transformAbstractProcedureDto(AbstractNewProcedureDto abstractNewProcedureDto);
-    Procedure transformProcedureDto(ProcedureDto procedureDto);
+    ProcedureType getProcedureType();
+    Procedure AbstractProcedureDtoToProcedure(AbstractNewProcedureDto abstractNewProcedureDto);
+    Procedure ProcedureDtoToProcedure(ProcedureDto procedureDto);
 }

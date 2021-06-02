@@ -22,17 +22,17 @@ public interface ExternalParasiteMapper extends AbstractProcedureMapper {
     ExternalParasiteProcedure procedureDtoToExternalParasite(ProcedureDto procedureDto);
 
     @Override
-    default ProcedureType getType() {
+    default ProcedureType getProcedureType() {
         return ProcedureType.EXTERNAL_PARASITE;
     }
 
     @Override
-    default Procedure transformAbstractProcedureDto(AbstractNewProcedureDto abstractNewProcedureDto) {
+    default Procedure AbstractProcedureDtoToProcedure(AbstractNewProcedureDto abstractNewProcedureDto) {
         return externalParasiteDtoToExternalParasite((ExternalParasiteDto) abstractNewProcedureDto);
     }
 
     @Override
-    default Procedure transformProcedureDto(ProcedureDto procedureDto) {
+    default Procedure ProcedureDtoToProcedure(ProcedureDto procedureDto) {
         return procedureDtoToExternalParasite(procedureDto);
     }
 }

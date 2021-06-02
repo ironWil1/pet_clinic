@@ -19,10 +19,16 @@ public abstract class ProcedureMapper {
 
     Map<ProcedureType, AbstractProcedureMapper> mapperMap;
 
-    @PostConstruct
     @Autowired
+    List<AbstractProcedureMapper> mapperList;
+
+    @PostConstruct
+    public void init() {
+        this.setMapperMap(mapperList);
+    }
+
     public void setMapperMap(List<AbstractProcedureMapper> mapperList) {
-        mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractProcedureMapper::getType, Function.identity()));
+        mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractProcedureMapper::getProcedureType, Function.identity()));
     }
 
     @Mapping(source = "medicine.id", target = "medicineId")
@@ -30,7 +36,7 @@ public abstract class ProcedureMapper {
 
     public Procedure procedureDtoToProcedure(ProcedureDto procedureDto) {
         if (mapperMap.containsKey(procedureDto.getType())) {
-            return mapperMap.get(procedureDto.getType()).transformProcedureDto(procedureDto);
+            return mapperMap.get(procedureDto.getType()).ProcedureDtoToProcedure(procedureDto);
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find mapper for Procedure: " + procedureDto);
         }
@@ -38,7 +44,7 @@ public abstract class ProcedureMapper {
 
     public Procedure abstractNewProcedureDtoToProcedure(AbstractNewProcedureDto procedureDto) {
         if (mapperMap.containsKey(procedureDto.getType())) {
-            return mapperMap.get(procedureDto.getType()).transformAbstractProcedureDto(procedureDto);
+            return mapperMap.get(procedureDto.getType()).AbstractProcedureDtoToProcedure(procedureDto);
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find mapper for AbstractNewProcedureDto: " + procedureDto);
         }

@@ -20,7 +20,7 @@ public interface CatMapper extends AbstractPetMapper{
     }
 
     @Override
-    default Pet transformAbstractPetDto(AbstractNewPetDto petDto) {
+    default Pet AbstractPetDtoToPet(AbstractNewPetDto petDto) {
         return catDtoToCat((CatDto) petDto);
     }
 }

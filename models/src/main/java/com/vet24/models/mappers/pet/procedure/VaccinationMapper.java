@@ -22,17 +22,17 @@ public interface VaccinationMapper extends AbstractProcedureMapper {
     VaccinationProcedure procedureDtoToVaccination(ProcedureDto procedureDto);
 
     @Override
-    default ProcedureType getType() {
+    default ProcedureType getProcedureType() {
         return ProcedureType.VACCINATION;
     }
 
     @Override
-    default Procedure transformAbstractProcedureDto(AbstractNewProcedureDto abstractNewProcedureDto) {
+    default Procedure AbstractProcedureDtoToProcedure(AbstractNewProcedureDto abstractNewProcedureDto) {
         return vaccinationDtoToVaccination((VaccinationDto) abstractNewProcedureDto);
     }
 
     @Override
-    default Procedure transformProcedureDto(ProcedureDto procedureDto) {
+    default Procedure ProcedureDtoToProcedure(ProcedureDto procedureDto) {
         return procedureDtoToVaccination(procedureDto);
     }
 }
