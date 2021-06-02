@@ -1,4 +1,4 @@
-package com.vet24.models.mappers;
+package com.vet24.models.mappers.pet;
 
 import com.vet24.models.dto.pet.PetContactDto;
 import com.vet24.models.pet.PetContact;
