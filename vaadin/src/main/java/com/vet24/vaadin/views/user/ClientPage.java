@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
-@Route("/api/client")
+@Route("/client")
 @StyleSheet("./style.css")
 @PageTitle("Client Page")
 public class ClientPage extends VerticalLayout {
