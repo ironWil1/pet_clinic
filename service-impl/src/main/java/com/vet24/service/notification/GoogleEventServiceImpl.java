@@ -156,6 +156,14 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     @Override
     public void editEvent(GoogleEventDto googleEventDto) throws IOException {
         Credential credential;
+
+        if (googleEventDto.getId() == null) {
+            throw new EventException("cannot delete event, event id cannot be empty");
+        }
+        if (googleEventDto.getEmail() == null) {
+            throw new EventException("cannot delete event, user email cannot be empty");
+        }
+
         try {
             credential = flow.loadCredential(googleEventDto.getEmail());
         } catch (IOException e) {
@@ -183,6 +191,14 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     @Override
     public void deleteEvent(GoogleEventDto googleEventDto) throws IOException {
         Credential credential;
+
+        if (googleEventDto.getId() == null) {
+            throw new EventException("cannot delete event, event id cannot be empty");
+        }
+        if (googleEventDto.getEmail() == null) {
+            throw new EventException("cannot delete event, user email cannot be empty");
+        }
+
         try {
             credential = flow.loadCredential(googleEventDto.getEmail());
         } catch (IOException e) {

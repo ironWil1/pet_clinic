@@ -18,6 +18,7 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
 
     private final NotificationEventMapper notificationEventMapper;
     private final GoogleEventService googleEventService;
+    private final NotificationDao notificationDao;
 
     @Autowired
     public NotificationServiceImpl(NotificationDao notificationDao,
@@ -25,6 +26,7 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
         super(notificationDao);
         this.notificationEventMapper = notificationEventMapper;
         this.googleEventService = googleEventService;
+        this.notificationDao = notificationDao;
     }
 
     @Override
@@ -35,13 +37,11 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
         try {
             googleEventService.createEvent(googleEventDto);
             notification.setEventId(googleEventDto.getId());
-        } catch (CredentialException exception) {
-            // It's fine if user dont have credentials
         } catch (IOException exception) {
-            throw new BadRequestException(exception.getMessage(), exception.getCause());
+            // It's fine if user dont have credentials
         }
 
-        super.persist(notification);
+        notificationDao.persist(notification);
     }
 
     @Override
@@ -51,13 +51,11 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
 
         try {
             googleEventService.editEvent(googleEventDto);
-        } catch (CredentialException exception) {
-            // It's fine if user dont have credentials
         } catch (IOException exception) {
-            throw new BadRequestException(exception.getMessage(), exception.getCause());
+            // It's fine if user dont have credentials
         }
 
-        return super.update(notification);
+        return notificationDao.update(notification);
     }
 
     @Override
@@ -68,12 +66,10 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
 
         try {
             googleEventService.deleteEvent(googleEventDto);
-        } catch (CredentialException exception) {
-            // It's fine if user dont have credentials
         } catch (IOException exception) {
-            throw new BadRequestException(exception.getMessage(), exception.getCause());
+            // It's fine if user dont have credentials
         }
 
-        super.delete(notification);
+        notificationDao.delete(notification);
     }
 }

@@ -18,12 +18,14 @@ import java.time.LocalTime;
 public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> implements ProcedureService {
 
     private final NotificationService notificationService;
+    private final ProcedureDao procedureDao;
 
     @Autowired
     public ProcedureServiceImpl(ProcedureDao procedureDao,
                                 NotificationService notificationService) {
         super(procedureDao);
         this.notificationService = notificationService;
+        this.procedureDao = procedureDao;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
             persistProcedureNotification(procedure);
         }
 
-        super.persist(procedure);
+        procedureDao.persist(procedure);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
             deleteProcedureNotification(oldEntity);
         }
 
-        return super.update(procedure);
+        return procedureDao.update(procedure);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
             deleteProcedureNotification(procedure);
         }
 
-        super.delete(procedure);
+        procedureDao.delete(procedure);
     }
 
     private void persistProcedureNotification(Procedure procedure) {
