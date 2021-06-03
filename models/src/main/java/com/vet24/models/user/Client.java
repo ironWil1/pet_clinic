@@ -27,7 +27,7 @@ public class Client extends User {
         super();
     }
 
-    public Client(String firstname, String lastname, String email, String password,Role role,  Set<Pet> pets) {
+    public Client(String firstname, String lastname, String email, String password, Role role, Set<Pet> pets) {
         super(firstname, lastname, email, password, role);
         this.pets = pets;
     }
