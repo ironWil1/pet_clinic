@@ -15,6 +15,14 @@ USER_ENTITIES:
     LASTNAME: "Manager"
     EMAIL: "manager@gmail.com"
     PASSWORD: "manager"
+  - ID: 102
+    USER_TYPE: "CLIENT"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Client"
+    LASTNAME: "Client"
+    EMAIL: "client1@email.com"
+    PASSWORD: "client"
   - ID: 3
     USER_TYPE: "CLIENT"
     AVATAR: "test.png"

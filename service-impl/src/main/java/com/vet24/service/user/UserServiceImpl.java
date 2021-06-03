@@ -20,7 +20,11 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
     }
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return userDao.getUserByEmail(s);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userDao.getUserByEmail(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("Email " + username + " doesn't exist!");
+        }
+        return user;
     }
 }

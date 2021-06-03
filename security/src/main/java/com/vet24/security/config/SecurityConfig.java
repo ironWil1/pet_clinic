@@ -20,10 +20,14 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final UserService userDetailsService;
+    private final LoginSuccessHandler loginSuccessHandler;
+
     @Autowired
-    private UserService userDetailsService;
-    @Autowired
-    private LoginSuccessHandler loginSuccessHandler;
+    public SecurityConfig(UserService userDetailsService, LoginSuccessHandler loginSuccessHandler) {
+        this.userDetailsService = userDetailsService;
+        this.loginSuccessHandler = loginSuccessHandler;
+    }
 
     @Bean
     public DaoAuthenticationProvider daoAuthProvider() {
