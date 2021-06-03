@@ -5,6 +5,7 @@ import com.vet24.models.exception.CredentialException;
 import com.vet24.models.exception.EventException;
 import com.vet24.service.notification.GoogleEventService;
 
+import com.vet24.service.user.ClientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +26,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 public class NotificationController {
 
     private final GoogleEventService googleEventService;
+    private final ClientService clientService;
 
-    public NotificationController(GoogleEventService googleEventService) {
+    public NotificationController(GoogleEventService googleEventService, ClientService clientService) {
         this.googleEventService = googleEventService;
+        this.clientService = clientService;
     }
-
-    //must be email of authorize user
-    private String user = "petclinic.vet24@gmail.com";
 
 
     @Operation(summary = "redirect for google authorization window")
@@ -47,7 +47,7 @@ public class NotificationController {
     public void saveAuthorizationCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String code = request.getParameter("code");
         if (code != null) {
-            googleEventService.saveToken(code, user);
+            googleEventService.saveToken(code, clientService.getCurrentClient().getEmail());
         }
         response.sendRedirect("/");
     }
