@@ -6,5 +6,5 @@ import com.vet24.models.pet.Pet;
 
 public interface AbstractPetMapper {
     PetType getPetType();
-    Pet AbstractPetDtoToPet(AbstractNewPetDto petDto);
+    Pet abstractPetDtoToPet(AbstractNewPetDto petDto);
 }

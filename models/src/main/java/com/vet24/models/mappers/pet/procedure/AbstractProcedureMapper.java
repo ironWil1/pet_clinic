@@ -7,6 +7,6 @@ import com.vet24.models.pet.procedure.Procedure;
 
 public interface AbstractProcedureMapper {
     ProcedureType getProcedureType();
-    Procedure AbstractProcedureDtoToProcedure(AbstractNewProcedureDto abstractNewProcedureDto);
-    Procedure ProcedureDtoToProcedure(ProcedureDto procedureDto);
+    Procedure abstractProcedureDtoToProcedure(AbstractNewProcedureDto abstractNewProcedureDto);
+    Procedure procedureDtoToProcedure(ProcedureDto procedureDto);
 }
