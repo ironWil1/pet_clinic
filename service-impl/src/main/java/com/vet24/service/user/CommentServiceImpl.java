@@ -16,4 +16,9 @@ public class CommentServiceImpl extends ReadWriteServiceImpl<Long, Comment> impl
         super(commentDao);
         this.commentDao = commentDao;
     }
+
+    @Override
+    public Comment findByClientAndDoctorIds(long clientId, long doctorId) {
+        return commentDao.findByClientAndDoctorIds(clientId,doctorId);
+    }
 }

@@ -4,4 +4,5 @@ import com.vet24.models.user.Comment;
 import com.vet24.service.ReadWriteService;
 
 public interface CommentService extends ReadWriteService<Long, Comment> {
+    Comment findByClientAndDoctorIds(long clientId, long doctorId);
 }
