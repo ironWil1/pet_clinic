@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-import java.sql.Date;
 import java.time.LocalDate;
 
 
@@ -43,9 +42,13 @@ public class Comment {
     @Column
     private LocalDate dateTime;
 
-    public Comment(Client client, String content, LocalDate dateTime) {
+    @ManyToOne (fetch = FetchType.LAZY)
+    private Doctor doctor;
+
+    public Comment(Client client, String content, LocalDate dateTime, Doctor doctor) {
         this.client = client;
         this.content = content;
         this.dateTime = dateTime;
+        this.doctor = doctor;
     }
 }
