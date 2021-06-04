@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.user;
 
+import com.vet24.models.exception.RepeatedCommentException;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Doctor;
@@ -50,9 +51,7 @@ public class DoctorController {
                 );
                 commentService.persist(comment);
             } else {
-                comment = commentService.findByClientAndDoctorIds(clientId, doctorId);
-                comment.setContent(text);
-                commentService.update(comment);
+                throw new RepeatedCommentException("You can add only one comment to Doctor. So you have to update or delete old one.");
             }
             return new ResponseEntity<>(comment.getContent(), HttpStatus.OK);
         }
