@@ -2,6 +2,8 @@ package com.vet24.vaadin.views.user;
 
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -12,12 +14,16 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.selection.MultiSelect;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vet24.vaadin.models.pet.Pet;
+import com.vet24.vaadin.models.pet.PetForm;
 import com.vet24.vaadin.models.user.Client;
 import com.vet24.vaadin.template.user.ClientTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Set;
 
@@ -98,10 +104,54 @@ public class ClientPage extends VerticalLayout {
         divGridClients.add(clientGrid);
         divGridClients.setWidth("100%");
         clientGrid.setItems(client);
-        clientGrid.getColumnByKey("firstname").setAutoWidth(true);
-        clientGrid.getColumnByKey("lastname").setAutoWidth(true);
-        clientGrid.getColumnByKey("email").setAutoWidth(true);
-        clientGrid.getColumnByKey("pets").setAutoWidth(true);
+        clientGrid.setColumns("firstname", "lastname", "email");
+        clientGrid.addColumn(new ComponentRenderer<>(() -> {
+            Div petsDiv = new Div();
+            HorizontalLayout horizontalLayout = new HorizontalLayout();
+            PetForm petForm = new PetForm();
+            ComboBox<Pet> petComboBox = new ComboBox<>();
+            Button addPet = new Button("Add Pet");
+            Button editPet = new Button("Edit");
+            Button deletePet = new Button("Delete");
+
+            petForm.setVisible(false);
+            petComboBox.setItems(client.getPets());
+            petComboBox.setValue(client.getPets().stream().findFirst().orElse(new Pet()));
+            petComboBox.setItemLabelGenerator(Pet::getName);
+            horizontalLayout.add(addPet, petComboBox, editPet, deletePet);
+            addPet.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            deletePet.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+            addPet.addClickListener(event -> {
+                petForm.setPet(new Pet());
+                petForm.setVisible(true);
+                horizontalLayout.setVisible(false);
+            });
+            editPet.addClickListener(event -> {
+                petForm.setPet(petComboBox.getValue());
+                petForm.setVisible(true);
+                horizontalLayout.setVisible(false);
+            });
+            deletePet.addClickListener(event -> {
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.delete("http://localhost:8080/api/client/pet/" + petComboBox.getValue().getId());
+                Notification.show("Delete Pet " + petComboBox.getValue().getName());
+            });
+            petForm.addListener(PetForm.SaveEvent.class, event -> {
+                Notification.show("Save Pet " + event.getPet().getName());
+                petForm.setVisible(false);
+                horizontalLayout.setVisible(true);
+            });
+            petForm.addListener(PetForm.CloseEvent.class, event -> {
+                petForm.setVisible(false);
+                horizontalLayout.setVisible(true);
+            });
+
+            petsDiv.add(horizontalLayout, petForm);
+            return petsDiv;
+        })).setHeader("Pets");
+
+        clientGrid.getColumns().forEach(col -> col.setAutoWidth(true));
         clientGrid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS, GridVariant.LUMO_ROW_STRIPES);
         clientGrid.setSelectionMode(Grid.SelectionMode.MULTI);
         MultiSelect<Grid<Client>, Client> multiSelect =
