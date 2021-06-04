@@ -15,8 +15,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
@@ -36,6 +38,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -89,11 +92,32 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     @Transactional
     public void getCurrentClient() {
 
+        /*String username = "client1@email.com";
+        String password = "client";
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+        requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestHeaders);
+
+        TestRestTemplate testRestTemplate1 = new TestRestTemplate(username, password, TestRestTemplate.HttpClientOption.ENABLE_COOKIES);
+        ResponseEntity<String> responseEntity = testRestTemplate1.exchange(
+                URI, HttpMethod.GET, requestEntity, String.class);
+
+        String responseBody = responseEntity.getBody();
+        System.err.println(responseBody);
+        Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());*/
+
+
+
         ResponseEntity<String> result = testRestTemplate.withBasicAuth("client1@email.com", "client")
                 .getForEntity(URI, String.class);
         String responseBody = result.getBody();
         System.err.println(responseBody);
         Assert.assertEquals(HttpStatus.OK, result.getStatusCode());
+
+
 
         /*ClientDto clientDto = clientMapper.clientToClientDto(clientService.getClientByEmail("client1@email.com"));
         ResponseEntity<String> response = testRestTemplate.getForEntity(URI, String.class);
