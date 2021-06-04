@@ -22,14 +22,14 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/client/doctor")
 @Tag(name = "doctor-controller", description = "operations with doctors")
-public class DoctorController {
+public class ClientCommentController {
 
     private final DoctorService doctorService;
     private final ClientService clientService;
     private final CommentService commentService;
 
     @Autowired
-    public DoctorController(DoctorService doctorService, ClientService clientService, CommentService commentService) {
+    public ClientCommentController(DoctorService doctorService, ClientService clientService, CommentService commentService) {
         this.doctorService = doctorService;
         this.clientService = clientService;
         this.commentService = commentService;
@@ -45,7 +45,7 @@ public class DoctorController {
             Comment comment = null;
             Client currentClient = clientService.getCurrentClient();
             Long clientId = currentClient.getId();
-            if (commentService.findByClientAndDoctorIds(clientId, doctorId) == null) {
+            if (commentService.findByClientIdAndDoctorId(clientId, doctorId) == null) {
                 comment = new Comment(
                         clientService.getCurrentClient(), text, LocalDate.now(), doctor
                 );
