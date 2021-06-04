@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Data
 public class Pet {
+    private String id;
 
     private String name;
 
