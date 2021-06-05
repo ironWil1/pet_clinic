@@ -3,6 +3,7 @@ package com.vet24.models.pet;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
@@ -93,6 +94,17 @@ public abstract class Pet {
     )
     private Set<Reproduction> reproductions = new HashSet<>();
 
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+
+    private Set<ClinicalExamination> clinicalExaminations = new HashSet<>();
+
+
+
+
     protected Pet() {
     }
 
@@ -105,10 +117,12 @@ public abstract class Pet {
     }
 
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
-                  Set<Procedure> procedures, Set<Reproduction> reproductions) {
+                  Set<Procedure> procedures, Set<Reproduction> reproductions,
+                  Set<ClinicalExamination> clinicalExaminations) {
         this(name, birthDay, gender, breed, client);
         this.procedures = procedures;
         this.reproductions = reproductions;
+        this.clinicalExaminations = clinicalExaminations;
     }
 
     public void addProcedure(Procedure procedure) {
@@ -129,5 +143,15 @@ public abstract class Pet {
     public void removeReproduction(Reproduction reproduction) {
         reproductions.remove(reproduction);
         reproduction.setPet(null);
+    }
+
+    public void addClinicalExamination(ClinicalExamination clinicalExamination){
+        clinicalExaminations.add(clinicalExamination);
+        clinicalExamination.setPet(this);
+    }
+
+    public void removeClinicalExamination(ClinicalExamination clinicalExamination) {
+        clinicalExaminations.remove(clinicalExamination);
+        clinicalExamination.setPet(null);
     }
 }

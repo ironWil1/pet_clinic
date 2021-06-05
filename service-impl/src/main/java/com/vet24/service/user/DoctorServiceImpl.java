@@ -7,6 +7,8 @@ import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implements DoctorService{
 
@@ -18,4 +20,8 @@ public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implem
         this.doctorDao = doctorDao;
     }
 
+    @Override
+    public Doctor getCurrentDoctor() {
+        return doctorDao.getByKey(5L);
+    }
 }
