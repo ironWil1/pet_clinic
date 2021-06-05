@@ -7,6 +7,7 @@ import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
+import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
@@ -20,6 +21,7 @@ import com.vet24.service.pet.CatService;
 import com.vet24.service.pet.DogService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
+import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
 import com.vet24.service.pet.procedure.EchinococcusProcedureService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
@@ -55,6 +57,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
     private final EchinococcusProcedureService echinococcusProcedureService;
     private final ReproductionService reproductionService;
+    private final ClinicalExaminationService clinicalExaminationService;
     private final PetContactService petContactService;
     private final CatService catService;
     private final DogService dogService;
@@ -71,14 +74,22 @@ public class TestDataInitializer implements ApplicationRunner {
     private final Gender FEMALE = Gender.FEMALE;
 
     @Autowired
-    public TestDataInitializer(RoleService roleService, UserService userService,
+    public TestDataInitializer(RoleService roleService,
+                               UserService userService,
                                ClientService clientService,
-                               MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
+                               MedicineService medicineService,
+                               VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
-                               ReproductionService reproductionService, PetContactService petContactService,
-                               CatService catService, DogService dogService, DoctorService doctorService,
-                               PetService petService, Environment environment, CommentService commentService) {
+                               ReproductionService reproductionService,
+                               ClinicalExaminationService clinicalExaminationService,
+                               PetContactService petContactService,
+                               CatService catService,
+                               DogService dogService,
+                               DoctorService doctorService,
+                               PetService petService,
+                               Environment environment,
+                               CommentService commentService) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
@@ -87,6 +98,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.externalParasiteProcedureService = externalParasiteProcedureService;
         this.echinococcusProcedureService = echinococcusProcedureService;
         this.reproductionService = reproductionService;
+        this.clinicalExaminationService = clinicalExaminationService;
         this.petContactService = petContactService;
         this.catService = catService;
         this.dogService = dogService;
@@ -169,6 +181,15 @@ public class TestDataInitializer implements ApplicationRunner {
         }
         reproductionService.persistAll(reproductions);
     }
+
+//    public void clinicalExaminationInitializer(){
+//        List<ClinicalExamination> clinicalExaminations = new ArrayList<>();
+//        for (int i = 1; i <= 30; i++) {
+//            clinicalExaminations.add(new ClinicalExamination(LocalDate.now(), LocalDate.now(), LocalDate.now(), i,
+//                    petService.getByKey((long) i)));
+//        }
+//        clinicalExaminationService.persistAll(clinicalExaminations);
+//    }
 
     public void petContactInitializer() {
         Pet pet1 = petService.getByKey(1L);
