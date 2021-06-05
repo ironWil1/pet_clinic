@@ -7,6 +7,7 @@ import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
+import com.vet24.models.user.Doctor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -79,6 +80,9 @@ public abstract class Pet {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Doctor doctor;
 
     @OneToMany(
             mappedBy = "pet",
