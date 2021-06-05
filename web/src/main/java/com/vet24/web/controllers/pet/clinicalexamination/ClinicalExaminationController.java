@@ -143,4 +143,6 @@ public class ClinicalExaminationController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
 }
