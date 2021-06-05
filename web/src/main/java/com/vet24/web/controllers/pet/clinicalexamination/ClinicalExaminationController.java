@@ -16,17 +16,17 @@ import org.webjars.NotFoundException;
 
 @RestController
 @RequestMapping("/api/doctor/pet/{petId}/exam")
-public class ClinicalExaminationRestController {
+public class ClinicalExaminationController {
 
     private final PetService petService;
     private final ClinicalExaminationService clinicalExaminationService;
     private final ClinicalExaminationMapper clinicalExaminationMapper;
     private final DoctorService doctorService;
 
-    public ClinicalExaminationRestController(PetService petService,
-                                             ClinicalExaminationService clinicalExaminationService,
-                                             ClinicalExaminationMapper clinicalExaminationMapper,
-                                             DoctorService doctorService) {
+    public ClinicalExaminationController(PetService petService,
+                                         ClinicalExaminationService clinicalExaminationService,
+                                         ClinicalExaminationMapper clinicalExaminationMapper,
+                                         DoctorService doctorService) {
         this.petService = petService;
         this.clinicalExaminationService = clinicalExaminationService;
         this.clinicalExaminationMapper = clinicalExaminationMapper;
