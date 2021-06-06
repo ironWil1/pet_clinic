@@ -22,7 +22,7 @@ import java.util.Set;
 @DiscriminatorColumn(name = "pet_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"diagnoses","procedures","reproductions"})
 public abstract class Pet {
 
     @Id
@@ -77,7 +77,7 @@ public abstract class Pet {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<Diagnosis> diagnosis = new HashSet<>();
+    private Set<Diagnosis> diagnoses = new HashSet<>();
 
 
     @OneToMany(

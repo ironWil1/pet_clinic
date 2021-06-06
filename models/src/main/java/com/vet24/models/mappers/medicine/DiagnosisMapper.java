@@ -5,11 +5,12 @@ import com.vet24.models.medicine.Diagnosis;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses=TreatmentMapper.class)
 public interface DiagnosisMapper {
 
-    @Mapping(source="doctor.id", target="doctorId")
+
     @Mapping(source="pet.id", target="petId")
+    @Mapping(source="doctor.id", target="doctorId")
     DiagnosisDto diagnosisToDiagnosisDto(Diagnosis diagnosis);
 
 }

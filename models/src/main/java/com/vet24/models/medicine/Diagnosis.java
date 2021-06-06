@@ -7,13 +7,12 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 
-
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @RequiredArgsConstructor
-@Table(name="diagnosis")
 public class Diagnosis implements Serializable {
 
     @Id

@@ -2,15 +2,14 @@ package com.vet24.models.dto.user;
 
 
 import com.vet24.models.dto.medicine.DiagnosisDto;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Set;
 
-@Getter
-@Setter
-@EqualsAndHashCode(exclude = "diagnoses")
+@Data
 public class DoctorDto {
 
     private Long id;

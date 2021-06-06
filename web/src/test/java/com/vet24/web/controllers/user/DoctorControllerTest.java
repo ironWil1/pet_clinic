@@ -9,12 +9,14 @@ import com.vet24.service.pet.PetService;
 import com.vet24.service.user.DoctorService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.medicine.DoctorController;
+import groovy.util.logging.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 
 @DBRider
+@Slf4j
 public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
@@ -41,7 +43,6 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
     }
 
     @Test
-   // @WithUserDetails(value="doctor", userDetailsServiceBeanName="myUserDetailsService")
     @DataSet(value = {"/datasets/registration-doctor.yml"}, cleanBefore = true)
     public void shouldBeCreated()  {
         String diagnosis = "bla-bla-bla";
@@ -55,8 +56,9 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
         Assert.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         Assert.assertEquals("bla-bla-bla",responseEntity.getBody().getDescription());
         Assert.assertEquals(doctor.getId(),responseEntity.getBody().getDoctorId());
-        Assert.assertEquals(petService.getByKey(101L).getId(),responseEntity.getBody().getPetId());
+        Assert.assertEquals(Long.valueOf(101L),responseEntity.getBody().getPetId());
         Assert.assertNotNull(responseEntity.getBody().getId());
+        Assert.assertNotNull(responseEntity.getBody().getDoctorId());
         Assert.assertEquals(responseEntity.getBody().getDoctorId(),doctor.getId());
 
 
