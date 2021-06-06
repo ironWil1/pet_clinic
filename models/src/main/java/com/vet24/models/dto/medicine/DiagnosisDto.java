@@ -10,7 +10,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class DiagnosisDto {
     private Long id;
-    private PetDto pet;
+    private Long petId;
     private Long doctorId;
     private String description;
     private TreatmentDto treatment;

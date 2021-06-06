@@ -55,7 +55,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
         Assert.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         Assert.assertEquals("bla-bla-bla",responseEntity.getBody().getDescription());
         Assert.assertEquals(doctor.getId(),responseEntity.getBody().getDoctorId());
-        Assert.assertEquals(petService.getByKey(101L).getId(),responseEntity.getBody().getPet().getId());
+        Assert.assertEquals(petService.getByKey(101L).getId(),responseEntity.getBody().getPetId());
         Assert.assertNotNull(responseEntity.getBody().getId());
         Assert.assertEquals(responseEntity.getBody().getDoctorId(),doctor.getId());
 

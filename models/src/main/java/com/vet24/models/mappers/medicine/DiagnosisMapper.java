@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 public interface DiagnosisMapper {
 
     @Mapping(source="doctor.id", target="doctorId")
+    @Mapping(source="pet.id", target="petId")
     DiagnosisDto diagnosisToDiagnosisDto(Diagnosis diagnosis);
 
 }
