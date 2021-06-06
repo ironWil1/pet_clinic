@@ -7,8 +7,11 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,6 +25,10 @@ public class Client extends User {
             orphanRemoval = true
     )
     private Set<Pet> pets = new HashSet<>();
+
+    @OneToMany
+    @JoinColumn(name = "id")
+    private List<Comment> comments = new ArrayList<>();
 
     public Client() {
         super();
