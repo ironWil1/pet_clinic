@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @DiscriminatorValue("DOCTOR")
-@EqualsAndHashCode(callSuper = true,exclude = "diagnoses,comments")
+@EqualsAndHashCode(callSuper = true,exclude = {"diagnoses","comments"})
 @AllArgsConstructor
 public class Doctor extends User {
 
