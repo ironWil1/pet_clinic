@@ -23,6 +23,8 @@ import com.vet24.vaadin.models.pet.PetForm;
 import com.vet24.vaadin.models.user.Client;
 import com.vet24.vaadin.template.user.ClientTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Set;
@@ -33,6 +35,7 @@ import java.util.Set;
 public class ClientPage extends VerticalLayout {
 
     private static final String GET_URL_CLIENT = "http://localhost:8080/api/client";
+    private static final String PET_API_URL = "http://localhost:8080/api/client/pet/";
 
     private HorizontalLayout header = new HorizontalLayout();
     private VerticalLayout navBar = new VerticalLayout();
@@ -47,7 +50,7 @@ public class ClientPage extends VerticalLayout {
     private Button delete = new Button("Delete",VaadinIcon.TRASH.create(), e -> Notification.show("client delete will be here"));
     private HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
 
-    public ClientPage(@Autowired ClientTemplateService clientTemplateService) {
+    public ClientPage(@Autowired ClientTemplateService clientService) {
 
         // div
         Div divWrapperPage = new Div();
@@ -99,26 +102,24 @@ public class ClientPage extends VerticalLayout {
 
         // content
         content.setWidth("100%");
-        Client client = clientTemplateService.getEntity(GET_URL_CLIENT, Client.class);
+        Client client = clientService.getEntity(GET_URL_CLIENT, Client.class);
         clientGrid.addClassName("grid_client");
         divGridClients.add(clientGrid);
         divGridClients.setWidth("100%");
         clientGrid.setItems(client);
         clientGrid.setColumns("firstname", "lastname", "email");
         clientGrid.addColumn(new ComponentRenderer<>(() -> {
-            Div petsDiv = new Div();
             HorizontalLayout horizontalLayout = new HorizontalLayout();
             PetForm petForm = new PetForm();
             ComboBox<Pet> petComboBox = new ComboBox<>();
             Button addPet = new Button("Add Pet");
             Button editPet = new Button("Edit");
             Button deletePet = new Button("Delete");
+            Div petsDiv = new Div();
 
             petForm.setVisible(false);
-            petComboBox.setItems(client.getPets());
-            petComboBox.setValue(client.getPets().stream().findFirst().orElse(new Pet()));
+            petComboBox.setItems(clientService.getEntity(GET_URL_CLIENT, Client.class).getPets());
             petComboBox.setItemLabelGenerator(Pet::getName);
-            horizontalLayout.add(addPet, petComboBox, editPet, deletePet);
             addPet.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             deletePet.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
@@ -128,26 +129,44 @@ public class ClientPage extends VerticalLayout {
                 horizontalLayout.setVisible(false);
             });
             editPet.addClickListener(event -> {
-                petForm.setPet(petComboBox.getValue());
-                petForm.setVisible(true);
-                horizontalLayout.setVisible(false);
+                if (petComboBox.isEmpty()){
+                    Notification.show("Select a pet");
+                } else {
+                    petForm.setPet(petComboBox.getValue());
+                    petForm.setVisible(true);
+                    horizontalLayout.setVisible(false);
+                }
             });
             deletePet.addClickListener(event -> {
-                RestTemplate restTemplate = new RestTemplate();
-                restTemplate.delete("http://localhost:8080/api/client/pet/" + petComboBox.getValue().getId());
-                Notification.show("Delete Pet " + petComboBox.getValue().getName());
+                if (petComboBox.isEmpty()){
+                    Notification.show("Select a pet");
+                } else {
+                    clientService.deleteEntity(PET_API_URL, petComboBox.getValue().getId());
+                    Notification.show("Delete pet: " + petComboBox.getValue().getName());
+                    petComboBox.setItems(clientService.getEntity(GET_URL_CLIENT, Client.class).getPets());
+                }
             });
-            petForm.addListener(PetForm.SaveEvent.class, event -> {
-                Notification.show("Save Pet " + event.getPet().getName());
-                petForm.setVisible(false);
-                horizontalLayout.setVisible(true);
-            });
+
             petForm.addListener(PetForm.CloseEvent.class, event -> {
                 petForm.setVisible(false);
                 horizontalLayout.setVisible(true);
             });
+            petForm.addListener(PetForm.SaveEvent.class, event -> {
+                Pet pet = event.getPet();
+                ResponseEntity<Pet> response = pet.getId() != null ?
+                        clientService.saveEntity(PET_API_URL + pet.getId(), HttpMethod.PUT, pet) :
+                        clientService.saveEntity(PET_API_URL + "add", HttpMethod.POST, pet);
+                Notification.show(response.getStatusCode().is2xxSuccessful() ?
+                        "Save pet: " + pet.getName() :
+                        response.toString());
+                petComboBox.setItems(clientService.getEntity(GET_URL_CLIENT, Client.class).getPets());
+                petForm.setVisible(false);
+                horizontalLayout.setVisible(true);
+            });
 
+            horizontalLayout.add(addPet, petComboBox, editPet, deletePet);
             petsDiv.add(horizontalLayout, petForm);
+            addClassName("pets_column");
             return petsDiv;
         })).setHeader("Pets");
 
