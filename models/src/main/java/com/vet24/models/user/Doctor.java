@@ -4,7 +4,9 @@ import com.vet24.models.medicine.Diagnosis;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -28,7 +30,7 @@ public class Doctor extends User {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<Comment> comments = new HashSet<>();
+    private List<Comment> comments = new ArrayList<>();
 
     public Doctor() {
         super();
