@@ -8,10 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
 @DiscriminatorValue("DOCTOR")
-@EqualsAndHashCode(callSuper = true,exclude = "diagnoses")
+@EqualsAndHashCode(callSuper = true,exclude = "diagnoses,comments")
 @AllArgsConstructor
 public class Doctor extends User {
 
@@ -24,6 +22,13 @@ public class Doctor extends User {
             cascade = CascadeType.ALL
     )
     private Set<Diagnosis> diagnoses = new HashSet<>();
+
+    @OneToMany(
+            mappedBy = "doctor",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<Comment> comments = new HashSet<>();
 
     public Doctor() {
         super();
