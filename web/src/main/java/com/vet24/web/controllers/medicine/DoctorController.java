@@ -26,8 +26,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
-import java.util.Set;
-
 @RestController
 @Tag(name = "doctor-controller", description = "Doctor's operations")
 public class DoctorController {
@@ -80,9 +78,7 @@ public class DoctorController {
         }
         Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
         diagnosisService.persist(diagnosis);
-
-        DiagnosisDto diahnosisDto = diagnosisMapper.diagnosisToDiagnosisDto(diagnosis);
-        return new ResponseEntity<>(diahnosisDto,
+        return new ResponseEntity<>(diagnosisMapper.diagnosisToDiagnosisDto(diagnosis),
                 HttpStatus.CREATED);
     }
 

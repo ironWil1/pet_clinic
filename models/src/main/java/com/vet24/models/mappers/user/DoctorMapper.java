@@ -6,10 +6,11 @@ import com.vet24.models.dto.user.DoctorDto;
 import com.vet24.models.mappers.medicine.DiagnosisMapper;
 import com.vet24.models.user.Doctor;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {DiagnosisMapper.class})
 public interface DoctorMapper {
 
-
     DoctorDto doctorToDoctorDto(Doctor doctor);
+
 }
