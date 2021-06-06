@@ -1,6 +1,8 @@
 package com.vet24.web.controllers.pet.clinicalexamination;
 
+import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.clinicalexamination.ClinicalExaminationDto;
+import com.vet24.models.dto.pet.reproduction.ReproductionDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.clinicalexamination.ClinicalExaminationMapper;
 import com.vet24.models.pet.Pet;
@@ -9,6 +11,11 @@ import com.vet24.models.user.Doctor;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
 import com.vet24.service.user.DoctorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +40,17 @@ public class ClinicalExaminationController {
         this.doctorService = doctorService;
     }
 
+    @Operation(summary = "get clinical examination by id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "ok",
+                    content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class))),
+            @ApiResponse(responseCode = "400", description = "clinical examination not assigned " +
+                    "to this pet or pet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "404", description = "clinical examination or pet with " +
+                    "this id not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+    })
     @GetMapping("/{examinationId}")
     public ResponseEntity<ClinicalExaminationDto> getById(@PathVariable Long petId,
                                                           @PathVariable Long examinationId) {
@@ -42,6 +60,9 @@ public class ClinicalExaminationController {
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
+        }
+        if (doctor == null) {
+            throw new NotFoundException("there is no doctor assigned to this pet");
         }
         if (clinicalExamination == null) {
             throw new NotFoundException("clinical examination not found");
@@ -56,9 +77,16 @@ public class ClinicalExaminationController {
     }
 
 
-
-
-
+    @Operation(summary = "add new clinical examination")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "clinical examination successful " +
+                    "created",
+                    content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class))),
+            @ApiResponse(responseCode = "404", description = "pet with this id not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "pet has no doctor",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+    })
     @PostMapping("")
     public ResponseEntity<ClinicalExaminationDto> save(@PathVariable Long petId,
                                                        @RequestBody ClinicalExaminationDto clinicalExaminationDto) {
@@ -70,8 +98,8 @@ public class ClinicalExaminationController {
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
-        if (!pet.getClient().getId().equals(doctor.getId())) {
-            throw new BadRequestException("pet not yours");
+        if (!pet.getDoctor().getId().equals(doctor.getId())) {
+            throw new BadRequestException("pet has no doctor");
         }
 
         clinicalExamination.setId(null);
@@ -84,10 +112,19 @@ public class ClinicalExaminationController {
                 HttpStatus.CREATED);
     }
 
-
-
-
-
+    @Operation(summary = "update clinical examination by id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "clinical examination successful " +
+                    "updated",
+                    content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class))),
+            @ApiResponse(responseCode = "404", description = "clinical examination or pet with " +
+                    "this id not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "clinical examination not assigned " +
+                    "to this pet OR \n" +
+                    "examinationId in path and in body not equals OR \npet has no doctor",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+    })
     @PutMapping("/{examinationId}")
     public ResponseEntity<ClinicalExaminationDto> update(@PathVariable Long petId,
                                                          @PathVariable Long examinationId,
@@ -98,6 +135,9 @@ public class ClinicalExaminationController {
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
+        }
+        if (doctor == null) {
+            throw new NotFoundException("there is no doctor assigned to this pet");
         }
         if (clinicalExamination == null) {
             throw new NotFoundException("clinical examination not found");
@@ -119,6 +159,16 @@ public class ClinicalExaminationController {
     }
 
 
+    @Operation(summary = "delete clinical examination by id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "clinical examination successful " +
+                    "deleted"),
+            @ApiResponse(responseCode = "404", description = "clinical examination or pet with " +
+                    "this id not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "reproduction not assigned to this pet OR pet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+    })
     @DeleteMapping(value = "/{examinationId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long petId,
                                            @PathVariable Long examinationId) {
