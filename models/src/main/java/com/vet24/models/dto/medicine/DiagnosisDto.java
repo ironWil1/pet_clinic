@@ -12,5 +12,4 @@ public class DiagnosisDto {
     private Long petId;
     private Long doctorId;
     private String description;
-    private TreatmentDto treatment;
 }

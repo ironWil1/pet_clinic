@@ -10,7 +10,6 @@ import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Doctor;
 import com.vet24.models.user.User;
 import com.vet24.service.medicine.DiagnosisService;
-import com.vet24.service.medicine.TreatmentService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.user.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,17 +33,15 @@ public class DoctorController {
     private final DiagnosisService diagnosisService;
     private final DoctorMapper doctorMapper;
     private final DiagnosisMapper diagnosisMapper;
-    private final TreatmentService treatmentService;
     private static final String SECURITY_FILTER ="ROLE_DOCTOR";
     public static final String ADD_DIAGNOSIS_API ="/api/doctor/pet/{petId}/addDiagnosis";
 
-    public DoctorController(PetService petService, DoctorService doctorService, DiagnosisService diagnosisService, DoctorMapper doctorMapper, DiagnosisMapper diagnosisMapper, TreatmentService treatmentService) {
+    public DoctorController(PetService petService, DoctorService doctorService, DiagnosisService diagnosisService, DoctorMapper doctorMapper, DiagnosisMapper diagnosisMapper) {
         this.petService = petService;
         this.doctorService = doctorService;
         this.diagnosisService = diagnosisService;
         this.doctorMapper = doctorMapper;
         this.diagnosisMapper = diagnosisMapper;
-        this.treatmentService = treatmentService;
     }
 
     @Operation(summary = "add a new doctor")

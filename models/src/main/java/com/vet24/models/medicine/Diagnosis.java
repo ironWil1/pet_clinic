@@ -31,8 +31,4 @@ public class Diagnosis implements Serializable {
     @Column(nullable = false)
     private String description;
 
-    @OneToOne(fetch = FetchType.LAZY,cascade = {CascadeType.ALL},orphanRemoval = true)
-    private Treatment treatment;
-
-
 }

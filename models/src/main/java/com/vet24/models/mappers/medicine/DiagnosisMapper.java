@@ -5,7 +5,7 @@ import com.vet24.models.medicine.Diagnosis;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses=TreatmentMapper.class)
+@Mapper(componentModel = "spring")
 public interface DiagnosisMapper {
 
 
