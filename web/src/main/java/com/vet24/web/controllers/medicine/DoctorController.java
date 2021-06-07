@@ -2,7 +2,6 @@ package com.vet24.web.controllers.medicine;
 
 import com.vet24.models.dto.medicine.DiagnosisDto;
 import com.vet24.models.mappers.medicine.DiagnosisMapper;
-import com.vet24.models.mappers.user.DoctorMapper;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Doctor;
@@ -17,27 +16,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 @RestController
+@RequestMapping("/api/doctor")
 @Tag(name = "doctor-controller", description = "Doctor's operations")
 public class DoctorController {
     private final PetService petService;
     private final DoctorService doctorService;
     private final DiagnosisService diagnosisService;
-    private final DoctorMapper doctorMapper;
     private final DiagnosisMapper diagnosisMapper;
-    public static final String ADD_DIAGNOSIS_API ="/api/doctor/pet/{petId}/addDiagnosis";
 
-    public DoctorController(PetService petService, DoctorService doctorService, DiagnosisService diagnosisService, DoctorMapper doctorMapper, DiagnosisMapper diagnosisMapper) {
+
+    public DoctorController(PetService petService, DoctorService doctorService,
+                            DiagnosisService diagnosisService,  DiagnosisMapper diagnosisMapper) {
         this.petService = petService;
         this.doctorService = doctorService;
         this.diagnosisService = diagnosisService;
-        this.doctorMapper = doctorMapper;
         this.diagnosisMapper = diagnosisMapper;
     }
 
@@ -48,7 +44,7 @@ public class DoctorController {
             @ApiResponse(responseCode = "404", description = "Pet is not found")
     })
 
-    @PostMapping(ADD_DIAGNOSIS_API)
+    @PostMapping("/pet/{petId}/addDiagnosis")
     public ResponseEntity<DiagnosisDto> addDiagnosis(@PathVariable Long petId,
                                                      @RequestBody String text){
         Doctor doctor = doctorService.getCurrentDoctor();
