@@ -141,8 +141,11 @@ public class ClientPage extends VerticalLayout {
                 if (petComboBox.isEmpty()){
                     Notification.show("Select a pet");
                 } else {
-                    clientService.deleteEntity(PET_API_URL, petComboBox.getValue().getId());
-                    Notification.show("Delete pet: " + petComboBox.getValue().getName());
+                    if(clientService.deleteEntity(PET_API_URL, petComboBox.getValue().getId())){
+                        Notification.show("Delete pet: " + petComboBox.getValue().getName());
+                    } else {
+                        Notification.show("Delete pet Error");
+                    }
                     petComboBox.setItems(clientService.getEntity(GET_URL_CLIENT, Client.class).getPets());
                 }
             });

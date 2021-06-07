@@ -65,7 +65,12 @@ public abstract class GenericMethodTemplateService {
         }
     }
 
-    public <T> void deleteEntity(String url, T entityId) {
-        restTemplate.delete(url + entityId);
+    public <T> boolean deleteEntity(String url, T entityId) {
+        try {
+            restTemplate.delete(url + entityId);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
     }
 }
