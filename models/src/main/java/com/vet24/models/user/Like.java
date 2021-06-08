@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @AllArgsConstructor
-@Table(name="commentLike")
+@Table(name="comment_like")
 @IdClass(LikeId.class)
 public class Like {
 
