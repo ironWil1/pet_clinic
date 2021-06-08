@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/client/doctor")
@@ -47,7 +48,7 @@ public class ClientCommentController {
             Long clientId = currentClient.getId();
             if (commentService.findByClientIdAndDoctorId(clientId, doctorId) == null) {
                 comment = new Comment(
-                        clientService.getCurrentClient(), text, LocalDate.now(), doctor
+                        clientService.getCurrentClient(), text, LocalDateTime.now(), doctor
                 );
                 commentService.persist(comment);
             } else {

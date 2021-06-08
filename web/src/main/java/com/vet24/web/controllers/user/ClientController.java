@@ -6,7 +6,6 @@ import com.vet24.models.mappers.user.ClientMapper;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Like;
-import com.vet24.models.user.LikeId;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.user.ClientService;
@@ -102,15 +101,16 @@ public class ClientController {
     })
 
     @PostMapping(value = "/{commentId}/{dis}")
-    public ResponseEntity<Void> likeOrDislikeComment(@PathVariable Long commentId, @PathVariable String dis)  {
+    public ResponseEntity<Void> likeOrDislikeComment(@PathVariable Long commentId, @PathVariable boolean dis)  {
 
         Client client = clientService.getCurrentClient();
         Comment comment = commentService.getByKey(commentId);
         if (comment == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Like commentLike = new Like(comment,client,dis.equals("dislike"));
+        Like commentLike = new Like(comment,client,dis);
         likeService.update(commentLike);
+
         return new  ResponseEntity<>(HttpStatus.OK);
     }
 

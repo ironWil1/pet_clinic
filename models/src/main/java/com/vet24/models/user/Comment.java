@@ -9,7 +9,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -33,7 +35,7 @@ public class Comment implements Serializable {
     private String content;
 
     @Column
-    private LocalDate dateTime;
+    private LocalDateTime dateTime;
 
     @ManyToOne (fetch = FetchType.LAZY)
     private Doctor doctor;
@@ -43,9 +45,9 @@ public class Comment implements Serializable {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<Like> likes = new HashSet<>();
+    private List<Like> likes;
 
-    public Comment(Client client, String content, LocalDate dateTime, Doctor doctor) {
+    public Comment(Client client, String content, LocalDateTime dateTime, Doctor doctor) {
         this.client = client;
         this.content = content;
         this.dateTime = dateTime;

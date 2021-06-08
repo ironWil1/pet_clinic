@@ -23,8 +23,11 @@ public class Client extends User {
     )
     private Set<Pet> pets = new HashSet<>();
 
-    @OneToMany
-    @JoinColumn(name = "id")
+    @OneToMany(
+                    mappedBy = "client",
+                    cascade = CascadeType.ALL,
+                    orphanRemoval = true
+            )
     private List<Comment> comments = new ArrayList<>();
 
 
@@ -32,7 +35,7 @@ public class Client extends User {
             mappedBy = "client",
             cascade = CascadeType.ALL
     )
-    private Set<Like> likes = new HashSet<>();
+    private List<Like> likes;
 
     public Client() {
         super();

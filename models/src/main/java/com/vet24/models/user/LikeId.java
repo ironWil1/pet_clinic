@@ -2,7 +2,6 @@ package com.vet24.models.user;
 
 import lombok.*;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 
@@ -12,8 +11,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LikeId implements Serializable {
-
-
     private Comment comment;
 
     private Client client;
