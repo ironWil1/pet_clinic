@@ -1,14 +1,10 @@
 package com.vet24.models.user;
 
-import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.pet.Pet;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +13,7 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue("CLIENT")
 @EqualsAndHashCode(callSuper = true, exclude = "pets")
+@Getter
 public class Client extends User {
 
     @OneToMany(
@@ -29,6 +26,8 @@ public class Client extends User {
     @OneToMany
     @JoinColumn(name = "id")
     private List<Comment> comments = new ArrayList<>();
+
+
 
     public Client() {
         super();

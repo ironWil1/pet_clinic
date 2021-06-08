@@ -4,9 +4,14 @@ import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.user.ClientDto;
 import com.vet24.models.mappers.user.ClientMapper;
 import com.vet24.models.user.Client;
+import com.vet24.models.user.Comment;
+import com.vet24.models.user.Like;
+import com.vet24.models.user.LikeId;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.user.ClientService;
+import com.vet24.service.user.CommentService;
+import com.vet24.service.user.LikeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,8 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("api/client")
@@ -32,13 +35,16 @@ public class ClientController {
     private final ClientMapper clientMapper;
     private final UploadService uploadService;
     private final ResourceService resourceService;
+    private final CommentService commentService;
+    private final LikeService likeService;
 
-    public ClientController(ClientService clientService, ClientMapper clientMapper, UploadService uploadService,
-                            ResourceService resourceService) {
+    public ClientController(ClientService clientService, ClientMapper clientMapper, UploadService uploadService, ResourceService resourceService, CommentService commentService, LikeService likeService) {
         this.clientService = clientService;
         this.clientMapper = clientMapper;
         this.uploadService = uploadService;
         this.resourceService = resourceService;
+        this.commentService = commentService;
+        this.likeService = likeService;
     }
 
     @Operation(summary = "get current Client")
@@ -87,6 +93,25 @@ public class ClientController {
             clientService.update(client);
             return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
         }
+    }
+
+    @Operation(summary = "like or dislike a comment")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully liked/disliked the comment"),
+            @ApiResponse(responseCode = "404", description = "Comment is not found")
+    })
+
+    @PostMapping(value = "/{commentId}/{dis}")
+    public ResponseEntity<Void> likeOrDislikeComment(@PathVariable Long commentId, @PathVariable String dis)  {
+
+        Client client = clientService.getCurrentClient();
+        Comment comment = commentService.getByKey(commentId);
+        if (comment == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Like commentLike = new Like(new LikeId(comment,client),dis.equals("dislike"));
+        likeService.update(commentLike);
+        return new  ResponseEntity<>(HttpStatus.OK);
     }
 
     private HttpHeaders addContentHeaders(String filename) {
