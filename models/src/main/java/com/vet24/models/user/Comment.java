@@ -17,7 +17,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"likes"})
 @Entity
 
 public class Comment implements Serializable {
@@ -38,7 +38,12 @@ public class Comment implements Serializable {
     @ManyToOne (fetch = FetchType.LAZY)
     private Doctor doctor;
 
-
+    @OneToMany(
+            mappedBy = "comment",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<Like> likes = new HashSet<>();
 
     public Comment(Client client, String content, LocalDate dateTime, Doctor doctor) {
         this.client = client;

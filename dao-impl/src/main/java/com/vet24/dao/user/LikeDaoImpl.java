@@ -14,7 +14,7 @@ public class LikeDaoImpl extends ReadWriteDaoImpl<LikeId, Like> implements LikeD
 
     @Override
     public List<Like> findByClientId(Long clientId) {
-        return manager.createQuery("SELECT l FROM Like l WHERE l.likeId.client.id =:clientId ", Like.class)
+        return manager.createQuery("SELECT l FROM Like l WHERE l.client.id =:clientId ", Like.class)
                 .setParameter("clientId", clientId)
                 .getResultList();
     }

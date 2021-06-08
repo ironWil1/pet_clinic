@@ -109,7 +109,7 @@ public class ClientController {
         if (comment == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Like commentLike = new Like(new LikeId(comment,client),dis.equals("dislike"));
+        Like commentLike = new Like(comment,client,dis.equals("dislike"));
         likeService.update(commentLike);
         return new  ResponseEntity<>(HttpStatus.OK);
     }

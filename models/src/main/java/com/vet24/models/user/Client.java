@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @DiscriminatorValue("CLIENT")
-@EqualsAndHashCode(callSuper = true, exclude = "pets")
+@EqualsAndHashCode(callSuper = true, exclude = {"pets","comments","likes"})
 @Getter
 public class Client extends User {
 
@@ -28,6 +28,11 @@ public class Client extends User {
     private List<Comment> comments = new ArrayList<>();
 
 
+    @OneToMany(
+            mappedBy = "client",
+            cascade = CascadeType.ALL
+    )
+    private Set<Like> likes = new HashSet<>();
 
     public Client() {
         super();
