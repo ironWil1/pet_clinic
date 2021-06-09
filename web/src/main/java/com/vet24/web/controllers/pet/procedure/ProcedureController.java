@@ -143,6 +143,8 @@ public class ProcedureController {
             throw new BadRequestException("procedureId in path and in body not equals");
         }
         procedure = procedureMapper.procedureDtoToProcedure(procedureDto);
+        Medicine medicine = medicineService.getByKey(procedureDto.getMedicineId());
+        procedure.setMedicine(medicine);
         procedure.setPet(pet);
         procedureService.update(procedure);
 
