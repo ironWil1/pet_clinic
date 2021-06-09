@@ -87,6 +87,13 @@ public abstract class Pet {
     )
     private Set<Reproduction> reproductions = new HashSet<>();
 
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<PetFound> petFounds = new HashSet<>();
+
     protected Pet() {
     }
 
