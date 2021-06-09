@@ -12,14 +12,15 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"pet", "doctor"})
+//@EqualsAndHashCode(exclude = {"pet", "doctor"})
 @Entity
+@Table(name = "clinical_examination")
 public class ClinicalExamination implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column
+    @Column(name = "date")
     LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)

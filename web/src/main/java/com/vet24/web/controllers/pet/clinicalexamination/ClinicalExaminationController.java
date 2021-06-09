@@ -2,7 +2,6 @@ package com.vet24.web.controllers.pet.clinicalexamination;
 
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.clinicalexamination.ClinicalExaminationDto;
-import com.vet24.models.dto.pet.reproduction.ReproductionDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.clinicalexamination.ClinicalExaminationMapper;
 import com.vet24.models.pet.Pet;
@@ -16,10 +15,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.hibernate.type.LocalDateType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
+
+import java.time.LocalDate;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/doctor/pet/{petId}/exam")
@@ -40,12 +43,25 @@ public class ClinicalExaminationController {
         this.doctorService = doctorService;
     }
 
-    @Operation(summary = "get clinical examination by id")
+    @Operation(
+            summary = "get clinical examination by id",
+            description = "is looking for one clinical examination for a unique identifier")
+//            parameters = {
+//                    @Parameter(
+//                            in = ParameterIn.PATH,
+//                            required = true,
+//                            description = "id clinical examination",
+//                            schema = @Schema(
+//                                    minimum = "1",
+//                                    allOf = {Integer.class}
+//                            ),
+//                            style = ParameterStyle.SIMPLE
+//                    )
+//            })
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "ok",
                     content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class))),
-            @ApiResponse(responseCode = "400", description = "clinical examination not assigned " +
-                    "to this pet or pet not yours",
+            @ApiResponse(responseCode = "400", description = "incorrect query input is specified",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "404", description = "clinical examination or pet with " +
                     "this id not found",
@@ -93,14 +109,15 @@ public class ClinicalExaminationController {
         Pet pet = petService.getByKey(petId);
         ClinicalExamination clinicalExamination =
                 clinicalExaminationMapper.clinicalExaminationDtoToClinicalExamination(clinicalExaminationDto);
-        Doctor doctor = doctorService.getCurrentDoctor();
+//        Date date = new Date();
+//        Doctor doctor = doctorService.getCurrentDoctor();
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
-        if (!pet.getDoctor().getId().equals(doctor.getId())) {
-            throw new BadRequestException("pet has no doctor");
-        }
+//        if (!pet.getDoctor().getId().equals(doctor.getId())) {
+//            throw new BadRequestException("pet has no doctor");
+//        }
 
         clinicalExamination.setId(null);
         clinicalExaminationService.persist(clinicalExamination);
