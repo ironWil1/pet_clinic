@@ -5,6 +5,7 @@ import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
+import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
@@ -91,10 +92,8 @@ public class ProcedureController {
                                              @RequestBody AbstractNewProcedureDto newProcedureDto) {
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
+        Procedure procedure = procedureMapper.abstractNewProcedureDtoToProcedure(newProcedureDto);
 
-        if (medicineService.getByKey(newProcedureDto.getMedicineId()) == null){
-            throw new BadRequestException("medicine not found");
-        }
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
@@ -102,7 +101,8 @@ public class ProcedureController {
             throw new BadRequestException("pet not yours");
         }
 
-        Procedure procedure = procedureMapper.abstractNewProcedureDtoToProcedure(newProcedureDto);
+        Medicine medicine = medicineService.getByKey(newProcedureDto.getMedicineId());
+        procedure.setMedicine(medicine);
         procedureService.persist(procedure);
 
         pet.addProcedure(procedure);
