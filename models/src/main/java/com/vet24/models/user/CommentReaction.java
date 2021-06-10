@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @IdClass(CommentReactionId.class)
 public class CommentReaction {
@@ -16,11 +16,13 @@ public class CommentReaction {
     @Id
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    @EqualsAndHashCode.Include
     private Comment comment;
 
     @Id
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    @EqualsAndHashCode.Include
     private Client client;
 
     @Column(nullable = false)

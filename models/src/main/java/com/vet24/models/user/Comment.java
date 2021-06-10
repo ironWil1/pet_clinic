@@ -16,22 +16,22 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"commentReactions"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-
 public class Comment implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne (fetch = FetchType.LAZY)
     private Client client;
 
-    @Column
+    @Column(nullable=false)
     private String content;
 
-    @Column
+    @Column(nullable=false)
     private LocalDateTime dateTime;
 
     @ManyToOne (fetch = FetchType.LAZY)
