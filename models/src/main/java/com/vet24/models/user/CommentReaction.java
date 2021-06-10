@@ -10,9 +10,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @AllArgsConstructor
-@Table(name="comment_like")
-@IdClass(LikeId.class)
-public class Like {
+@IdClass(CommentReactionId.class)
+public class CommentReaction {
 
     @Id
     @ManyToOne(fetch= FetchType.LAZY)
@@ -25,5 +24,5 @@ public class Like {
     private Client client;
 
     @Column(nullable = false)
-    private Boolean dislike;
+    private Boolean positive;
 }

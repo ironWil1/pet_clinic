@@ -10,7 +10,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikeId implements Serializable {
+public class CommentReactionId implements Serializable {
     private Comment comment;
 
     private Client client;

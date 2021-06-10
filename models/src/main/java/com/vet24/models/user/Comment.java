@@ -8,18 +8,15 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"likes"})
+@EqualsAndHashCode(exclude = {"commentReactions"})
 @Entity
 
 public class Comment implements Serializable {
@@ -45,7 +42,7 @@ public class Comment implements Serializable {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Like> likes;
+    private List<CommentReaction> commentReactions;
 
     public Comment(Client client, String content, LocalDateTime dateTime, Doctor doctor) {
         this.client = client;

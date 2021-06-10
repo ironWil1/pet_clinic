@@ -21,7 +21,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
     final String DOMAIN = "http://localhost:8090";
 
     @Test
-    @DataSet(value = {"/datasets/registration-doctor.yml"}, cleanBefore = true)
+    @DataSet(value = {"/datasets/roles.yml","/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
     public void shouldBeNotFound()  {
        String diagnosis = "bla-bla-bla";
 
@@ -35,7 +35,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
     }
 
     @Test
-    @DataSet(value = {"/datasets/registration-doctor.yml"}, cleanBefore = true)
+    @DataSet(value = {"/datasets/roles.yml","/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
     public void shouldBeCreated()  {
         String diagnosis = "bla-bla-bla";
         Doctor doctor = doctorService.getCurrentDoctor();

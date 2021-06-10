@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @DiscriminatorValue("CLIENT")
-@EqualsAndHashCode(callSuper = true, exclude = {"pets","comments","likes"})
+@EqualsAndHashCode(callSuper = true, exclude = {"pets","comments","commentReactions"})
 @Getter
 public class Client extends User {
 
@@ -35,7 +35,7 @@ public class Client extends User {
             mappedBy = "client",
             cascade = CascadeType.ALL
     )
-    private List<Like> likes;
+    private List<CommentReaction> commentReactions;
 
     public Client() {
         super();
