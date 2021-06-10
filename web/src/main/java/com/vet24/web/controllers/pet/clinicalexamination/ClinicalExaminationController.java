@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.apache.tomcat.jni.Local;
 import org.hibernate.type.LocalDateType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -109,8 +110,10 @@ public class ClinicalExaminationController {
         Pet pet = petService.getByKey(petId);
         ClinicalExamination clinicalExamination =
                 clinicalExaminationMapper.clinicalExaminationDtoToClinicalExamination(clinicalExaminationDto);
-//        Date date = new Date();
-//        Doctor doctor = doctorService.getCurrentDoctor();
+        Doctor doctor = doctorService.getCurrentDoctor();
+        pet.setDoctor(doctor);
+
+
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
@@ -124,6 +127,8 @@ public class ClinicalExaminationController {
 
         pet.addClinicalExamination(clinicalExamination);
         petService.update(pet);
+
+        clinicalExamination.setDate(LocalDate.now());
 
         return new ResponseEntity<>(clinicalExaminationMapper.clinicalExaminationToClinicalExaminationDto(clinicalExamination),
                 HttpStatus.CREATED);

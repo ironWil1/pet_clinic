@@ -13,8 +13,6 @@ import java.time.LocalDate;
 public class ClinicalExaminationDto {
     Long id;
     LocalDate date;
-    Long doctorId;
-//    Doctor doctor;
     Integer weight;
     Boolean isCanMove;
     String text;

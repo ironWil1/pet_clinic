@@ -2,6 +2,7 @@ package com.vet24.models.pet.clinicalexamination;
 
 import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Doctor;
+import jdk.jfr.Timestamp;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,10 +19,10 @@ import java.time.LocalDate;
 public class ClinicalExamination implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(name = "date")
-    LocalDate date;
+    private LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Pet pet;
@@ -30,13 +31,13 @@ public class ClinicalExamination implements Serializable {
     private Doctor doctor;
 
     @Column
-    Integer weight; //вес, при том последний вес аписывается в таблицу животного
+    private Integer weight; //вес, при том последний вес аписывается в таблицу животного
 
     @Column
-    Boolean isCanMove; // животное здорово и выдержит перевозку до места назначения? true/false
+    private Boolean isCanMove; // животное здорово и выдержит перевозку до места назначения? true/false
 
     @Column
-    String text; // общее описание состояния животного
+    private String text; // общее описание состояния животного
 
     public ClinicalExamination(LocalDate date,
                                Pet pet,
