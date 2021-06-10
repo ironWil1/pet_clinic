@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 @Service
+@Transactional
 public class TreatmentServiceImpl extends ReadWriteServiceImpl<Long, Treatment> implements TreatmentService {
 
     private final TreatmentDao treatmentDao;

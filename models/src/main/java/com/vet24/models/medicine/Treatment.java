@@ -1,12 +1,12 @@
 package com.vet24.models.medicine;
 
-import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Procedure;
-import com.vet24.models.user.Doctor;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -21,15 +21,10 @@ public class Treatment implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     private Diagnosis diagnosis;
 
-    @NotNull
     @OneToMany(fetch = FetchType.LAZY)
-    private Set<Procedure> procedures;
+    private Set<Procedure> procedureSet;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    private Doctor doctor;
 }
