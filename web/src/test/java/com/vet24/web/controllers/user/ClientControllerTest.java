@@ -10,12 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,8 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DBRider
 public class ClientControllerTest extends ControllerAbstractIntegrationTest {
 
-    @Autowired
-    private ClientController controller;
 
     @Autowired
     private ClientMapper clientMapper;
@@ -37,7 +30,7 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void getCurrentClient() {
-        ClientDto clientDto = clientMapper.clientToClientDto(clientService.testGetCurrentClientEagerly());
+        ClientDto clientDto = clientMapper.clientToClientDto(clientService.testGetCurrentClientWithPets());
         ResponseEntity<ClientDto> response = testRestTemplate
                 .getForEntity(URI, ClientDto.class);
 
