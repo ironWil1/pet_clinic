@@ -28,8 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -44,10 +43,11 @@ public class DoctorController {
     private final TreatmentMapper treatmentMapper;
     private final ProcedureMapper procedureMapper;
     private final ProcedureService procedureService;
+    private final MedicineService medicineService;
 
 
     public DoctorController(PetService petService, DoctorService doctorService,
-                            DiagnosisService diagnosisService, DiagnosisMapper diagnosisMapper, TreatmentService treatmentService, TreatmentMapper treatmentMapper, ProcedureMapper procedureMapper, ProcedureService procedureService, MedicineService medicineService) {
+                            DiagnosisService diagnosisService, DiagnosisMapper diagnosisMapper, TreatmentService treatmentService, TreatmentMapper treatmentMapper, ProcedureMapper procedureMapper, ProcedureService procedureService, MedicineService medicineService, MedicineService medicineService1) {
         this.petService = petService;
         this.doctorService = doctorService;
         this.diagnosisService = diagnosisService;
@@ -56,6 +56,7 @@ public class DoctorController {
         this.treatmentMapper = treatmentMapper;
         this.procedureMapper = procedureMapper;
         this.procedureService = procedureService;
+        this.medicineService = medicineService1;
     }
 
     @Operation(summary = "add a new diagnosis")
@@ -83,30 +84,28 @@ public class DoctorController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully added treatment ",
             content = @Content(schema = @Schema(implementation = TreatmentDto.class))),
-            @ApiResponse(responseCode = "404", description = "Pet is not found")
+            @ApiResponse(responseCode = "404", description = "Unknown medicine")
     })
 
-    @PostMapping("/pet/{petId}/{diagnoseId}/addTreatment")
-    public ResponseEntity<TreatmentDto> addTreatment(@PathVariable Long petId,
-                                                     @PathVariable Long diagnoseId,
-                                                     @RequestBody Set<AbstractNewProcedureDto> procedures){
-        Pet pet = petService.getByKey(petId);
-        if(pet == null){
-            throw new NotFoundException("pet is not found");
-        }
-        Diagnosis diagnosis = pet.getDiagnoses()
-                .stream()
-                .filter(x -> x.getId().equals(diagnoseId))
-                .findFirst()
-                .orElse(null);
-        if(diagnosis == null){
-            throw new NotFoundException("This pet don't have diagnose");
-        }
+    @PostMapping("/diagnosis/{diagnoseId}/addTreatment")
+    public ResponseEntity<TreatmentDto> addTreatment(@PathVariable Long diagnoseId,
+                                                     @RequestBody List<AbstractNewProcedureDto> procedures){
+        Diagnosis diagnosis = diagnosisService.getByKey(diagnoseId);
         Treatment treatment = new Treatment();
-        Set<Procedure> procedureSet = procedures.stream()
-                .map(procedureMapper::abstractNewProcedureDtoToProcedure).collect(Collectors.toSet());
-        procedureService.persistAll(new ArrayList<>(procedureSet));
-        treatment.setProcedureSet(procedureSet);
+        List<Procedure> procedureList = procedures.stream()
+                .map(procedureMapper::abstractNewProcedureDtoToProcedure)
+                .map(x ->{
+                    if(!medicineService.isExistByKey(x.getMedicine().getId())){
+                        throw new NotFoundException("unknown medicine with id: " + x.getMedicine().getId()
+                                + " in the procedure with type: " + x.getType());
+                    }
+                    else {
+                        return x;
+                    }
+                })
+                .collect(Collectors.toList());
+        procedureService.persistAll(procedureList);
+        treatment.setProcedureList(procedureList);
         treatment.setDiagnosis(diagnosis);
         treatmentService.persist(treatment);
         TreatmentDto treatmentDto = treatmentMapper.treatmentToTreatmentDto(treatment);
