@@ -1,16 +1,14 @@
 package com.vet24.models.dto.medicine;
 
-import com.vet24.models.medicine.Diagnosis;
-import com.vet24.models.pet.procedure.Procedure;
-import com.vet24.models.user.Doctor;
+import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import lombok.Data;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 public class TreatmentDto {
      Long id;
      Long diagnosisId;
-     Set<Long> procedureSetId;
+     List<ProcedureDto> procedureDtoList;
      Long doctorId;
 }
