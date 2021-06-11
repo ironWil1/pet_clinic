@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,6 +25,6 @@ public class Treatment implements Serializable {
     private Diagnosis diagnosis;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private Set<Procedure> procedureSet;
+    private List<Procedure> procedureList;
 
 }
