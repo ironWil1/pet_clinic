@@ -21,3 +21,4 @@ public class CommentDaoImpl extends ReadWriteDaoImpl<Long, Comment>  implements 
         }
     }
 }
+

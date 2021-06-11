@@ -6,3 +6,4 @@ import com.vet24.models.user.Comment;
 public interface CommentDao extends ReadWriteDao<Long, Comment> {
     Comment findByClientIdAndDoctorId(long clientId, long doctorId);
 }
+

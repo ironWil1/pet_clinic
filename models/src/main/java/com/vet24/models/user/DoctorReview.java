@@ -13,16 +13,16 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class DoctorReview {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(targetEntity = Comment.class)
     private Comment comment;
-    @OneToOne
+    @OneToOne(targetEntity = Doctor.class)
     private Doctor doctor;
 
     public DoctorReview(Comment comment, Doctor doctor) {

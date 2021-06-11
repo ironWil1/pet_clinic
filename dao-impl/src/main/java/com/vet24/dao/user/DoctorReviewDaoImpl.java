@@ -11,10 +11,11 @@ import javax.persistence.NoResultException;
 public class DoctorReviewDaoImpl extends ReadWriteDaoImpl<Long, DoctorReview>  implements DoctorReviewDao{
 
     @Override
-    public DoctorReview findByDoctorId(long doctorId) {
+    public DoctorReview findViewByDoctorIdAndClientId(long doctorId,long clientId) {
         try {
-            return manager.createQuery("SELECT c FROM DoctorReview c WHERE c.doctor.id =:doctorId", DoctorReview.class)
+            return manager.createQuery("SELECT c FROM DoctorReview c WHERE c.doctor.id =:doctorId AND c.comment.client.id=:clientId", DoctorReview.class)
                     .setParameter("doctorId", doctorId)
+                    .setParameter("clientId", clientId)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;

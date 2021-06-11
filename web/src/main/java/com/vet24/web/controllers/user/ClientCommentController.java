@@ -5,10 +5,7 @@ import com.vet24.models.user.Client;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Doctor;
 import com.vet24.models.user.DoctorReview;
-import com.vet24.service.user.ClientService;
-import com.vet24.service.user.CommentService;
-import com.vet24.service.user.DoctorReviewService;
-import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +47,9 @@ public class ClientCommentController {
             DoctorReview doctorReview = null;
             Client currentClient = clientService.getCurrentClient();
             Long clientId = currentClient.getId();
-            if (commentService.findByClientIdAndDoctorId(clientId, doctorId) == null) {
+            System.out.println(doctorReviewService);
+            System.out.println(doctorReviewService.findViewByDoctorIdAndClientId(doctorId,clientId));
+            if (doctorReviewService.findViewByDoctorIdAndClientId(doctorId,clientId) == null) {
                 comment = new Comment(
                         clientService.getCurrentClient(), text, LocalDate.now(), doctor
                 );

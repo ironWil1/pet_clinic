@@ -20,7 +20,7 @@ public class DoctorReviewServiceImpl extends ReadWriteServiceImpl<Long, DoctorRe
     }
 
     @Override
-    public Comment findByDoctorId(long doctorId) {
-        return null;
+    public DoctorReview findViewByDoctorIdAndClientId(long doctorId, long clientId) {
+        return doctorReviewDao.findViewByDoctorIdAndClientId(doctorId, clientId);
     }
 }

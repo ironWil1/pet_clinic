@@ -5,5 +5,5 @@ import com.vet24.models.user.DoctorReview;
 import com.vet24.service.ReadWriteService;
 
 public interface DoctorReviewService extends ReadWriteService<Long, DoctorReview> {
-    Comment findByDoctorId(long doctorId);
+    DoctorReview findViewByDoctorIdAndClientId(long doctorId, long clientId);
 }
