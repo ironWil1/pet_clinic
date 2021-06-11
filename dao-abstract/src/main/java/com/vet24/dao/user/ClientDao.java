@@ -9,5 +9,7 @@ public interface ClientDao extends ReadWriteDao<Long, Client> {
 
     Client getClientByEmail(String email);
 
-    Client testGetCurrentClientEagerly();
+    Client testGetCurrentClientWithPets();
+
+    Client testGetCurrentClientWithReactions();
 }
