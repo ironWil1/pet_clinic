@@ -4,8 +4,10 @@ import com.vet24.models.exception.RepeatedCommentException;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Doctor;
+import com.vet24.models.user.DoctorReview;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.CommentService;
+import com.vet24.service.user.DoctorReviewService;
 import com.vet24.service.user.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,12 +29,14 @@ public class ClientCommentController {
     private final DoctorService doctorService;
     private final ClientService clientService;
     private final CommentService commentService;
+    private final DoctorReviewService doctorReviewService;
 
     @Autowired
-    public ClientCommentController(DoctorService doctorService, ClientService clientService, CommentService commentService) {
+    public ClientCommentController(DoctorService doctorService, ClientService clientService, CommentService commentService,DoctorReviewService doctorReviewService) {
         this.doctorService = doctorService;
         this.clientService = clientService;
         this.commentService = commentService;
+        this.doctorReviewService = doctorReviewService;
     }
 
     @Operation(summary = "add comment by Client for Doctor")
@@ -43,13 +47,18 @@ public class ClientCommentController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
             Comment comment = null;
+            DoctorReview doctorReview = null;
             Client currentClient = clientService.getCurrentClient();
             Long clientId = currentClient.getId();
             if (commentService.findByClientIdAndDoctorId(clientId, doctorId) == null) {
                 comment = new Comment(
                         clientService.getCurrentClient(), text, LocalDate.now(), doctor
                 );
+                doctorReview = new DoctorReview(comment,doctor);
+
                 commentService.persist(comment);
+
+                doctorReviewService.persist(doctorReview);
             } else {
                 throw new RepeatedCommentException("You can add only one comment to Doctor. So you have to update or delete old one.");
             }
