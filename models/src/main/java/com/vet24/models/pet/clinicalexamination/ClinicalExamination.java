@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode(exclude = {"pet", "doctor"})
+@EqualsAndHashCode(exclude = {"pet", "doctor"})
 @Entity
 @Table(name = "clinical_examination")
 public class ClinicalExamination implements Serializable {

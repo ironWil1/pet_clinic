@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class ClinicalExaminationDto {
     Long id;
-    LocalDate date;
     Integer weight;
     Boolean isCanMove;
     String text;

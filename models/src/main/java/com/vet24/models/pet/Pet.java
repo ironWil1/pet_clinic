@@ -103,11 +103,7 @@ public abstract class Pet {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-
     private Set<ClinicalExamination> clinicalExaminations = new HashSet<>();
-
-
-
 
     protected Pet() {
     }
@@ -139,7 +135,7 @@ public abstract class Pet {
         procedure.setPet(null);
     }
 
-    public void addReproduction(Reproduction reproduction){
+    public void addReproduction(Reproduction reproduction) {
         reproductions.add(reproduction);
         reproduction.setPet(this);
     }
@@ -149,7 +145,7 @@ public abstract class Pet {
         reproduction.setPet(null);
     }
 
-    public void addClinicalExamination(ClinicalExamination clinicalExamination){
+    public void addClinicalExamination(ClinicalExamination clinicalExamination) {
         clinicalExaminations.add(clinicalExamination);
         clinicalExamination.setPet(this);
     }

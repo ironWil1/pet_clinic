@@ -1,0 +1,16 @@
+CLINICAL-EXAMINATION:
+  - ID: 100
+    PET_ID: 100
+    WEIGHT: 10
+    IS_CAN_MOVE: true
+    TEXT: "test txt"
+  - ID: 101
+    PET_ID: 101
+    WEIGHT: 20
+    IS_CAN_MOVE: true
+    TEXT: "test 2 txt"
+  - ID: 102
+    PET_ID: 102
+    WEIGHT: 30
+    IS_CAN_MOVE: false
+    TEXT: "test 3 txt"

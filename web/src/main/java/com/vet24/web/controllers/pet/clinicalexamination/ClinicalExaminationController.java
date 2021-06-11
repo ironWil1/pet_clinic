@@ -47,18 +47,6 @@ public class ClinicalExaminationController {
     @Operation(
             summary = "get clinical examination by id",
             description = "is looking for one clinical examination for a unique identifier")
-//            parameters = {
-//                    @Parameter(
-//                            in = ParameterIn.PATH,
-//                            required = true,
-//                            description = "id clinical examination",
-//                            schema = @Schema(
-//                                    minimum = "1",
-//                                    allOf = {Integer.class}
-//                            ),
-//                            style = ParameterStyle.SIMPLE
-//                    )
-//            })
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "ok",
                     content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class))),
@@ -94,7 +82,9 @@ public class ClinicalExaminationController {
     }
 
 
-    @Operation(summary = "add new clinical examination")
+    @Operation(
+            summary = "add new clinical examination",
+            description = "to add a new clinical exam, enter the pet ID and fill in the fields: wight, isCanMove, text.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "clinical examination successful " +
                     "created",
@@ -112,29 +102,27 @@ public class ClinicalExaminationController {
                 clinicalExaminationMapper.clinicalExaminationDtoToClinicalExamination(clinicalExaminationDto);
         Doctor doctor = doctorService.getCurrentDoctor();
         pet.setDoctor(doctor);
-
-
+        clinicalExamination.setDoctor(doctor);
+        clinicalExamination.setDate(LocalDate.now());
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
-//        if (!pet.getDoctor().getId().equals(doctor.getId())) {
-//            throw new BadRequestException("pet has no doctor");
-//        }
-
+        if (!pet.getDoctor().getId().equals(doctor.getId())) {
+            throw new BadRequestException("pet has no doctor");
+        }
         clinicalExamination.setId(null);
         clinicalExaminationService.persist(clinicalExamination);
 
         pet.addClinicalExamination(clinicalExamination);
         petService.update(pet);
-
-        clinicalExamination.setDate(LocalDate.now());
-
         return new ResponseEntity<>(clinicalExaminationMapper.clinicalExaminationToClinicalExaminationDto(clinicalExamination),
                 HttpStatus.CREATED);
     }
 
-    @Operation(summary = "update clinical examination by id")
+    @Operation(
+            summary = "update clinical examination by id",
+            description = "enter pet ID and clinical exam ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "clinical examination successful " +
                     "updated",
@@ -154,6 +142,13 @@ public class ClinicalExaminationController {
         Pet pet = petService.getByKey(petId);
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
         Doctor doctor = doctorService.getCurrentDoctor();
+        pet.setDoctor(doctor);
+        clinicalExamination.setDoctor(doctor);
+        clinicalExamination.setDate(LocalDate.now());
+//        clinicalExaminationService.update(clinicalExamination.setDate(LocalDate.now()));
+
+
+        clinicalExamination.setDate(LocalDate.now());
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
@@ -161,6 +156,7 @@ public class ClinicalExaminationController {
         if (doctor == null) {
             throw new NotFoundException("there is no doctor assigned to this pet");
         }
+
         if (clinicalExamination == null) {
             throw new NotFoundException("clinical examination not found");
         }
@@ -181,7 +177,9 @@ public class ClinicalExaminationController {
     }
 
 
-    @Operation(summary = "delete clinical examination by id")
+    @Operation(
+            summary = "delete clinical examination by id",
+            description = "enter a unique ID of the pet's clinical examination")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "clinical examination successful " +
                     "deleted"),
