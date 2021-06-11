@@ -1,5 +1,7 @@
 package com.vet24.models.medicine;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Doctor;
 import lombok.*;
