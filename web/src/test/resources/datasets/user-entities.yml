@@ -31,3 +31,11 @@ USER_ENTITIES:
     LASTNAME: "Petrov"
     EMAIL: "user4@gmail.com"
     PASSWORD: "user4"
+  - ID: 41
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Sergey"
+    LASTNAME: "Seregin"
+    EMAIL: "user41@gmail.com"
+    PASSWORD: "user41"

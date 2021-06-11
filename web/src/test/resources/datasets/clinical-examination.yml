@@ -1,16 +1,19 @@
-CLINICAL-EXAMINATION:
+CLINICAL_EXAMINATION:
   - ID: 100
     PET_ID: 100
-    WEIGHT: 10
+    DATE: "2020-01-01"
     IS_CAN_MOVE: true
-    TEXT: "test txt"
+    WEIGHT: 100
+    DOCTOR: 40
   - ID: 101
     PET_ID: 101
-    WEIGHT: 20
+    DATE: "2020-02-01"
     IS_CAN_MOVE: true
-    TEXT: "test 2 txt"
+    WEIGHT: 101
+    DOCTOR: 41
   - ID: 102
     PET_ID: 102
-    WEIGHT: 30
-    IS_CAN_MOVE: false
-    TEXT: "test 3 txt"
+    DATE: "2020-03-01"
+    IS_CAN_MOVE: true
+    WEIGHT: 102
+    DOCTOR: 42
