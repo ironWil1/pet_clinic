@@ -34,7 +34,7 @@ public class Comment {
     private Long id;
 
     @ManyToOne (fetch = FetchType.LAZY)
-    private Client client;
+    private User user;
 
     @Column
     private String content;
@@ -42,13 +42,9 @@ public class Comment {
     @Column
     private LocalDate dateTime;
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    private Doctor doctor;
-
-    public Comment(Client client, String content, LocalDate dateTime, Doctor doctor) {
-        this.client = client;
+    public Comment(User user, String content, LocalDate dateTime) {
+        this.user = user;
         this.content = content;
         this.dateTime = dateTime;
-        this.doctor = doctor;
     }
 }

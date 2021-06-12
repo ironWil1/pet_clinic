@@ -10,15 +10,13 @@ import javax.persistence.NoResultException;
 public class CommentDaoImpl extends ReadWriteDaoImpl<Long, Comment>  implements CommentDao{
 
     @Override
-    public Comment findByClientIdAndDoctorId(long clientId, long doctorId) {
+    public Comment findByUserId(long userId) {
         try {
-            return manager.createQuery("SELECT c FROM Comment c WHERE c.client.id =:clientId AND c.doctor.id =:doctorId", Comment.class)
-                    .setParameter("clientId", clientId)
-                    .setParameter("doctorId", doctorId)
+            return manager.createQuery("SELECT c FROM Comment c WHERE c.user.id =:userId", Comment.class)
+                    .setParameter("userId", userId)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 }
-

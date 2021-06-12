@@ -25,12 +25,12 @@ public class Doctor extends User {
     )
     private Set<Diagnosis> diagnoses = new HashSet<>();
 
-    @OneToMany(
-            mappedBy = "doctor",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Comment> comments = new ArrayList<>();
+//    @OneToMany(
+//            mappedBy = "doctor",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true
+//    )
+//    private List<Comment> comments = new ArrayList<>();
 
     public Doctor() {
         super();

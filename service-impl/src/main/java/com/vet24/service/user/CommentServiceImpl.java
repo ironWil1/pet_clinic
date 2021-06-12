@@ -19,7 +19,7 @@ public class CommentServiceImpl extends ReadWriteServiceImpl<Long, Comment> impl
 
 
     @Override
-    public Comment findByClientIdAndDoctorId(long clientId, long doctorId) {
-        return commentDao.findByClientIdAndDoctorId(clientId,doctorId);
+    public Comment findByUserId(long userId) {
+        return commentDao.findByUserId(userId);
     }
 }

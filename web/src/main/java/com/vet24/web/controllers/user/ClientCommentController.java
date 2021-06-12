@@ -1,10 +1,7 @@
 package com.vet24.web.controllers.user;
 
 import com.vet24.models.exception.RepeatedCommentException;
-import com.vet24.models.user.Client;
-import com.vet24.models.user.Comment;
-import com.vet24.models.user.Doctor;
-import com.vet24.models.user.DoctorReview;
+import com.vet24.models.user.*;
 import com.vet24.service.user.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,13 +24,15 @@ public class ClientCommentController {
     private final ClientService clientService;
     private final CommentService commentService;
     private final DoctorReviewService doctorReviewService;
+    private final UserService userService;
 
     @Autowired
-    public ClientCommentController(DoctorService doctorService, ClientService clientService, CommentService commentService,DoctorReviewService doctorReviewService) {
+    public ClientCommentController(DoctorService doctorService, ClientService clientService, CommentService commentService,DoctorReviewService doctorReviewService, UserService userService) {
         this.doctorService = doctorService;
         this.clientService = clientService;
         this.commentService = commentService;
         this.doctorReviewService = doctorReviewService;
+        this.userService = userService;
     }
 
     @Operation(summary = "add comment by Client for Doctor")
@@ -45,13 +44,11 @@ public class ClientCommentController {
         } else {
             Comment comment = null;
             DoctorReview doctorReview = null;
-            Client currentClient = clientService.getCurrentClient();
-            Long clientId = currentClient.getId();
-            System.out.println(doctorReviewService);
-            System.out.println(doctorReviewService.findViewByDoctorIdAndClientId(doctorId,clientId));
-            if (doctorReviewService.findViewByDoctorIdAndClientId(doctorId,clientId) == null) {
+            User currentUser = userService.getCurrentUser();
+            Long userId = currentUser.getId();
+            if (doctorReviewService.findViewByDoctorIdAndClientId(doctorId,userId) == null) {
                 comment = new Comment(
-                        clientService.getCurrentClient(), text, LocalDate.now(), doctor
+                        userService.getCurrentUser(), text, LocalDate.now()
                 );
                 doctorReview = new DoctorReview(comment,doctor);
 

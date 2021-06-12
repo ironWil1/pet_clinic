@@ -205,7 +205,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void commentInitializer() {
         List<Comment> comments = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            comments.add(new Comment(clientService.getByKey((long) i), "lorem " + i, LocalDate.now(), doctorService.getByKey((long) i + 30)));
+            comments.add(new Comment(clientService.getByKey((long) i), "lorem " + i, LocalDate.now()));
         }
         commentService.persistAll(comments);
     }
