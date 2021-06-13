@@ -69,8 +69,17 @@ public class PetContactQrCodeController {
     public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@RequestBody PetContactDto petContactDto,
                                                                 @PathVariable("id") Long id) {
         if (petContactService.isExistByKey(id)) {
-            PetContact petContactNew = petContactMapper.petContactDtoToPetContact(petContactDto);
             PetContact petContactOld = petContactService.getByKey(id);
+            if(petContactDto.getOwnerName().equals("")){
+                petContactDto.setOwnerName(petContactOld.getOwnerName());
+            }
+            if(petContactDto.getAddress().equals("")){
+                petContactDto.setAddress(petContactOld.getAddress());
+            }
+            if(petContactDto.getPhone().equals("")){
+                petContactDto.setPhone(petContactOld.getPhone().toString());
+            }
+            PetContact petContactNew = petContactMapper.petContactDtoToPetContact(petContactDto);
             petContactOld.setOwnerName(petContactNew.getOwnerName());
             petContactOld.setAddress(petContactNew.getAddress());
             petContactOld.setPhone(petContactNew.getPhone());
