@@ -8,6 +8,6 @@ import lombok.Data;
 public class PetContactDto {
     private String ownerName;
     private String address;
-    private String phone;
+    private Long phone;
 }
 
