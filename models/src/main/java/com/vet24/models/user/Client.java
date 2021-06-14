@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,12 +22,7 @@ public class Client extends User {
     )
     private Set<Pet> pets = new HashSet<>();
 
-    @OneToMany(
-                    mappedBy = "client",
-                    cascade = CascadeType.ALL,
-                    orphanRemoval = true
-            )
-    private List<Comment> comments = new ArrayList<>();
+
 
 
     @OneToMany(

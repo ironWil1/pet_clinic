@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,9 +35,10 @@ public class ClientCommentController {
     private final CommentService commentService;
     private final DoctorReviewService doctorReviewService;
     private final UserService userService;
+    private final CommentReactionService commentReactionService;
 
     @Autowired
-    public ClientCommentController(DoctorService doctorService, ClientService clientService, CommentService commentService,DoctorReviewService doctorReviewService, UserService userService) {
+    public ClientCommentController(DoctorService doctorService, ClientService clientService, CommentService commentService,DoctorReviewService doctorReviewService, UserService userService, CommentReactionService commentReactionService) {
         this.doctorService = doctorService;
         this.clientService = clientService;
         this.commentService = commentService;
@@ -58,7 +60,7 @@ public class ClientCommentController {
             Long userId = currentUser.getId();
             if (doctorReviewService.findViewByDoctorIdAndClientId(doctorId,userId) == null) {
                 comment = new Comment(
-                        userService.getCurrentUser(), text, LocalDate.now()
+                        userService.getCurrentUser(), text, LocalDateTime.now()
                 );
                 doctorReview = new DoctorReview(comment,doctor);
 

@@ -50,6 +50,13 @@ public class User implements UserDetails {
 
     private Boolean enabled;
 
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Comment> comments = new ArrayList<>();
+
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),

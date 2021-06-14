@@ -10,7 +10,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Data
@@ -35,6 +34,10 @@ public class Comment implements Serializable {
 
     @Column(nullable=false)
     private LocalDateTime dateTime;
+
+    @ManyToOne(fetch= FetchType.LAZY)
+
+    private Comment comment;
 
     public Comment(User user, String content, LocalDateTime dateTime) {
         this.user = user;
