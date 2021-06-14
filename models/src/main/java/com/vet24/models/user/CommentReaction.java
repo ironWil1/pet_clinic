@@ -3,7 +3,6 @@ package com.vet24.models.user;
 import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 
 @Getter
@@ -11,22 +10,34 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
-@Entity@IdClass(CommentReactionId.class)
+@Entity
+
 public class CommentReaction{
 
 
-    @Id
+    @EmbeddedId
+    @EqualsAndHashCode.Include
+    private CommentReactionId id;
+
+
     @ManyToOne(fetch= FetchType.LAZY)
     @PrimaryKeyJoinColumn
-    @EqualsAndHashCode.Include
+    @MapsId("commentId")
     private Comment comment;
 
-    @Id
+
     @ManyToOne(fetch= FetchType.LAZY)
     @PrimaryKeyJoinColumn
-    @EqualsAndHashCode.Include
+    @MapsId("clientId")
     private Client client;
 
     @Column(nullable = false)
     private Boolean positive;
+
+    public CommentReaction(Comment comment, Client client, Boolean positive) {
+        this.id = new CommentReactionId(comment.getId(),client.getId());
+        this.comment = comment;
+        this.client = client;
+        this.positive = positive;
+    }
 }

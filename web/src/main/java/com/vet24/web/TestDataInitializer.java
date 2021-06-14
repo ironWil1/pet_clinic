@@ -28,15 +28,12 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.swing.*;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Stream;
 
 
@@ -206,7 +203,7 @@ public class TestDataInitializer implements ApplicationRunner {
 
     }
 
-    public void likesInitilaizer(){
+    public void likeInitilaizer(){
         for (int i = 1; i <= 30; i++) {
             commentReactionService.update(new CommentReaction(commentService.getByKey((long) i), clientService.getByKey((long) i),true));
         }
@@ -226,7 +223,7 @@ public class TestDataInitializer implements ApplicationRunner {
             reproductionInitializer();
             petContactInitializer();
             commentInitializer();
-            likesInitilaizer();
+            likeInitilaizer();
         }
     }
 }
