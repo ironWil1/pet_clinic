@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.pet;
 
 import com.vet24.models.dto.media.UploadedFileDto;
-import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.PetDto;
 import com.vet24.models.mappers.pet.PetMapper;
 import com.vet24.models.pet.Pet;
@@ -47,14 +46,14 @@ public class PetController {
     @Operation(summary = "add a new Pet")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully added a new Pet",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AbstractNewPetDto.class))),
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PetDto.class))),
             @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)
     })
     @PostMapping("/add")
-    public ResponseEntity<AbstractNewPetDto> persistPet(@RequestBody AbstractNewPetDto petDto) {
+    public ResponseEntity<PetDto> persistPet(@RequestBody PetDto petDto) {
         Client client = clientService.getCurrentClient();
         if (client != null) {
-            Pet pet = petMapper.abstractNewPetDtoToPet(petDto);
+            Pet pet = petMapper.toEntity(petDto);
             pet.setClient(client);
             petService.persist(pet);
             return ResponseEntity.ok(petDto);
@@ -90,12 +89,12 @@ public class PetController {
     })
     @PutMapping("/{petId}")
     public ResponseEntity<PetDto> updatePet(@PathVariable("petId") Long petId,
-                                            @RequestBody AbstractNewPetDto petDto) {
+                                            @RequestBody PetDto petDto) {
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(client.getId())) {
-                Pet updatedPet = petMapper.abstractNewPetDtoToPet(petDto);
+                Pet updatedPet = petMapper.toEntity(petDto);
                 updatedPet.setId(pet.getId());
                 updatedPet.setClient(client);
                 petService.update(updatedPet);
