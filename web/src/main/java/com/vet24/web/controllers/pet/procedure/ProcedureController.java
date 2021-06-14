@@ -5,9 +5,11 @@ import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
+import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
+import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.ProcedureService;
 import com.vet24.service.user.ClientService;
@@ -32,14 +34,16 @@ public class ProcedureController {
     private final ProcedureService procedureService;
     private final ProcedureMapper procedureMapper;
     private final ClientService clientService;
+    private final MedicineService medicineService;
 
     @Autowired
     public ProcedureController(PetService petService, ProcedureService procedureService,
-                               ProcedureMapper procedureMapper, ClientService clientService) {
+                               ProcedureMapper procedureMapper, ClientService clientService, MedicineService medicineService) {
         this.petService = petService;
         this.procedureService = procedureService;
         this.procedureMapper = procedureMapper;
         this.clientService = clientService;
+        this.medicineService = medicineService;
     }
 
     @Operation(summary = "get a Procedure")
@@ -97,6 +101,8 @@ public class ProcedureController {
             throw new BadRequestException("pet not yours");
         }
 
+        Medicine medicine = medicineService.getByKey(newProcedureDto.getMedicineId());
+        procedure.setMedicine(medicine);
         procedureService.persist(procedure);
 
         pet.addProcedure(procedure);
@@ -137,6 +143,8 @@ public class ProcedureController {
             throw new BadRequestException("procedureId in path and in body not equals");
         }
         procedure = procedureMapper.procedureDtoToProcedure(procedureDto);
+        Medicine medicine = medicineService.getByKey(procedureDto.getMedicineId());
+        procedure.setMedicine(medicine);
         procedure.setPet(pet);
         procedureService.update(procedure);
 

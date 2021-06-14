@@ -37,6 +37,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -205,7 +206,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void commentInitializer() {
         List<Comment> comments = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            comments.add(new Comment(clientService.getByKey((long) i), "lorem " + i, LocalDate.now()));
+            comments.add(new Comment(userService.getByKey((long) i), "lorem " + i, LocalDateTime.now()));
         }
         commentService.persistAll(comments);
     }
