@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Entity
 @DiscriminatorValue("DOCTOR")
-@EqualsAndHashCode(callSuper = true,exclude = {"diagnoses","comments"})
+@EqualsAndHashCode(callSuper = true,onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 public class Doctor extends User {
 
@@ -23,7 +23,7 @@ public class Doctor extends User {
             mappedBy = "doctor",
             cascade = CascadeType.ALL
     )
-    private Set<Diagnosis> diagnoses = new HashSet<>();
+    private List<Diagnosis> diagnoses= new ArrayList<>();
 
     @OneToMany(
             mappedBy = "doctor",

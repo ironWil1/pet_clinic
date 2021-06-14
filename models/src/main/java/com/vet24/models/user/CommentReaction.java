@@ -3,25 +3,27 @@ package com.vet24.models.user;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-@Entity
+
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
-@IdClass(CommentReactionId.class)
-public class CommentReaction {
+@Entity@IdClass(CommentReactionId.class)
+public class CommentReaction{
+
 
     @Id
     @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    @PrimaryKeyJoinColumn
     @EqualsAndHashCode.Include
     private Comment comment;
 
     @Id
     @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    @PrimaryKeyJoinColumn
     @EqualsAndHashCode.Include
     private Client client;
 

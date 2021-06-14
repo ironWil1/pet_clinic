@@ -1,20 +1,20 @@
 package com.vet24.models.user;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Data
+@Getter
+@Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class VerificationToken  implements Serializable {
     @Id
     @NonNull
+    @EqualsAndHashCode.Include
     private Long id;
 
     @NonNull

@@ -13,7 +13,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,11 +24,12 @@ import java.util.Set;
 @DiscriminatorColumn(name = "pet_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"diagnoses","procedures","reproductions"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false)
@@ -70,14 +73,14 @@ public abstract class Pet {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<Procedure> procedures = new HashSet<>();
+    private List<Procedure> procedures = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "pet",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<Diagnosis> diagnoses = new HashSet<>();
+    private List<Diagnosis> diagnoses = new ArrayList<>();
 
 
     @OneToMany(
@@ -85,14 +88,14 @@ public abstract class Pet {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<Reproduction> reproductions = new HashSet<>();
+    private List<Reproduction> reproductions = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "pet",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<PetFound> petFounds = new HashSet<>();
+    private List<PetFound> petFounds = new ArrayList<>();
 
     protected Pet() {
     }
@@ -106,7 +109,7 @@ public abstract class Pet {
     }
 
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
-                  Set<Procedure> procedures, Set<Reproduction> reproductions) {
+                  List<Procedure> procedures, List<Reproduction> reproductions) {
         this(name, birthDay, gender, breed, client);
         this.procedures = procedures;
         this.reproductions = reproductions;

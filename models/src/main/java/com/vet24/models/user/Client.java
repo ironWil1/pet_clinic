@@ -12,8 +12,7 @@ import java.util.Set;
 
 @Entity
 @DiscriminatorValue("CLIENT")
-@EqualsAndHashCode(callSuper = true, exclude = {"pets","comments","commentReactions"})
-@Getter
+@EqualsAndHashCode(callSuper = true,onlyExplicitlyIncluded = true)
 public class Client extends User {
 
     @OneToMany(
@@ -21,7 +20,7 @@ public class Client extends User {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<Pet> pets = new HashSet<>();
+    private List<Pet> pets =  new ArrayList<>();
 
     @OneToMany(
                     mappedBy = "client",
@@ -35,13 +34,13 @@ public class Client extends User {
             mappedBy = "client",
             cascade = CascadeType.ALL
     )
-    private List<CommentReaction> commentReactions;
+    private List<CommentReaction> commentReactions = new ArrayList<>();
 
     public Client() {
         super();
     }
 
-    public Client(String firstname, String lastname, String email, String password, Role role, Set<Pet> pets) {
+    public Client(String firstname, String lastname, String email, String password, Role role, List<Pet> pets) {
         super(firstname, lastname, email, password, role);
         this.pets = pets;
     }
@@ -56,12 +55,28 @@ public class Client extends User {
         pet.setClient(null);
     }
 
-    public Set<Pet> getPets() {
+    public List<Pet> getPets() {
         return pets;
     }
 
-    public void setPets(Set<Pet> pets) {
+    public void setPets(List<Pet> pets) {
         this.pets = pets;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<CommentReaction> getCommentReactions() {
+        return commentReactions;
+    }
+
+    public void setCommentReactions(List<CommentReaction> commentReactions) {
+        this.commentReactions = commentReactions;
     }
 
     @Override

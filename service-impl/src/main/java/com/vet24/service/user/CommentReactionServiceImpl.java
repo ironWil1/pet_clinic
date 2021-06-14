@@ -16,4 +16,13 @@ public class CommentReactionServiceImpl extends ReadWriteServiceImpl<CommentReac
         this.likeDao = likeDao;
     }
 
+    @Override
+    public void persist(CommentReaction entity) {
+        likeDao.persist(entity);
+    }
+
+    @Override
+    public CommentReaction update(CommentReaction entity) {
+        return likeDao.update(entity);
+    }
 }

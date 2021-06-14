@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "user_entities")
 @DiscriminatorColumn(name="user_type", discriminatorType = DiscriminatorType.STRING)
@@ -38,6 +38,7 @@ public class User implements UserDetails {
 
     @NonNull
     @NaturalId
+    @EqualsAndHashCode.Include
     @Column(nullable = false,unique = true)
     private String email;
 
@@ -52,7 +53,7 @@ public class User implements UserDetails {
 
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
+    @JoinTable(name = "user_role",
             inverseJoinColumns = @JoinColumn(name = "role_name"))
     private Role role;
 
