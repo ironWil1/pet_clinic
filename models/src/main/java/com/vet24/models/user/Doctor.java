@@ -21,12 +21,6 @@ public class Doctor extends User {
 
     @OneToMany(
             mappedBy = "doctor",
-            cascade = CascadeType.ALL
-    )
-    private List<Diagnosis> diagnoses= new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "doctor",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )

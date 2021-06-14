@@ -2,6 +2,7 @@ package com.vet24.web;
 
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.RoleNameEnum;
+import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Dog;
@@ -12,6 +13,7 @@ import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.*;
+import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.CatService;
 import com.vet24.service.pet.DogService;
@@ -56,6 +58,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final Environment environment;
     private final CommentService commentService;
     private final CommentReactionService commentReactionService;
+    private final DiagnosisService diagnosisService;
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
@@ -73,7 +76,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                ReproductionService reproductionService, PetContactService petContactService,
                                CatService catService, DogService dogService, DoctorService doctorService,
                                PetService petService, Environment environment, CommentService commentService,
-                               CommentReactionService commentReactionService) {
+                               CommentReactionService commentReactionService,DiagnosisService diagnosisService) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
@@ -90,6 +93,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.environment = environment;
         this.commentService = commentService;
         this.commentReactionService = commentReactionService;
+        this.diagnosisService = diagnosisService;
     }
 
     public void roleInitialize() {
@@ -120,6 +124,14 @@ public class TestDataInitializer implements ApplicationRunner {
             }
         }
         petService.persistAll(pets);
+    }
+
+    public void diagnosisInitilaizer(){
+        List<Diagnosis> diagnoses = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+                diagnoses.add(new Diagnosis(doctorService.getByKey(30+(long)i),petService.getByKey((long)i), "some diagnosis "+i));
+        }
+        diagnosisService.persistAll(diagnoses);
     }
 
     public void medicineInitialize() {
@@ -218,6 +230,7 @@ public class TestDataInitializer implements ApplicationRunner {
             roleInitialize();
             userInitialize();
             petInitialize();
+            diagnosisInitilaizer();
             medicineInitialize();
             procedureInitializer();
             reproductionInitializer();

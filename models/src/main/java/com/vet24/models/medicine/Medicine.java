@@ -21,16 +21,13 @@ import org.hibernate.annotations.NaturalId;
 @NoArgsConstructor
 public class Medicine {
     @Id
+    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NaturalId
-    @EqualsAndHashCode.Include
     @Column(nullable = false)
     private String manufactureName;
 
-    @NaturalId
-    @EqualsAndHashCode.Include
     @Column(nullable = false)
     private String name;
 

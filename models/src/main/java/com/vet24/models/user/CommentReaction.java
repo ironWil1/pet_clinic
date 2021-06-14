@@ -9,16 +9,13 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@AllArgsConstructor
 @Entity
-
 public class CommentReaction{
 
 
     @EmbeddedId
     @EqualsAndHashCode.Include
     private CommentReactionId id;
-
 
     @ManyToOne(fetch= FetchType.LAZY)
     @PrimaryKeyJoinColumn
