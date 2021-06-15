@@ -92,18 +92,12 @@ public class DoctorController {
                                                      @RequestBody List<AbstractNewProcedureDto> procedures){
         Diagnosis diagnosis = diagnosisService.getByKey(diagnoseId);
         Treatment treatment = new Treatment();
-        List<Procedure> procedureList = procedures.stream()
-                .map(procedureMapper::abstractNewProcedureDtoToProcedure)
-                .map(x ->{
-                    if(!medicineService.isExistByKey(x.getMedicine().getId())){
-                        throw new NotFoundException("unknown medicine with id: " + x.getMedicine().getId()
-                                + " in the procedure with type: " + x.getType());
-                    }
-                    else {
-                        return x;
-                    }
-                })
-                .collect(Collectors.toList());
+        List<Procedure> procedureList = procedureMapper.listAbstractNewProcedureDtoToListProcedure(procedures);
+        for (Procedure x : procedureList){
+            if(!medicineService.isExistByKey(x.getId())){
+                throw new NotFoundException("medicine is not found");
+            }
+        }
         procedureService.persistAll(procedureList);
         treatment.setProcedureList(procedureList);
         treatment.setDiagnosis(diagnosis);
