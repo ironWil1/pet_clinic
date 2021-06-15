@@ -1,6 +1,7 @@
 package com.vet24.web.controllers.pet.procedure;
 
 import com.vet24.models.dto.exception.ExceptionDto;
+import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
@@ -72,7 +73,7 @@ public class ProcedureController {
         if (!procedure.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("pet not assigned to this procedure");
         }
-        ProcedureDto procedureDto = procedureMapper.toDto(procedure);
+        ProcedureDto procedureDto = procedureMapper.procedureToProcedureDto(procedure);
 
         return new ResponseEntity<>(procedureDto, HttpStatus.OK);
     }
@@ -88,10 +89,10 @@ public class ProcedureController {
     })
     @PostMapping("")
     public ResponseEntity<ProcedureDto> save(@PathVariable Long petId,
-                                             @RequestBody ProcedureDto procedureDto) {
+                                             @RequestBody AbstractNewProcedureDto newProcedureDto) {
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
-        Procedure procedure = procedureMapper.toEntity(procedureDto);
+        Procedure procedure = procedureMapper.abstractNewProcedureDtoToProcedure(newProcedureDto);
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
@@ -99,20 +100,15 @@ public class ProcedureController {
         if (!pet.getClient().getId().equals(client.getId())) {
             throw new BadRequestException("pet not yours");
         }
-        if (procedureService.isExistByKey(procedure.getId())){
-            throw new BadRequestException("procedure already exists");
-        } else if (procedure.getId() != null) {
-            procedure.setId(null);
-        }
 
-        Medicine medicine = medicineService.getByKey(procedureDto.getMedicineId());
+        Medicine medicine = medicineService.getByKey(newProcedureDto.getMedicineId());
         procedure.setMedicine(medicine);
         procedureService.persist(procedure);
 
         pet.addProcedure(procedure);
         petService.update(pet);
 
-        return new ResponseEntity<>(procedureMapper.toDto(procedure), HttpStatus.CREATED);
+        return new ResponseEntity<>(procedureMapper.procedureToProcedureDto(procedure), HttpStatus.CREATED);
     }
 
     @Operation(summary = "update a Procedure")
@@ -146,13 +142,13 @@ public class ProcedureController {
         if (!procedureDto.getId().equals(procedureId)) {
             throw new BadRequestException("procedureId in path and in body not equals");
         }
-        procedure = procedureMapper.toEntity(procedureDto);
+        procedure = procedureMapper.procedureDtoToProcedure(procedureDto);
         Medicine medicine = medicineService.getByKey(procedureDto.getMedicineId());
         procedure.setMedicine(medicine);
         procedure.setPet(pet);
         procedureService.update(procedure);
 
-        return new ResponseEntity<>(procedureMapper.toDto(procedure), HttpStatus.OK);
+        return new ResponseEntity<>(procedureMapper.procedureToProcedureDto(procedure), HttpStatus.OK);
     }
 
     @Operation(summary = "delete a Procedure")

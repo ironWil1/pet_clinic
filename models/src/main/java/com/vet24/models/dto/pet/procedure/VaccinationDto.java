@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @NoArgsConstructor
-public class VaccinationDto extends ProcedureDto {
+public class VaccinationDto extends AbstractNewProcedureDto {
 
     @JsonCreator
-    public VaccinationDto(Long id, LocalDate date, Long medicineId,
+    public VaccinationDto(LocalDate date, Long medicineId,
                           String medicineBatchNumber, Boolean isPeriodical, Integer periodDays) {
-        super(id, date, ProcedureType.VACCINATION, medicineId, medicineBatchNumber, isPeriodical, periodDays);
+        super(date, ProcedureType.VACCINATION, medicineId, medicineBatchNumber, isPeriodical, periodDays);
     }
 }

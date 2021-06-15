@@ -1,56 +1,52 @@
 package com.vet24.models.mappers.pet.procedure;
 
-import com.vet24.models.dto.pet.procedure.EchinococcusDto;
-import com.vet24.models.dto.pet.procedure.ExternalParasiteDto;
-import com.vet24.models.dto.pet.procedure.ProcedureDto;
-import com.vet24.models.dto.pet.procedure.VaccinationDto;
+import com.vet24.models.dto.pet.procedure.*;
+import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
-import com.vet24.models.mappers.DtoMapper;
-import com.vet24.models.mappers.EntityMapper;
-import com.vet24.models.pet.procedure.EchinococcusProcedure;
-import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.Procedure;
-import com.vet24.models.pet.procedure.VaccinationProcedure;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
-public abstract class ProcedureMapper implements DtoMapper<Procedure, ProcedureDto>,
-        EntityMapper<ProcedureDto, Procedure> {
+public abstract class ProcedureMapper {
+
+    private Map<ProcedureType, AbstractProcedureMapper> mapperMap;
 
     @Autowired
-    ExternalParasiteMapper externalParasiteMapper;
-    @Autowired
-    EchinococcusMapper echinococcusMapper;
-    @Autowired
-    VaccinationMapper vaccinationMapper;
+    private List<AbstractProcedureMapper> mapperList;
 
-    @Override
-    public Procedure toEntity (ProcedureDto dto){
-        if (dto instanceof EchinococcusDto) {
-            return echinococcusMapper.toEntity((EchinococcusDto) dto);
-        }
-        if (dto instanceof ExternalParasiteDto) {
-            return externalParasiteMapper.toEntity((ExternalParasiteDto) dto);
-        }
-        if (dto instanceof VaccinationDto) {
-            return vaccinationMapper.toEntity((VaccinationDto) dto);
-        }
-        throw new NoSuchAbstractEntityDtoException("Can't find mapper for ProcedureDto: " + dto);
+    @PostConstruct
+    private void init() {
+        this.setMapperMap(mapperList);
     }
 
-    @Override
-    public ProcedureDto toDto (Procedure entity){
-        if (entity instanceof EchinococcusProcedure) {
-            return echinococcusMapper.toDto((EchinococcusProcedure) entity);
-        }
-        if (entity instanceof ExternalParasiteProcedure) {
-            return externalParasiteMapper.toDto((ExternalParasiteProcedure) entity);
-        }
-        if (entity instanceof VaccinationProcedure) {
-            return vaccinationMapper.toDto((VaccinationProcedure) entity);
-        }
-        throw new NoSuchAbstractEntityDtoException("Can't find mapper for Procedure: " + entity);
+    private void setMapperMap(List<AbstractProcedureMapper> mapperList) {
+        mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractProcedureMapper::getProcedureType, Function.identity()));
     }
 
+    @Mapping(source = "medicine.id", target = "medicineId")
+    public abstract ProcedureDto procedureToProcedureDto(Procedure procedure);
+
+    public Procedure procedureDtoToProcedure(ProcedureDto procedureDto) {
+        if (mapperMap.containsKey(procedureDto.getType())) {
+            return mapperMap.get(procedureDto.getType()).procedureDtoToProcedure(procedureDto);
+        } else {
+            throw new NoSuchAbstractEntityDtoException("Can't find mapper for Procedure: " + procedureDto);
+        }
+    }
+
+    public Procedure abstractNewProcedureDtoToProcedure(AbstractNewProcedureDto procedureDto) {
+        if (mapperMap.containsKey(procedureDto.getType())) {
+            return mapperMap.get(procedureDto.getType()).abstractProcedureDtoToProcedure(procedureDto);
+        } else {
+            throw new NoSuchAbstractEntityDtoException("Can't find mapper for AbstractNewProcedureDto: " + procedureDto);
+        }
+    }
 }

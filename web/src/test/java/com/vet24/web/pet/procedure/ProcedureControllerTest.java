@@ -4,9 +4,10 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.vet24.dao.pet.procedure.ProcedureDao;
 import com.vet24.models.dto.exception.ExceptionDto;
-import com.vet24.models.dto.pet.procedure.ExternalParasiteDto;
+import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.dto.pet.procedure.VaccinationDto;
+import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.web.ControllerAbstractIntegrationTest;
@@ -38,7 +39,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
 
     final String URI = "http://localhost:8090/api/client/pet";
     final HttpHeaders HEADERS = new HttpHeaders();
-    ProcedureDto newProcedureDto;
+    AbstractNewProcedureDto newProcedureDto;
     ProcedureDto procedureDto1;
     ProcedureDto procedureDto3;
 
@@ -49,9 +50,11 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
 
     @Before
     public void createModels() {
-        this.newProcedureDto = new VaccinationDto(null, LocalDate.now(), 100L, "4f435", false, null);
-        this.procedureDto1 = new ExternalParasiteDto(100L,100L, LocalDate.now(), "4f435", true, 20);
-        this.procedureDto3 = new ExternalParasiteDto(102L,101L, LocalDate.now(), "4f435", true, 20);
+        this.newProcedureDto = new VaccinationDto(LocalDate.now(), 100L, "4f435", false, null);
+        this.procedureDto1 = new ProcedureDto(100L, LocalDate.now(), ProcedureType.EXTERNAL_PARASITE,
+                100L, "4f435", true, 20);
+        this.procedureDto3 = new ProcedureDto(102L, LocalDate.now(), ProcedureType.EXTERNAL_PARASITE,
+                100L, "4f435", true, 20);
     }
 
     // GET procedure by id - 200 SUCCESS
@@ -59,7 +62,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testGetProcedureSuccess() {
         ProcedureDto procedureDtoFromDao = procedureMapper
-                .toDto(procedureDao.getByKey(102L));
+                .procedureToProcedureDto(procedureDao.getByKey(102L));
         ResponseEntity<ProcedureDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/procedure/{procedureId}", ProcedureDto.class, 102, 102);
 
@@ -116,7 +119,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testAddProcedureSuccess() {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<ProcedureDto> request = new HttpEntity<>(newProcedureDto, HEADERS);
+        HttpEntity<AbstractNewProcedureDto> request = new HttpEntity<>(newProcedureDto, HEADERS);
         ResponseEntity<ProcedureDto> response = testRestTemplate
                 .postForEntity(URI + "/{petId}/procedure", request, ProcedureDto.class, 102);
         int afterCount = procedureDao.getAll().size();
@@ -130,7 +133,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testAddProcedureErrorPetNotFound() {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<ProcedureDto> request = new HttpEntity<>(newProcedureDto, HEADERS);
+        HttpEntity<AbstractNewProcedureDto> request = new HttpEntity<>(newProcedureDto, HEADERS);
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .postForEntity(URI + "/{petId}/procedure", request, ExceptionDto.class, 33);
         int afterCount = procedureDao.getAll().size();
@@ -145,7 +148,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testAddProcedureErrorPetForbidden() {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<ProcedureDto> request = new HttpEntity<>(newProcedureDto, HEADERS);
+        HttpEntity<AbstractNewProcedureDto> request = new HttpEntity<>(newProcedureDto, HEADERS);
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .postForEntity(URI + "/{petId}/procedure", request, ExceptionDto.class, 100);
         int afterCount = procedureDao.getAll().size();
@@ -160,7 +163,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testUpdateProcedureSuccess() {
         int beforeCount = procedureDao.getAll().size();
-        ProcedureDto procedureDtoBefore = procedureMapper.toDto(procedureDao.getByKey(102L));
+        ProcedureDto procedureDtoBefore = procedureMapper.procedureToProcedureDto(procedureDao.getByKey(102L));
         HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto3, HEADERS);
         ResponseEntity<ProcedureDto> response = testRestTemplate
                 .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ProcedureDto.class, 102, 102);
