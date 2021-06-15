@@ -1,19 +1,19 @@
 package com.vet24.models.user;
 
-import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.pet.Pet;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @DiscriminatorValue("CLIENT")
-@EqualsAndHashCode(callSuper = true, exclude = "pets")
+@EqualsAndHashCode(callSuper = true, exclude = {"pets","comments","commentReactions"})
+@Getter
 public class Client extends User {
 
     @OneToMany(
@@ -22,6 +22,20 @@ public class Client extends User {
             orphanRemoval = true
     )
     private Set<Pet> pets = new HashSet<>();
+
+    @OneToMany(
+                    mappedBy = "client",
+                    cascade = CascadeType.ALL,
+                    orphanRemoval = true
+            )
+    private List<Comment> comments = new ArrayList<>();
+
+
+    @OneToMany(
+            mappedBy = "client",
+            cascade = CascadeType.ALL
+    )
+    private List<CommentReaction> commentReactions;
 
     public Client() {
         super();

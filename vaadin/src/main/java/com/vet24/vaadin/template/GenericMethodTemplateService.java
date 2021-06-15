@@ -1,11 +1,8 @@
 package com.vet24.vaadin.template;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,6 +12,7 @@ import java.util.Set;
 public abstract class GenericMethodTemplateService {
 
     protected final RestTemplate restTemplate = new RestTemplate();
+    protected ObjectMapper mapper = new ObjectMapper();
 
     public void getCheckedUrlResponseInConsole(String url) {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -44,11 +42,35 @@ public abstract class GenericMethodTemplateService {
                     url,
                     method,
                     null,
-                    new ParameterizedTypeReference<Set<T>>() {
+                    new ParameterizedTypeReference<>() {
                     });
             return responseEntity.getBody();
         } catch (Exception e) {
             throw new IllegalStateException("Failed to get data, server is temporarily unavailable", e);
+        }
+    }
+
+    public <T> ResponseEntity<T> saveEntity(String url, HttpMethod method, T entity) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        try {
+            return restTemplate.exchange(
+                    url,
+                    method,
+                    new HttpEntity<>(mapper.writeValueAsString(entity), headers),
+                    new ParameterizedTypeReference<>() {
+                    });
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to get data, server is temporarily unavailable", e);
+        }
+    }
+
+    public <T> boolean deleteEntity(String url, T entityId) {
+        try {
+            restTemplate.delete(url + entityId);
+            return true;
+        } catch (Exception e){
+            return false;
         }
     }
 }

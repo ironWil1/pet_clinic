@@ -5,9 +5,11 @@ import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
+import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
+import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.ProcedureService;
 import com.vet24.service.user.ClientService;
@@ -32,14 +34,16 @@ public class ProcedureController {
     private final ProcedureService procedureService;
     private final ProcedureMapper procedureMapper;
     private final ClientService clientService;
+    private final MedicineService medicineService;
 
     @Autowired
     public ProcedureController(PetService petService, ProcedureService procedureService,
-                               ProcedureMapper procedureMapper, ClientService clientService) {
+                               ProcedureMapper procedureMapper, ClientService clientService, MedicineService medicineService) {
         this.petService = petService;
         this.procedureService = procedureService;
         this.procedureMapper = procedureMapper;
         this.clientService = clientService;
+        this.medicineService = medicineService;
     }
 
     @Operation(summary = "get a Procedure")
@@ -80,7 +84,7 @@ public class ProcedureController {
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
             @ApiResponse(responseCode = "404", description = "Pet is not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "pet not yours OR cannot create event OR need set period days",
+            @ApiResponse(responseCode = "400", description = "pet not yours",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("")
@@ -97,7 +101,8 @@ public class ProcedureController {
             throw new BadRequestException("pet not yours");
         }
 
-        procedure.setPet(pet);
+        Medicine medicine = medicineService.getByKey(newProcedureDto.getMedicineId());
+        procedure.setMedicine(medicine);
         procedureService.persist(procedure);
 
         pet.addProcedure(procedure);
@@ -117,35 +122,33 @@ public class ProcedureController {
     })
     @PutMapping("/{procedureId}")
     public ResponseEntity<ProcedureDto> update(@PathVariable Long petId, @PathVariable Long procedureId,
-                                               @RequestBody ProcedureDto procedureDto) {
+                                         @RequestBody ProcedureDto procedureDto) {
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
-        Procedure oldProcedure = procedureService.getByKey(procedureId);
-        Procedure newProcedure = procedureMapper.procedureDtoToProcedure(procedureDto);
+        Procedure procedure = procedureService.getByKey(procedureId);
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
-        if (newProcedure == null) {
+        if (procedure == null) {
             throw new NotFoundException("procedure not found");
         }
         if (!pet.getClient().getId().equals(client.getId())) {
             throw new BadRequestException("pet not yours");
         }
-        if (!oldProcedure.getPet().getId().equals(pet.getId())) {
+        if (!procedure.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("pet not assigned to this procedure");
         }
-        if (!oldProcedure.getPet().equals(pet)) {
-            throw new BadRequestException("unable to change procedure pet");
-        }
-        if (!procedureId.equals(newProcedure.getId())) {
+        if (!procedureDto.getId().equals(procedureId)) {
             throw new BadRequestException("procedureId in path and in body not equals");
         }
+        procedure = procedureMapper.procedureDtoToProcedure(procedureDto);
+        Medicine medicine = medicineService.getByKey(procedureDto.getMedicineId());
+        procedure.setMedicine(medicine);
+        procedure.setPet(pet);
+        procedureService.update(procedure);
 
-        newProcedure.setPet(pet);
-        procedureService.update(newProcedure);
-
-        return new ResponseEntity<>(procedureMapper.procedureToProcedureDto(newProcedure), HttpStatus.OK);
+        return new ResponseEntity<>(procedureMapper.procedureToProcedureDto(procedure), HttpStatus.OK);
     }
 
     @Operation(summary = "delete a Procedure")
@@ -174,10 +177,8 @@ public class ProcedureController {
         if (!procedure.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("pet not assigned to this procedure");
         }
-
-        procedureService.delete(procedure);
-
         pet.removeProcedure(procedure);
+        procedureService.delete(procedure);
         petService.update(pet);
 
         return new ResponseEntity<>(HttpStatus.OK);

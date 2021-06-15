@@ -3,6 +3,7 @@ package com.vet24.models.pet;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.notification.Notification;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.pet.procedure.Procedure;
@@ -11,22 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +23,7 @@ import java.util.Set;
 @DiscriminatorColumn(name = "pet_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"diagnoses","procedures","reproductions","notifications"})
 public abstract class Pet {
 
     @Id
@@ -92,6 +78,14 @@ public abstract class Pet {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    private Set<Diagnosis> diagnoses = new HashSet<>();
+
+
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Set<Reproduction> reproductions = new HashSet<>();
 
     @OneToMany(
@@ -100,6 +94,13 @@ public abstract class Pet {
             orphanRemoval = true
     )
     private Set<Notification> notifications = new HashSet<>();
+
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<PetFound> petFounds = new HashSet<>();
 
     protected Pet() {
     }

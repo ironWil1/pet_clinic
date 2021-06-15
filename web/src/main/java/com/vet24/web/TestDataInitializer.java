@@ -12,9 +12,9 @@ import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
+import com.vet24.models.user.Comment;
 import com.vet24.models.user.Doctor;
 import com.vet24.models.user.Role;
-import com.vet24.models.user.User;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.CatService;
 import com.vet24.service.pet.DogService;
@@ -25,6 +25,7 @@ import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
 import com.vet24.service.user.ClientService;
+import com.vet24.service.user.CommentService;
 import com.vet24.service.user.DoctorService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.UserService;
@@ -36,6 +37,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +62,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final PetService petService;
     private final DoctorService doctorService;
     private final Environment environment;
+    private final CommentService commentService;
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
@@ -76,7 +79,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                EchinococcusProcedureService echinococcusProcedureService,
                                ReproductionService reproductionService, PetContactService petContactService,
                                CatService catService, DogService dogService, DoctorService doctorService,
-                               PetService petService, Environment environment) {
+                               PetService petService, Environment environment, CommentService commentService) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
@@ -91,6 +94,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.petService = petService;
         this.doctorService = doctorService;
         this.environment = environment;
+        this.commentService = commentService;
     }
 
     public void roleInitialize() {
@@ -201,6 +205,14 @@ public class TestDataInitializer implements ApplicationRunner {
         petContactService.persist(petContact6);
     }
 
+    public void commentInitializer() {
+        List<Comment> comments = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            comments.add(new Comment(clientService.getByKey((long) i), "lorem " + i, LocalDateTime.now(), doctorService.getByKey((long) i + 30)));
+        }
+        commentService.persistAll(comments);
+    }
+
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
@@ -214,6 +226,7 @@ public class TestDataInitializer implements ApplicationRunner {
             procedureInitializer();
             reproductionInitializer();
             petContactInitializer();
+            commentInitializer();
         }
     }
 }
