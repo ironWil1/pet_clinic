@@ -1,45 +1,45 @@
 package com.vet24.models.mappers.pet;
 
-import com.vet24.models.dto.pet.CatDto;
-import com.vet24.models.dto.pet.DogDto;
+import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.PetDto;
+import com.vet24.models.enums.PetType;
 import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
-import com.vet24.models.mappers.DtoMapper;
-import com.vet24.models.mappers.EntityMapper;
-import com.vet24.models.pet.Cat;
-import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
-public abstract class PetMapper implements DtoMapper<Pet, PetDto>, EntityMapper<PetDto, Pet> {
+public abstract class PetMapper {
+
+    private Map<PetType, AbstractPetMapper> mapperMap;
 
     @Autowired
-    CatMapper catMapper;
-    @Autowired
-    DogMapper dogMapper;
+    private List<AbstractPetMapper> mapperList;
 
-    @Override
-    public Pet toEntity (PetDto dto){
-        if (dto instanceof CatDto) {
-            return catMapper.toEntity((CatDto) dto);
-        }
-        if (dto instanceof DogDto) {
-            return dogMapper.toEntity((DogDto) dto);
-        }
-        throw new NoSuchAbstractEntityDtoException("Can't find mapper for PetDto: " + dto);
+    @PostConstruct
+    private void init() {
+        this.setMapperMap(mapperList);
     }
 
-    @Override
-    public PetDto toDto (Pet entity){
-        if (entity instanceof Cat) {
-            return catMapper.toDto((Cat) entity);
-        }
-        if (entity instanceof Dog) {
-            return dogMapper.toDto((Dog) entity);
-        }
-        throw new NoSuchAbstractEntityDtoException("Can't find mapper for Pet: " + entity);
+    private void setMapperMap(List<AbstractPetMapper> mapperList) {
+        mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractPetMapper::getPetType, Function.identity()));
     }
 
+    @Mapping(source = "petType", target = "type")
+    public abstract PetDto petToPetDto(Pet pet);
+
+    public Pet abstractNewPetDtoToPet(AbstractNewPetDto petDto) {
+        if (mapperMap.containsKey(petDto.getPetType())) {
+            return mapperMap.get(petDto.getPetType()).abstractPetDtoToPet(petDto);
+        } else {
+            throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petDto);
+        }
+    }
 }

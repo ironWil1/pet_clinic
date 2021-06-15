@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class CatDto extends PetDto {
+public class CatDto extends AbstractNewPetDto {
 
     private String avatar;
     private Integer notificationCount;
@@ -21,7 +21,7 @@ public class CatDto extends PetDto {
     }
 
     @JsonCreator
-    public CatDto(String name, LocalDate birthDay,
+    public CatDto(String name, PetType petType, LocalDate birthDay,
                   Gender gender, String breed, String color,
                   PetSize size, Double weight, String description,
                   String avatar, Integer notificationCount) {

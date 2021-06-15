@@ -3,6 +3,7 @@ package com.vet24.web.controllers.pet;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.vet24.dao.pet.PetDao;
+import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.DogDto;
 import com.vet24.models.dto.pet.PetDto;
 import com.vet24.models.enums.Gender;
@@ -36,11 +37,11 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
 
     private final String URI = "http://localhost:8090/api/client/pet";
 
-    private PetDto petDto;
+    private AbstractNewPetDto abstractNewPetDto;
 
     @Before
     public void createNewClientAndDog() {
-        this.petDto = new DogDto("name", LocalDate.now(), Gender.MALE, "breed",
+        this.abstractNewPetDto = new DogDto("name", PetType.DOG, LocalDate.now(), Gender.MALE, "breed",
                 "color", PetSize.MEDIUM, 9.3, "description", "test.png", 0);
     }
 
@@ -48,9 +49,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void persistPetSuccess() {
         int sizeBefore = petDao.getAll().size();
-        HttpEntity<PetDto> request = new HttpEntity<>(petDto, new HttpHeaders());
-        ResponseEntity<PetDto> response = testRestTemplate
-                .postForEntity(URI + "/add", request, PetDto.class);
+        HttpEntity<AbstractNewPetDto> request = new HttpEntity<>(abstractNewPetDto, new HttpHeaders());
+        ResponseEntity<AbstractNewPetDto> response = testRestTemplate
+                .postForEntity(URI + "/add", request, AbstractNewPetDto.class);
         int sizeAfter = petDao.getAll().size();
 
         Assert.assertEquals(++sizeBefore, sizeAfter);
@@ -107,7 +108,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void updatePetSuccess() {
         Pet petBefore = petDao.getByKey(102L);
         int sizeBefore = petDao.getAll().size();
-        HttpEntity<PetDto> request = new HttpEntity<>(petDto, new HttpHeaders());
+        HttpEntity<AbstractNewPetDto> request = new HttpEntity<>(abstractNewPetDto, new HttpHeaders());
         ResponseEntity<PetDto> response = testRestTemplate
                 .exchange(URI + "/{petId}", HttpMethod.PUT, request, PetDto.class, 102);
         Pet petAfter = petDao.getByKey(102L);
@@ -123,7 +124,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void updatePetOfAnotherOwnerBadRequest() {
         Pet petBefore = petDao.getByKey(100L);
         int sizeBefore = petDao.getAll().size();
-        HttpEntity<PetDto> request = new HttpEntity<>(petDto, new HttpHeaders());
+        HttpEntity<AbstractNewPetDto> request = new HttpEntity<>(abstractNewPetDto, new HttpHeaders());
         ResponseEntity<PetDto> response = testRestTemplate
                 .exchange(URI + "/{petId}", HttpMethod.PUT, request, PetDto.class, 100);
         Pet petAfter = petDao.getByKey(100L);
@@ -142,7 +143,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void updatePetThatDoesNotExistNotFound() {
         Pet petBefore = petDao.getByKey(69000L);
         int sizeBefore = petDao.getAll().size();
-        HttpEntity<PetDto> request = new HttpEntity<>(petDto, new HttpHeaders());
+        HttpEntity<AbstractNewPetDto> request = new HttpEntity<>(abstractNewPetDto, new HttpHeaders());
         ResponseEntity<PetDto> response = testRestTemplate
                 .exchange(URI + "/{petId}", HttpMethod.PUT, request, PetDto.class, 69000);
         int sizeAfter = petDao.getAll().size();
