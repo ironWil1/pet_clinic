@@ -1,6 +1,7 @@
 package com.vet24.models.mappers.pet.procedure;
 
-import com.vet24.models.dto.pet.procedure.*;
+import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
+import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
 import com.vet24.models.pet.procedure.Procedure;
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public abstract class ProcedureMapper {
 
+
     private Map<ProcedureType, AbstractProcedureMapper> mapperMap;
 
     @Autowired
     private List<AbstractProcedureMapper> mapperList;
+
 
     @PostConstruct
     private void init() {
@@ -49,4 +52,6 @@ public abstract class ProcedureMapper {
             throw new NoSuchAbstractEntityDtoException("Can't find mapper for AbstractNewProcedureDto: " + procedureDto);
         }
     }
+
+    public abstract List<Procedure> listAbstractNewProcedureDtoToListProcedure(List<AbstractNewProcedureDto> abstractNewProcedureDtoList);
 }
