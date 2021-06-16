@@ -26,11 +26,7 @@ import com.vet24.service.pet.procedure.EchinococcusProcedureService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
-import com.vet24.service.user.ClientService;
-import com.vet24.service.user.CommentService;
-import com.vet24.service.user.DoctorService;
-import com.vet24.service.user.RoleService;
-import com.vet24.service.user.UserService;
+import com.vet24.service.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -39,11 +35,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @Component
@@ -182,14 +174,15 @@ public class TestDataInitializer implements ApplicationRunner {
         reproductionService.persistAll(reproductions);
     }
 
-//    public void clinicalExaminationInitializer(){
-//        List<ClinicalExamination> clinicalExaminations = new ArrayList<>();
-//        for (int i = 1; i <= 30; i++) {
-//            clinicalExaminations.add(new ClinicalExamination(LocalDate.now(), LocalDate.now(), LocalDate.now(), i,
-//                    petService.getByKey((long) i)));
-//        }
-//        clinicalExaminationService.persistAll(clinicalExaminations);
-//    }
+    //clinical examination
+    public void clinicalExaminationInitializer(){
+        List<ClinicalExamination> clinicalExaminations = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            clinicalExaminations.add(new ClinicalExamination(LocalDate.now(), petService.getByKey((long) i), doctorService.getByKey((long) i + 30), i, true, "text"));
+        }
+        clinicalExaminationService.persistAll(clinicalExaminations);
+    }
+
 
     public void petContactInitializer() {
         Pet pet1 = petService.getByKey(1L);
@@ -243,6 +236,7 @@ public class TestDataInitializer implements ApplicationRunner {
             medicineInitialize();
             procedureInitializer();
             reproductionInitializer();
+            clinicalExaminationInitializer();
             petContactInitializer();
             commentInitializer();
         }
