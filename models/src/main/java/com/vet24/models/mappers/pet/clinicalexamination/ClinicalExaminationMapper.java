@@ -5,12 +5,14 @@ import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ClinicalExaminationMapper {
 
-    @Mapping(source = "id", target = "id")
     ClinicalExaminationDto clinicalExaminationToClinicalExaminationDto(ClinicalExamination clinicalExamination);
 
-    @Mapping(source = "id", target = "id")
     ClinicalExamination clinicalExaminationDtoToClinicalExamination(ClinicalExaminationDto clinicalExaminationDto);
+
+    List<ClinicalExaminationDto> ClinicalExaminationListToClinicalExaminationDto(List<ClinicalExamination> clinicalExaminationList);
 }
