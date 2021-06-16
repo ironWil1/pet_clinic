@@ -82,7 +82,7 @@ public class RegistrationController {
 
         Client foundOrNew = clientService.getClientByEmail(inputDto.getEmail());
         if(foundOrNew == null){
-            foundOrNew = clientMapper.registerDtoToClient(inputDto);
+            foundOrNew = clientMapper.toEntity(inputDto);
         }
         else if(foundOrNew.getRole().getName()!=RoleNameEnum.UNVERIFIED_CLIENT) {
             throw new RepeatedRegistrationException(repeatedRegistrationMsg);
@@ -116,7 +116,7 @@ public class RegistrationController {
         }
         Client cl = token.getClient();
         cl.setRole(new Role(RoleNameEnum.CLIENT));
-        ClientDto clientUpdated = clientMapper.clientToClientDto(clientService.update(cl));
+        ClientDto clientUpdated = clientMapper.toDto(clientService.update(cl));
         verificationService.delete(token);
         return  ResponseEntity.status(HttpStatus.RESET_CONTENT).body(clientUpdated);
 

@@ -4,19 +4,24 @@ import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.dto.pet.procedure.VaccinationDto;
 import com.vet24.models.enums.ProcedureType;
+import com.vet24.models.mappers.DtoMapper;
+import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface VaccinationMapper extends AbstractProcedureMapper {
+public interface VaccinationMapper extends AbstractProcedureMapper,
+        DtoMapper<VaccinationProcedure, VaccinationDto>, EntityMapper<VaccinationDto, VaccinationProcedure> {
 
     @Mapping(source = "medicine.id", target = "medicineId")
-    VaccinationDto vaccinationToVaccinationDto(VaccinationProcedure vaccinationProcedure);
+    @Override
+    VaccinationDto toDto(VaccinationProcedure vaccinationProcedure);
 
     @Mapping(source = "medicineId", target = "medicine.id")
-    VaccinationProcedure vaccinationDtoToVaccination(VaccinationDto vaccinationDto);
+    @Override
+    VaccinationProcedure toEntity(VaccinationDto vaccinationDto);
 
     @Mapping(source = "medicineId", target = "medicine.id")
     VaccinationProcedure procedureDtoToVaccination(ProcedureDto procedureDto);
@@ -27,8 +32,8 @@ public interface VaccinationMapper extends AbstractProcedureMapper {
     }
 
     @Override
-    default Procedure abstractProcedureDtoToProcedure(AbstractNewProcedureDto abstractNewProcedureDto) {
-        return vaccinationDtoToVaccination((VaccinationDto) abstractNewProcedureDto);
+    default Procedure abstractNewProcedureDtoToProcedure(AbstractNewProcedureDto abstractNewProcedureDto) {
+        return toEntity((VaccinationDto) abstractNewProcedureDto);
     }
 
     @Override
