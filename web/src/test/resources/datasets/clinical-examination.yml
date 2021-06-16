@@ -1,17 +1,17 @@
 CLINICAL_EXAMINATION:
-  - ID: 100
+  - DOCTOR_ID: 100
     PET_ID: 100
     DATE: "2020-01-01"
     IS_CAN_MOVE: true
     WEIGHT: 100
     DOCTOR: 40
-  - ID: 101
+  - DOCTOR_ID: 101
     PET_ID: 101
     DATE: "2020-02-01"
     IS_CAN_MOVE: true
     WEIGHT: 101
     DOCTOR: 41
-  - ID: 102
+  - DOCTOR_ID: 102
     PET_ID: 102
     DATE: "2020-03-01"
     IS_CAN_MOVE: true
