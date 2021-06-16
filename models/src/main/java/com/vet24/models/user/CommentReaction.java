@@ -1,9 +1,17 @@
 package com.vet24.models.user;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 @Getter
 @Setter
@@ -11,7 +19,6 @@ import javax.persistence.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 public class CommentReaction{
-
 
     @EmbeddedId
     @EqualsAndHashCode.Include
