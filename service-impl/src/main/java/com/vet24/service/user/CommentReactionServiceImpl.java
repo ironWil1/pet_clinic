@@ -15,5 +15,4 @@ public class CommentReactionServiceImpl extends ReadWriteServiceImpl<CommentReac
         super(likeDao);
         this.likeDao = likeDao;
     }
-
 }
