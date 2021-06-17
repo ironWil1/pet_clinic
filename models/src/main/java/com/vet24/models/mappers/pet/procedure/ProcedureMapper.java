@@ -1,6 +1,5 @@
 package com.vet24.models.mappers.pet.procedure;
 
-import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
@@ -49,6 +48,4 @@ public abstract class ProcedureMapper implements
             throw new NoSuchAbstractEntityDtoException("Can't find mapper for ProcedureDto: " + procedureDto);
         }
     }
-
-
 }
