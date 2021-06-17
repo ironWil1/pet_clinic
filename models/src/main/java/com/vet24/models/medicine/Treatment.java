@@ -1,19 +1,21 @@
 package com.vet24.models.medicine;
 
 import com.vet24.models.pet.procedure.Procedure;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @NoArgsConstructor
 public class Treatment implements Serializable {
 
