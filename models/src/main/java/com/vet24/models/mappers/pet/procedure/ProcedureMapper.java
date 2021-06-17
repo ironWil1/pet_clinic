@@ -50,5 +50,5 @@ public abstract class ProcedureMapper implements
         }
     }
 
-    public abstract List<Procedure> listAbstractNewProcedureDtoToListProcedure(List<AbstractNewProcedureDto> abstractNewProcedureDtoList);
+
 }
