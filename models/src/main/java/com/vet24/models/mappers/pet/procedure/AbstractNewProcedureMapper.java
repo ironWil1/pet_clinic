@@ -1,5 +1,6 @@
 package com.vet24.models.mappers.pet.procedure;
 
+import com.vet24.models.bridge.MedicineServiceAdapter;
 import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
@@ -7,6 +8,7 @@ import com.vet24.models.mappers.DtoMapper;
 import com.vet24.models.pet.procedure.Procedure;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.webjars.NotFoundException;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -22,6 +24,9 @@ public abstract class AbstractNewProcedureMapper implements
 
     @Autowired
     private List<AbstractProcedureMapper> mapperList;
+
+    @Autowired
+    MedicineServiceAdapter medicineServiceAdapter;
 
     @PostConstruct
     private void init() {
@@ -39,5 +44,12 @@ public abstract class AbstractNewProcedureMapper implements
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find mapper for AbstractNewProcedureDto: " + abstractNewProcedureDto);
         }
+    }
+    public List<Procedure> toListEntity(List<AbstractNewProcedureDto> abstractNewProcedureDtoList){
+        return abstractNewProcedureDtoList.stream().map(this::toEntity).peek(x -> {
+            if(!medicineServiceAdapter.isExistByKey(x.getMedicine().getId())){
+                throw new NotFoundException("Medicine with id: " + x.getMedicine().getId() + " not found");
+            }
+        }).collect(Collectors.toList());
     }
 }
