@@ -5,6 +5,7 @@ import com.vet24.models.dto.medicine.TreatmentDto;
 import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.mappers.medicine.DiagnosisMapper;
 import com.vet24.models.mappers.medicine.TreatmentMapper;
+import com.vet24.models.mappers.pet.procedure.AbstractNewProcedureMapper;
 import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.Treatment;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/doctor")
@@ -41,22 +41,20 @@ public class DoctorController {
     private final DiagnosisMapper diagnosisMapper;
     private final TreatmentService treatmentService;
     private final TreatmentMapper treatmentMapper;
-    private final ProcedureMapper procedureMapper;
     private final ProcedureService procedureService;
-    private final MedicineService medicineService;
+    private final AbstractNewProcedureMapper abstractNewProcedureMapper;
 
 
     public DoctorController(PetService petService, DoctorService doctorService,
-                            DiagnosisService diagnosisService, DiagnosisMapper diagnosisMapper, TreatmentService treatmentService, TreatmentMapper treatmentMapper, ProcedureMapper procedureMapper, ProcedureService procedureService, MedicineService medicineService, MedicineService medicineService1) {
+                            DiagnosisService diagnosisService, DiagnosisMapper diagnosisMapper, TreatmentService treatmentService, TreatmentMapper treatmentMapper, ProcedureMapper procedureMapper, ProcedureService procedureService, MedicineService medicineService, MedicineService medicineService1, AbstractNewProcedureMapper abstractNewProcedureMapper) {
         this.petService = petService;
         this.doctorService = doctorService;
         this.diagnosisService = diagnosisService;
         this.diagnosisMapper = diagnosisMapper;
         this.treatmentService = treatmentService;
         this.treatmentMapper = treatmentMapper;
-        this.procedureMapper = procedureMapper;
         this.procedureService = procedureService;
-        this.medicineService = medicineService1;
+        this.abstractNewProcedureMapper = abstractNewProcedureMapper;
     }
 
     @Operation(summary = "add a new diagnosis")
@@ -92,12 +90,8 @@ public class DoctorController {
                                                      @RequestBody List<AbstractNewProcedureDto> procedures){
         Diagnosis diagnosis = diagnosisService.getByKey(diagnoseId);
         Treatment treatment = new Treatment();
-        List<Procedure> procedureList = procedureMapper.listAbstractNewProcedureDtoToListProcedure(procedures);
-        for (Procedure x : procedureList){
-            if(!medicineService.isExistByKey(x.getId())){
-                throw new NotFoundException("medicine is not found");
-            }
-        }
+        List<Procedure> procedureList = abstractNewProcedureMapper.toListEntity(procedures);
+
         procedureService.persistAll(procedureList);
         treatment.setProcedureList(procedureList);
         treatment.setDiagnosis(diagnosis);
