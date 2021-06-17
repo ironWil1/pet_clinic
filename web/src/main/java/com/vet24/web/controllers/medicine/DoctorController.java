@@ -54,7 +54,7 @@ public class DoctorController {
         }
         Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
         diagnosisService.persist(diagnosis);
-        return new ResponseEntity<>(diagnosisMapper.diagnosisToDiagnosisDto(diagnosis),
+        return new ResponseEntity<>(diagnosisMapper.toDto(diagnosis),
                 HttpStatus.CREATED);
     }
 

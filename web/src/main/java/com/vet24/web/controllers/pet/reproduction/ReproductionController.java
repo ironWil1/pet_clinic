@@ -67,7 +67,7 @@ public class ReproductionController {
         if (!reproduction.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("reproduction not assigned to this pet");
         }
-        ReproductionDto reproductionDto = reproductionMapper.reproductionToReproductionDto(reproduction);
+        ReproductionDto reproductionDto = reproductionMapper.toDto(reproduction);
 
         return new ResponseEntity<>(reproductionDto, HttpStatus.OK);
     }
@@ -86,7 +86,7 @@ public class ReproductionController {
     public ResponseEntity<ReproductionDto> save(@PathVariable Long petId,
                                                 @RequestBody ReproductionDto reproductionDto) {
         Pet pet = petService.getByKey(petId);
-        Reproduction reproduction = reproductionMapper.reproductionDtoToReproduction(reproductionDto);
+        Reproduction reproduction = reproductionMapper.toEntity(reproductionDto);
         Client client = clientService.getCurrentClient();
 
         if (pet == null) {
@@ -102,7 +102,7 @@ public class ReproductionController {
         pet.addReproduction(reproduction);
         petService.update(pet);
 
-        return new ResponseEntity<>(reproductionMapper.reproductionToReproductionDto(reproduction), HttpStatus.CREATED);
+        return new ResponseEntity<>(reproductionMapper.toDto(reproduction), HttpStatus.CREATED);
     }
 
 
@@ -138,11 +138,11 @@ public class ReproductionController {
         if (!reproductionId.equals(reproductionDto.getId())) {
             throw new BadRequestException("reproductionId in path and in body not equals");
         }
-        reproduction = reproductionMapper.reproductionDtoToReproduction(reproductionDto);
+        reproduction = reproductionMapper.toEntity(reproductionDto);
         reproduction.setPet(pet);
         reproductionService.update(reproduction);
 
-        return new ResponseEntity<>(reproductionMapper.reproductionToReproductionDto(reproduction), HttpStatus.OK);
+        return new ResponseEntity<>(reproductionMapper.toDto(reproduction), HttpStatus.OK);
 
     }
 

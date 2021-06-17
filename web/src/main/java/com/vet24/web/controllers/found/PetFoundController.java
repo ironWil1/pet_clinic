@@ -57,7 +57,7 @@ public class PetFoundController {
                                                                           @RequestBody PetFoundDto petFoundDto) {
         if (petContactService.isExistByPetCode(petCode)) {
             PetContact petContact = petContactService.getByPetCode(petCode);
-            PetFound petFound = petFoundMapper.petFoundDtoToPetFound(petFoundDto);
+            PetFound petFound = petFoundMapper.toEntity(petFoundDto);
             petFound.setPet(petContact.getPet());
             petFoundService.persist(petFound);
 
