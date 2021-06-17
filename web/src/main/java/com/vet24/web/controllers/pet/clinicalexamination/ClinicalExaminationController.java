@@ -67,7 +67,7 @@ public class ClinicalExaminationController {
             throw new NotFoundException("pet not found");
         }
         if (doctor == null) {
-            throw new NotFoundException("there is no doctor assigned to this pet");
+            throw new NotFoundException("the pet is not assigned a doctor");
         }
         if (clinicalExamination == null) {
             throw new NotFoundException("clinical examination not found");

@@ -31,4 +31,28 @@ USER_ENTITIES:
     LASTNAME: "Petrov"
     EMAIL: "user4@gmail.com"
     PASSWORD: "user4"
+  - ID: 40
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Sergey"
+    LASTNAME: "Seregin"
+    EMAIL: "user40@gmail.com"
+    PASSWORD: "user40"
+  - ID: 41
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Semen"
+    LASTNAME: "Semenov"
+    EMAIL: "user41@gmail.com"
+    PASSWORD: "user41"
+  - ID: 42
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Petr"
+    LASTNAME: "Vasechkin"
+    EMAIL: "user42@gmail.com"
+    PASSWORD: "user42"
 
