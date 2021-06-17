@@ -64,20 +64,21 @@ public class PetContactQrCodeController {
             Pet pet = petService.getByKey(id);
             Client client = pet.getClient();
             PetContact petContact = new PetContact();
-            petContact.setAddress("unknown");
+            petContact.setAddress("");
             petContact.setOwnerName(pet.getClient().getFirstname());
-            petContact.setPetCode(petContactService.randomPetContactUniqueCode(id));
+            petContact.setPetCode("");
             petContact.setPhone(pet.getId());
             petContact.setPet(pet);
             //
-            //номер находится в карточке petContact, в клиенте нет номера, стоит пока заглушка в виде id
-            //адрес находится в карточке petContact, в клиенте нет адреса, стоит заглушка в виде unknown
+            //номер находится в карточке petContact, в клиенте нет номера, стоит пока заглушка в виде пустой строки
+            //адрес находится в карточке petContact, в клиенте нет адреса, стоит заглушка в виде пустой строки
+            //
             petContactService.persist(petContact);
 
             String urlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
             String sb = "Имя питомца - " + pet.getName() + ", " +
                     "Владелец - " + client.getFirstname() + ", " +
-                    "Адрес - " + (petContact.getAddress().equals("unknown") ? "владелец еще не успел указать адрес" : petContact.getAddress()) + ", " +
+                    "Адрес - " + (petContact.getAddress().equals("") ? "владелец еще не успел указать адрес" : petContact.getAddress()) + ", " +
                     "Телефон - " + (petContact.getPhone().toString().length() < 11 ? "владелец не успел указать номер телефона" : petContact.getPhone()) + ", " +
                     "Почта - " + client.getEmail() + ", " +
                     "чтобы сообщить владельцу о находке перейдите по адресу - " + urlToAlertPetContact;
@@ -97,20 +98,20 @@ public class PetContactQrCodeController {
             @ApiResponse(responseCode = "400", description = "PetContact is expecting a pet for persist command"),
     })
     @PostMapping(value = "/{id}/qr")
-    public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@RequestBody PetContactDto petContactDto,
+    public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@RequestBody(required = false) PetContactDto petContactDto,
                                                                 @PathVariable("id") Long id) {
         if (petContactService.isExistByKey(id)) {
             PetContact petContactOld = petContactService.getByKey(id);
-            if(petContactDto.getOwnerName().equals("")){
+            if (petContactDto.getOwnerName() == null) {
                 petContactDto.setOwnerName(petContactOld.getOwnerName());
             }
-            if(petContactDto.getAddress().equals("")){
+            if (petContactDto.getAddress() == null) {
                 petContactDto.setAddress(petContactOld.getAddress());
             }
-            if(petContactDto.getPhone().equals("")){
-                petContactDto.setPhone(petContactOld.getPhone().toString());
+            if(petContactDto.getPhone() == null) {
+                petContactDto.setPhone(petContactOld.getPhone());
             }
-            PetContact petContactNew = petContactMapper.petContactDtoToPetContact(petContactDto);
+            PetContact petContactNew = petContactMapper.toEntity(petContactDto);
             petContactOld.setOwnerName(petContactNew.getOwnerName());
             petContactOld.setAddress(petContactNew.getAddress());
             petContactOld.setPhone(petContactNew.getPhone());
@@ -118,7 +119,7 @@ public class PetContactQrCodeController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else if (petService.isExistByKey(id)) {
             Pet pet = petService.getByKey(id);
-            PetContact petContact = petContactMapper.petContactDtoToPetContact(petContactDto);
+            PetContact petContact = petContactMapper.toEntity(petContactDto);
             petContact.setPetCode(petContactService.randomPetContactUniqueCode(id));
             petContact.setPet(pet);
             petContactService.persist(petContact);
