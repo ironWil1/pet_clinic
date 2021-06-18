@@ -307,7 +307,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     }
 
     // - delete clinical examination by id - error pet not yours
-    @Test
+    @Test()
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testDeleteClinicalExaminationError400refClientPet() {
         int beforeCount = clinicalExaminationDao.getAll().size();
