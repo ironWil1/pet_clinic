@@ -50,15 +50,16 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(value = "/datasets/roles.yml", cleanBefore = true)
     public void shouldBeCreated() throws Exception {
+        RegisterDto registerDto = new RegisterDto("342354234@gmail.com","Vera","P",
+                "Congo","Congo");
         Mockito.doNothing()
                 .when(mailService)
                 .sendWelcomeMessage(anyString(), anyString(), anyString());
-        RegisterDto registerDto = new RegisterDto("342354234@gmail.com","Vera","P",
-                "Congo","Congo");
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
                 .content(objectMapper.valueToTree(registerDto).toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
+        Mockito.verify(mailService).sendWelcomeMessage(anyString(), anyString(), anyString());
     }
 }

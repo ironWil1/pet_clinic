@@ -43,6 +43,7 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
                 .param("petCode", petCode))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andDo(MockMvcResultHandlers.print());
+        Mockito.verify(petFoundMailSender).sendTextAndGeolocationPet(anyString(), anyString(), anyString());
     }
 
     // get PetContact by petCode is not found - error 404
