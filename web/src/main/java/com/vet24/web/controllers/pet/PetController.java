@@ -50,7 +50,6 @@ public class PetController {
         this.resourceService = resourceService;
     }
 
-    // оставить?
     @Operation(summary = "get pet by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a Pet",
@@ -72,9 +71,8 @@ public class PetController {
             throw new BadRequestException("pet not yours");
         }
 
-        return new ResponseEntity<>(petMapper.petToPetDto(pet), HttpStatus.OK);
+        return new ResponseEntity<>(petMapper.toDto(pet), HttpStatus.OK);
     }
-    //
 
     @Operation(summary = "add a new Pet")
     @ApiResponses(value = {
