@@ -100,14 +100,15 @@ public class ClinicalExaminationController {
         Pet pet = petService.getByKey(petId);
         ClinicalExamination clinicalExamination =
                 clinicalExaminationMapper.clinicalExaminationDtoToClinicalExamination(clinicalExaminationDto);
+        if (pet == null) {
+            throw new NotFoundException("pet not found");
+        }
         Doctor doctor = doctorService.getCurrentDoctor();
         pet.setDoctor(doctor);
         clinicalExamination.setDoctor(doctor);
         clinicalExamination.setDate(LocalDate.now());
 
-        if (pet == null) {
-            throw new NotFoundException("pet not found");
-        }
+
         if (!pet.getDoctor().getId().equals(doctor.getId())) {
             throw new BadRequestException("pet has no doctor");
         }
@@ -141,18 +142,10 @@ public class ClinicalExaminationController {
                                                          @RequestBody ClinicalExaminationDto clinicalExaminationDto) {
         Pet pet = petService.getByKey(petId);
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
-        Doctor doctor = doctorService.getCurrentDoctor();
-        pet.setDoctor(doctor);
-        clinicalExamination.setDoctor(doctor);
-        clinicalExamination.setDate(LocalDate.now());
-//        clinicalExaminationService.update(clinicalExamination.setDate(LocalDate.now()));
-
-
-        clinicalExamination.setDate(LocalDate.now());
-
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
+        Doctor doctor = doctorService.getCurrentDoctor();
         if (doctor == null) {
             throw new NotFoundException("there is no doctor assigned to this pet");
         }
@@ -167,6 +160,12 @@ public class ClinicalExaminationController {
         if (!examinationId.equals(clinicalExaminationDto.getId())) {
             throw new BadRequestException("examinationId in path and in body not equals");
         }
+
+        pet.setDoctor(doctor);
+        clinicalExamination.setDoctor(doctor);
+        clinicalExamination.setDate(LocalDate.now());
+//        clinicalExaminationService.update(clinicalExamination.setDate(LocalDate.now()));
+        clinicalExamination.setDate(LocalDate.now());
         clinicalExamination =
                 clinicalExaminationMapper.clinicalExaminationDtoToClinicalExamination(clinicalExaminationDto);
         clinicalExamination.setPet(pet);
