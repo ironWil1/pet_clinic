@@ -21,11 +21,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.LocalDate;
 
 
 @DBRider
+@WithUserDetails(value = "user3@gmail.com")
 public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
