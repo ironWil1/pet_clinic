@@ -39,17 +39,13 @@ public abstract class AbstractNewProcedureMapper implements
 
     @Override
     public Procedure toEntity(AbstractNewProcedureDto abstractNewProcedureDto) {
+        if (!medicineServiceAdapter.isExistByKey(abstractNewProcedureDto.getMedicineId())) {
+            throw new NotFoundException("Medicine with id: " + abstractNewProcedureDto.getMedicineId() + " not found");
+        }
         if (mapperMap.containsKey(abstractNewProcedureDto.getType())) {
             return mapperMap.get(abstractNewProcedureDto.getType()).abstractNewProcedureDtoToProcedure(abstractNewProcedureDto);
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find mapper for AbstractNewProcedureDto: " + abstractNewProcedureDto);
         }
-    }
-    public List<Procedure> toListEntity(List<AbstractNewProcedureDto> abstractNewProcedureDtoList){
-        return abstractNewProcedureDtoList.stream().map(this::toEntity).peek(x -> {
-            if(!medicineServiceAdapter.isExistByKey(x.getMedicine().getId())){
-                throw new NotFoundException("Medicine with id: " + x.getMedicine().getId() + " not found");
-            }
-        }).collect(Collectors.toList());
     }
 }
