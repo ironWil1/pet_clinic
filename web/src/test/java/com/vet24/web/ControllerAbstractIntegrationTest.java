@@ -1,5 +1,6 @@
 package com.vet24.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.vet24.service.media.MailService;
@@ -32,4 +33,7 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @Autowired
     protected MockMvc mockMvc;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
 }

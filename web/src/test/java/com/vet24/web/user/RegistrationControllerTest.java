@@ -3,13 +3,10 @@ package com.vet24.web.user;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.vet24.models.dto.user.RegisterDto;
-import com.vet24.service.media.MailService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import lombok.extern.slf4j.Slf4j;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -24,16 +21,13 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
 
     final String URI = "http://localhost:8090/api/registration";
 
-    @Mock
-    private MailService mailService;
-
     @Test
     @DataSet(value = "/datasets/roles.yml", cleanBefore = true)
     public void shouldBeNotAcceptableWrongEmail() throws Exception {
         RegisterDto registerDto = new RegisterDto("342354234.com","Vera","P",
                 "Congo","Congo");
-        this.mockMvc.perform(MockMvcRequestBuilders.post(URI)
-                .content(new ObjectMapper().valueToTree(registerDto).toString())
+        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                .content(objectMapper.valueToTree(registerDto).toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -45,8 +39,8 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     public void shouldBeNotAcceptablePasswords() throws Exception {
         RegisterDto registerDto = new RegisterDto("342354234@gmail.com","Vera","P",
                 "Congo","Congo2");
-        this.mockMvc.perform(MockMvcRequestBuilders.post(URI)
-                .content(new ObjectMapper().valueToTree(registerDto).toString())
+        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                .content(objectMapper.valueToTree(registerDto).toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -61,8 +55,8 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
                 .sendWelcomeMessage(anyString(), anyString(), anyString());
         RegisterDto registerDto = new RegisterDto("342354234@gmail.com","Vera","P",
                 "Congo","Congo");
-        this.mockMvc.perform(MockMvcRequestBuilders.post(URI)
-                .content(new ObjectMapper().valueToTree(registerDto).toString())
+        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                .content(objectMapper.valueToTree(registerDto).toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());

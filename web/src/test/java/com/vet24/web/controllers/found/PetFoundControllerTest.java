@@ -1,15 +1,12 @@
 package com.vet24.web.controllers.found;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.vet24.models.dto.pet.PetFoundDto;
 import com.vet24.models.pet.PetContact;
 import com.vet24.service.pet.PetContactService;
-import com.vet24.util.mailSender.PetFoundMailSender;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,9 +24,6 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     private PetContactService petContactService;
 
-    @Mock
-    private PetFoundMailSender petFoundMailSender;
-
     final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
 
     // get save data found pet and create with send owner message about pet - success
@@ -40,11 +34,11 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
         String petCode = petContact.getPetCode();
         final String URL_GET_PET_CONTACT_BY_PETCODE = "/api/petFound";
         PetFoundDto petFoundDto = new PetFoundDto("1.2345678", "2.3456789", "Some text");
-        String bodyUpdate = (new ObjectMapper()).valueToTree(petFoundDto).toString();
+        String bodyUpdate = objectMapper.valueToTree(petFoundDto).toString();
         Mockito.doNothing()
                 .when(petFoundMailSender)
                 .sendTextAndGeolocationPet(anyString(), anyString(), anyString());
-        this.mockMvc.perform(MockMvcRequestBuilders.post(URL_GET_PET_CONTACT_BY_PETCODE)
+        mockMvc.perform(MockMvcRequestBuilders.post(URL_GET_PET_CONTACT_BY_PETCODE)
                 .content(bodyUpdate).contentType(APPLICATION_JSON_UTF8)
                 .param("petCode", petCode))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -58,8 +52,8 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
         String petCode = "CD0964F7A769B65E2BA57822840B0E53";
         final String URL_GET_PET_CONTACT_BY_PETCODE = "/api/petFound";
         PetFoundDto petFoundDto = new PetFoundDto("1.2345678", "2.3456789", "Some text");
-        String bodyUpdate = (new ObjectMapper()).valueToTree(petFoundDto).toString();
-        this.mockMvc.perform(MockMvcRequestBuilders.post(URL_GET_PET_CONTACT_BY_PETCODE)
+        String bodyUpdate = objectMapper.valueToTree(petFoundDto).toString();
+        mockMvc.perform(MockMvcRequestBuilders.post(URL_GET_PET_CONTACT_BY_PETCODE)
                 .content(bodyUpdate).contentType(APPLICATION_JSON_UTF8)
                 .param("petCode", petCode))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
