@@ -62,7 +62,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testGetProcedureSuccess() {
         ProcedureDto procedureDtoFromDao = procedureMapper
-                .procedureToProcedureDto(procedureDao.getByKey(102L));
+                .toDto(procedureDao.getByKey(102L));
         ResponseEntity<ProcedureDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/procedure/{procedureId}", ProcedureDto.class, 102, 102);
 
@@ -163,7 +163,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testUpdateProcedureSuccess() {
         int beforeCount = procedureDao.getAll().size();
-        ProcedureDto procedureDtoBefore = procedureMapper.procedureToProcedureDto(procedureDao.getByKey(102L));
+        ProcedureDto procedureDtoBefore = procedureMapper.toDto(procedureDao.getByKey(102L));
         HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto3, HEADERS);
         ResponseEntity<ProcedureDto> response = testRestTemplate
                 .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ProcedureDto.class, 102, 102);

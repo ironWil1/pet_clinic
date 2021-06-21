@@ -1,9 +1,10 @@
 package com.vet24.models.mappers.pet;
 
-import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.PetDto;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
+import com.vet24.models.mappers.DtoMapper;
+import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.pet.Pet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,13 +16,18 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import javax.annotation.PostConstruct;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public abstract class PetMapper {
+public abstract class PetMapper implements
+        DtoMapper<Pet, PetDto>, EntityMapper<PetDto, Pet> {
 
     private Map<PetType, AbstractPetMapper> mapperMap;
 
@@ -39,7 +45,8 @@ public abstract class PetMapper {
 
     @Mapping(target = "type", source = "petType")
     @Mapping(target = "notificationCount", source = "pet")
-    public abstract PetDto petToPetDto(Pet pet);
+    @Override
+    public abstract PetDto toDto(Pet pet);
 
     protected int petToNotificationCountInt(Pet pet) {
         return (int) pet.getNotifications().stream()
@@ -48,9 +55,10 @@ public abstract class PetMapper {
                 .count();
     }
 
-    public Pet abstractNewPetDtoToPet(AbstractNewPetDto petDto) {
-        if (mapperMap.containsKey(petDto.getPetType())) {
-            return mapperMap.get(petDto.getPetType()).abstractPetDtoToPet(petDto);
+    @Override
+    public Pet toEntity (PetDto petDto) {
+        if (mapperMap.containsKey(petDto.getType())) {
+            return mapperMap.get(petDto.getType()).abstractPetDtoToPet(petDto);
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petDto);
         }

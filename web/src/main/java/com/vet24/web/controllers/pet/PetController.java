@@ -4,6 +4,7 @@ import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.PetDto;
+import com.vet24.models.mappers.pet.AbstractNewPetMapper;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.PetMapper;
 import com.vet24.models.pet.Pet;
@@ -35,18 +36,21 @@ public class PetController {
     private final ClientService clientService;
     private final PetService petService;
     private final PetMapper petMapper;
+    private final AbstractNewPetMapper newPetMapper;
     private final UploadService uploadService;
     private final ResourceService resourceService;
 
     public PetController(ClientService clientService, PetService petService, PetMapper petMapper,
-                         UploadService uploadService, ResourceService resourceService) {
+                         AbstractNewPetMapper newPetMapper, UploadService uploadService, ResourceService resourceService) {
         this.clientService = clientService;
         this.petService = petService;
         this.petMapper = petMapper;
+        this.newPetMapper = newPetMapper;
         this.uploadService = uploadService;
         this.resourceService = resourceService;
     }
 
+    // оставить?
     @Operation(summary = "get pet by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a Pet",
@@ -70,6 +74,7 @@ public class PetController {
 
         return new ResponseEntity<>(petMapper.petToPetDto(pet), HttpStatus.OK);
     }
+    //
 
     @Operation(summary = "add a new Pet")
     @ApiResponses(value = {
@@ -81,7 +86,7 @@ public class PetController {
     public ResponseEntity<AbstractNewPetDto> persistPet(@RequestBody AbstractNewPetDto petDto) {
         Client client = clientService.getCurrentClient();
         if (client != null) {
-            Pet pet = petMapper.abstractNewPetDtoToPet(petDto);
+            Pet pet = newPetMapper.toEntity(petDto);
             pet.setClient(client);
             petService.persist(pet);
             return ResponseEntity.ok(petDto);
@@ -122,7 +127,7 @@ public class PetController {
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(client.getId())) {
-                Pet updatedPet = petMapper.abstractNewPetDtoToPet(petDto);
+                Pet updatedPet = newPetMapper.toEntity(petDto);
                 updatedPet.setId(pet.getId());
                 updatedPet.setClient(client);
                 petService.update(updatedPet);

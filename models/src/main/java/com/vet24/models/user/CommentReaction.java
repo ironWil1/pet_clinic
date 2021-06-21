@@ -1,30 +1,47 @@
 package com.vet24.models.user;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.PrimaryKeyJoinColumn;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@AllArgsConstructor
-@IdClass(CommentReactionId.class)
-public class CommentReaction {
+@Entity
+public class CommentReaction{
 
-    @Id
-    @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    @EmbeddedId
     @EqualsAndHashCode.Include
+    private CommentReactionId id;
+
+    @ManyToOne(fetch= FetchType.LAZY)
+    @PrimaryKeyJoinColumn
+    @MapsId("commentId")
     private Comment comment;
 
-    @Id
+
     @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
-    @EqualsAndHashCode.Include
+    @PrimaryKeyJoinColumn
+    @MapsId("clientId")
     private Client client;
 
     @Column(nullable = false)
     private Boolean positive;
+
+    public CommentReaction(Comment comment, Client client, Boolean positive) {
+        this.id = new CommentReactionId(comment.getId(),client.getId());
+        this.comment = comment;
+        this.client = client;
+        this.positive = positive;
+    }
 }

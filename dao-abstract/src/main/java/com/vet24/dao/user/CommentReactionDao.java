@@ -7,4 +7,6 @@ import com.vet24.models.user.CommentReactionId;
 
 public interface CommentReactionDao extends ReadWriteDao<CommentReactionId, CommentReaction> {
 
+
+
 }
