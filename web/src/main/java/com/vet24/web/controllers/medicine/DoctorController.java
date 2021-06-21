@@ -82,21 +82,23 @@ public class DoctorController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully added treatment ",
             content = @Content(schema = @Schema(implementation = TreatmentDto.class))),
-            @ApiResponse(responseCode = "404", description = "Unknown medicine")
+            @ApiResponse(responseCode = "404", description = "Unknown medicine"),
+            @ApiResponse(responseCode = "404", description = "unknown diagnoses")
     })
 
     @PostMapping("/diagnosis/{diagnoseId}/addTreatment")
     public ResponseEntity<TreatmentDto> addTreatment(@PathVariable Long diagnoseId,
                                                      @RequestBody List<AbstractNewProcedureDto> procedures){
+        if (!diagnosisService.isExistByKey(diagnoseId)) {
+            throw new NotFoundException("diagnoses with id = " + diagnoseId + " not found");
+        }
         Diagnosis diagnosis = diagnosisService.getByKey(diagnoseId);
-        Treatment treatment = new Treatment();
-        List<Procedure> procedureList = abstractNewProcedureMapper.toListEntity(procedures);
-
+        List<Procedure> procedureList = abstractNewProcedureMapper.toEntity(procedures);
         procedureService.persistAll(procedureList);
+        Treatment treatment = new Treatment();
         treatment.setProcedureList(procedureList);
         treatment.setDiagnosis(diagnosis);
         treatmentService.persist(treatment);
-        TreatmentDto treatmentDto = treatmentMapper.treatmentToTreatmentDto(treatment);
-        return new ResponseEntity<>(treatmentDto,HttpStatus.CREATED);
+        return new ResponseEntity<>(treatmentMapper.toDto(treatment),HttpStatus.CREATED);
     }
 }
