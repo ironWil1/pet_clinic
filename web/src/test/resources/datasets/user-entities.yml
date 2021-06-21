@@ -47,6 +47,13 @@ USER_ENTITIES:
     EMAIL: "user4@gmail.com"
     PASSWORD: "user4"
 
+ROLE:
+  - NAME: "ADMIN"
+  - NAME: "MANAGER"
+  - NAME: "CLIENT"
+  - NAME: "UNVERIFIED_CLIENT"
+  - NAME: "DOCTOR"
+
 USER_ROLE:
   - USER_ID: 100
     ROLE_NAME: "ADMIN"
