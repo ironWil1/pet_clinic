@@ -17,8 +17,9 @@ public class ApplicationRestTemplate extends RestTemplate {
     protected MockMvc mockMvc;
 
     @PostConstruct
-    public void initial() {
+    public void construct() {
         MockMvcClientHttpRequestFactory requestFactory = new MockMvcClientHttpRequestFactory(mockMvc);
         this.setRequestFactory(requestFactory);
+        this.setErrorHandler(new RestTemplateResponseErrorHandler());
     }
 }
