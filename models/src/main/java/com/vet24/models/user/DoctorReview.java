@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Entity
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class DoctorReview {
 
     @Id

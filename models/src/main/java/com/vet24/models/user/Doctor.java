@@ -8,9 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -25,12 +23,6 @@ public class Doctor extends User {
     )
     private Set<Diagnosis> diagnoses = new HashSet<>();
 
-//    @OneToMany(
-//            mappedBy = "doctor",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true
-//    )
-//    private List<Comment> comments = new ArrayList<>();
 
     public Doctor() {
         super();

@@ -1,8 +1,6 @@
 package com.vet24.service.user;
 
-import com.vet24.dao.user.CommentDao;
 import com.vet24.dao.user.DoctorReviewDao;
-import com.vet24.models.user.Comment;
 import com.vet24.models.user.DoctorReview;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,7 @@ public class DoctorReviewServiceImpl extends ReadWriteServiceImpl<Long, DoctorRe
     }
 
     @Override
-    public DoctorReview findViewByDoctorIdAndClientId(long doctorId, long clientId) {
-        return doctorReviewDao.findViewByDoctorIdAndClientId(doctorId, clientId);
+    public DoctorReview getByDoctorAndClientId(long doctorId, long clientId) {
+        return doctorReviewDao.getByDoctorAndClientId(doctorId, clientId);
     }
 }

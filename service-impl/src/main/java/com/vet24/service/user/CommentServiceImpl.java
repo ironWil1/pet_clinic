@@ -18,8 +18,4 @@ public class CommentServiceImpl extends ReadWriteServiceImpl<Long, Comment> impl
     }
 
 
-    @Override
-    public Comment findByUserId(long userId) {
-        return commentDao.findByUserId(userId);
-    }
 }

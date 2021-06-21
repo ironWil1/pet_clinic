@@ -58,7 +58,7 @@ public class ClientCommentController {
             DoctorReview doctorReview = null;
             User currentUser = userService.getCurrentUser();
             Long userId = currentUser.getId();
-            if (doctorReviewService.findViewByDoctorIdAndClientId(doctorId,userId) == null) {
+            if (doctorReviewService.getByDoctorAndClientId(doctorId,userId) == null) {
                 comment = new Comment(
                         userService.getCurrentUser(), text, LocalDateTime.now()
                 );
