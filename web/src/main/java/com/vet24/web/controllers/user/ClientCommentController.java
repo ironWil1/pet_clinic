@@ -1,16 +1,18 @@
 package com.vet24.web.controllers.user;
 
 import com.vet24.models.exception.RepeatedCommentException;
-import com.vet24.models.user.*;
-import com.vet24.service.user.*;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.CommentReaction;
 import com.vet24.models.user.Doctor;
+import com.vet24.models.user.DoctorReview;
+import com.vet24.models.user.User;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.CommentReactionService;
 import com.vet24.service.user.CommentService;
+import com.vet24.service.user.DoctorReviewService;
 import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

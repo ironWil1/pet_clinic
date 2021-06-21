@@ -12,7 +12,7 @@ public class DoctorReviewDaoImpl extends ReadWriteDaoImpl<Long, DoctorReview>  i
     @Override
     public DoctorReview getByDoctorAndClientId(long doctorId, long userId) {
         try {
-            return manager.createQuery("SELECT c FROM DoctorReview c WHERE c.doctor.id =:doctorId AND c.comment.user.id=:userId", DoctorReview.class)
+            return manager.createQuery("SELECT dr FROM DoctorReview dr WHERE dr.doctor.id =:doctorId AND dr.comment.user.id=:userId", DoctorReview.class)
                     .setParameter("doctorId", doctorId)
                     .setParameter("userId", userId)
                     .getSingleResult();
