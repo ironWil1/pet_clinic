@@ -15,7 +15,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,15 +46,21 @@ public class ClientController {
         this.resourceService = resourceService;
     }
 
-    @Operation(summary = "get current Client")
+    @GetMapping("")
+    @Operation(summary = "get current Client with his pets")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the Client",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientDto.class))),
-            @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ClientDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden access",
+                    content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Client not found exception",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "406", description = "Client not acceptable type",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
-    @GetMapping("")
-    public ResponseEntity<ClientDto> getCurrentClient(Principal principal) {
-        ClientDto clientDto = clientMapper.clientToClientDto(clientService.getClientByEmail(principal.getName()));
+    public ResponseEntity<ClientDto> getCurrentClient() {
+        ClientDto clientDto = clientMapper.clientToClientDto(clientService.getCurrentClient());
         return clientDto != null ? ResponseEntity.ok(clientDto) : ResponseEntity.notFound().build();
     }
 
@@ -58,8 +70,8 @@ public class ClientController {
             @ApiResponse(responseCode = "404", description = "Client or avatar is not found")
     })
     @GetMapping("/avatar")
-    public ResponseEntity<byte[]> getClientAvatar(Principal principal) {
-        Client client = clientService.getClientByEmail(principal.getName());
+    public ResponseEntity<byte[]> getClientAvatar() {
+        Client client = clientService.getCurrentClient();
         if (client != null) {
             String url = client.getAvatar();
             if (url != null) {
@@ -75,17 +87,19 @@ public class ClientController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UploadedFileDto.class))),
             @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)
     })
-    @PostMapping(value = "/avatar", consumes = {"multipart/form-data"})
-    public ResponseEntity<UploadedFileDto> persistClientAvatar(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
-        Client client = clientService.getClientByEmail(principal.getName());
+    @PostMapping(value = "/avatar", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    //public ResponseEntity<UploadedFileDto> persistClientAvatar(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<UploadedFileDto> persistClientAvatar(@RequestPart("file") MultipartFile file) throws IOException {
+        Client client = clientService.getCurrentClient();
         if (client == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            UploadedFileDto uploadedFileDto = uploadService.store(file);
-            client.setAvatar(uploadedFileDto.getUrl());
-            clientService.update(client);
-            return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
         }
+
+        UploadedFileDto uploadedFileDto = uploadService.store(file);
+        client.setAvatar(uploadedFileDto.getUrl());
+        clientService.update(client);
+
+        return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
     }
 
     private HttpHeaders addContentHeaders(String filename) {

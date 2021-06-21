@@ -25,9 +25,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 
 @Entity
 @Data
@@ -73,9 +72,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<>();
-        list.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-        return list;
+        return new HashSet<>() {{
+            add(new SimpleGrantedAuthority("ROLE_" + role.getAuthority()));
+        }};
     }
 
     @Override

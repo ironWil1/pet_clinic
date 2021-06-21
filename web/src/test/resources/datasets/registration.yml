@@ -3,11 +3,4 @@ ROLE:
   - NAME: "MANAGER"
   - NAME: "CLIENT"
   - NAME: "UNVERIFIED_CLIENT"
-
-
-
-
-
-
-
-
+  - NAME: "DOCTOR"

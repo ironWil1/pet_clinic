@@ -8,7 +8,7 @@ public interface ClientService extends ReadWriteService<Long, Client> {
 
     Client getClientByEmail(String email);
 
-    Client getCurrentClient(); // temporary solution. Always returns Client with id = 3
+    Client getCurrentClient();
 
     Client testGetCurrentClientEagerly();
 }

@@ -2,16 +2,14 @@ package com.vet24.service.user;
 
 import com.vet24.dao.user.ClientDao;
 import com.vet24.models.user.Client;
-import com.vet24.models.user.User;
 import com.vet24.service.ReadWriteServiceImpl;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implements ClientService{
+public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implements ClientService {
 
     private final ClientDao clientDao;
 
@@ -26,11 +24,11 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
         return clientDao.getClientByEmail(email);
     }
 
-    // Always returns Client with id = 3
     @Override
     @Transactional(readOnly = true)
     public Client getCurrentClient() {
-        return clientDao.getByKey(3L);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return clientDao.getClientByEmail(authentication.getName());
     }
 
     @Override

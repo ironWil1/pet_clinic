@@ -31,6 +31,7 @@ import com.vet24.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -44,6 +45,7 @@ import java.util.Set;
 
 
 @Component
+@Profile("!TestProfile")
 public class TestDataInitializer implements ApplicationRunner {
 
     private final RoleService roleService;

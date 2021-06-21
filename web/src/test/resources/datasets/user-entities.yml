@@ -17,12 +17,19 @@ USER_ENTITIES:
     PASSWORD: "manager"
   - ID: 102
     USER_TYPE: "CLIENT"
-    AVATAR: "test.png"
     ENABLED: true
     FIRSTNAME: "Client"
     LASTNAME: "Client"
     EMAIL: "client1@email.com"
     PASSWORD: "client"
+  - ID: 103
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Dr."
+    LASTNAME: "Petrov"
+    EMAIL: "doctor103@email.com"
+    PASSWORD: "doctor"
   - ID: 3
     USER_TYPE: "CLIENT"
     AVATAR: "test.png"
@@ -39,3 +46,17 @@ USER_ENTITIES:
     LASTNAME: "Petrov"
     EMAIL: "user4@gmail.com"
     PASSWORD: "user4"
+
+USER_ROLE:
+  - USER_ID: 100
+    ROLE_NAME: "ADMIN"
+  - USER_ID: 101
+    ROLE_NAME: "MANAGER"
+  - USER_ID: 102
+    ROLE_NAME: "CLIENT"
+  - USER_ID: 103
+    ROLE_NAME: "DOCTOR"
+  - USER_ID: 3
+    ROLE_NAME: "CLIENT"
+  - USER_ID: 4
+    ROLE_NAME: "CLIENT"
