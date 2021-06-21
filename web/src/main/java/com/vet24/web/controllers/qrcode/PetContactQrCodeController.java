@@ -1,6 +1,7 @@
 package com.vet24.web.controllers.qrcode;
 
 import com.vet24.models.dto.pet.PetContactDto;
+import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.PetContactMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
@@ -67,7 +68,7 @@ public class PetContactQrCodeController {
             petContact.setAddress("");
             petContact.setOwnerName(pet.getClient().getFirstname());
             petContact.setPetCode("");
-            petContact.setPhone(pet.getId());
+            petContact.setPhone(8L);
             petContact.setPet(pet);
             //
             //номер находится в карточке petContact, в клиенте нет номера, стоит пока заглушка в виде пустой строки
@@ -102,13 +103,13 @@ public class PetContactQrCodeController {
                                                                 @PathVariable("id") Long id) {
         if (petContactService.isExistByKey(id)) {
             PetContact petContactOld = petContactService.getByKey(id);
-            if (petContactDto.getOwnerName() == null) {
+            if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
                 petContactDto.setOwnerName(petContactOld.getOwnerName());
             }
-            if (petContactDto.getAddress() == null) {
+            if (petContactDto.getAddress() == null || petContactDto.getAddress().equals("")) {
                 petContactDto.setAddress(petContactOld.getAddress());
             }
-            if(petContactDto.getPhone() == null) {
+            if (petContactDto.getPhone() == null || petContactDto.getPhone() == 0) {
                 petContactDto.setPhone(petContactOld.getPhone());
             }
             PetContact petContactNew = petContactMapper.toEntity(petContactDto);
@@ -118,6 +119,15 @@ public class PetContactQrCodeController {
             petContactService.update(petContactOld);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else if (petService.isExistByKey(id)) {
+            if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
+                throw new BadRequestException("name can't is null or is empty for create Contact");
+            }
+            if (petContactDto.getAddress() == null || petContactDto.getAddress().equals("")) {
+                throw new BadRequestException("Address can't is null or is empty for create Contact");
+            }
+            if (petContactDto.getPhone() == null || petContactDto.getPhone() == 0) {
+                throw new BadRequestException("phone can't is null or empty for create Contact");
+            }
             Pet pet = petService.getByKey(id);
             PetContact petContact = petContactMapper.toEntity(petContactDto);
             petContact.setPetCode(petContactService.randomPetContactUniqueCode(id));
