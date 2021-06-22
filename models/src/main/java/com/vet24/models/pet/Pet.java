@@ -4,29 +4,15 @@ import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.medicine.Diagnosis;
-import com.vet24.models.pet.procedure.Procedure;
+import com.vet24.models.notification.Notification;
 import com.vet24.models.pet.reproduction.Reproduction;
+import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +94,13 @@ public abstract class Pet {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    private List<Notification> notifications = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<PetFound> petFounds = new ArrayList<>();
 
     protected Pet() {
@@ -122,10 +115,11 @@ public abstract class Pet {
     }
 
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
-                  List<Procedure> procedures, List<Reproduction> reproductions) {
+                  List<Procedure> procedures, List<Reproduction> reproductions, List<Notification> notifications) {
         this(name, birthDay, gender, breed, client);
         this.procedures = procedures;
         this.reproductions = reproductions;
+        this.notifications = notifications;
     }
 
     public void addProcedure(Procedure procedure) {
@@ -146,5 +140,15 @@ public abstract class Pet {
     public void removeReproduction(Reproduction reproduction) {
         reproductions.remove(reproduction);
         reproduction.setPet(null);
+    }
+
+    public void addNotification(Notification notification){
+        notifications.add(notification);
+        notification.setPet(this);
+    }
+
+    public void removeNotification(Notification notification) {
+        notifications.remove(notification);
+        notification.setPet(null);
     }
 }

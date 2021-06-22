@@ -107,6 +107,7 @@ public class ProcedureController {
 
         Medicine medicine = medicineService.getByKey(newProcedureDto.getMedicineId());
         procedure.setMedicine(medicine);
+        procedure.setPet(pet);
         procedureService.persist(procedure);
 
         pet.addProcedure(procedure);
@@ -181,8 +182,9 @@ public class ProcedureController {
         if (!procedure.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("pet not assigned to this procedure");
         }
-        pet.removeProcedure(procedure);
+
         procedureService.delete(procedure);
+        pet.removeProcedure(procedure);
         petService.update(pet);
 
         return new ResponseEntity<>(HttpStatus.OK);

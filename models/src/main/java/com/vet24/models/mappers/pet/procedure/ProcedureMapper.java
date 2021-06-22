@@ -9,6 +9,8 @@ import com.vet24.models.pet.procedure.Procedure;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Component
 @Mapper(componentModel = "spring")
 public abstract class ProcedureMapper implements
         DtoMapper<Procedure, ProcedureDto>, EntityMapper<ProcedureDto, Procedure> {

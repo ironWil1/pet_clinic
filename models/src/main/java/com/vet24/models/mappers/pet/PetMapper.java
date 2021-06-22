@@ -11,6 +11,10 @@ import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -34,9 +38,17 @@ public abstract class PetMapper implements
         mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractPetMapper::getPetType, Function.identity()));
     }
 
-    @Mapping(source = "petType", target = "type")
+    @Mapping(target = "type", source = "petType")
+    @Mapping(target = "notificationCount", source = "pet")
     @Override
     public abstract PetDto toDto(Pet pet);
+
+    protected int petToNotificationCountInt(Pet pet) {
+        return (int) pet.getNotifications().stream()
+                .filter(item -> item.getStartDate().getTime() <
+                        Timestamp.valueOf(LocalDateTime.of(LocalDate.now().plusDays(7L), LocalTime.MIDNIGHT)).getTime())
+                .count();
+    }
 
     @Override
     public Pet toEntity (PetDto petDto) {
