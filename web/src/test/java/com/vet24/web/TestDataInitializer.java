@@ -2,8 +2,10 @@ package com.vet24.web;
 
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.Client;
+import com.vet24.models.user.Manager;
 import com.vet24.models.user.Role;
 import com.vet24.service.user.ClientService;
+import com.vet24.service.user.ManagerService;
 import com.vet24.service.user.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -21,11 +23,13 @@ public class TestDataInitializer implements ApplicationRunner {
 
     private final RoleService roleService;
     private final ClientService clientService;
+    private final ManagerService managerService;
 
     @Autowired
-    public TestDataInitializer(RoleService roleService, ClientService clientService) {
+    public TestDataInitializer(RoleService roleService, ClientService clientService, ManagerService managerService) {
         this.roleService = roleService;
         this.clientService = clientService;
+        this.managerService = managerService;
     }
 
     @Override
@@ -50,5 +54,9 @@ public class TestDataInitializer implements ApplicationRunner {
         Client client3 = new Client("Любимый", "Клиент", "user3@gmail.com", "client",
                 new Role(RoleNameEnum.CLIENT), new HashSet<>());
         clientService.persist(client3);
+
+        Manager manager = new Manager("Иван", "Петрович", "manager@gmail.com", "manager",
+                new Role(RoleNameEnum.MANAGER));
+        managerService.persist(manager);
     }
 }

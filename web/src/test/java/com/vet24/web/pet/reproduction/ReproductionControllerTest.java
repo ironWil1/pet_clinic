@@ -15,10 +15,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.LocalDate;
 
 @DBRider
+@WithUserDetails(value = "user3@gmail.com")
 public class ReproductionControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     ReproductionController reproductionController;

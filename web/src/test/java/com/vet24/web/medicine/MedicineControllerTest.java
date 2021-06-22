@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,6 +23,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DBRider
+@WithUserDetails(value = "manager@gmail.com")
 public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
@@ -50,7 +52,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get medicine by id
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeGetMedicineById() throws Exception {
         Medicine medicine = medicineDao.getByKey(100L);
         ResponseEntity<MedicineDto> response = testRestTemplate
@@ -62,7 +64,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //add medicine
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeAddMedicine() throws URISyntaxException {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
@@ -80,7 +82,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //put medicine by id
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeUpdateMedicineById() throws Exception {
         medicineDto.setId(101L);
         HttpEntity<MedicineDto> entity = new HttpEntity<>(medicineDto, headers);
@@ -94,7 +96,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //upload icon for medicine by id
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeUpdateMedicineIcon() throws Exception {
         LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("file", new org.springframework.core.io.ClassPathResource("test.png"));
@@ -108,7 +110,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get icon for medicine by id
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeGetMedicineIconById() throws Exception {
         shouldBeUpdateMedicineIcon();
         ResponseEntity<byte[]> response = testRestTemplate
@@ -118,7 +120,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //delete medicine by id
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeDeleteMedicine() throws Exception {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
@@ -133,7 +135,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //test search medicine
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeSearchMedicine() throws Exception {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(URI + "/search")
                 .queryParam("manufactureName")
