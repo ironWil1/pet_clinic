@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 @Slf4j
 @DBRider
@@ -60,6 +61,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
-        Mockito.verify(mailService).sendWelcomeMessage(anyString(), anyString(), anyString());
+        Mockito.verify(mailService)
+                .sendWelcomeMessage(eq("342354234@gmail.com"), eq("Vera"), anyString());
     }
 }

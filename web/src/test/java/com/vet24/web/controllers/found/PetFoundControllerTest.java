@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 
 @DBRider
 public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
@@ -43,7 +43,9 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
                 .param("petCode", petCode))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andDo(MockMvcResultHandlers.print());
-        Mockito.verify(petFoundMailSender).sendTextAndGeolocationPet(anyString(), anyString(), anyString());
+        Mockito.verify(petFoundMailSender)
+                .sendTextAndGeolocationPet(anyString(), anyString(),
+                        Mockito.matches(".*Some text.*\\s+.*1\\.2345678.+2\\.3456789.*"));
     }
 
     // get PetContact by petCode is not found - error 404
