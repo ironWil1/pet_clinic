@@ -36,7 +36,7 @@ public class PetContact {
     private String address;
 
     @NonNull
-    @Column(unique = true)
+    @Column
     private Long phone;
 
     @NonNull
