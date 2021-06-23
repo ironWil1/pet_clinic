@@ -13,11 +13,19 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.File;
 import java.security.Principal;
+
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DBRider
 @WithUserDetails(value = "client1@email.com")
@@ -37,7 +45,11 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     }
 
     @Test
-    public void uploadClientAvatar() {
+    public void uploadClientAvatarAndVerify() throws Exception {
+        /*
+        // Resolved Exception: Type = org.springframework.web.multipart.support.MissingServletRequestPartException
+        // Error message = Required request part 'file' is not present
+
         ClassPathResource classPathResource = new ClassPathResource("test.png");
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", classPathResource);
@@ -48,32 +60,16 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
         ResponseEntity<UploadedFileDto> response = testRestTemplate.postForEntity(URI + "/avatar", requestEntity, UploadedFileDto.class);
 
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());*/
+
+        ClassPathResource classPathResource = new ClassPathResource("test.png");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
+                classPathResource.getFilename(), null, classPathResource.getInputStream());
+        mockMvc.perform(multipart(URI + "/avatar")
+                .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
+                .andExpect(status().isOk());
+
+        ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI + "/avatar", byte[].class);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
-
-    /*
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void getClientAvatar() {
-        persistClientAvatar();
-        ResponseEntity<byte[]> response = testRestTemplate
-                .getForEntity(URI + "/avatar", byte[].class);
-
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void persistClientAvatar() {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("file", new ClassPathResource("test.png"));
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
-        ResponseEntity<String> response = testRestTemplate
-                .exchange(URI + "/avatar", HttpMethod.POST, entity, String.class, 3);
-
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-    */
 }

@@ -12,7 +12,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -21,6 +23,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DBRider
 @WithUserDetails(value = "manager@gmail.com")
@@ -33,7 +37,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     private MedicineDaoImpl medicineDao;
     private final String URI = "http://localhost:8090/api/manager/medicine";
-    private HttpHeaders headers = new HttpHeaders();
+    private final HttpHeaders headers = new HttpHeaders();
     private Medicine medicine;
     private MedicineDto medicineDto;
 
@@ -98,23 +102,14 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeUpdateMedicineIcon() throws Exception {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("file", new org.springframework.core.io.ClassPathResource("test.png"));
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
-        ResponseEntity<String> response = testRestTemplate
-                .exchange(URI + "/{id}/set-pic", HttpMethod.POST, entity, String.class, 100);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
+        ClassPathResource classPathResource = new ClassPathResource("test.png");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
+                classPathResource.getFilename(), null, classPathResource.getInputStream());
+        mockMvc.perform(multipart(URI + "/{id}/set-pic", 100)
+                .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
+                .andExpect(status().isOk());
 
-    //get icon for medicine by id
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
-    public void shouldBeGetMedicineIconById() throws Exception {
-        shouldBeUpdateMedicineIcon();
-        ResponseEntity<byte[]> response = testRestTemplate
-                .getForEntity(URI + "/{id}/set-pic", byte[].class, 100);
+        ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI + "/{id}/set-pic", byte[].class, 100);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 

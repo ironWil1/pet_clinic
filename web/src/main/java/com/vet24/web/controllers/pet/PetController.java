@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -131,7 +132,7 @@ public class PetController {
             @ApiResponse(responseCode = "404", description = "Client or Pet is not found", content = @Content),
             @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")
     })
-    @PostMapping(value = "/{petId}/avatar", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/{petId}/avatar", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UploadedFileDto> persistPetAvatar(@PathVariable("petId") Long petId,
                                                             @RequestParam("file") MultipartFile file) throws IOException {
         Client client = clientService.getCurrentClient();

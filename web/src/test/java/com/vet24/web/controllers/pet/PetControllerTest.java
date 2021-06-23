@@ -22,10 +22,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.time.LocalDate;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DBRider
 @WithUserDetails(value = "client1@email.com")
@@ -157,16 +161,6 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void getPetAvatarSuccess() {
-        persistPetAvatarSuccess();
-        ResponseEntity<byte[]> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/avatar", byte[].class, 102);
-
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void getPetAvatarButPetDoesNotExistNotFound() {
         Pet pet = petDao.getByKey(69000L);
         ResponseEntity<byte[]> response = testRestTemplate
@@ -178,15 +172,15 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void persistPetAvatarSuccess() {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("file", new ClassPathResource("test.png"));
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
-        ResponseEntity<String> response = testRestTemplate
-                .exchange(URI + "/{petId}/avatar", HttpMethod.POST, entity, String.class, 102);
+    public void persistPetAvatarSuccess() throws Exception {
+        ClassPathResource classPathResource = new ClassPathResource("test.png");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
+                classPathResource.getFilename(), null, classPathResource.getInputStream());
+        mockMvc.perform(multipart(URI + "/{petId}/avatar", 102)
+                .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
+                .andExpect(status().isOk());
 
+        ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI + "/{petId}/avatar", byte[].class, 102);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
