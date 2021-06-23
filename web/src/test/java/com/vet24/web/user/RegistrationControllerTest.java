@@ -22,7 +22,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     final String URI = "http://localhost:8090/api/registration";
 
     @Test
-    @DataSet(value = "/datasets/registration.yml", cleanBefore = true)
+    @DataSet(value = "/datasets/user-entities.yml", cleanBefore = true)
     public void shouldBeNotAcceptableWrongEmail() {
         RegisterDto registerDto = new RegisterDto("342354234.com","Vera","P",
                 "Congo","Congo");
@@ -35,7 +35,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(value = "/datasets/registration.yml", cleanBefore = true)
+    @DataSet(value = "/datasets/user-entities.yml", cleanBefore = true)
     public void shouldBeNotAcceptablePasswords(){
         RegisterDto registerDto = new RegisterDto("342354234@com","Vera","P",
                 "Congo","Congo2");
@@ -48,7 +48,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(value = "/datasets/registration.yml", cleanBefore = true)
+    @DataSet(value = "/datasets/user-entities.yml", cleanBefore = true)
     public void shouldBeCreated()  {
         RegisterDto registerDto = new RegisterDto("342354234@gmail.com","Vera","P",
                 "Congo","Congo");
@@ -56,8 +56,8 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
         HttpHeaders headers = new HttpHeaders();
 
         HttpEntity<RegisterDto> entity = new HttpEntity<>(registerDto, headers);
-        ResponseEntity<RegisterDto> responseEntity =  testRestTemplate
-                .exchange(URI, HttpMethod.POST, entity, RegisterDto.class);
+        ResponseEntity<Void> responseEntity =  testRestTemplate
+                .exchange(URI, HttpMethod.POST, entity, Void.class);
         Assert.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
     }
 }
