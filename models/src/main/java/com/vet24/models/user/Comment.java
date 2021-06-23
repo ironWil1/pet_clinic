@@ -45,9 +45,6 @@ public class Comment implements Serializable {
     @Column(nullable=false)
     private LocalDateTime dateTime;
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    private Doctor doctor;
-
     @OneToMany(
             mappedBy = "comment",
             cascade = CascadeType.ALL,

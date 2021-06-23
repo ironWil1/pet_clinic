@@ -58,13 +58,7 @@ public class Client extends User {
         this.pets = pets;
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
 
     public List<CommentReaction> getCommentReactions() {
         return commentReactions;
