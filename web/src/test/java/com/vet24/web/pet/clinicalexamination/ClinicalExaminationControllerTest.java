@@ -48,9 +48,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
 
     @Before
     public void createNewClinicalExaminationAndClinicalExaminationDto() {
-        this.clinicalExaminationDtoNew = new ClinicalExaminationDto(4L, 10, true, "textNew");
-        this.clinicalExaminationDto1 = new ClinicalExaminationDto(100L, 20, true, "text1");
-        this.clinicalExaminationDto3 = new ClinicalExaminationDto(102L, 40, true, "text3");
+        this.clinicalExaminationDtoNew = new ClinicalExaminationDto(4L, 10.0, true, "textNew");
+        this.clinicalExaminationDto1 = new ClinicalExaminationDto(100L, 20.0, true, "text1");
+        this.clinicalExaminationDto3 = new ClinicalExaminationDto(102L, 40.0, true, "text3");
     }
 
     // + 1. get clinical examination by id - success (pet id 102 and examination id 102 found in db test_pets)
@@ -95,10 +95,10 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
-    // + add clinical examination - success
+    // - add clinical examination - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testAddRClinicalExaminationSuccess() {
+    public void testAddClinicalExaminationSuccess() {
         int beforeCount = clinicalExaminationDao.getAll().size();
         HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDtoNew, HEADERS);
         ResponseEntity<ClinicalExaminationDto> response = testRestTemplate
@@ -263,23 +263,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertNotNull(afterExamination);
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(response.getBody(), new ExceptionDto("clinical examination not assigned to this pet"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    // - delete clinical examination by id - error pet not yours
-    @Test()
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testDeleteClinicalExaminationError400refClientPet() {
-        int beforeCount = clinicalExaminationDao.getAll().size();
-        HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/exam/{examinationId}", HttpMethod.DELETE, request, ExceptionDto.class, 100, 100);
-        int afterCount = clinicalExaminationDao.getAll().size();
-        ClinicalExamination afterExamination = clinicalExaminationDao.getByKey(100L);
-
-        Assert.assertNotNull(afterExamination);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

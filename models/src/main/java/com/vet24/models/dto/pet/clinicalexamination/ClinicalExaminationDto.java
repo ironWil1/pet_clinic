@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClinicalExaminationDto {
     Long id;
-    Integer weight;
+    Double weight;
     Boolean isCanMove;
     String text;
 

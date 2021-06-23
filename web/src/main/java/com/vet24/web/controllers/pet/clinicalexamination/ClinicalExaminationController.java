@@ -15,15 +15,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.apache.tomcat.jni.Local;
-import org.hibernate.type.LocalDateType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
-
+import org.apache.tomcat.jni.Local;
 import java.time.LocalDate;
 import java.util.Date;
+
 
 @RestController
 @RequestMapping("/api/doctor/pet/{petId}/exam")
@@ -34,15 +33,15 @@ public class ClinicalExaminationController {
     private final ClinicalExaminationMapper clinicalExaminationMapper;
     private final DoctorService doctorService;
 
-    public ClinicalExaminationController(PetService petService,
-                                         ClinicalExaminationService clinicalExaminationService,
-                                         ClinicalExaminationMapper clinicalExaminationMapper,
+    public ClinicalExaminationController(PetService petService, ClinicalExaminationService clinicalExaminationService,
+                                         ClinicalExaminationMapper clinicalExaminationMapper, //почему то появилась ошибка
                                          DoctorService doctorService) {
         this.petService = petService;
         this.clinicalExaminationService = clinicalExaminationService;
         this.clinicalExaminationMapper = clinicalExaminationMapper;
         this.doctorService = doctorService;
     }
+
 
     @Operation(
             summary = "get clinical examination by id",
@@ -90,9 +89,7 @@ public class ClinicalExaminationController {
                     "created",
                     content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class))),
             @ApiResponse(responseCode = "404", description = "pet with this id not found",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "pet has no doctor",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("")
     public ResponseEntity<ClinicalExaminationDto> save(@PathVariable Long petId,
@@ -105,16 +102,11 @@ public class ClinicalExaminationController {
         }
         Doctor doctor = doctorService.getCurrentDoctor();
         pet.setDoctor(doctor);
+        clinicalExamination.setId(null);
         clinicalExamination.setDoctor(doctor);
         clinicalExamination.setDate(LocalDate.now());
-
-
-        if (!pet.getDoctor().getId().equals(doctor.getId())) {
-            throw new BadRequestException("pet has no doctor");
-        }
-        clinicalExamination.setId(null);
         clinicalExaminationService.persist(clinicalExamination);
-
+        pet.setWeight(clinicalExamination.getWeight());
         pet.addClinicalExamination(clinicalExamination);
         petService.update(pet);
         return new ResponseEntity<>(clinicalExaminationMapper.clinicalExaminationToClinicalExaminationDto(clinicalExamination),
@@ -164,6 +156,7 @@ public class ClinicalExaminationController {
         pet.setDoctor(doctor);
         clinicalExamination.setDoctor(doctor);
         clinicalExamination.setDate(LocalDate.now());
+        pet.setWeight(clinicalExamination.getWeight());
 //        clinicalExaminationService.update(clinicalExamination.setDate(LocalDate.now()));
         clinicalExamination.setDate(LocalDate.now());
         clinicalExamination =
@@ -201,8 +194,8 @@ public class ClinicalExaminationController {
         if (clinicalExamination == null) {
             throw new NotFoundException("clinical examination not found");
         }
-        if (!pet.getDoctor().getId().equals(doctor.getId())) {
-            throw new BadRequestException("no doctor appointed");
+        if (doctor == null) {
+            throw new NotFoundException("there is no doctor assigned to this pet");
         }
         if (!clinicalExamination.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("clinical examination not assigned to this pet");
@@ -212,6 +205,7 @@ public class ClinicalExaminationController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
 
 }

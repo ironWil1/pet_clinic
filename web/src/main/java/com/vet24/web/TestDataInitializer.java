@@ -178,7 +178,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void clinicalExaminationInitializer(){
         List<ClinicalExamination> clinicalExaminations = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            clinicalExaminations.add(new ClinicalExamination(LocalDate.now(), petService.getByKey((long) i), doctorService.getByKey((long) i + 30), i, true, "text"));
+            clinicalExaminations.add(new ClinicalExamination(LocalDate.now(), petService.getByKey((long) i), doctorService.getByKey((long) i + 30), (double)i, true, "text"));
         }
         clinicalExaminationService.persistAll(clinicalExaminations);
     }

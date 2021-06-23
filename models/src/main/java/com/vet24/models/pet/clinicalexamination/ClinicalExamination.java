@@ -31,7 +31,7 @@ public class ClinicalExamination implements Serializable {
     private Doctor doctor;
 
     @Column
-    private Integer weight; //вес, при том последний вес аписывается в таблицу животного
+    private Double weight; //вес, при том последний вес аписывается в таблицу животного
 
     @Column
     private Boolean isCanMove; // животное здорово и выдержит перевозку до места назначения? true/false
@@ -42,7 +42,7 @@ public class ClinicalExamination implements Serializable {
     public ClinicalExamination(LocalDate date,
                                Pet pet,
                                Doctor doctor,
-                               Integer weight,
+                               Double weight,
                                Boolean isCanMove, String text) {
         this.date = date;
         this.pet = pet;
