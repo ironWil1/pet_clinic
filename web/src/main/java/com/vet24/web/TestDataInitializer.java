@@ -59,6 +59,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final CommentService commentService;
     private final CommentReactionService commentReactionService;
     private final DiagnosisService diagnosisService;
+    private final TopicService topicService;
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
@@ -76,7 +77,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                ReproductionService reproductionService, PetContactService petContactService,
                                CatService catService, DogService dogService, DoctorService doctorService,
                                PetService petService, Environment environment, CommentService commentService,
-                               CommentReactionService commentReactionService,DiagnosisService diagnosisService) {
+                               CommentReactionService commentReactionService, DiagnosisService diagnosisService, TopicService topicService) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
@@ -94,6 +95,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.commentService = commentService;
         this.commentReactionService = commentReactionService;
         this.diagnosisService = diagnosisService;
+        this.topicService = topicService;
     }
 
     public void roleInitialize() {
@@ -223,6 +225,15 @@ public class TestDataInitializer implements ApplicationRunner {
         }
     }
 
+    public void topicInitializer() {
+        List<Topic> listTopic = new ArrayList<>();
+        List<Comment> commentList = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            listTopic.add(new Topic(userService.getByKey((long)i), LocalDateTime.now(), LocalDateTime.now(), "topic" + i, "content" + i, false, commentList));
+        }
+        topicService.persistAll(listTopic);
+    }
+
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
@@ -239,6 +250,7 @@ public class TestDataInitializer implements ApplicationRunner {
             petContactInitializer();
             commentInitializer();
             likeInitilaizer();
+            topicInitializer();
         }
     }
 }
