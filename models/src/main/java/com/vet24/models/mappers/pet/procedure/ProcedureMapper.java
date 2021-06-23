@@ -1,6 +1,6 @@
 package com.vet24.models.mappers.pet.procedure;
 
-import com.vet24.models.dto.pet.procedure.*;
+import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
 import com.vet24.models.mappers.DtoMapper;
@@ -23,10 +23,12 @@ import java.util.stream.Collectors;
 public abstract class ProcedureMapper implements
         DtoMapper<Procedure, ProcedureDto>, EntityMapper<ProcedureDto, Procedure> {
 
+
     private Map<ProcedureType, AbstractProcedureMapper> mapperMap;
 
     @Autowired
     private List<AbstractProcedureMapper> mapperList;
+
 
     @PostConstruct
     private void init() {
