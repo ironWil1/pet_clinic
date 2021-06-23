@@ -1,8 +1,8 @@
 package com.vet24.models.pet.procedure;
 
-import com.vet24.models.medicine.Medicine;
-
 import com.vet24.models.enums.ProcedureType;
+import com.vet24.models.medicine.Medicine;
+import com.vet24.models.notification.Notification;
 import com.vet24.models.pet.Pet;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"pet","medicine"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
@@ -24,6 +24,7 @@ public abstract class Procedure implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column
@@ -47,6 +48,10 @@ public abstract class Procedure implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Pet pet;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notification_id")
+    private Notification notification;
 
     protected Procedure(LocalDate date, ProcedureType type, String medicineBatchNumber,
                         Boolean isPeriodical, Integer periodDays, Medicine medicine, Pet pet) {

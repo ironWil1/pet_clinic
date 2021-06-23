@@ -5,7 +5,6 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.vet24.models.dto.pet.PetContactDto;
 import com.vet24.web.ControllerAbstractIntegrationTest;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -43,7 +42,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     @DataSet(cleanBefore = true, value = {"/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void testUpdatePetContactForPetSuccess() throws Exception {
         final String URL_POST_UPDATE = "/api/client/pet/103/qr";
-        PetContactDto petContact1 = new PetContactDto("Мария", "Невского 17", "4854789899");
+        PetContactDto petContact1 = new PetContactDto("Мария", "Невского 17", 4854789899L);
         String bodyUpdate = (new ObjectMapper()).valueToTree(petContact1).toString();
         this.mockMvc.perform(MockMvcRequestBuilders.post(URL_POST_UPDATE)
                 .content(bodyUpdate).contentType(APPLICATION_JSON_UTF8))
@@ -56,7 +55,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     @DataSet(cleanBefore = true, value = {"/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void testCreatePetContactForPetSuccess() throws Exception {
         final String URL_POST_CREATE = "/api/client/pet/106/qr";
-        PetContactDto petContact2 = new PetContactDto("Мария", "Невского 17", "5647564343");
+        PetContactDto petContact2 = new PetContactDto("Мария", "Невского 17", 5647564343L);
         String bodyCreate = (new ObjectMapper()).valueToTree(petContact2).toString();
         this.mockMvc.perform(MockMvcRequestBuilders.post(URL_POST_CREATE)
                 .content(bodyCreate).contentType(APPLICATION_JSON_UTF8))
@@ -69,7 +68,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     @DataSet(cleanBefore = true, value = {"/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void testUpdateAndCreatePetContactForPetError404Pet() throws Exception {
         final String URL_POST_NOT_FOUND_ID_PET = "/api/client/pet/1000/qr";
-        PetContactDto petContact3 = new PetContactDto("Мария", "Невского 17", "2456786957");
+        PetContactDto petContact3 = new PetContactDto("Мария", "Невского 17", 2456786957L);
         String body = (new ObjectMapper()).valueToTree(petContact3).toString();
         this.mockMvc.perform(MockMvcRequestBuilders.post(URL_POST_NOT_FOUND_ID_PET)
                 .content(body).contentType(APPLICATION_JSON_UTF8))

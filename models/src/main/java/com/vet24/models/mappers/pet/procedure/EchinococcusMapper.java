@@ -4,19 +4,24 @@ import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.EchinococcusDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.enums.ProcedureType;
+import com.vet24.models.mappers.DtoMapper;
+import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.Procedure;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface EchinococcusMapper extends AbstractProcedureMapper {
+public interface EchinococcusMapper extends AbstractProcedureMapper,
+        DtoMapper<EchinococcusProcedure, EchinococcusDto>, EntityMapper<EchinococcusDto, EchinococcusProcedure> {
 
     @Mapping(source = "medicine.id", target = "medicineId")
-    EchinococcusDto echinococcusToEchinococcusDto(EchinococcusProcedure echinococcusProcedure);
+    @Override
+    EchinococcusDto toDto(EchinococcusProcedure echinococcusProcedure);
 
     @Mapping(source = "medicineId", target = "medicine.id")
-    EchinococcusProcedure echinococcusDtoToEchinococcus(EchinococcusDto echinococcusDto);
+    @Override
+    EchinococcusProcedure toEntity(EchinococcusDto echinococcusDto);
 
     @Mapping(source = "medicineId", target = "medicine.id")
     EchinococcusProcedure procedureDtoToEchinococcus(ProcedureDto procedureDto);
@@ -27,8 +32,8 @@ public interface EchinococcusMapper extends AbstractProcedureMapper {
     }
 
     @Override
-    default Procedure abstractProcedureDtoToProcedure(AbstractNewProcedureDto abstractNewProcedureDto) {
-        return echinococcusDtoToEchinococcus((EchinococcusDto) abstractNewProcedureDto);
+    default Procedure abstractNewProcedureDtoToProcedure(AbstractNewProcedureDto abstractNewProcedureDto) {
+        return toEntity((EchinococcusDto) abstractNewProcedureDto);
     }
 
     @Override

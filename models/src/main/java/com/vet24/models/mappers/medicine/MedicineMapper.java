@@ -1,19 +1,13 @@
 package com.vet24.models.mappers.medicine;
 
 import com.vet24.models.dto.medicine.MedicineDto;
+import com.vet24.models.mappers.DtoMapper;
+import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.medicine.Medicine;
 
 import org.mapstruct.Mapper;
 
-import java.util.List;
-
-
 @Mapper(componentModel = "spring")
-public interface MedicineMapper {
+public interface MedicineMapper extends DtoMapper<Medicine, MedicineDto>, EntityMapper<MedicineDto, Medicine> {
 
-    MedicineDto medicineToMedicineDto(Medicine medicine);
-
-    Medicine medicineDtoToMedicine(MedicineDto medicineDto);
-
-    List<MedicineDto> medicineListToMedicineDto(List<Medicine> medicineList);
 }

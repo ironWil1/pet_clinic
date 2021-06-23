@@ -4,6 +4,7 @@ import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.exception.BadRequestException;
+import com.vet24.models.mappers.pet.procedure.AbstractNewProcedureMapper;
 import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
@@ -33,15 +34,18 @@ public class ProcedureController {
     private final PetService petService;
     private final ProcedureService procedureService;
     private final ProcedureMapper procedureMapper;
+    private final AbstractNewProcedureMapper newProcedureMapper;
     private final ClientService clientService;
     private final MedicineService medicineService;
 
     @Autowired
     public ProcedureController(PetService petService, ProcedureService procedureService,
-                               ProcedureMapper procedureMapper, ClientService clientService, MedicineService medicineService) {
+                               ProcedureMapper procedureMapper, AbstractNewProcedureMapper newProcedureMapper,
+                               ClientService clientService, MedicineService medicineService) {
         this.petService = petService;
         this.procedureService = procedureService;
         this.procedureMapper = procedureMapper;
+        this.newProcedureMapper = newProcedureMapper;
         this.clientService = clientService;
         this.medicineService = medicineService;
     }
@@ -73,7 +77,7 @@ public class ProcedureController {
         if (!procedure.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("pet not assigned to this procedure");
         }
-        ProcedureDto procedureDto = procedureMapper.procedureToProcedureDto(procedure);
+        ProcedureDto procedureDto = procedureMapper.toDto(procedure);
 
         return new ResponseEntity<>(procedureDto, HttpStatus.OK);
     }
@@ -92,7 +96,7 @@ public class ProcedureController {
                                              @RequestBody AbstractNewProcedureDto newProcedureDto) {
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
-        Procedure procedure = procedureMapper.abstractNewProcedureDtoToProcedure(newProcedureDto);
+        Procedure procedure = newProcedureMapper.toEntity(newProcedureDto);
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
@@ -103,12 +107,13 @@ public class ProcedureController {
 
         Medicine medicine = medicineService.getByKey(newProcedureDto.getMedicineId());
         procedure.setMedicine(medicine);
+        procedure.setPet(pet);
         procedureService.persist(procedure);
 
         pet.addProcedure(procedure);
         petService.update(pet);
 
-        return new ResponseEntity<>(procedureMapper.procedureToProcedureDto(procedure), HttpStatus.CREATED);
+        return new ResponseEntity<>(procedureMapper.toDto(procedure), HttpStatus.CREATED);
     }
 
     @Operation(summary = "update a Procedure")
@@ -142,13 +147,13 @@ public class ProcedureController {
         if (!procedureDto.getId().equals(procedureId)) {
             throw new BadRequestException("procedureId in path and in body not equals");
         }
-        procedure = procedureMapper.procedureDtoToProcedure(procedureDto);
+        procedure = procedureMapper.toEntity(procedureDto);
         Medicine medicine = medicineService.getByKey(procedureDto.getMedicineId());
         procedure.setMedicine(medicine);
         procedure.setPet(pet);
         procedureService.update(procedure);
 
-        return new ResponseEntity<>(procedureMapper.procedureToProcedureDto(procedure), HttpStatus.OK);
+        return new ResponseEntity<>(procedureMapper.toDto(procedure), HttpStatus.OK);
     }
 
     @Operation(summary = "delete a Procedure")
@@ -177,8 +182,9 @@ public class ProcedureController {
         if (!procedure.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("pet not assigned to this procedure");
         }
-        pet.removeProcedure(procedure);
+
         procedureService.delete(procedure);
+        pet.removeProcedure(procedure);
         petService.update(pet);
 
         return new ResponseEntity<>(HttpStatus.OK);

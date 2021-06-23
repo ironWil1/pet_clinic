@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class CommentReactionDaoImpl extends ReadWriteDaoImpl<CommentReactionId, CommentReaction> implements CommentReactionDao {
-
 }

@@ -39,7 +39,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
     public void createNewMedicineAndMedicineDto() {
         medicine = new Medicine("daulet", "jm", "dsad", "test");
         medicine.setId(1L);
-        medicineDto = medicineMapper.medicineToMedicineDto(medicine);
+        medicineDto = medicineMapper.toDto(medicine);
     }
 
     //test controller exist
@@ -68,7 +68,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
         int countRow = medicineListBefore.size();
         Medicine medicine = new Medicine("tetetete", "etetete", "ttrtrt", "ttrrtr");
         medicine.setId(3L);
-        MedicineDto medicineDto = medicineMapper.medicineToMedicineDto(medicine);
+        MedicineDto medicineDto = medicineMapper.toDto(medicine);
         HttpEntity<MedicineDto> request = new HttpEntity<>(medicineDto, headers);
         ResponseEntity<MedicineDto> response = testRestTemplate
                 .postForEntity(URI, request, MedicineDto.class);

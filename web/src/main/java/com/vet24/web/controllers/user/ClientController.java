@@ -50,7 +50,7 @@ public class ClientController {
     })
     @GetMapping()
     public ResponseEntity<ClientDto> getCurrentClient() {
-        ClientDto clientDto = clientMapper.clientToClientDto(clientService.getCurrentClient());
+        ClientDto clientDto = clientMapper.toDto(clientService.getCurrentClient());
         return clientDto != null ? ResponseEntity.ok(clientDto) : ResponseEntity.notFound().build();
     }
 

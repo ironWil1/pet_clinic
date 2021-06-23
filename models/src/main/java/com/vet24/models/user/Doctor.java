@@ -1,6 +1,5 @@
 package com.vet24.models.user;
 
-import com.vet24.models.medicine.Diagnosis;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @DiscriminatorValue("DOCTOR")
-@EqualsAndHashCode(callSuper = true,exclude = {"diagnoses","comments"})
+@EqualsAndHashCode(callSuper = true,onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 public class Doctor extends User {
 

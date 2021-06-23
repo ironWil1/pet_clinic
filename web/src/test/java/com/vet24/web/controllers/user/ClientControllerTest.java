@@ -30,7 +30,7 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void getCurrentClient() {
-        ClientDto clientDto = clientMapper.clientToClientDto(clientService.testGetCurrentClientWithPets());
+        ClientDto clientDto = clientMapper.toDto(clientService.testGetCurrentClientWithPets());
         ResponseEntity<ClientDto> response = testRestTemplate
                 .getForEntity(URI, ClientDto.class);
 

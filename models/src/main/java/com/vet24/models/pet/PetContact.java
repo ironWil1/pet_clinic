@@ -1,11 +1,11 @@
 package com.vet24.models.pet;
-
-
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,13 +17,16 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class PetContact {
 
     @Id
+    @EqualsAndHashCode.Include
     private Long id;
 
     @NonNull
@@ -33,7 +36,7 @@ public class PetContact {
     private String address;
 
     @NonNull
-    @Column(unique = true)
+    @Column
     private Long phone;
 
     @NonNull
