@@ -257,6 +257,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testDeleteProcedureSuccess() {
         int beforeCount = procedureDao.getAll().size();
+        System.err.println("beforeCount "+beforeCount);
         ResponseEntity<Void> response = testRestTemplate.exchange(URI + "/{petId}/procedure/{procedureId}",
                 HttpMethod.DELETE, new HttpEntity<>(HEADERS), Void.class, 102, 102);
         int afterCount = procedureDao.getAll().size();

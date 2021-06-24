@@ -22,7 +22,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void testCreateQrCodeForViewOnePetContactSuccess() throws Exception {
-        ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI, byte[].class, 103);
+        ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI, byte[].class, 107);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -38,7 +38,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void testUpdatePetContactForPetSuccess() throws Exception {
-        PetContactDto petContact = new PetContactDto("Мария", "Невского 17", "4854789899");
+        PetContactDto petContact = new PetContactDto("Мария", "Невского 17", 4854789899L);
         HttpEntity<PetContactDto> entity = new HttpEntity<>(petContact, new HttpHeaders());
         ResponseEntity<PetContactDto> response = testRestTemplate.postForEntity(URI, entity, PetContactDto.class, 103);
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -48,7 +48,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void testCreatePetContactForPetSuccess() throws Exception {
-        PetContactDto petContact = new PetContactDto("Мария", "Невского 17", "5647564343");
+        PetContactDto petContact = new PetContactDto("Мария", "Невского 17", 5647564343L);
         HttpEntity<PetContactDto> entity = new HttpEntity<>(petContact, new HttpHeaders());
         ResponseEntity<PetContactDto> response = testRestTemplate.postForEntity(URI, entity, PetContactDto.class, 106);
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -58,7 +58,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void testUpdateAndCreatePetContactForPetError404Pet() throws Exception {
-        PetContactDto petContact = new PetContactDto("Мария", "Невского 17", "2456786957");
+        PetContactDto petContact = new PetContactDto("Мария", "Невского 17", 2456786957L);
         HttpEntity<PetContactDto> entity = new HttpEntity<>(petContact, new HttpHeaders());
         ResponseEntity<PetContactDto> response = testRestTemplate.postForEntity(URI, entity, PetContactDto.class, 1000);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

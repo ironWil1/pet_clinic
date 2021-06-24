@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 
 @Component
@@ -44,15 +44,15 @@ public class TestDataInitializer implements ApplicationRunner {
         roleService.persist(new Role(RoleNameEnum.DOCTOR));
 
         Client admin = new Client("Admin", "Админыч", "admin@gmail.com", "password",
-                new Role(RoleNameEnum.ADMIN), new HashSet<>());
+                new Role(RoleNameEnum.ADMIN), new ArrayList<>());
         clientService.persist(admin);
 
         Client client1 = new Client("Любимый", "Клиент", "client1@email.com", "client",
-                new Role(RoleNameEnum.CLIENT), new HashSet<>());
+                new Role(RoleNameEnum.CLIENT), new ArrayList<>());
         clientService.persist(client1);
 
         Client client3 = new Client("Любимый", "Клиент", "user3@gmail.com", "client",
-                new Role(RoleNameEnum.CLIENT), new HashSet<>());
+                new Role(RoleNameEnum.CLIENT), new ArrayList<>());
         clientService.persist(client3);
 
         Manager manager = new Manager("Иван", "Петрович", "manager@gmail.com", "manager",
