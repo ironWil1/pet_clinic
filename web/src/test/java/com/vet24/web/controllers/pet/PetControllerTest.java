@@ -70,9 +70,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         int sizeBefore = petDao.getAll().size();
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Void> response = testRestTemplate
-                .exchange(URI + "/{petId}", HttpMethod.DELETE, new HttpEntity<>(headers), Void.class, 102);
+                .exchange(URI + "/{petId}", HttpMethod.DELETE, new HttpEntity<>(headers), Void.class, 107);
         int sizeAfter = petDao.getAll().size();
-        Pet pet = petDao.getByKey(102L);
+        Pet pet = petDao.getByKey(107L);
 
         Assert.assertNull(pet);
         Assert.assertEquals(--sizeBefore, sizeAfter);
@@ -116,8 +116,8 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         int sizeBefore = petDao.getAll().size();
         HttpEntity<AbstractNewPetDto> request = new HttpEntity<>(abstractNewPetDto, new HttpHeaders());
         ResponseEntity<PetDto> response = testRestTemplate
-                .exchange(URI + "/{petId}", HttpMethod.PUT, request, PetDto.class, 102);
-        Pet petAfter = petDao.getByKey(102L);
+                .exchange(URI + "/{petId}", HttpMethod.PUT, request, PetDto.class, 107);
+        Pet petAfter = petDao.getByKey(107L);
         int sizeAfter = petDao.getAll().size();
 
         Assert.assertEquals(sizeBefore, sizeAfter);
@@ -176,7 +176,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         ClassPathResource classPathResource = new ClassPathResource("test.png");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
                 classPathResource.getFilename(), null, classPathResource.getInputStream());
-        mockMvc.perform(multipart(URI + "/{petId}/avatar", 102)
+        mockMvc.perform(multipart(URI + "/{petId}/avatar", 107)
                 .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
                 .andExpect(status().isOk());
 
@@ -200,17 +200,12 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void persistPetAvatarButPetDoesNotExistNotFound() {
-        Pet pet = petDao.getByKey(69000L);
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("file", new ClassPathResource("test.png"));
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
-        ResponseEntity<String> response = testRestTemplate
-                .exchange(URI + "/{petId}/avatar", HttpMethod.POST, entity, String.class, 69000);
-
-        Assert.assertNull(pet);
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    public void persistPetAvatarButPetDoesNotExistNotFound() throws Exception {
+        ClassPathResource classPathResource = new ClassPathResource("test.png");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
+                classPathResource.getFilename(), null, classPathResource.getInputStream());
+        mockMvc.perform(multipart(URI + "/{petId}/avatar", 69000)
+                .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
+                .andExpect(status().isNotFound());
     }
 }
