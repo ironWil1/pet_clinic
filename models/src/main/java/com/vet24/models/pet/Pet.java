@@ -3,16 +3,33 @@ package com.vet24.models.pet;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.notification.Notification;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
+import com.vet24.models.user.Doctor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +40,7 @@ import java.util.List;
 @DiscriminatorColumn(name = "pet_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 public abstract class Pet {
 
     @Id
@@ -67,6 +84,9 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Doctor doctor;
+
     @OneToMany(
             mappedBy = "pet",
             cascade = CascadeType.ALL,
@@ -103,6 +123,13 @@ public abstract class Pet {
     )
     private List<PetFound> petFounds = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<ClinicalExamination> clinicalExaminations = new HashSet<>();
+
     protected Pet() {
     }
 
@@ -115,10 +142,13 @@ public abstract class Pet {
     }
 
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
+                  Set<Procedure> procedures, Set<Reproduction> reproductions,
+                  Set<ClinicalExamination> clinicalExaminations) {
                   List<Procedure> procedures, List<Reproduction> reproductions, List<Notification> notifications) {
         this(name, birthDay, gender, breed, client);
         this.procedures = procedures;
         this.reproductions = reproductions;
+        this.clinicalExaminations = clinicalExaminations;
         this.notifications = notifications;
     }
 
@@ -132,7 +162,7 @@ public abstract class Pet {
         procedure.setPet(null);
     }
 
-    public void addReproduction(Reproduction reproduction){
+    public void addReproduction(Reproduction reproduction) {
         reproductions.add(reproduction);
         reproduction.setPet(this);
     }
@@ -140,6 +170,16 @@ public abstract class Pet {
     public void removeReproduction(Reproduction reproduction) {
         reproductions.remove(reproduction);
         reproduction.setPet(null);
+    }
+
+    public void addClinicalExamination(ClinicalExamination clinicalExamination) {
+        clinicalExaminations.add(clinicalExamination);
+        clinicalExamination.setPet(this);
+    }
+
+    public void removeClinicalExamination(ClinicalExamination clinicalExamination) {
+        clinicalExaminations.remove(clinicalExamination);
+        clinicalExamination.setPet(null);
     }
 
     public void addNotification(Notification notification){

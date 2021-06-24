@@ -9,7 +9,7 @@ PET_ENTITIES:
     GENDER: "FEMALE"
     NAME: "pet1"
     PET_SIZE: "MEDIUM"
-    WEIGHT: 10
+    WEIGHT: 10.0
     CLIENT_ID: 4
   - ID: 101
     PET_TYPE: "CAT"
@@ -21,7 +21,7 @@ PET_ENTITIES:
     GENDER: "FEMALE"
     NAME: "pet2"
     PET_SIZE: "SMALL"
-    WEIGHT: 3
+    WEIGHT: 3.0
     CLIENT_ID: 3
   - ID: 102
     PET_TYPE: "DOG"
@@ -33,7 +33,7 @@ PET_ENTITIES:
     GENDER: "MALE"
     NAME: "pet3"
     PET_SIZE: "BIG"
-    WEIGHT: 21
+    WEIGHT: 21.0
     CLIENT_ID: 3
   - ID: 103
     PET_TYPE: "DOG"
@@ -45,7 +45,7 @@ PET_ENTITIES:
     GENDER: "MALE"
     NAME: "pet4"
     PET_SIZE: "BIG"
-    WEIGHT: 21
+    WEIGHT: 21.0
     CLIENT_ID: 3
   - ID: 104
     PET_TYPE: "CAT"
@@ -57,7 +57,7 @@ PET_ENTITIES:
     GENDER: "MALE"
     NAME: "pet5"
     PET_SIZE: "BIG"
-    WEIGHT: 21
+    WEIGHT: 21.0
     CLIENT_ID: 3
   - ID: 105
     PET_TYPE: "CAT"
@@ -69,7 +69,7 @@ PET_ENTITIES:
     GENDER: "MALE"
     NAME: "pet6"
     PET_SIZE: "BIG"
-    WEIGHT: 21
+    WEIGHT: 21.0
     CLIENT_ID: 3
   - ID: 106
     PET_TYPE: "DOG"
@@ -81,5 +81,5 @@ PET_ENTITIES:
     GENDER: "MALE"
     NAME: "pet7"
     PET_SIZE: "BIG"
-    WEIGHT: 21
+    WEIGHT: 21.0
     CLIENT_ID: 3
