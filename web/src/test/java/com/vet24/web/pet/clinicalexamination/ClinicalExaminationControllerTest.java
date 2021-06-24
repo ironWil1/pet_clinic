@@ -53,7 +53,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         this.clinicalExaminationDto3 = new ClinicalExaminationDto(102L, 40.0, true, "text3");
     }
 
-    // + 1. get clinical examination by id - success (pet id 102 and examination id 102 found in db test_pets)
+    // + get clinical examination by id - success (pet id 102 and examination id 102 found in db test_pets)
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationSuccess() {
@@ -65,7 +65,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-    // + 2. get clinical examination by id -  error 404 (pet id 33 not found)
+    // + get clinical examination by id -  error 404 (pet id 33 not found)
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationError404pet() {
@@ -75,7 +75,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    // + 3. get clinical examination by id -  error 404 clinical examination not found (id 33 clinical examination not found)
+    // + get clinical examination by id -  error 404 clinical examination not found (id 33 clinical examination not found)
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationError404examination() {
@@ -85,7 +85,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    // + 4. get clinical examination by id -  error 400 (clinical examination not assigned to pet)
+    // + get clinical examination by id -  error 400 (clinical examination not assigned to pet)
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationError400refPetExamination() {
@@ -95,7 +95,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
-    // - add clinical examination - success
+    // + add clinical examination - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testAddClinicalExaminationSuccess() {
@@ -201,7 +201,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
-    // - delete clinical examination by id - success
+    // + delete clinical examination by id - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testDeleteClinicalExaminationSuccess() {
@@ -249,7 +249,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    // - delete clinical examination by id - error clinical examination not assigned to pet
+    // + delete clinical examination by id - error clinical examination not assigned to pet
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testDeleteClinicalExaminationError400refPetExamination() {
