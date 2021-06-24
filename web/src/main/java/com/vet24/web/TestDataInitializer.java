@@ -76,10 +76,10 @@ public class TestDataInitializer implements ApplicationRunner {
                                MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
-                               ReproductionService reproductionService, PetContactService petContactService,
+                               ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
                                CatService catService, DogService dogService, DoctorService doctorService,
                                PetService petService, Environment environment, CommentService commentService,
-                               CommentReactionService commentReactionService,DiagnosisService diagnosisService) {
+                               CommentReactionService commentReactionService, DiagnosisService diagnosisService) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;

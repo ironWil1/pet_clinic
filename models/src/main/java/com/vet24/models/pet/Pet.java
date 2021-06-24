@@ -3,33 +3,18 @@ package com.vet24.models.pet;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
-import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.notification.Notification;
-import com.vet24.models.pet.reproduction.Reproduction;
+import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Procedure;
+import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Doctor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +113,7 @@ public abstract class Pet {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<ClinicalExamination> clinicalExaminations = new HashSet<>();
+    private List<ClinicalExamination> clinicalExaminations = new ArrayList<>();
 
     protected Pet() {
     }
@@ -142,9 +127,8 @@ public abstract class Pet {
     }
 
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
-                  Set<Procedure> procedures, Set<Reproduction> reproductions,
-                  Set<ClinicalExamination> clinicalExaminations) {
-                  List<Procedure> procedures, List<Reproduction> reproductions, List<Notification> notifications) {
+                  List<Procedure> procedures, List<Reproduction> reproductions,
+                  List<ClinicalExamination> clinicalExaminations) {
         this(name, birthDay, gender, breed, client);
         this.procedures = procedures;
         this.reproductions = reproductions;
@@ -182,7 +166,7 @@ public abstract class Pet {
         clinicalExamination.setPet(null);
     }
 
-    public void addNotification(Notification notification){
+    public void addNotification(Notification notification) {
         notifications.add(notification);
         notification.setPet(this);
     }
