@@ -1,6 +1,14 @@
 ROLE:
   - NAME: "ADMIN"
   - NAME: "MANAGER"
-  - NAME: "DOCTOR"
   - NAME: "CLIENT"
   - NAME: "UNVERIFIED_CLIENT"
+  - NAME: "DOCTOR"
+
+
+
+
+
+
+
+

@@ -30,4 +30,6 @@ public class Doctor extends User {
     public Doctor(String firstname, String lastname, String email, String password, Role role) {
         super(firstname, lastname, email, password, role);
     }
+
+
 }
