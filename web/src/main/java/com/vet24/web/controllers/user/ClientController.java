@@ -7,6 +7,7 @@ import com.vet24.models.user.Client;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.user.ClientService;
+import com.vet24.service.user.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,13 +36,15 @@ public class ClientController {
     private final ClientMapper clientMapper;
     private final UploadService uploadService;
     private final ResourceService resourceService;
+    private final CommentService commentService;
 
-    public ClientController(ClientService clientService, ClientMapper clientMapper, UploadService uploadService,
-                            ResourceService resourceService) {
+    public ClientController(ClientService clientService, ClientMapper clientMapper, UploadService uploadService, ResourceService resourceService, CommentService commentService) {
         this.clientService = clientService;
         this.clientMapper = clientMapper;
         this.uploadService = uploadService;
         this.resourceService = resourceService;
+        this.commentService = commentService;
+
     }
 
     @GetMapping("")
@@ -58,7 +61,7 @@ public class ClientController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
     public ResponseEntity<ClientDto> getCurrentClient() {
-        ClientDto clientDto = clientMapper.clientToClientDto(clientService.getCurrentClient());
+        ClientDto clientDto = clientMapper.toDto(clientService.getCurrentClient());
         return clientDto != null ? ResponseEntity.ok(clientDto) : ResponseEntity.notFound().build();
     }
 

@@ -54,7 +54,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
     public void testGetReproductionSuccess() {
-        ReproductionDto dtoFromDao = reproductionMapper.reproductionToReproductionDto(reproductionDao.getByKey(102L));
+        ReproductionDto dtoFromDao = reproductionMapper.toDto(reproductionDao.getByKey(102L));
         ResponseEntity<ReproductionDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/reproduction/{id}", ReproductionDto.class, 102, 102);
 

@@ -19,14 +19,24 @@ public class ClientDaoImpl extends ReadWriteDaoImpl<Long, Client> implements Cli
         } catch (NoResultException e) {
             return null;
         }
-
     }
 
     @Override
-    public Client testGetCurrentClientEagerly() {
+    public Client testGetCurrentClientWithPets() {
         try {
             return manager
-                    .createQuery("SELECT c FROM Client c join fetch c.pets p WHERE p.client.id =:id", Client.class)
+                    .createQuery("SELECT c FROM Client c JOIN FETCH c.pets WHERE c.id =:id", Client.class)
+                    .setParameter("id", 3L).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Client testGetCurrentClientWithReactions() {
+        try {
+            return manager
+                    .createQuery("SELECT c FROM Client c JOIN FETCH c.commentReactions WHERE c.id =:id", Client.class)
                     .setParameter("id", 3L).getSingleResult();
         } catch (NoResultException e) {
             return null;

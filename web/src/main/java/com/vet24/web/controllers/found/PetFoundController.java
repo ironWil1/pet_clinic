@@ -56,13 +56,14 @@ public class PetFoundController {
     public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "petCode", required = false) String petCode,
                                                                           @RequestBody PetFoundDto petFoundDto) {
         if (petContactService.isExistByPetCode(petCode)) {
-            PetFound petFound = petFoundMapper.petFoundDtoToPetFound(petFoundDto);
+            PetContact petContact = petContactService.getByPetCode(petCode);
+            PetFound petFound = petFoundMapper.toEntity(petFoundDto);
+            petFound.setPet(petContact.getPet());
+            petFoundService.persist(petFound);
+
             String text = petFound.getText();
             String latitude = petFound.getLatitude();
             String longitude = petFound.getLongitude();
-            petFoundService.persist(petFound);
-
-            PetContact petContact = petContactService.getByPetCode(petCode);
             String clientEmail = petContact.getPet().getClient().getEmail();
             String clientName = petContact.getPet().getClient().getFirstname();
             String petName = petContact.getPet().getName();

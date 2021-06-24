@@ -1,8 +1,11 @@
 package com.vet24.web.controllers.pet;
 
+import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.PetDto;
+import com.vet24.models.mappers.pet.AbstractNewPetMapper;
+import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.PetMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Client;
@@ -22,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.webjars.NotFoundException;
 
 import java.io.IOException;
 
@@ -33,16 +37,42 @@ public class PetController {
     private final ClientService clientService;
     private final PetService petService;
     private final PetMapper petMapper;
+    private final AbstractNewPetMapper newPetMapper;
     private final UploadService uploadService;
     private final ResourceService resourceService;
 
     public PetController(ClientService clientService, PetService petService, PetMapper petMapper,
-                         UploadService uploadService, ResourceService resourceService) {
+                         AbstractNewPetMapper newPetMapper, UploadService uploadService, ResourceService resourceService) {
         this.clientService = clientService;
         this.petService = petService;
         this.petMapper = petMapper;
+        this.newPetMapper = newPetMapper;
         this.uploadService = uploadService;
         this.resourceService = resourceService;
+    }
+
+    @Operation(summary = "get pet by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully get a Pet",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PetDto.class))),
+            @ApiResponse(responseCode = "404", description = "Pet not found",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "Pet not yours",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @GetMapping("/{petId}")
+    public ResponseEntity<PetDto> getById(@PathVariable("petId") Long petId) {
+        Client client = clientService.getCurrentClient();
+        Pet pet = petService.getByKey(petId);
+
+        if (pet == null) {
+            throw new NotFoundException("pet not found");
+        }
+        if (!pet.getClient().getId().equals(client.getId())) {
+            throw new BadRequestException("pet not yours");
+        }
+
+        return new ResponseEntity<>(petMapper.toDto(pet), HttpStatus.OK);
     }
 
     @Operation(summary = "add a new Pet")
@@ -55,7 +85,7 @@ public class PetController {
     public ResponseEntity<AbstractNewPetDto> persistPet(@RequestBody AbstractNewPetDto petDto) {
         Client client = clientService.getCurrentClient();
         if (client != null) {
-            Pet pet = petMapper.abstractNewPetDtoToPet(petDto);
+            Pet pet = newPetMapper.toEntity(petDto);
             pet.setClient(client);
             petService.persist(pet);
             return ResponseEntity.ok(petDto);
@@ -96,7 +126,7 @@ public class PetController {
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(client.getId())) {
-                Pet updatedPet = petMapper.abstractNewPetDtoToPet(petDto);
+                Pet updatedPet = newPetMapper.toEntity(petDto);
                 updatedPet.setId(pet.getId());
                 updatedPet.setClient(client);
                 petService.update(updatedPet);

@@ -28,11 +28,4 @@ public class RegistrationExceptionHandler {
         return new ResponseEntity<>(data, HttpStatus.NOT_ACCEPTABLE);
     }
 
-    @ExceptionHandler({BadRequestException.class})
-    public ResponseEntity<ExceptionDto> handleException(BadRequestException exception) {
-        ExceptionDto data = new ExceptionDto();
-        data.setMessage(exception.getMessage());
-        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
-    }
-
 }

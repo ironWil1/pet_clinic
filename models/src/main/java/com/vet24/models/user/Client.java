@@ -7,12 +7,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @DiscriminatorValue("CLIENT")
-@EqualsAndHashCode(callSuper = true, exclude = "pets")
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Client extends User {
 
     @OneToMany(
@@ -20,13 +20,27 @@ public class Client extends User {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<Pet> pets = new HashSet<>();
+    private List<Pet> pets = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "client",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Comment> comments = new ArrayList<>();
+
+
+    @OneToMany(
+            mappedBy = "client",
+            cascade = CascadeType.ALL
+    )
+    private List<CommentReaction> commentReactions = new ArrayList<>();
 
     public Client() {
         super();
     }
 
-    public Client(String firstname, String lastname, String email, String password, Role role, Set<Pet> pets) {
+    public Client(String firstname, String lastname, String email, String password, Role role, List<Pet> pets) {
         super(firstname, lastname, email, password, role);
         this.pets = pets;
     }
@@ -41,11 +55,34 @@ public class Client extends User {
         pet.setClient(null);
     }
 
-    public Set<Pet> getPets() {
+    public List<Pet> getPets() {
         return pets;
     }
 
-    public void setPets(Set<Pet> pets) {
+    public void setPets(List<Pet> pets) {
         this.pets = pets;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<CommentReaction> getCommentReactions() {
+        return commentReactions;
+    }
+
+    public void setCommentReactions(List<CommentReaction> commentReactions) {
+        this.commentReactions = commentReactions;
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "pets=" + pets + " email " + super.getEmail() + " " + super.getRole() +
+                '}';
     }
 }

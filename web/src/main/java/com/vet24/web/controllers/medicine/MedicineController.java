@@ -1,6 +1,5 @@
 package com.vet24.web.controllers.medicine;
 
-
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.medicine.MedicineDto;
 import com.vet24.models.mappers.medicine.MedicineMapper;
@@ -9,12 +8,10 @@ import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.medicine.MedicineService;
 
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -56,7 +52,7 @@ public class MedicineController {
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            MedicineDto medicineDto = medicineMapper.medicineToMedicineDto(medicine);
+            MedicineDto medicineDto = medicineMapper.toDto(medicine);
             return new ResponseEntity<>(medicineDto, HttpStatus.OK);
         }
     }
@@ -79,7 +75,8 @@ public class MedicineController {
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            medicine = medicineMapper.medicineDtoToMedicine(medicineDto);
+            medicine = medicineMapper.toEntity(medicineDto);
+            medicine.setId(id);
             medicineService.update(medicine);
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -87,9 +84,13 @@ public class MedicineController {
 
     @PostMapping(value = "")
     public ResponseEntity<MedicineDto> save(@RequestBody MedicineDto medicineDto) {
-        Medicine medicine = medicineMapper.medicineDtoToMedicine(medicineDto);
+        Medicine medicine = medicineMapper.toEntity(medicineDto);
         medicine.setId(null);
-        medicineService.persist(medicine);
+        try {
+            medicineService.persist(medicine);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -128,7 +129,7 @@ public class MedicineController {
             @RequestParam(required = false, name = "name", defaultValue = "") String name,
             @RequestParam(required = false, name = "searchText", defaultValue = "") String searchText) {
         List<Medicine> medicineList = medicineService.searchFull(manufactureName, name, searchText);
-        List<MedicineDto> medicineDtoList = medicineMapper.medicineListToMedicineDto(medicineList);
+        List<MedicineDto> medicineDtoList = medicineMapper.toDto(medicineList);
         return new ResponseEntity<>(medicineDtoList, HttpStatus.OK);
     }
 }

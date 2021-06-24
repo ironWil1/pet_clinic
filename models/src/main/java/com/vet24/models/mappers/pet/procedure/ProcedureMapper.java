@@ -1,63 +1,54 @@
 package com.vet24.models.mappers.pet.procedure;
 
-import com.vet24.models.dto.pet.procedure.*;
+import com.vet24.models.dto.pet.procedure.ProcedureDto;
+import com.vet24.models.enums.ProcedureType;
+import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
+import com.vet24.models.mappers.DtoMapper;
+import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.pet.procedure.Procedure;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@Component
 @Mapper(componentModel = "spring")
-public abstract class ProcedureMapper {
+public abstract class ProcedureMapper implements
+        DtoMapper<Procedure, ProcedureDto>, EntityMapper<ProcedureDto, Procedure> {
+
+
+    private Map<ProcedureType, AbstractProcedureMapper> mapperMap;
 
     @Autowired
-    private VaccinationMapper vaccinationMapper;
+    private List<AbstractProcedureMapper> mapperList;
 
-    @Autowired
-    private ExternalParasiteMapper externalParasiteMapper;
 
-    @Autowired
-    private EchinococcusMapper echinococcusMapper;
-
-    @Mapping(source = "medicine.id", target = "medicineId")
-    public abstract ProcedureDto procedureToProcedureDto(Procedure procedure);
-
-    public Procedure procedureDtoToProcedure(ProcedureDto procedureDto) {
-        Procedure procedure = null;
-        String procedureType = procedureDto.getType().name();
-        switch (procedureType) {
-            case "VACCINATION":
-                procedure = vaccinationMapper.procedureDtoToVaccination(procedureDto);
-                break;
-            case "EXTERNAL_PARASITE":
-                procedure = externalParasiteMapper.procedureDtoToExternalParasite(procedureDto);
-                break;
-            case "ECHINOCOCCUS":
-                procedure = echinococcusMapper.procedureDtoToEchinococcus(procedureDto);
-                break;
-            default:
-                break;
-        }
-
-        return procedure;
+    @PostConstruct
+    private void init() {
+        this.setMapperMap(mapperList);
     }
 
-    public Procedure abstractNewProcedureDtoToProcedure(AbstractNewProcedureDto procedureDto) {
-        Procedure procedure = null;
-        String procedureType = procedureDto.getType().name();
-        switch (procedureType) {
-            case "VACCINATION":
-                procedure = vaccinationMapper.vaccinationDtoToVaccination((VaccinationDto) procedureDto);
-                break;
-            case "EXTERNAL_PARASITE":
-                procedure = externalParasiteMapper.externalParasiteDtoToExternalParasite((ExternalParasiteDto) procedureDto);
-                break;
-            case "ECHINOCOCCUS":
-                procedure = echinococcusMapper.echinococcusDtoToEchinococcus((EchinococcusDto) procedureDto);
-                break;
-            default:
-                break;
-        }
+    private void setMapperMap(List<AbstractProcedureMapper> mapperList) {
+        mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractProcedureMapper::getProcedureType, Function.identity()));
+    }
 
-        return procedure;
+    @Mapping(source = "medicine.id", target = "medicineId")
+    @Override
+    public abstract ProcedureDto toDto (Procedure procedure);
+
+    @Override
+    public Procedure toEntity (ProcedureDto procedureDto) {
+        if (mapperMap.containsKey(procedureDto.getType())) {
+            return mapperMap.get(procedureDto.getType()).procedureDtoToProcedure(procedureDto);
+        } else {
+            throw new NoSuchAbstractEntityDtoException("Can't find mapper for ProcedureDto: " + procedureDto);
+        }
     }
 }
