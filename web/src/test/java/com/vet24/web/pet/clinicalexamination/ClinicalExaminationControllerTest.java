@@ -41,6 +41,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     ClinicalExaminationDto clinicalExaminationDto1;
     ClinicalExaminationDto clinicalExaminationDto3;
 
+
     // clinical examination 4 --> pet 1 --> examination 1 (to check doctor-pet link)
     // client 3 --> pet 2 --> clinical examination 2 (to check pet-clinical examination link)
     //        `---> pet 3 --> clinical examination 3 (to get & update & delete)
