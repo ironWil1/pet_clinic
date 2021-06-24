@@ -18,8 +18,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
+
+import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/client/pet/{petId}/reproduction")
@@ -83,8 +88,13 @@ public class ReproductionController {
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @PostMapping("")
-    public ResponseEntity<ReproductionDto> save(@PathVariable Long petId,
-                                                @RequestBody ReproductionDto reproductionDto) {
+    public ResponseEntity<ReproductionDto> save(@PathVariable Long petId, @Valid
+                                                @RequestBody ReproductionDto reproductionDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()){
+            String errors = bindingResult.getAllErrors().stream()
+                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
+            throw new BadRequestException(errors);
+        }
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.toEntity(reproductionDto);
         Client client = clientService.getCurrentClient();

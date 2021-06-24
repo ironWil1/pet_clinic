@@ -6,6 +6,7 @@ import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDate;
 
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 public class DogDto extends AbstractNewPetDto {
 
     private String avatar;
+
     private Integer notificationCount;
 
     public DogDto() {

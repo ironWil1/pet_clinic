@@ -9,6 +9,10 @@ import com.vet24.models.enums.PetType;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 
 @Getter
@@ -19,14 +23,18 @@ import java.time.LocalDate;
         @JsonSubTypes.Type(value = CatDto.class, name = "CAT")
 })
 public abstract class AbstractNewPetDto {
-
+    @NotBlank
     private String name;
     private PetType petType;
+    @PastOrPresent
     private LocalDate birthDay;
     private Gender gender; //male, female
+    @NotBlank
     private String breed;
+    @NotBlank
     private String color;
     private PetSize size; //small, medium, big
+    @Positive
     private Double weight; // кг, округляем до десятых - 10,1, 12,5
     private String description;
 

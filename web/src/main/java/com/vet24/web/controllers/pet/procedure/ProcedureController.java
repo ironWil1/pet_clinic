@@ -23,8 +23,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
+
+import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/client/pet/{petId}/procedure")
@@ -92,8 +97,13 @@ public class ProcedureController {
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("")
-    public ResponseEntity<ProcedureDto> save(@PathVariable Long petId,
-                                             @RequestBody AbstractNewProcedureDto newProcedureDto) {
+    public ResponseEntity<ProcedureDto> save(@PathVariable Long petId, @Valid
+                                             @RequestBody AbstractNewProcedureDto newProcedureDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()){
+            String errors = bindingResult.getAllErrors().stream()
+                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
+            throw new BadRequestException(errors);
+        }
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = newProcedureMapper.toEntity(newProcedureDto);
