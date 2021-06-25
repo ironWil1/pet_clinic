@@ -6,6 +6,7 @@ import com.vet24.models.exception.EventException;
 import com.vet24.service.notification.GoogleEventService;
 
 import com.vet24.service.user.ClientService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
+@Slf4j
 public class NotificationController {
 
     private final GoogleEventService googleEventService;

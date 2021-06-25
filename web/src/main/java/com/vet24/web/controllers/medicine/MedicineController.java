@@ -8,6 +8,7 @@ import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.medicine.MedicineService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import java.util.List;
 
 
 @RestController
+@Slf4j
 @RequestMapping("api/manager/medicine")
 public class MedicineController {
 
