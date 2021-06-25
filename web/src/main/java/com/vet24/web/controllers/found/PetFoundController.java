@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +51,8 @@ public class PetFoundController {
     })
     @PostMapping(value = "/petFound")
     public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "petCode", required = false) String petCode,
-                                                                          @RequestBody PetFoundDto petFoundDto) {
+                                                                          @RequestBody PetFoundDto petFoundDto,
+                                                                          @Value("${googlemaps.service.url}") String googlemapsServiceUrl) {
         if (petContactService.isExistByPetCode(petCode)) {
             PetContact petContact = petContactService.getByPetCode(petCode);
             PetFound petFound = petFoundMapper.toEntity(petFoundDto);
@@ -65,9 +67,9 @@ public class PetFoundController {
             String petName = petContact.getPet().getName();
             String message = String.format("%s, добрый день! Ваш %s нашёлся!\n\n Кто-то отсканировал QR код" +
                     " на ошейнике вашего питомца и отправил вам следующее сообщение: \n\"%s\"\n\n" +
-                    "Перейдите по ссылке для просмотра местонахождения питомца: https://www.google.com/maps/place/%s+%s",
+                    "Перейдите по ссылке для просмотра местонахождения питомца: " + googlemapsServiceUrl,
                     clientName, petName, text, latitude, longitude);
-            mailService.sendTextAndGeolocationPet(clientEmail, "Информация о вашем питомце", message);
+            mailService.sendGeolocationPetFoundMessage(clientEmail, "Информация о вашем питомце", message);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

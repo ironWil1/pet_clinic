@@ -54,7 +54,7 @@ public class MailServiceImpl implements MailService{
         emailSender.send(message);
     }
 
-    public void sendTextAndGeolocationPet(String emailTo, String subject, String message) {
+    public void sendGeolocationPetFoundMessage(String emailTo, String subject, String message) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
         mailMessage.setFrom(mailFrom);
