@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 
 @Slf4j
 @DBRider
@@ -33,6 +34,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Valid email is required")));
+        Mockito.verify(mailService, times(0)).sendWelcomeMessage(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -46,6 +48,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Passwords don't match")));
+        Mockito.verify(mailService, times(0)).sendWelcomeMessage(anyString(), anyString(), anyString());
     }
 
     @Test

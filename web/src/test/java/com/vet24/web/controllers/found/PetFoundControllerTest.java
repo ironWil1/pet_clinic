@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.nio.charset.StandardCharsets;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 
 @DBRider
 public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
@@ -61,5 +62,6 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
                 .param("petCode", petCode))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
+        Mockito.verify(petFoundMailSender, times(0)).sendTextAndGeolocationPet(anyString(), anyString(), anyString());
     }
 }
