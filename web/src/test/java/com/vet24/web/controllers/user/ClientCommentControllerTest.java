@@ -8,8 +8,6 @@ import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -33,26 +31,28 @@ public class ClientCommentControllerTest extends ControllerAbstractIntegrationTe
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeDislikedComment() throws Exception {
-        SecurityContext context = SecurityContextHolder.getContext();
         mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,1L,false))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        SecurityContextHolder.setContext(context);
-        Client client = clientService.getCurrentClientWithReactions();
-        Assert.assertEquals(client.getCommentReactions().size(), 1);
-        Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), false  );
+                .andExpect(MockMvcResultMatchers.status().isOk())
+        .andDo(
+                (result) -> {
+                    Client client = clientService.getCurrentClientWithReactions();
+                    Assert.assertEquals(client.getCommentReactions().size(), 1);
+                    Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), false);
+                }
+        );
     }
 
     @Test
     @DataSet(cleanBefore = true, value =  {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeLikedComment() throws Exception {
-        SecurityContext context = SecurityContextHolder.getContext();
         mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,2L,true))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        SecurityContextHolder.setContext(context);
-        Client client = clientService.getCurrentClientWithReactions();
-        Assert.assertEquals(client.getCommentReactions().size(), 1);
-        Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), true);
+                .andExpect(MockMvcResultMatchers.status().isOk())
+        .andDo(
+                (result) -> {
+                    Client client = clientService.getCurrentClientWithReactions();
+                    Assert.assertEquals(client.getCommentReactions().size(), 1);
+                    Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), true);
+                }
+        );
     }
 }
