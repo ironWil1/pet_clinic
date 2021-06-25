@@ -1,5 +1,7 @@
 package com.vet24.web.controllers.pet.procedure;
 
+import com.vet24.models.dto.OnCreate;
+import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
@@ -25,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
@@ -97,7 +100,7 @@ public class ProcedureController {
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("")
-    public ResponseEntity<ProcedureDto> save(@PathVariable Long petId, @Valid
+    public ResponseEntity<ProcedureDto> save(@PathVariable Long petId, @Validated(OnCreate.class)
                                              @RequestBody AbstractNewProcedureDto newProcedureDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
             String errors = bindingResult.getAllErrors().stream()
@@ -137,7 +140,12 @@ public class ProcedureController {
     })
     @PutMapping("/{procedureId}")
     public ResponseEntity<ProcedureDto> update(@PathVariable Long petId, @PathVariable Long procedureId,
-                                         @RequestBody ProcedureDto procedureDto) {
+                                         @Validated(OnUpdate.class )@RequestBody ProcedureDto procedureDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()){
+            String errors = bindingResult.getAllErrors().stream()
+                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
+            throw new BadRequestException(errors);
+        }
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = procedureService.getByKey(procedureId);

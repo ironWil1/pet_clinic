@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 public class PetContactDto {
-    @NotBlank
+    @NotBlank(message = "Введите имя владельца")
     private String ownerName;
 
     @NotBlank
