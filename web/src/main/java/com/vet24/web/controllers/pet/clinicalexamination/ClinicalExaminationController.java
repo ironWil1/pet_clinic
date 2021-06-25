@@ -44,6 +44,8 @@ public class ClinicalExaminationController {
         this.doctorService = doctorService;
     }
 
+//для получения доктора после прикрутки секьюрити
+
 //    public Doctor getCurrentDoctor(){
 //        return  (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //    }
@@ -81,7 +83,7 @@ public class ClinicalExaminationController {
         }
 
         ClinicalExaminationDto clinicalExaminationDto =
-                clinicalExaminationMapper.clinicalExaminationToClinicalExaminationDto(clinicalExamination);
+                clinicalExaminationMapper.toDto(clinicalExamination);
         return new ResponseEntity<>(clinicalExaminationDto, HttpStatus.OK);
     }
 
@@ -101,7 +103,7 @@ public class ClinicalExaminationController {
                                                        @RequestBody ClinicalExaminationDto clinicalExaminationDto) {
         Pet pet = petService.getByKey(petId);
         ClinicalExamination clinicalExamination =
-                clinicalExaminationMapper.clinicalExaminationDtoToClinicalExamination(clinicalExaminationDto);
+                clinicalExaminationMapper.toEntity(clinicalExaminationDto);
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
@@ -112,8 +114,7 @@ public class ClinicalExaminationController {
         pet.setWeight(clinicalExamination.getWeight());
         pet.addClinicalExamination(clinicalExamination);
         petService.update(pet);
-        return new ResponseEntity<>(clinicalExaminationMapper.clinicalExaminationToClinicalExaminationDto(clinicalExamination),
-                HttpStatus.CREATED);
+        return new ResponseEntity<>(clinicalExaminationMapper.toDto(clinicalExamination), HttpStatus.CREATED);
     }
 
     @Operation(
@@ -161,11 +162,11 @@ public class ClinicalExaminationController {
         pet.setWeight(clinicalExamination.getWeight());
         clinicalExamination.setDate(LocalDate.now());
         clinicalExamination =
-                clinicalExaminationMapper.clinicalExaminationDtoToClinicalExamination(clinicalExaminationDto);
+                clinicalExaminationMapper.toEntity(clinicalExaminationDto);
         clinicalExamination.setPet(pet);
         clinicalExaminationService.update(clinicalExamination);
 
-        return new ResponseEntity<>(clinicalExaminationMapper.clinicalExaminationToClinicalExaminationDto(clinicalExamination), HttpStatus.OK);
+        return new ResponseEntity<>(clinicalExaminationMapper.toDto(clinicalExamination), HttpStatus.OK);
 
     }
 

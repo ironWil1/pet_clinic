@@ -58,7 +58,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationSuccess() {
-        ClinicalExaminationDto dtoFromDao = clinicalExaminationMapper.clinicalExaminationToClinicalExaminationDto(clinicalExaminationDao.getByKey(102L));
+        ClinicalExaminationDto dtoFromDao = clinicalExaminationMapper.toDto(clinicalExaminationDao.getByKey(102L));
         ResponseEntity<ClinicalExaminationDto> response = testRestTemplate
                 .getForEntity(URI + "/{petId}/exam/{examinationId}", ClinicalExaminationDto.class, 102, 102);
 
