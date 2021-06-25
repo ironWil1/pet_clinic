@@ -33,11 +33,11 @@ public class ClientDaoImpl extends ReadWriteDaoImpl<Long, Client> implements Cli
     }
 
     @Override
-    public Client testGetCurrentClientWithReactions() {
+    public Client getClientWithReactionsByEmail(String email) {
         try {
             return manager
-                    .createQuery("SELECT c FROM Client c JOIN FETCH c.commentReactions WHERE c.id =:id", Client.class)
-                    .setParameter("id", 3L).getSingleResult();
+                    .createQuery("SELECT c FROM Client c JOIN FETCH c.commentReactions WHERE c.email =:email", Client.class)
+                    .setParameter("email", email).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

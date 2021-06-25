@@ -8,10 +8,14 @@ import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @DBRider
+@WithUserDetails(value = "user3@gmail.com")
 public class ClientCommentControllerTest extends ControllerAbstractIntegrationTest {
 
     private final String URI_LIKE = "/api/client/{commentId}/{positive}";
@@ -20,28 +24,34 @@ public class ClientCommentControllerTest extends ControllerAbstractIntegrationTe
     private ClientService clientService;
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/roles.yml","/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeNotFoundComment() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,10000L,false))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,10000L,false))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
     }
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/roles.yml","/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeDislikedComment() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,1L,false))
+        SecurityContext context = SecurityContextHolder.getContext();
+        mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,1L,false))
                 .andExpect(MockMvcResultMatchers.status().isOk());
-        Client client = clientService.testGetCurrentClientWithReactions();
+
+        SecurityContextHolder.setContext(context);
+        Client client = clientService.getCurrentClientWithReactions();
         Assert.assertEquals(client.getCommentReactions().size(), 1);
         Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), false  );
     }
 
     @Test
-    @DataSet(cleanBefore = true, value =  {"/datasets/roles.yml","/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
+    @DataSet(cleanBefore = true, value =  {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeLikedComment() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,2L,true))
+        SecurityContext context = SecurityContextHolder.getContext();
+        mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,2L,true))
                 .andExpect(MockMvcResultMatchers.status().isOk());
-        Client client = clientService.testGetCurrentClientWithReactions();
+
+        SecurityContextHolder.setContext(context);
+        Client client = clientService.getCurrentClientWithReactions();
         Assert.assertEquals(client.getCommentReactions().size(), 1);
         Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), true);
     }

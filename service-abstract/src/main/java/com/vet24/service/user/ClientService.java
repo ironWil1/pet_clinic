@@ -2,7 +2,6 @@ package com.vet24.service.user;
 
 import com.vet24.models.user.Client;
 import com.vet24.service.ReadWriteService;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface ClientService extends ReadWriteService<Long, Client> {
 
@@ -12,5 +11,5 @@ public interface ClientService extends ReadWriteService<Long, Client> {
 
     Client testGetCurrentClientWithPets();
 
-    Client testGetCurrentClientWithReactions();
+    Client getCurrentClientWithReactions();
 }

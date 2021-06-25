@@ -1,3 +1,6 @@
+ROLE:
+  - NAME: "CLIENT"
+
 USER_ENTITIES:
   - ID: 3
     USER_TYPE: "CLIENT"

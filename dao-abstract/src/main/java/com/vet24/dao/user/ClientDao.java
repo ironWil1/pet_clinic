@@ -11,5 +11,5 @@ public interface ClientDao extends ReadWriteDao<Long, Client> {
 
     Client testGetCurrentClientWithPets();
 
-    Client testGetCurrentClientWithReactions();
+    Client getClientWithReactionsByEmail(String email);
 }
