@@ -7,6 +7,7 @@ import com.vet24.models.mappers.pet.clinicalexamination.ClinicalExaminationMappe
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.user.Doctor;
+import com.vet24.models.user.User;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
 import com.vet24.service.user.DoctorService;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 import org.apache.tomcat.jni.Local;
@@ -42,6 +44,9 @@ public class ClinicalExaminationController {
         this.doctorService = doctorService;
     }
 
+//    public Doctor getCurrentDoctor(){
+//        return  (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//    }
 
     @Operation(
             summary = "get clinical examination by id",
@@ -100,10 +105,8 @@ public class ClinicalExaminationController {
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
-        Doctor doctor = doctorService.getCurrentDoctor();
-        pet.setDoctor(doctor);
         clinicalExamination.setId(null);
-        clinicalExamination.setDoctor(doctor);
+        clinicalExamination.setDoctor(doctorService.getCurrentDoctor());
         clinicalExamination.setDate(LocalDate.now());
         clinicalExaminationService.persist(clinicalExamination);
         pet.setWeight(clinicalExamination.getWeight());
@@ -153,11 +156,9 @@ public class ClinicalExaminationController {
             throw new BadRequestException("examinationId in path and in body not equals");
         }
 
-        pet.setDoctor(doctor);
         clinicalExamination.setDoctor(doctor);
         clinicalExamination.setDate(LocalDate.now());
         pet.setWeight(clinicalExamination.getWeight());
-//        clinicalExaminationService.update(clinicalExamination.setDate(LocalDate.now()));
         clinicalExamination.setDate(LocalDate.now());
         clinicalExamination =
                 clinicalExaminationMapper.clinicalExaminationDtoToClinicalExamination(clinicalExaminationDto);

@@ -69,9 +69,6 @@ public abstract class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Client client;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Doctor doctor;
-
     @OneToMany(
             mappedBy = "pet",
             cascade = CascadeType.ALL,
