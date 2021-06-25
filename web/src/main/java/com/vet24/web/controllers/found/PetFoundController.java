@@ -4,17 +4,15 @@ import com.vet24.models.dto.pet.PetFoundDto;
 import com.vet24.models.mappers.pet.PetFoundMapper;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.PetFound;
+import com.vet24.service.media.MailService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetFoundService;
-import com.vet24.service.user.ClientService;
-import com.vet24.util.mailSender.PetFoundMailSender;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,16 +26,14 @@ public class PetFoundController {
     private final PetFoundService petFoundService;
     private final PetContactService petContactService;
     private final PetFoundMapper petFoundMapper;
-    private final ClientService clientService;
-    private final PetFoundMailSender petFoundMailSender;
+    private final MailService mailService;
 
     public PetFoundController(PetFoundService petFoundService, PetContactService petContactService,
-                              PetFoundMapper petFoundMapper, ClientService clientService, PetFoundMailSender petFoundMailSender) {
+                              PetFoundMapper petFoundMapper, MailService mailService) {
         this.petFoundService = petFoundService;
         this.petContactService = petContactService;
         this.petFoundMapper = petFoundMapper;
-        this.clientService = clientService;
-        this.petFoundMailSender = petFoundMailSender;
+        this.mailService = mailService;
     }
 
     /* Запрос может выглядеть следующим образом.
@@ -71,7 +67,7 @@ public class PetFoundController {
                     " на ошейнике вашего питомца и отправил вам следующее сообщение: \n\"%s\"\n\n" +
                     "Перейдите по ссылке для просмотра местонахождения питомца: https://www.google.com/maps/place/%s+%s",
                     clientName, petName, text, latitude, longitude);
-            petFoundMailSender.sendTextAndGeolocationPet(clientEmail, "Информация о вашем питомце", message);
+            mailService.sendTextAndGeolocationPet(clientEmail, "Информация о вашем питомце", message);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

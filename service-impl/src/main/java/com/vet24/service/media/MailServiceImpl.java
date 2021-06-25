@@ -3,6 +3,7 @@ package com.vet24.service.media;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,6 @@ import java.util.Map;
 @Service
 public class MailServiceImpl implements MailService{
 
-
     @Value("${spring.mail.username}")
     private String mailFrom;
     @Value("${spring.mail.location}")
@@ -31,7 +31,6 @@ public class MailServiceImpl implements MailService{
     private JavaMailSender emailSender;
     @Autowired
     private SpringTemplateEngine templateEngine;
-
 
     public void sendWelcomeMessage (String emailTo,String name,String tokenLink) throws  MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
@@ -53,5 +52,16 @@ public class MailServiceImpl implements MailService{
         helper.setSubject("Registration greeting");
         helper.setFrom(mailFrom);
         emailSender.send(message);
+    }
+
+    public void sendTextAndGeolocationPet(String emailTo, String subject, String message) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+
+        mailMessage.setFrom(mailFrom);
+        mailMessage.setTo(emailTo);
+        mailMessage.setSubject(subject);
+        mailMessage.setText(message);
+
+        emailSender.send(mailMessage);
     }
 }

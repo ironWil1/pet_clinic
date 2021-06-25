@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.vet24.service.media.MailService;
-import com.vet24.util.mailSender.PetFoundMailSender;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,9 +23,6 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @MockBean
     protected MailService mailService;
-
-    @MockBean
-    protected PetFoundMailSender petFoundMailSender;
 
     @Autowired
     protected TestRestTemplate testRestTemplate;
