@@ -10,32 +10,32 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 @DBRider
+@WithUserDetails(value = "doctor33@gmail.com")
 public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
     DoctorService doctorService;
 
-    public static final String ADD_DIAGNOSIS_API ="/api/doctor/pet/{petId}/addDiagnosis";
-    final String DOMAIN = "http://localhost:8090";
+    private final String URI = "http://localhost:8090/api/doctor/pet/{petId}/addDiagnosis";
 
     @Test
-    @DataSet(value = {"/datasets/roles.yml","/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
+    @DataSet(value = {"/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
     public void shouldBeNotFound()  {
        String diagnosis = "bla-bla-bla";
 
-        Doctor doctor = doctorService.getCurrentDoctor();
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(diagnosis, headers);
         ResponseEntity<DiagnosisDto> responseEntity =  testRestTemplate
-                .exchange(DOMAIN+ADD_DIAGNOSIS_API, HttpMethod.POST,entity, DiagnosisDto.class,1001);
+                .exchange(URI, HttpMethod.POST,entity, DiagnosisDto.class,1001);
         Assert.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 
     }
 
     @Test
-    @DataSet(value = {"/datasets/roles.yml","/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
+    @DataSet(value = {"/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
     public void shouldBeCreated()  {
         String diagnosis = "bla-bla-bla";
         Doctor doctor = doctorService.getCurrentDoctor();
@@ -43,7 +43,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(diagnosis, headers);
         ResponseEntity<DiagnosisDto> responseEntity =  testRestTemplate
-                .exchange(DOMAIN+ADD_DIAGNOSIS_API, HttpMethod.POST,entity, DiagnosisDto.class,101L);
+                .exchange(URI, HttpMethod.POST,entity, DiagnosisDto.class,101L);
         Assert.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         Assert.assertEquals("bla-bla-bla",responseEntity.getBody().getDescription());
         Assert.assertEquals(doctor.getId(),responseEntity.getBody().getDoctorId());
