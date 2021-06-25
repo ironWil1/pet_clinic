@@ -19,12 +19,8 @@ public class ReproductionDto {
     @Null(groups = {OnCreate.class})
     @NotNull(groups = {OnUpdate.class})
     Long id;
-    @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     LocalDate estrusStart;
-    @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     LocalDate mating;
-    @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     LocalDate dueDate;
-    @Positive(groups = {OnCreate.class, OnUpdate.class})
     Integer childCount;
 }

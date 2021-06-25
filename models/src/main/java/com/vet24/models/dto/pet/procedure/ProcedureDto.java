@@ -16,12 +16,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProcedureDto {
+    @Null(groups = {OnCreate.class})
+    @NotNull(groups = {OnUpdate.class})
     Long id;
 
     LocalDate date; //if null or blank set now
     ProcedureType type;
+
+    @NotNull(groups = {OnCreate.class, OnUpdate.class})
     Long medicineId;
+
+    @NotNull(groups = {OnCreate.class, OnUpdate.class})
     String medicineBatchNumber;
+
     Boolean isPeriodical;
     Integer periodDays;
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.vet24.models.enums.ProcedureType;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter
@@ -21,7 +22,9 @@ import java.time.LocalDate;
 public abstract class AbstractNewProcedureDto {
     LocalDate date; //if null or blank set now
     ProcedureType type;
+    @NotNull
     Long medicineId;
+    @NotNull
     String medicineBatchNumber;
     Boolean isPeriodical;
     Integer periodDays;

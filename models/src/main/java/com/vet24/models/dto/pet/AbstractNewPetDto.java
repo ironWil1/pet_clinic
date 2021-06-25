@@ -23,18 +23,18 @@ import java.time.LocalDate;
         @JsonSubTypes.Type(value = CatDto.class, name = "CAT")
 })
 public abstract class AbstractNewPetDto {
-    @NotBlank
+    @NotBlank(message = "Введите имя питомца")
     private String name;
     private PetType petType;
-    @PastOrPresent
+    @PastOrPresent(message = "Введите корректную дату рождения")
     private LocalDate birthDay;
     private Gender gender; //male, female
-    @NotBlank
+    @NotBlank(message = "Введите породу")
     private String breed;
-    @NotBlank
+    @NotBlank(message = "Введите цвет")
     private String color;
     private PetSize size; //small, medium, big
-    @Positive
+    @Positive(message = "Вес должен быть больше 0")
     private Double weight; // кг, округляем до десятых - 10,1, 12,5
     private String description;
 
