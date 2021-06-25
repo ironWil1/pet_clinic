@@ -121,7 +121,13 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         int sizeAfter = petDao.getAll().size();
 
         Assert.assertEquals(sizeBefore, sizeAfter);
-        Assert.assertNotEquals(petBefore, petAfter);
+        Assert.assertNotEquals(petBefore.getName(), petAfter.getName());
+        Assert.assertNotEquals(petBefore.getBirthDay(), petAfter.getBirthDay());
+        Assert.assertNotEquals(petBefore.getDescription(), petAfter.getDescription());
+        Assert.assertNotEquals(petBefore.getBreed(), petAfter.getBreed());
+        Assert.assertNotEquals(petBefore.getColor(), petAfter.getColor());
+        Assert.assertNotEquals(petBefore.getPetSize(), petAfter.getPetSize());
+        Assert.assertNotEquals(petBefore.getWeight(), petAfter.getWeight());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
