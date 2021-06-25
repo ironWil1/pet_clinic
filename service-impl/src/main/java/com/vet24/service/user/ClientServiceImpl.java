@@ -33,8 +33,8 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
 
     @Override
     @Transactional(readOnly = true)
-    public Client testGetCurrentClientWithPets() {
-        return clientDao.testGetCurrentClientWithPets();
+    public Client getCurrentClientWithPets() {
+        return clientDao.getClientWithPetsByEmail(getCurrentClient().getUsername());
     }
 
     @Override
