@@ -159,7 +159,7 @@ public class ClinicalExaminationController {
 
         clinicalExamination.setDoctor(doctor);
         clinicalExamination.setDate(LocalDate.now());
-        pet.setWeight(clinicalExamination.getWeight());
+        pet.setWeight(clinicalExaminationDto.getWeight());
         clinicalExamination.setDate(LocalDate.now());
         clinicalExamination =
                 clinicalExaminationMapper.toEntity(clinicalExaminationDto);
