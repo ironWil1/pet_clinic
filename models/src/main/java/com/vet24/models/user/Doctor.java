@@ -8,8 +8,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @DiscriminatorValue("DOCTOR")
@@ -21,7 +21,7 @@ public class Doctor extends User {
             mappedBy = "doctor",
             cascade = CascadeType.ALL
     )
-    private Set<Diagnosis> diagnoses = new HashSet<>();
+    private List<Diagnosis> diagnoses = new ArrayList<>();
 
 
     public Doctor() {
