@@ -25,7 +25,6 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
 
     @Override
     public User getCurrentUser() {
-        System.out.println(userDao.getByKey(3L));
         return userDao.getByKey(3L);
     }
 }
