@@ -12,5 +12,6 @@ public interface TopicMapper extends DtoMapper <Topic, TopicDto>, EntityMapper <
 
     @Override
     @Mapping(source = "topicStarter.id", target = "topicStarterId")
+    @Mapping(source = "comments", target = "commentDtoList")
     TopicDto toDto(Topic topic);
 }
