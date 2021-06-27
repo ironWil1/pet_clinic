@@ -240,8 +240,11 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void topicInitializer() {
         List<Topic> listTopic = new ArrayList<>();
-        List<Comment> commentList = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
+            List<Comment> commentList = new ArrayList<>();
+            commentList.add(new Comment(userService.getByKey((long) i +30),"lorem " + (i+30), LocalDateTime.now()));
+            commentList.add(new Comment(userService.getByKey((long) i +30),"lorem " + (i+30), LocalDateTime.now()));
+            commentService.persistAll(commentList);
             listTopic.add(new Topic(userService.getByKey((long)i),"topic" + i, "content" + i, false, commentList));
         }
         topicService.persistAll(listTopic);
