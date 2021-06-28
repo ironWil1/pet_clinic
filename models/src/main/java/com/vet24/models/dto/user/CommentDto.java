@@ -8,8 +8,10 @@ import java.time.LocalDateTime;
 public class CommentDto {
 
     private Long id;
-    private Long userId;
+    private UserInfoDto UserInfoDto;
     private String content;
     private LocalDateTime dateTime;
+    private int likes;
+    private int dislike;
 
 }
