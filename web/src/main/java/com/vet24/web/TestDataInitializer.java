@@ -48,6 +48,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final UserService userService;
     private final ClientService clientService;
     private final MedicineService medicineService;
+    private final DoctorReviewService doctorReviewService;
     private final VaccinationProcedureService vaccinationProcedureService;
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
     private final EchinococcusProcedureService echinococcusProcedureService;
@@ -61,6 +62,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final CommentService commentService;
     private final CommentReactionService commentReactionService;
     private final DiagnosisService diagnosisService;
+    private final TopicService topicService;
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
@@ -78,11 +80,12 @@ public class TestDataInitializer implements ApplicationRunner {
                                ReproductionService reproductionService, PetContactService petContactService,
                                CatService catService, DogService dogService, DoctorService doctorService,
                                PetService petService, Environment environment, CommentService commentService,
-                               CommentReactionService commentReactionService,DiagnosisService diagnosisService) {
+                               CommentReactionService commentReactionService,DiagnosisService diagnosisService, DoctorReviewService doctorReviewService, TopicService topicService) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
         this.medicineService = medicineService;
+        this.doctorReviewService = doctorReviewService;
         this.vaccinationProcedureService = vaccinationProcedureService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
         this.echinococcusProcedureService = echinococcusProcedureService;
@@ -96,6 +99,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.commentService = commentService;
         this.commentReactionService = commentReactionService;
         this.diagnosisService = diagnosisService;
+        this.topicService = topicService;
     }
 
     public void roleInitialize() {
@@ -213,7 +217,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void commentInitializer() {
         List<Comment> comments = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            comments.add(new Comment(clientService.getByKey((long) i), "lorem " + i, LocalDateTime.now(), doctorService.getByKey((long) i + 30)));
+            comments.add(new Comment(userService.getByKey((long) i), "lorem " + i, LocalDateTime.now()));
         }
         commentService.persistAll(comments);
 
@@ -223,6 +227,26 @@ public class TestDataInitializer implements ApplicationRunner {
         for (int i = 1; i <= 30; i++) {
             commentReactionService.update(new CommentReaction(commentService.getByKey((long) i), clientService.getByKey((long) i),true));
         }
+    }
+
+    public void doctorReviewInitializer() {
+        List<DoctorReview> doctorReviews = new ArrayList<>();
+        Comment doctorReviewComment = null;
+        for (int i = 1; i <= 30; i++) {
+            doctorReviewComment = new Comment(userService.getByKey((long) i +30),"lorem " + (i+30), LocalDateTime.now());
+            commentService.persist(doctorReviewComment);
+            doctorReviews.add(new DoctorReview(doctorReviewComment, doctorService.getByKey((long) i + 30)));
+        }
+        doctorReviewService.persistAll(doctorReviews);
+    }
+
+    public void topicInitializer() {
+        List<Topic> listTopic = new ArrayList<>();
+        List<Comment> commentList = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            listTopic.add(new Topic(userService.getByKey((long)i),"topic" + i, "content" + i, false, commentList));
+        }
+        topicService.persistAll(listTopic);
     }
 
     @Override
@@ -241,6 +265,8 @@ public class TestDataInitializer implements ApplicationRunner {
             petContactInitializer();
             commentInitializer();
             likeInitilaizer();
+            topicInitializer();
+            doctorReviewInitializer();
         }
     }
 }
