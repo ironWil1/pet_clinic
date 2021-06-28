@@ -1,10 +1,10 @@
 package com.vet24.service.media;
 
+import com.vet24.models.pet.PetContact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -37,6 +37,8 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendEmailFromTemplate(String toEmail, String subject, String templateName, Map<String, Object> model) {
         Locale locale = Locale.forLanguageTag("ru-RU");
+        model.put("sign", mailSign);
+        model.put("location", mailLocation);
         Context context = new Context(locale);
         context.setVariables(model);
         String content = templateEngine.process(templateName, context);
@@ -68,21 +70,19 @@ public class MailServiceImpl implements MailService {
         var model = new HashMap<String, Object>() {{
             put("tokenUrl", tokenUrl);
             put("name", userName);
-            put("sign", mailSign);
-            put("location", mailLocation);
         }};
         sendEmailFromTemplate(emailTo, "Registration greeting", "mail/greeting-letter-template", model);
     }
 
     @Override
-    public void sendGeolocationPetFoundMessage(String emailTo, String subject, String message) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-
-        mailMessage.setFrom(mailFrom);
-        mailMessage.setTo(emailTo);
-        mailMessage.setSubject(subject);
-        mailMessage.setText(message);
-
-        emailSender.send(mailMessage);
+    public void sendGeolocationPetFoundMessage(PetContact petContact, String geolocationPetFoundUrl, String text) {
+        var model = new HashMap<String, Object>() {{
+            put("name", petContact.getPet().getClient().getFirstname());
+            put("geolocationPetFoundUrl", geolocationPetFoundUrl);
+            put("petName", petContact.getPet().getName());
+            put("text", text);
+        }};
+        sendEmailFromTemplate(petContact.getPet().getClient().getEmail(), "Info about your founded pet",
+                "mail/geolocation-pet-letter-template", model);
     }
 }

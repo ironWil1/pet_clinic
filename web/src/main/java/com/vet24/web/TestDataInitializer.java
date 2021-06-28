@@ -178,32 +178,32 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void petContactInitializer() {
         Pet pet1 = petService.getByKey(1L);
-        PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_18_00L, petContactService.randomPetContactUniqueCode(1L));
+        PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_18_00L, petContactService.randomPetContactUniqueCode());
         petContact1.setPet(pet1);
         petContactService.persist(petContact1);
 
         Pet pet2 = petService.getByKey(2L);
-        PetContact petContact2 = new PetContact("Мария", "Парниковое 7", 8_748_585_55_55L, petContactService.randomPetContactUniqueCode(2L));
+        PetContact petContact2 = new PetContact("Мария", "Парниковое 7", 8_748_585_55_55L, petContactService.randomPetContactUniqueCode());
         petContact2.setPet(pet2);
         petContactService.persist(petContact2);
 
         Pet pet3 = petService.getByKey(3L);
-        PetContact petContact3 = new PetContact("Олег", "Садовое 27", 8_696_777_42_42L, petContactService.randomPetContactUniqueCode(3L));
+        PetContact petContact3 = new PetContact("Олег", "Садовое 27", 8_696_777_42_42L, petContactService.randomPetContactUniqueCode());
         petContact3.setPet(pet3);
         petContactService.persist(petContact3);
 
         Pet pet4 = petService.getByKey(4L);
-        PetContact petContact4 = new PetContact("Дмитрий", "Липовая 3", 8_962_478_02_02L, petContactService.randomPetContactUniqueCode(4L));
+        PetContact petContact4 = new PetContact("Дмитрий", "Липовая 3", 8_962_478_02_02L, petContactService.randomPetContactUniqueCode());
         petContact4.setPet(pet4);
         petContactService.persist(petContact4);
 
         Pet pet5 = petService.getByKey(5L);
-        PetContact petContact5 = new PetContact("Кирилл", "Виноградная 20", 8_696_222_32_23L, petContactService.randomPetContactUniqueCode(5L));
+        PetContact petContact5 = new PetContact("Кирилл", "Виноградная 20", 8_696_222_32_23L, petContactService.randomPetContactUniqueCode());
         petContact5.setPet(pet5);
         petContactService.persist(petContact5);
 
         Pet pet6 = petService.getByKey(6L);
-        PetContact petContact6 = new PetContact("Александр", "Стрелковая 70", 8_962_969_10_30L, petContactService.randomPetContactUniqueCode(6L));
+        PetContact petContact6 = new PetContact("Александр", "Стрелковая 70", 8_962_969_10_30L, petContactService.randomPetContactUniqueCode());
         petContact6.setPet(pet6);
         petContactService.persist(petContact6);
     }

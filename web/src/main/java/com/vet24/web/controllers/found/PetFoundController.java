@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/petFound")
 public class PetFoundController {
 
     private final PetFoundService petFoundService;
@@ -49,7 +49,7 @@ public class PetFoundController {
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "PetContact by petCode is not found"),
     })
-    @PostMapping(value = "/petFound")
+    @PostMapping(value = "")
     public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "petCode", required = false) String petCode,
                                                                           @RequestBody PetFoundDto petFoundDto,
                                                                           @Value("${googlemaps.service.url}") String googlemapsServiceUrl) {
@@ -60,16 +60,9 @@ public class PetFoundController {
             petFoundService.persist(petFound);
 
             String text = petFound.getText();
-            String latitude = petFound.getLatitude();
-            String longitude = petFound.getLongitude();
-            String clientEmail = petContact.getPet().getClient().getEmail();
-            String clientName = petContact.getPet().getClient().getFirstname();
-            String petName = petContact.getPet().getName();
-            String message = String.format("%s, добрый день! Ваш %s нашёлся!\n\n Кто-то отсканировал QR код" +
-                    " на ошейнике вашего питомца и отправил вам следующее сообщение: \n\"%s\"\n\n" +
-                    "Перейдите по ссылке для просмотра местонахождения питомца: " + googlemapsServiceUrl,
-                    clientName, petName, text, latitude, longitude);
-            mailService.sendGeolocationPetFoundMessage(clientEmail, "Информация о вашем питомце", message);
+            String geolocationPetFoundUrl = String.format(googlemapsServiceUrl, petFound.getLatitude(), petFound.getLongitude());
+
+            mailService.sendGeolocationPetFoundMessage(petContact, geolocationPetFoundUrl, text);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
