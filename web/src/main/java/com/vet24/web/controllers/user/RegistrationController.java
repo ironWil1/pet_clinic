@@ -26,29 +26,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
+@RequestMapping("/api/registration")
 @Tag(name = "registration-controller", description = "operations with creation of new clients")
 public class RegistrationController {
 
-
-    private static  final String CONFIRMATION_API ="/api/auth/submit";
     private static final String INVALID_TOKEN_MSG = "Registration token is invalid";
     private static final String PASSWORDS_UNMATCHED = "Passwords don't match";
     @Value("${registration.repeated.error.msg}")
     private  String repeatedRegistrationMsg;
-    @Value("${application.domain.name}")
-    private  String domainPath;
 
     private final ClientService clientService;
     private final MailService mailService;
@@ -64,14 +60,6 @@ public class RegistrationController {
         this.verificationService = verificationService;
     }
 
-    @PostMapping("/api/registration/test")
-    public ResponseEntity<Void> testMailSend(@RequestBody Map<String, String> toMailInfo) {
-        String tokenUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString() + CONFIRMATION_API + "/342354655";
-        mailService.sendWelcomeMessage(toMailInfo.get("toMail"), toMailInfo.get("toName"), tokenUrl);
-
-        return new  ResponseEntity<>(HttpStatus.CREATED);
-    }
-
     @Operation(summary = "Register new client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created new client"),
@@ -80,9 +68,8 @@ public class RegistrationController {
             @ApiResponse(responseCode = "400", description = "DataIntegrityViolationException")
     })
 
-    @PostMapping("/api/registration")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterDto inputDto, Errors errors,
-                                         HttpServletRequest request) throws IOException, MessagingException {
+    @PostMapping("")
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterDto inputDto, Errors errors) throws IOException, MessagingException {
         if (errors.hasErrors()) {
             String mesBuild = errors.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
@@ -102,13 +89,9 @@ public class RegistrationController {
 
         foundOrNew.setRole(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
 
-        String tokenLink = domainPath +
-                request.getContextPath() +
-                RegistrationController.CONFIRMATION_API +
-                "?userCode=" +
-                verificationService.createVerificationToken(foundOrNew);
-
-        mailService.sendWelcomeMessage(inputDto.getEmail(),inputDto.getFirstname(), tokenLink);
+        String tokenUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString() +
+                "/api/registration/confirm/" + verificationService.createVerificationToken(foundOrNew);
+        mailService.sendWelcomeMessage(inputDto.getEmail(), inputDto.getFirstname(), tokenUrl);
 
         return new  ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -119,7 +102,7 @@ public class RegistrationController {
             @ApiResponse(responseCode = "400", description = "BadRequestException")
     })
 
-    @GetMapping(CONFIRMATION_API + "/{token}")
+    @GetMapping("/confirm/{token}")
     public ResponseEntity<ClientDto> verifyMail(@PathVariable(value="token") String token/* @RequestParam String userCode*/) {
 
         VerificationToken verificationToken = verificationService.getVerificationToken(token);

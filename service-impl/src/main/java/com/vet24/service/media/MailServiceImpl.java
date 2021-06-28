@@ -2,7 +2,6 @@ package com.vet24.service.media;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -34,8 +33,6 @@ public class MailServiceImpl implements MailService {
     private JavaMailSender emailSender;
     @Autowired
     private SpringTemplateEngine templateEngine;
-    @Autowired
-    private ServerProperties server;
 
     @Override
     public void sendEmailFromTemplate(String toEmail, String subject, String templateName, Map<String, Object> model) {
@@ -55,7 +52,6 @@ public class MailServiceImpl implements MailService {
             helper.setFrom(mailFrom, mailSign);
             helper.setTo(toMail);
             helper.setSubject(subject);
-            //helper.setText("<h1>sdfsdfsd</h1> <p>sdfsdfs <b>a00dfsdfsdfdsf</b></p><hr /><img src='cid:logoImage' />", true);
             helper.setText(content, true);
 
             var resource = new ClassPathResource("/template-cover-cat-transparent-80.png");
@@ -69,36 +65,13 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public void sendWelcomeMessage(String emailTo, String userName, String tokenUrl) {
-//        new EnvironmentUtil();
         var model = new HashMap<String, Object>() {{
-            //ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
             put("tokenUrl", tokenUrl);
             put("name", userName);
             put("sign", mailSign);
             put("location", mailLocation);
         }};
         sendEmailFromTemplate(emailTo, "Registration greeting", "mail/greeting-letter-template", model);
-
-        /*MimeMessage message = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,
-                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                StandardCharsets.UTF_8.name());
-        helper.addAttachment("template-cover-cat.png",
-                new ClassPathResource("template-cover-cat.png"));
-        Context context = new Context(Locale.ENGLISH);
-        Map<String, Object> model = new HashMap<>();
-        model.put("name",name );
-        model.put("location", mailLocation);
-        model.put("sign" ,mailSign);
-        model.put("tokenLink", tokenLink);
-        context.setVariables(model);
-        String html = templateEngine.process("greeting-letter-template", context);
-        helper.setTo(emailTo);
-        helper.setText(html, true);
-        helper.setSubject("Registration greeting");
-        helper.setFrom(mailFrom);
-        emailSender.send(message);
-        //send(message);*/
     }
 
     @Override
@@ -111,6 +84,5 @@ public class MailServiceImpl implements MailService {
         mailMessage.setText(message);
 
         emailSender.send(mailMessage);
-        //send(mailMessage);
     }
 }
