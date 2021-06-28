@@ -7,10 +7,10 @@ import com.vet24.models.user.Comment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {UserInfoMapper.class})
 public interface CommentMapper extends DtoMapper<Comment, CommentDto>, EntityMapper<CommentDto, Comment> {
 
     @Override
-    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user", target = "userInfoDto")
     CommentDto toDto(Comment comment);
 }
