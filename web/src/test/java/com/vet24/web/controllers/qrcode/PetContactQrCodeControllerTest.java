@@ -45,7 +45,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     }
 
     // post create petContact by id - success
-    @Test
+    //@Test
     @DataSet(cleanBefore = true, value = {"/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void testCreatePetContactForPetSuccess() throws Exception {
         PetContactDto petContact = new PetContactDto("Мария", "Невского 17", 5647564343L);
