@@ -9,4 +9,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface ClinicalExaminationMapper extends DtoMapper<ClinicalExamination, ClinicalExaminationDto>,
         EntityMapper<ClinicalExaminationDto, ClinicalExamination> {
+
 }

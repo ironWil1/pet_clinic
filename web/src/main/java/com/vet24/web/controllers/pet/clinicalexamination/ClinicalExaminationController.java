@@ -61,11 +61,10 @@ public class ClinicalExaminationController {
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @GetMapping("/{examinationId}")
-    public ResponseEntity<ClinicalExaminationDto> getById(@PathVariable Long petId,
-                                                          @PathVariable Long examinationId) {
+    public ResponseEntity<ClinicalExaminationDto> getById(@PathVariable Long examinationId) {
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
         Doctor doctor = doctorService.getCurrentDoctor();
-        Pet pet = petService.getByKey(petId);
+        Pet pet = clinicalExamination.getPet();
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
@@ -107,10 +106,10 @@ public class ClinicalExaminationController {
         clinicalExamination.setId(null);
         clinicalExamination.setDoctor(doctorService.getCurrentDoctor());
         clinicalExamination.setDate(LocalDate.now());
+
         clinicalExaminationService.persist(clinicalExamination);
         pet.setWeight(clinicalExamination.getWeight());
-
-        //        clinicalExamination.setPet(pet);
+        clinicalExamination.setPet(petService.getByKey(clinicalExaminationDto.getPetId()));
 
         pet.addClinicalExamination(clinicalExamination);
         petService.update(pet);
