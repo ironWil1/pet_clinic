@@ -1,13 +1,13 @@
 package com.vet24.web.controllers.pet.clinicalexamination;
 
 import com.vet24.models.dto.exception.ExceptionDto;
+import com.vet24.models.dto.pet.PetDto;
 import com.vet24.models.dto.pet.clinicalexamination.ClinicalExaminationDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.clinicalexamination.ClinicalExaminationMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.user.Doctor;
-import com.vet24.models.user.User;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
 import com.vet24.service.user.DoctorService;
@@ -18,16 +18,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
-import org.apache.tomcat.jni.Local;
+
 import java.time.LocalDate;
-import java.util.Date;
 
 
 @RestController
-@RequestMapping("/api/doctor/pet/{petId}/exam")
+@RequestMapping("/api/doctor/exam")
 public class ClinicalExaminationController {
 
     private final PetService petService;
@@ -99,9 +97,8 @@ public class ClinicalExaminationController {
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("")
-    public ResponseEntity<ClinicalExaminationDto> save(@PathVariable Long petId,
-                                                       @RequestBody ClinicalExaminationDto clinicalExaminationDto) {
-        Pet pet = petService.getByKey(petId);
+    public ResponseEntity<ClinicalExaminationDto> save(@RequestBody ClinicalExaminationDto clinicalExaminationDto) {
+        Pet pet = petService.getByKey(clinicalExaminationDto.getPetId());
         ClinicalExamination clinicalExamination =
                 clinicalExaminationMapper.toEntity(clinicalExaminationDto);
         if (pet == null) {
@@ -112,6 +109,9 @@ public class ClinicalExaminationController {
         clinicalExamination.setDate(LocalDate.now());
         clinicalExaminationService.persist(clinicalExamination);
         pet.setWeight(clinicalExamination.getWeight());
+
+        //        clinicalExamination.setPet(pet);
+
         pet.addClinicalExamination(clinicalExamination);
         petService.update(pet);
         return new ResponseEntity<>(clinicalExaminationMapper.toDto(clinicalExamination), HttpStatus.CREATED);
@@ -207,7 +207,5 @@ public class ClinicalExaminationController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 
 }

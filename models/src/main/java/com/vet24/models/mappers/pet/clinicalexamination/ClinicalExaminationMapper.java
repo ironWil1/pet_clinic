@@ -5,9 +5,6 @@ import com.vet24.models.mappers.DtoMapper;
 import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ClinicalExaminationMapper extends DtoMapper<ClinicalExamination, ClinicalExaminationDto>,
