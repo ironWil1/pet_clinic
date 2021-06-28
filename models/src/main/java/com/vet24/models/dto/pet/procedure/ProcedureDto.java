@@ -16,17 +16,17 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProcedureDto {
-    @Null(groups = {OnCreate.class})
-    @NotNull(groups = {OnUpdate.class})
+    @Null(groups = {OnCreate.class}, message = "Поле id должно быть null")
+    @NotNull(groups = {OnUpdate.class}, message = "Поле id не должно быть null")
     Long id;
 
     LocalDate date; //if null or blank set now
     ProcedureType type;
 
-    @NotNull(groups = {OnCreate.class, OnUpdate.class})
+    @NotNull(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineId не должно быть null")
     Long medicineId;
 
-    @NotNull(groups = {OnCreate.class, OnUpdate.class})
+    @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineBatchNumber не должно быть пустым")
     String medicineBatchNumber;
 
     Boolean isPeriodical;

@@ -79,9 +79,7 @@ public class MedicineController {
     public ResponseEntity<MedicineDto> update(@PathVariable Long id,@Validated(OnUpdate.class)
                                                @RequestBody MedicineDto medicineDto,BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
-            String errors = bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-            throw new BadRequestException(errors);
+            throw new BadRequestException(bindingResult);
         }
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
@@ -97,9 +95,7 @@ public class MedicineController {
     @PostMapping(value = "")
     public ResponseEntity<MedicineDto> save(@Validated(OnCreate.class) @RequestBody MedicineDto medicineDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
-            String errors = bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-            throw new BadRequestException(errors);
+            throw new BadRequestException(bindingResult);
         }
         Medicine medicine = medicineMapper.toEntity(medicineDto);
         medicine.setId(null);

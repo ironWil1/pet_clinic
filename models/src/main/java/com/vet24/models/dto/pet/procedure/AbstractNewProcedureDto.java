@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.vet24.models.enums.ProcedureType;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -22,9 +23,9 @@ import java.time.LocalDate;
 public abstract class AbstractNewProcedureDto {
     LocalDate date; //if null or blank set now
     ProcedureType type;
-    @NotNull
+    @NotNull(message = "Поле medicineId не должно быть null")
     Long medicineId;
-    @NotNull
+    @NotBlank(message = "Поле medicineBatchNumber не должно быть пустым")
     String medicineBatchNumber;
     Boolean isPeriodical;
     Integer periodDays;

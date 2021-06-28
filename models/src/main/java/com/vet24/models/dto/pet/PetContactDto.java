@@ -11,13 +11,13 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 public class PetContactDto {
-    @NotBlank(message = "Введите имя владельца")
+    @NotBlank(message = "Поле ownerName не должно быть пустым")
     private String ownerName;
 
-    @NotBlank(message = "Введите адрес")
+    @NotBlank(message = "Поле address не должно быть пустым")
     private String address;
 
-    @NotNull(message = "Введите номер телефона")
+    @NotNull(message = "Поле phone не должно быть null")
     private Long phone;
 }
 
