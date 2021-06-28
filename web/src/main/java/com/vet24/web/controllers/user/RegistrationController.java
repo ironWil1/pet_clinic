@@ -12,7 +12,6 @@ import com.vet24.models.user.VerificationToken;
 import com.vet24.service.media.MailService;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.VerificationService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,12 +22,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -59,6 +64,14 @@ public class RegistrationController {
         this.verificationService = verificationService;
     }
 
+    @PostMapping("/api/registration/test")
+    public ResponseEntity<Void> testMailSend(@RequestBody Map<String, String> toMailInfo) {
+        String tokenUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString() + CONFIRMATION_API + "/342354655";
+        mailService.sendWelcomeMessage(toMailInfo.get("toMail"), toMailInfo.get("toName"), tokenUrl);
+
+        return new  ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @Operation(summary = "Register new client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created new client"),
@@ -68,9 +81,8 @@ public class RegistrationController {
     })
 
     @PostMapping("/api/registration")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterDto
-                                                     inputDto, Errors errors,
-                                         HttpServletRequest request)throws IOException, MessagingException {
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterDto inputDto, Errors errors,
+                                         HttpServletRequest request) throws IOException, MessagingException {
         if (errors.hasErrors()) {
             String mesBuild = errors.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
@@ -107,17 +119,17 @@ public class RegistrationController {
             @ApiResponse(responseCode = "400", description = "BadRequestException")
     })
 
-    @GetMapping(CONFIRMATION_API)
-    public ResponseEntity<ClientDto> verifyMail(@RequestParam String userCode) {
+    @GetMapping(CONFIRMATION_API + "/{token}")
+    public ResponseEntity<ClientDto> verifyMail(@PathVariable(value="token") String token/* @RequestParam String userCode*/) {
 
-        VerificationToken token = verificationService.getVerificationToken(userCode);
-        if (token == null) {
+        VerificationToken verificationToken = verificationService.getVerificationToken(token);
+        if (verificationToken == null) {
             throw new BadRequestException(INVALID_TOKEN_MSG);
         }
-        Client cl = token.getClient();
+        Client cl = verificationToken.getClient();
         cl.setRole(new Role(RoleNameEnum.CLIENT));
         ClientDto clientUpdated = clientMapper.toDto(clientService.update(cl));
-        verificationService.delete(token);
+        verificationService.delete(verificationToken);
         return  ResponseEntity.status(HttpStatus.RESET_CONTENT).body(clientUpdated);
 
     }

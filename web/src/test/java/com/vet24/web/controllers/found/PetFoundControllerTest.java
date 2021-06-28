@@ -38,14 +38,14 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
         String bodyUpdate = objectMapper.valueToTree(petFoundDto).toString();
         Mockito.doNothing()
                 .when(mailService)
-                .sendTextAndGeolocationPet(anyString(), anyString(), anyString());
+                .sendGeolocationPetFoundMessage(anyString(), anyString(), anyString());
         mockMvc.perform(MockMvcRequestBuilders.post(URL_GET_PET_CONTACT_BY_PETCODE)
                 .content(bodyUpdate).contentType(APPLICATION_JSON_UTF8)
                 .param("petCode", petCode))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andDo(MockMvcResultHandlers.print());
         Mockito.verify(mailService)
-                .sendTextAndGeolocationPet(anyString(), anyString(),
+                .sendGeolocationPetFoundMessage(anyString(), anyString(),
                         Mockito.matches(".*Some text.*\\s+.*1\\.2345678.+2\\.3456789.*"));
     }
 
@@ -62,6 +62,6 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
                 .param("petCode", petCode))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
-        Mockito.verify(mailService, times(0)).sendTextAndGeolocationPet(anyString(), anyString(), anyString());
+        Mockito.verify(mailService, times(0)).sendGeolocationPetFoundMessage(anyString(), anyString(), anyString());
     }
 }
