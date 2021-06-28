@@ -79,4 +79,15 @@ public class PetFoundController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
+    {
+        System.out.println(log.getName());
+        try {
+            log.debug("PetFoundController log!!!!!!!!!!!!");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
