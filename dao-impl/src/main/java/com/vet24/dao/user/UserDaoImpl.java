@@ -9,7 +9,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<Long, User> implements UserDao
     @Override
     public User getUserByEmail(String email) {
         return manager
-                .createQuery("from User where email =:email", User.class)
+                .createQuery("SELECT u from User u where u.email =:email", User.class)
                 .setParameter("email", email).getSingleResult();
     }
 }

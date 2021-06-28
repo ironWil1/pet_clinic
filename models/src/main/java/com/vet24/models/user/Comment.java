@@ -1,6 +1,7 @@
 package com.vet24.models.user;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -35,16 +37,13 @@ public class Comment implements Serializable {
     private Long id;
 
     @ManyToOne (fetch = FetchType.LAZY)
-    private Client client;
+    private User user;
 
     @Column(nullable=false)
     private String content;
 
     @Column(nullable=false)
     private LocalDateTime dateTime;
-
-    @ManyToOne (fetch = FetchType.LAZY)
-    private Doctor doctor;
 
     @OneToMany(
             mappedBy = "comment",
@@ -53,10 +52,9 @@ public class Comment implements Serializable {
     )
     private List<CommentReaction> commentReactions = new ArrayList<>();
 
-    public Comment(Client client, String content, LocalDateTime dateTime, Doctor doctor) {
-        this.client = client;
+    public Comment(User user, String content, LocalDateTime dateTime) {
+        this.user = user;
         this.content = content;
         this.dateTime = dateTime;
-        this.doctor = doctor;
     }
 }

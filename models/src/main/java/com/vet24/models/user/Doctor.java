@@ -1,5 +1,6 @@
 package com.vet24.models.user;
 
+import com.vet24.models.medicine.Diagnosis;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
@@ -18,10 +19,10 @@ public class Doctor extends User {
 
     @OneToMany(
             mappedBy = "doctor",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
     )
-    private List<Comment> comments = new ArrayList<>();
+    private List<Diagnosis> diagnoses = new ArrayList<>();
+
 
     public Doctor() {
         super();

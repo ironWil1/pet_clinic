@@ -22,12 +22,7 @@ public class Client extends User {
     )
     private List<Pet> pets = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "client",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Comment> comments = new ArrayList<>();
+
 
 
     @OneToMany(
@@ -63,13 +58,7 @@ public class Client extends User {
         this.pets = pets;
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
 
     public List<CommentReaction> getCommentReactions() {
         return commentReactions;

@@ -22,4 +22,9 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         return userDao.getUserByEmail(s);
     }
+
+    @Override
+    public User getCurrentUser() {
+        return userDao.getByKey(3L);
+    }
 }
