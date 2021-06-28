@@ -10,4 +10,6 @@ public interface UserService extends UserDetailsService, ReadWriteService<Long, 
 
     @Override
     UserDetails loadUserByUsername(String s) throws UsernameNotFoundException;
+
+    User getCurrentUser(); // temporary solution. Always returns User with id = 3
 }
