@@ -94,9 +94,7 @@ public class ReproductionController {
     public ResponseEntity<ReproductionDto> save(@PathVariable Long petId, @Validated(OnCreate.class)
                                                 @RequestBody ReproductionDto reproductionDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
-            String errors = bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-            throw new BadRequestException(errors);
+            throw new BadRequestException(bindingResult);
         }
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.toEntity(reproductionDto);
@@ -133,9 +131,7 @@ public class ReproductionController {
     public ResponseEntity<ReproductionDto> update(@PathVariable Long petId, @PathVariable Long reproductionId,
                                                   @Validated(OnUpdate.class) @RequestBody ReproductionDto reproductionDto,BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
-            String errors = bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-            throw new BadRequestException(errors);
+            throw new BadRequestException(bindingResult);
         }
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);

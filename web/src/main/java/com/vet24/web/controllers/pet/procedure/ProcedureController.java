@@ -103,9 +103,7 @@ public class ProcedureController {
     public ResponseEntity<ProcedureDto> save(@PathVariable Long petId, @Validated(OnCreate.class)
                                              @RequestBody AbstractNewProcedureDto newProcedureDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
-            String errors = bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-            throw new BadRequestException(errors);
+            throw new BadRequestException(bindingResult);
         }
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
@@ -142,9 +140,7 @@ public class ProcedureController {
     public ResponseEntity<ProcedureDto> update(@PathVariable Long petId, @PathVariable Long procedureId,
                                          @Validated(OnUpdate.class )@RequestBody ProcedureDto procedureDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
-            String errors = bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-            throw new BadRequestException(errors);
+            throw new BadRequestException(bindingResult);
         }
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);

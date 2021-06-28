@@ -107,9 +107,7 @@ public class PetContactQrCodeController {
     public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@Valid @RequestBody(required = false) PetContactDto petContactDto,
                                                                 @PathVariable("id") Long id, BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
-            String errors = bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-            throw new BadRequestException(errors);
+            throw new BadRequestException(bindingResult);
         }
         if (petContactService.isExistByKey(id)) {
             PetContact petContactOld = petContactService.getByKey(id);

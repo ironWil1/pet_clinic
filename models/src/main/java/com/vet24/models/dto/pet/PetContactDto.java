@@ -14,10 +14,10 @@ public class PetContactDto {
     @NotBlank(message = "Введите имя владельца")
     private String ownerName;
 
-    @NotBlank
+    @NotBlank(message = "Введите адрес")
     private String address;
 
-    @NotNull
+    @NotNull(message = "Введите номер телефона")
     private Long phone;
 }
 

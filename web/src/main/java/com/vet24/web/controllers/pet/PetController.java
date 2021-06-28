@@ -88,9 +88,7 @@ public class PetController {
     @PostMapping("/add")
     public ResponseEntity<AbstractNewPetDto> persistPet(@Valid @RequestBody AbstractNewPetDto petDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
-            String errors = bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-            throw new BadRequestException(errors);
+            throw new BadRequestException(bindingResult);
         }
         Client client = clientService.getCurrentClient();
         if (client != null) {
@@ -132,9 +130,7 @@ public class PetController {
     public ResponseEntity<PetDto> updatePet(@PathVariable("petId") Long petId,@Valid
                                             @RequestBody AbstractNewPetDto petDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
-            String errors = bindingResult.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-            throw new BadRequestException(errors);
+            throw new BadRequestException(bindingResult);
         }
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
