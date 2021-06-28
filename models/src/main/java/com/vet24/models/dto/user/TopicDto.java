@@ -11,11 +11,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TopicDto {
+
     private Long id;
     private String title;
     private String content;
     private LocalDateTime creationDate;
     private LocalDateTime lastUpdateDate;
-    private Long topicStarterId;
+    private UserInfoDto topicStarter;
     private List<CommentDto> commentDtoList;
 }
