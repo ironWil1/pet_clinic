@@ -21,9 +21,4 @@ public class TopicServiceImpl extends ReadWriteServiceImpl<Long, Topic> implemen
     public List<Topic> getTopicByClientId(Long id) {
         return topicDao.getTopicByClientId(id);
     }
-
-    @Override
-    public Topic getByTitleAndClientId(String title, Long clientId) {
-        return topicDao.getByTitleAndClientId(title, clientId);
-    }
 }
