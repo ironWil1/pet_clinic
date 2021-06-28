@@ -38,4 +38,13 @@ public class ResourceController {
 
         return new ResponseEntity<>(file, headers, HttpStatus.OK);
     }
+    {
+         try {
+        log.debug("ResourceController log!!!!!!!!!!!!");
+    }
+        catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
 }

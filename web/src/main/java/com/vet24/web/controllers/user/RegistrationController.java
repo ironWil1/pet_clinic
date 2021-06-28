@@ -31,8 +31,9 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-@Slf4j
+
 @RestController
+@Slf4j
 @Tag(name = "registration-controller", description = "operations with creation of new clients")
 public class RegistrationController {
 
@@ -120,6 +121,13 @@ public class RegistrationController {
         verificationService.delete(token);
         return  ResponseEntity.status(HttpStatus.RESET_CONTENT).body(clientUpdated);
 
+    }
+    {
+        try {
+            log.debug("RegistrationController log!!!!!!!!!!!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

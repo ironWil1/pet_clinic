@@ -103,4 +103,14 @@ public class DoctorController {
         treatmentService.persist(treatment);
         return new ResponseEntity<>(treatmentMapper.toDto(treatment),HttpStatus.CREATED);
     }
+
+    {
+        try {
+            log.debug("DoctorController log!!!!!!!!!!!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

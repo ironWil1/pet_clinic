@@ -35,4 +35,15 @@ public class UploadController {
     public ResponseEntity<UploadedFileDto> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         return new ResponseEntity<>(uploadService.store(file), HttpStatus.OK);
     }
+    {
+        try {
+        log.debug("UploadController log!!!!!!!!!!!!");
+    }
+        catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+
+
 }

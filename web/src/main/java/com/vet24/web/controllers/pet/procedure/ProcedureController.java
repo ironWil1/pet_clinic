@@ -191,4 +191,12 @@ public class ProcedureController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    {
+        try {
+            log.debug("ProcedureController log!!!!!!!!!!!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }

@@ -140,4 +140,11 @@ public class PetContactQrCodeController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    {
+        try {
+            log.debug("PetContactQrCodeController log!!!!!!!!!!!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

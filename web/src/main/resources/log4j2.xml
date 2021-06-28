@@ -2,14 +2,25 @@
 <configuration status="OFF">
     <Properties>
         <Property name="logPath">target/log</Property>
-        <Property name="RollingFile">logs</Property>
+    <!--    <Property name="RollingFile">logs</Property>-->
     </Properties>
 
     <appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %5p %t %-5l - %m%n"/>
         </Console>
-        <RollingFile name="RollingFile" fileName="${logPath}/${RollingFile}.log" filePattern="${logPath}/${RollingFile}_%d{yyyy-MM-dd}.log">
+
+    <RollingFile name="petfound" fileName="${logPath}/petfound.log" filePattern="${logPath}/petfound_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+               <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="resource" fileName="${logPath}/resource.log" filePattern="${logPath}/resource_%d{yyyy-MM-dd}.log">
             <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
             <Policies>
                 <!-- Causes a rollover if the log file is older than the current JVM's start time -->
@@ -19,7 +30,7 @@
             </Policies>
         </RollingFile>
 
-        <RollingFile name="petfound" fileName="${logPath}/petfound.log" filePattern="${logPath}/petfound_%d{yyyy-MM-dd}.log">
+        <RollingFile name="upload" fileName="${logPath}/upload.log" filePattern="${logPath}/upload_%d{yyyy-MM-dd}.log">
             <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
             <Policies>
                 <!-- Causes a rollover if the log file is older than the current JVM's start time -->
@@ -28,15 +39,181 @@
                 <TimeBasedTriggeringPolicy interval="1" modulate="true" />
             </Policies>
         </RollingFile>
+
+        <RollingFile name="doctor" fileName="${logPath}/doctor.log" filePattern="${logPath}/doctor_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="medicine" fileName="${logPath}/medicine.log" filePattern="${logPath}/medicine_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="notification" fileName="${logPath}/notification.log" filePattern="${logPath}/notification_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="procedure" fileName="${logPath}/procedure.log" filePattern="${logPath}/procedure_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="reproduction" fileName="${logPath}/reproduction.log" filePattern="${logPath}/reproduction_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="pet" fileName="${logPath}/pet.log" filePattern="${logPath}/pet_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="petcontactqrcode" fileName="${logPath}/petcontactqrcode.log" filePattern="${logPath}/petcontactqrcode_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="clientcomment" fileName="${logPath}/clientcomment.log" filePattern="${logPath}/clientcomment_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="client" fileName="${logPath}/client.log" filePattern="${logPath}/client_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="registration" fileName="${logPath}/registration.log" filePattern="${logPath}/registration_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
+
 
     </appenders>
     <loggers>
-        <root level="info">
+        <root level="warn">
             <appender-ref ref="Console"/>
-            <appender-ref ref="RollingFile"/>
+         <!--   <appender-ref ref="logs"/>-->
         </root>
         <logger name ="com.vet24.web.controllers.found.PetFoundController" level ="debug">
-        <appender-ref ref="petfound"/>
+            <appender-ref ref="Console"/>
+            <appender-ref ref="petfound"/>
         </logger>
+
+        <logger name ="com.vet24.web.controllers.media.ResourceController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="resource"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.media.UploadController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="upload"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.medicine.DoctorController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="doctor"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.medicine.MedicineController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="medicine"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.notification.NotificationController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="notification"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.pet.procedure.ProcedureController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="procedure"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.pet.reproduction.ReproductionController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="reproduction"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.pet.PetController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="pet"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.qrcode.PetContactQrCodeController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="petcontactqrcode"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.user.ClientCommentController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="clientcomment"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.user.ClientController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="client"/>
+        </logger>
+
+        <logger name ="com.vet24.web.controllers.user.RegistrationController" level ="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="registration"/>
+        </logger>
+
+
+
     </loggers>
 </configuration>

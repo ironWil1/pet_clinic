@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
+@Slf4j
 @RequestMapping("api/client")
 @Tag(name = "client-controller", description = "operations with current Client")
 public class ClientController {
@@ -94,5 +96,12 @@ public class ClientController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", resourceService.getContentTypeByFileName(filename));
         return headers;
+    }
+    {
+        try {
+            log.debug("ClientController log!!!!!!!!!!!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

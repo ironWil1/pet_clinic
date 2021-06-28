@@ -133,6 +133,14 @@ public class MedicineController {
         List<MedicineDto> medicineDtoList = medicineMapper.toDto(medicineList);
         return new ResponseEntity<>(medicineDtoList, HttpStatus.OK);
     }
+    {
+        try {
+            log.debug("MedicineController log!!!!!!!!!!!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }
 
 

@@ -101,4 +101,13 @@ public class NotificationController {
             return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_GATEWAY);
         }
     }
+    {
+        try {
+            log.debug("NotificationController log!!!!!!!!!!!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

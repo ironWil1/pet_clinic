@@ -185,4 +185,12 @@ public class PetController {
         headers.add("Content-Type", resourceService.getContentTypeByFileName(filename));
         return headers;
     }
+    {
+        try {
+            log.debug("PetController log!!!!!!!!!!!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }

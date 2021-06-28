@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/client/pet/{petId}/reproduction")
 public class ReproductionController {
 
@@ -178,4 +180,13 @@ public class ReproductionController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    {
+        try {
+            log.debug("ReproductionController log!!!!!!!!!!!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
