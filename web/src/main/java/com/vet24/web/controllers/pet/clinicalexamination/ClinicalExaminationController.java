@@ -132,10 +132,9 @@ public class ClinicalExaminationController {
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @PutMapping("/{examinationId}")
-    public ResponseEntity<ClinicalExaminationDto> update(@PathVariable Long petId,
-                                                         @PathVariable Long examinationId,
+    public ResponseEntity<ClinicalExaminationDto> update(@PathVariable Long examinationId,
                                                          @RequestBody ClinicalExaminationDto clinicalExaminationDto) {
-        Pet pet = petService.getByKey(petId);
+        Pet pet = petService.getByKey(clinicalExaminationDto.getPetId());
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
         if (pet == null) {
             throw new NotFoundException("pet not found");
