@@ -28,7 +28,7 @@ public class OpenApiConfig {
     @Bean
     public GroupedOpenApi clientApi() {
         return GroupedOpenApi.builder()
-                .group("pet-controller")
+                .group("client")
                 .pathsToMatch("/api/client/**")
                 .build();
     }
@@ -36,7 +36,7 @@ public class OpenApiConfig {
     @Bean
     public GroupedOpenApi doctorApi() {
         return GroupedOpenApi.builder()
-                .group("procedure-controller")
+                .group("doctor")
                 .pathsToMatch("/api/doctor/**")
                 .build();
     }
@@ -44,9 +44,10 @@ public class OpenApiConfig {
     @Bean
     public GroupedOpenApi managerApi() {
         return GroupedOpenApi.builder()
-                .group("procedure-controller")
+                .group("manager")
                 .pathsToMatch("/api/manager/medicine/**")
                 .build();
     }
+
 
 }
