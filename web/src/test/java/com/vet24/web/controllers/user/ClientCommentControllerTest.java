@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @WithUserDetails(value = "user3@gmail.com")
 public class ClientCommentControllerTest extends ControllerAbstractIntegrationTest {
 
-    private final String URI_LIKE = "/api/client/{commentId}/{positive}";
+    private final String URI = "/api/client/doctor";
 
     @Autowired
     private ClientService clientService;
@@ -24,14 +24,15 @@ public class ClientCommentControllerTest extends ControllerAbstractIntegrationTe
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeNotFoundComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,10000L,false))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}",10000L, false))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
     }
+
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeDislikedComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,1L,false))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}",1L,false))
                 .andExpect(MockMvcResultMatchers.status().isOk())
         .andDo(
                 (result) -> {
@@ -45,7 +46,7 @@ public class ClientCommentControllerTest extends ControllerAbstractIntegrationTe
     @Test
     @DataSet(cleanBefore = true, value =  {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeLikedComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI_LIKE,2L,true))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}",2L,true))
                 .andExpect(MockMvcResultMatchers.status().isOk())
         .andDo(
                 (result) -> {

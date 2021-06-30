@@ -4,6 +4,7 @@ import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.models.user.User;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.NoResultException;
 import java.util.Optional;
 
 @Repository
@@ -17,5 +18,16 @@ public class UserDaoImpl extends ReadWriteDaoImpl<Long, User> implements UserDao
                 .getResultList()
                 .stream()
                 .findFirst();
+    }
+
+    @Override
+    public User getByUserEmail(String email) {
+        try {
+            return manager
+                    .createQuery("SELECT u FROM User u WHERE u.email =:email", User.class)
+                    .setParameter("email", email).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

@@ -36,22 +36,6 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
 
     @Test
     public void uploadClientAvatarAndVerify() throws Exception {
-        /*
-        // Resolved Exception: Type = org.springframework.web.multipart.support.MissingServletRequestPartException
-        // Error message = Required request part 'file' is not present
-
-        ClassPathResource classPathResource = new ClassPathResource("test.png");
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", classPathResource);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-        ResponseEntity<UploadedFileDto> response = testRestTemplate.postForEntity(URI + "/avatar", requestEntity, UploadedFileDto.class);
-
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());*/
-
         ClassPathResource classPathResource = new ClassPathResource("test.png");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
                 classPathResource.getFilename(), null, classPathResource.getInputStream());

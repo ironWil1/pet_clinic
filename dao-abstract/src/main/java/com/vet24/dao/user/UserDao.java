@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface UserDao extends ReadWriteDao<Long, User> {
 
     Optional<User> getByEmail(String email);
+
+    User getByUserEmail(String email);
 }
