@@ -66,17 +66,8 @@ public class ClinicalExaminationController {
         Doctor doctor = doctorService.getCurrentDoctor();
         Pet pet = clinicalExamination.getPet();
 
-        if (pet == null) {
-            throw new NotFoundException("pet not found");
-        }
-        if (doctor == null) {
-            throw new NotFoundException("the pet is not assigned a doctor");
-        }
         if (clinicalExamination == null) {
             throw new NotFoundException("clinical examination not found");
-        }
-        if (!clinicalExamination.getPet().getId().equals(pet.getId())) {
-            throw new BadRequestException("clinical examination not assigned to this pet");
         }
 
         ClinicalExaminationDto clinicalExaminationDto =
@@ -173,37 +164,19 @@ public class ClinicalExaminationController {
             summary = "delete clinical examination by id",
             description = "enter a unique ID of the pet's clinical examination")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "clinical examination successful " +
-                    "deleted"),
-            @ApiResponse(responseCode = "404", description = "clinical examination or pet with " +
-                    "this id not found",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "reproduction not assigned to this pet OR pet not yours",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "200", description = "clinical examination successful deleted"),
+            @ApiResponse(responseCode = "404", description = "clinical examination not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @DeleteMapping(value = "/{examinationId}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long petId,
-                                           @PathVariable Long examinationId) {
-        Pet pet = petService.getByKey(petId);
-        ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
-        Doctor doctor = doctorService.getCurrentDoctor();
+    public ResponseEntity<Void> deleteById(@PathVariable Long examinationId) {
 
-        if (pet == null) {
-            throw new NotFoundException("pet not found");
-        }
+        ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
+
         if (clinicalExamination == null) {
             throw new NotFoundException("clinical examination not found");
         }
-        if (doctor == null) {
-            throw new NotFoundException("there is no doctor assigned to this pet");
-        }
-        if (!clinicalExamination.getPet().getId().equals(pet.getId())) {
-            throw new BadRequestException("clinical examination not assigned to this pet");
-        }
-        pet.removeClinicalExamination(clinicalExamination);
-        petService.update(pet);
-
+        clinicalExaminationService.delete(clinicalExamination);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
