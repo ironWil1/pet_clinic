@@ -1,7 +1,6 @@
 package com.vet24.web.pet.procedure;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import com.vet24.dao.pet.procedure.ProcedureDao;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
@@ -26,7 +25,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import java.time.LocalDate;
 
 
-@DBRider
 @WithUserDetails(value = "user3@gmail.com")
 public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
 

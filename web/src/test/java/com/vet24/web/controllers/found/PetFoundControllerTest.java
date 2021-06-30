@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.found;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import com.vet24.models.dto.pet.PetFoundDto;
 import com.vet24.models.pet.PetContact;
 import com.vet24.service.pet.PetContactService;
@@ -21,7 +20,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 
 
-@DBRider
 @WithUserDetails(value = "client1@email.com")
 public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
 

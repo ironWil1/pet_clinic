@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.pet;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import com.vet24.dao.pet.PetDao;
 import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.DogDto;
@@ -31,7 +30,6 @@ import java.time.LocalDate;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DBRider
 @WithUserDetails(value = "client1@email.com")
 public class PetControllerTest extends ControllerAbstractIntegrationTest {
 

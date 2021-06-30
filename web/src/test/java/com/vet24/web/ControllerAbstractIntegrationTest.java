@@ -5,6 +5,7 @@ import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.vet24.service.media.MailService;
 import com.vet24.util.mailSender.PetFoundMailSender;
+import com.vet24.web.config.ClinicDBRider;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource("classpath:/application-test.properties")
 @AutoConfigureMockMvc
 @DBUnit(schema = "public", caseInsensitiveStrategy = Orthography.LOWERCASE)
+@ClinicDBRider
 public abstract class ControllerAbstractIntegrationTest {
 
     @MockBean

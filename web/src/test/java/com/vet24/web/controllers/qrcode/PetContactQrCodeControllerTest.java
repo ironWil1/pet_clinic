@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.qrcode;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import com.vet24.models.dto.pet.PetContactDto;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Assert;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithUserDetails;
 
-@DBRider
 @WithUserDetails(value = "client1@email.com")
 public class PetContactQrCodeControllerTest extends ControllerAbstractIntegrationTest {
 
