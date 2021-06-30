@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/doctor/**").hasRole("DOCTOR")
                 .antMatchers("/api/manager/**").hasRole("MANAGER")
                 .antMatchers("/swagger-ui/**").permitAll()
-                .antMatchers("/api/auth/submit", "/api/registration").permitAll()
+                .antMatchers("/api/registration/**").permitAll()
                 .anyRequest().authenticated();
         http.logout()
                 .logoutUrl("/logout")

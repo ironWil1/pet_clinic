@@ -18,7 +18,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 
 @Slf4j
-@DBRider
 public class RegistrationControllerTest extends ControllerAbstractIntegrationTest {
 
     final String URI = "http://localhost:8090/api/registration";
