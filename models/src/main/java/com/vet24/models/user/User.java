@@ -1,6 +1,5 @@
 package com.vet24.models.user;
 
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,6 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @Entity
@@ -87,9 +87,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<>();
-        list.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-        return list;
+        return new HashSet<>() {{
+            add(new SimpleGrantedAuthority("ROLE_" + role.getAuthority()));
+        }};
     }
 
     @Override

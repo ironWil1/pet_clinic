@@ -1,7 +1,6 @@
 package com.vet24.web.medicine;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import com.vet24.dao.medicine.MedicineDaoImpl;
 import com.vet24.models.dto.medicine.MedicineDto;
 import com.vet24.models.mappers.medicine.MedicineMapper;
@@ -12,16 +11,24 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DBRider
+@WithUserDetails(value = "manager@gmail.com")
 public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
@@ -31,7 +38,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     private MedicineDaoImpl medicineDao;
     private final String URI = "http://localhost:8090/api/manager/medicine";
-    private HttpHeaders headers = new HttpHeaders();
+    private final HttpHeaders headers = new HttpHeaders();
     private Medicine medicine;
     private MedicineDto medicineDto;
 
@@ -50,7 +57,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //get medicine by id
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeGetMedicineById() throws Exception {
         Medicine medicine = medicineDao.getByKey(100L);
         ResponseEntity<MedicineDto> response = testRestTemplate
@@ -62,7 +69,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //add medicine
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeAddMedicine() throws URISyntaxException {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
@@ -80,7 +87,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //put medicine by id
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeUpdateMedicineById() throws Exception {
         medicineDto.setId(101L);
         HttpEntity<MedicineDto> entity = new HttpEntity<>(medicineDto, headers);
@@ -94,31 +101,22 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //upload icon for medicine by id
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeUpdateMedicineIcon() throws Exception {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("file", new org.springframework.core.io.ClassPathResource("test.png"));
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
-        ResponseEntity<String> response = testRestTemplate
-                .exchange(URI + "/{id}/set-pic", HttpMethod.POST, entity, String.class, 100);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
+        ClassPathResource classPathResource = new ClassPathResource("test.png");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
+                classPathResource.getFilename(), null, classPathResource.getInputStream());
+        mockMvc.perform(multipart(URI + "/{id}/set-pic", 100)
+                .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
+                .andExpect(status().isOk());
 
-    //get icon for medicine by id
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
-    public void shouldBeGetMedicineIconById() throws Exception {
-        shouldBeUpdateMedicineIcon();
-        ResponseEntity<byte[]> response = testRestTemplate
-                .getForEntity(URI + "/{id}/set-pic", byte[].class, 100);
+        ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI + "/{id}/set-pic", byte[].class, 100);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     //delete medicine by id
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeDeleteMedicine() throws Exception {
         List<Medicine> medicineListBefore = medicineDao.getAll();
         int countRow = medicineListBefore.size();
@@ -133,7 +131,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     //test search medicine
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/medicine.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeSearchMedicine() throws Exception {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(URI + "/search")
                 .queryParam("manufactureName")

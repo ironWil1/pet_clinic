@@ -85,11 +85,12 @@ public class ClientCommentController {
     @PostMapping(value = "/{commentId}/{positive}")
     public ResponseEntity<Void> likeOrDislikeComment(@PathVariable Long commentId, @PathVariable boolean positive)  {
 
-        Client client = clientService.getCurrentClient();
         Comment comment = commentService.getByKey(commentId);
         if (comment == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        Client client = clientService.getCurrentClient();
         CommentReaction commentLike = new CommentReaction(comment,client,positive);
         commentReactionService.update(commentLike);
 
