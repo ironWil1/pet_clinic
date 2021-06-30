@@ -129,10 +129,8 @@ public class ReproductionController {
     })
     @PutMapping("/{reproductionId}")
     public ResponseEntity<ReproductionDto> update(@PathVariable Long petId, @PathVariable Long reproductionId,
-                                                  @Validated(OnUpdate.class) @RequestBody ReproductionDto reproductionDto,BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            throw new BadRequestException(bindingResult);
-        }
+                                                   @RequestBody ReproductionDto reproductionDto) {
+
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
         Client client = clientService.getCurrentClient();

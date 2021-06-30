@@ -16,8 +16,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReproductionDto {
-    @Null(groups = {OnCreate.class}, message = "Поле id должно быть null")
-    @NotNull(groups = {OnUpdate.class}, message = "Поле id не должно быть null")
     Long id;
     LocalDate estrusStart;
     LocalDate mating;
