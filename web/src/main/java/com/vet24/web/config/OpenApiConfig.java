@@ -3,6 +3,7 @@ package com.vet24.web.config;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import org.springdoc.core.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,4 +24,29 @@ public class OpenApiConfig {
 
         return openAPI;
     }
+
+    @Bean
+    public GroupedOpenApi clientApi() {
+        return GroupedOpenApi.builder()
+                .group("pet-controller")
+                .pathsToMatch("/api/client/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi doctorApi() {
+        return GroupedOpenApi.builder()
+                .group("procedure-controller")
+                .pathsToMatch("/api/doctor/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi managerApi() {
+        return GroupedOpenApi.builder()
+                .group("procedure-controller")
+                .pathsToMatch("/api/manager/medicine/**")
+                .build();
+    }
+
 }
