@@ -1,3 +1,10 @@
+ROLE:
+  - NAME: "ADMIN"
+  - NAME: "MANAGER"
+  - NAME: "CLIENT"
+  - NAME: "UNVERIFIED_CLIENT"
+  - NAME: "DOCTOR"
+
 USER_ENTITIES:
   - ID: 100
     USER_TYPE: "ADMIN"
@@ -46,13 +53,38 @@ USER_ENTITIES:
     LASTNAME: "Petrov"
     EMAIL: "user4@gmail.com"
     PASSWORD: "user4"
-
-ROLE:
-  - NAME: "ADMIN"
-  - NAME: "MANAGER"
-  - NAME: "CLIENT"
-  - NAME: "UNVERIFIED_CLIENT"
-  - NAME: "DOCTOR"
+  - ID: 5
+    USER_TYPE: "CLIENT"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Petr"
+    LASTNAME: "Petrov"
+    EMAIL: "user5@gmail.com"
+    PASSWORD: "user5"
+  - ID: 33
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Doctor"
+    LASTNAME: "Doctor"
+    EMAIL: "doctor33@gmail.com"
+    PASSWORD: "user33"
+  - ID: 34
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Vinni"
+    LASTNAME: "Pukh"
+    EMAIL: "doctor34@gmail.com"
+    PASSWORD: "user34"
+  - ID: 35
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Doctor"
+    LASTNAME: "House"
+    EMAIL: "doctor35@gmail.com"
+    PASSWORD: "user35"
 
 USER_ROLE:
   - USER_ID: 100
@@ -67,3 +99,11 @@ USER_ROLE:
     ROLE_NAME: "CLIENT"
   - USER_ID: 4
     ROLE_NAME: "CLIENT"
+  - USER_ID: 5
+    ROLE_NAME: "CLIENT"
+  - USER_ID: 33
+    ROLE_NAME: "DOCTOR"
+  - USER_ID: 34
+    ROLE_NAME: "DOCTOR"
+  - USER_ID: 35
+    ROLE_NAME: "DOCTOR"

@@ -22,7 +22,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
     private final String URI = "http://localhost:8090/api/doctor/pet/{petId}/addDiagnosis";
 
     @Test
-    @DataSet(value = {"/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"}, cleanBefore = true)
     public void shouldBeNotFound()  {
        String diagnosis = "bla-bla-bla";
 
@@ -31,11 +31,10 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
         ResponseEntity<DiagnosisDto> responseEntity =  testRestTemplate
                 .exchange(URI, HttpMethod.POST,entity, DiagnosisDto.class,1001);
         Assert.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-
     }
 
     @Test
-    @DataSet(value = {"/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
+    @DataSet(value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"}, cleanBefore = true)
     public void shouldBeCreated()  {
         String diagnosis = "bla-bla-bla";
         Doctor doctor = doctorService.getCurrentDoctor();
@@ -51,7 +50,6 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
         Assert.assertNotNull(responseEntity.getBody().getId());
         Assert.assertNotNull(responseEntity.getBody().getDoctorId());
         Assert.assertEquals(responseEntity.getBody().getDoctorId(),doctor.getId());
-
     }
 
 }

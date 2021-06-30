@@ -67,11 +67,11 @@ public class DoctorController {
     @PostMapping("/pet/{petId}/addDiagnosis")
     public ResponseEntity<DiagnosisDto> addDiagnosis(@PathVariable Long petId,
                                                      @RequestBody String text){
-        Doctor doctor = doctorService.getCurrentDoctor();
         Pet pet = petService.getByKey(petId);
         if(pet == null){
             throw new NotFoundException("No such pet found");
         }
+        Doctor doctor = doctorService.getCurrentDoctor();
         Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
         diagnosisService.persist(diagnosis);
         return new ResponseEntity<>(diagnosisMapper.toDto(diagnosis),
