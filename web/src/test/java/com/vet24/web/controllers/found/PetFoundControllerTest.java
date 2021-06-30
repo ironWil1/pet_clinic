@@ -9,6 +9,7 @@ import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.PetFound;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 @DBRider
+@Slf4j
 public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
@@ -58,4 +60,6 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
     }
+
+
 }
