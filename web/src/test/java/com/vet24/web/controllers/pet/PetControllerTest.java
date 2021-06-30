@@ -184,7 +184,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                 .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
                 .andExpect(status().isOk());
 
-        ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI + "/{petId}/avatar", byte[].class, 102);
+        ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI + "/{petId}/avatar", byte[].class, 107);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
