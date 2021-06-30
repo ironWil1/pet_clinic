@@ -80,14 +80,6 @@ public class PetFoundController {
             return new ResponseEntity <>(HttpStatus.NOT_FOUND);
         }
       }
-    {
-        try {
-            log.debug("PetFoundController log!!!!!!!!!!!!");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     }
 
