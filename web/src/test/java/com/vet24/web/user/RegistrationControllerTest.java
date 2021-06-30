@@ -24,7 +24,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     final String URI = "http://localhost:8090/api/registration";
 
     @Test
-    @DataSet(value = "/datasets/roles.yml", cleanBefore = true)
+    @DataSet(value = "/datasets/user-entities.yml", cleanBefore = true)
     public void shouldBeNotAcceptableWrongEmail() throws Exception {
         RegisterDto registerDto = new RegisterDto("342354234.com","Vera","P",
                 "Congo","Congo");
@@ -38,7 +38,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(value = "/datasets/roles.yml", cleanBefore = true)
+    @DataSet(value = "/datasets/user-entities.yml", cleanBefore = true)
     public void shouldBeNotAcceptablePasswords() throws Exception {
         RegisterDto registerDto = new RegisterDto("342354234@gmail.com","Vera","P",
                 "Congo","Congo2");
@@ -52,7 +52,7 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(value = "/datasets/roles.yml", cleanBefore = true)
+    @DataSet(value = "/datasets/user-entities.yml", cleanBefore = true)
     public void shouldBeCreated() throws Exception {
         RegisterDto registerDto = new RegisterDto("342354234@gmail.com","Vera","P",
                 "Congo","Congo");

@@ -1,65 +1,51 @@
 package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import com.vet24.models.dto.user.ClientDto;
-import com.vet24.models.mappers.user.ClientMapper;
-import com.vet24.service.user.ClientService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
+import com.vet24.web.config.ClinicDBRider;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.security.Principal;
 
-@DBRider
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+
+@WithUserDetails(value = "client1@email.com")
+@DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
 public class ClientControllerTest extends ControllerAbstractIntegrationTest {
 
+    private final String URI = "/api/client";
 
-    @Autowired
-    private ClientMapper clientMapper;
-
-    @Autowired
-    private ClientService clientService;
-
-    private final String URI = "http://localhost:8090/api/client";
+    private final Principal principal = () -> "client1@email.com";
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void getCurrentClient() {
-        ClientDto clientDto = clientMapper.toDto(clientService.testGetCurrentClientWithPets());
-        ResponseEntity<ClientDto> response = testRestTemplate
-                .getForEntity(URI, ClientDto.class);
-
-        assertThat(clientDto).isNotNull();
-        Assert.assertEquals(clientDto, response.getBody());
+    public void shouldGetResponseEntityClientDto_ForCurrentClient() {
+        ResponseEntity<ClientDto> response = testRestTemplate.getForEntity(URI, ClientDto.class);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assert.assertNotNull(response.getBody());
+        Assert.assertEquals(principal.getName(), response.getBody().getEmail());
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void getClientAvatar() {
-        persistClientAvatar();
-        ResponseEntity<byte[]> response = testRestTemplate
-                .getForEntity(URI + "/avatar", byte[].class);
-
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void persistClientAvatar() {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("file", new ClassPathResource("test.png"));
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
-        ResponseEntity<String> response = testRestTemplate
-                .exchange(URI + "/avatar", HttpMethod.POST, entity, String.class, 3);
-
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    public void uploadClientAvatarAndVerify() throws Exception {
+        ClassPathResource classPathResource = new ClassPathResource("test.png");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
+                classPathResource.getFilename(), null, classPathResource.getInputStream());
+        mockMvc.perform(multipart(URI + "/avatar")
+                .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(
+                        (result) -> {
+                            ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI + "/avatar", byte[].class);
+                            Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+                        }
+                );
     }
 }

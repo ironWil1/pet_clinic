@@ -1,7 +1,6 @@
 package com.vet24.web.pet.reproduction;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import com.vet24.dao.pet.PetDao;
 import com.vet24.dao.pet.reproduction.ReproductionDao;
 import com.vet24.models.dto.exception.ExceptionDto;
@@ -14,11 +13,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.LocalDate;
 
-@DBRider
+@WithUserDetails(value = "user3@gmail.com")
 public class ReproductionControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     ReproductionController reproductionController;

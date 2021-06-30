@@ -28,9 +28,11 @@ public class PetFoundController {
     private final PetContactService petContactService;
     private final PetFoundMapper petFoundMapper;
     private final MailService mailService;
+    private final PetFoundMailSender petFoundMailSender;
 
     public PetFoundController(PetFoundService petFoundService, PetContactService petContactService,
                               PetFoundMapper petFoundMapper, MailService mailService) {
+                              PetFoundMapper petFoundMapper, PetFoundMailSender petFoundMailSender) {
         this.petFoundService = petFoundService;
         this.petContactService = petContactService;
         this.petFoundMapper = petFoundMapper;

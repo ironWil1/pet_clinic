@@ -1,6 +1,5 @@
 package com.vet24.models.user;
 
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -26,9 +26,11 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @Entity
@@ -70,6 +72,13 @@ public class User implements UserDetails {
 
     private Boolean enabled;
 
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Comment> comments = new ArrayList<>();
+
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
@@ -78,9 +87,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<>();
-        list.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-        return list;
+        return new HashSet<>() {{
+            add(new SimpleGrantedAuthority("ROLE_" + role.getAuthority()));
+        }};
     }
 
     @Override
