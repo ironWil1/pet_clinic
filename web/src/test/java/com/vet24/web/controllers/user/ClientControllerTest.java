@@ -11,11 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.security.Principal;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DBRider
 @WithUserDetails(value = "client1@email.com")
@@ -57,9 +57,12 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
                 classPathResource.getFilename(), null, classPathResource.getInputStream());
         mockMvc.perform(multipart(URI + "/avatar")
                 .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
-                .andExpect(status().isOk());
-
-        ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI + "/avatar", byte[].class);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(
+                        (result) -> {
+                            ResponseEntity<byte[]> response = testRestTemplate.getForEntity(URI + "/avatar", byte[].class);
+                            Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+                        }
+                );
     }
 }
