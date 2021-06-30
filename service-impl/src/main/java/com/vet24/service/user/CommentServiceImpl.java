@@ -16,6 +16,4 @@ public class CommentServiceImpl extends ReadWriteServiceImpl<Long, Comment> impl
         super(commentDao);
         this.commentDao = commentDao;
     }
-
-
 }

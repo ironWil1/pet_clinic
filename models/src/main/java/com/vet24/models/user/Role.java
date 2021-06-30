@@ -16,7 +16,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
-
 @Entity
 @Getter
 @Setter
@@ -38,5 +37,4 @@ public class Role implements GrantedAuthority {
     public String getAuthority() {
         return name.toString();
     }
-
 }

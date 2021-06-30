@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.found;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import com.vet24.models.dto.pet.PetFoundDto;
 import com.vet24.models.pet.PetContact;
 import com.vet24.service.pet.PetContactService;
@@ -10,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -19,7 +19,8 @@ import java.nio.charset.StandardCharsets;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 
-@DBRider
+
+@WithUserDetails(value = "client1@email.com")
 public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired

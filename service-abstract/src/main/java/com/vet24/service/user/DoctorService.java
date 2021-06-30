@@ -4,6 +4,6 @@ import com.vet24.service.ReadWriteService;
 
 public interface DoctorService extends ReadWriteService<Long, Doctor> {
 
-    Doctor getCurrentDoctor(); // temporary solution.
+    Doctor getCurrentDoctor();
 
 }
