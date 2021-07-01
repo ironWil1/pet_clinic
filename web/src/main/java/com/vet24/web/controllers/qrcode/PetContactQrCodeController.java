@@ -103,10 +103,8 @@ public class PetContactQrCodeController {
     })
     @PostMapping(value = "/{id}/qr")
     public ResponseEntity<PetContactDto> saveOrUpdatePetContact( @PathVariable("id") Long id,
-                                                                 @Valid @RequestBody(required = false) PetContactDto petContactDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            throw new BadRequestException(bindingResult);
-        }
+                                                                 @Valid @RequestBody PetContactDto petContactDto) {
+
         if (petContactService.isExistByKey(id)) {
             PetContact petContactOld = petContactService.getByKey(id);
             if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {

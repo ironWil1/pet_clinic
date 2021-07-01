@@ -72,10 +72,8 @@ public class MedicineController {
 
     @PutMapping("/{id}")
     public ResponseEntity<MedicineDto> update(@PathVariable Long id,@Valid
-                                               @RequestBody MedicineDto medicineDto,BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            throw new BadRequestException(bindingResult);
-        }
+                                               @RequestBody MedicineDto medicineDto) {
+
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -88,10 +86,8 @@ public class MedicineController {
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<MedicineDto> save(@Valid @RequestBody MedicineDto medicineDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            throw new BadRequestException(bindingResult);
-        }
+    public ResponseEntity<MedicineDto> save(@Valid @RequestBody MedicineDto medicineDto) {
+
         Medicine medicine = medicineMapper.toEntity(medicineDto);
         medicine.setId(null);
         try {

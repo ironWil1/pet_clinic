@@ -101,10 +101,8 @@ public class ProcedureController {
     })
     @PostMapping("")
     public ResponseEntity<ProcedureDto> save(@PathVariable Long petId, @Validated(OnCreate.class)
-                                             @RequestBody AbstractNewProcedureDto newProcedureDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            throw new BadRequestException(bindingResult);
-        }
+                                             @RequestBody AbstractNewProcedureDto newProcedureDto) {
+
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = newProcedureMapper.toEntity(newProcedureDto);
@@ -138,10 +136,8 @@ public class ProcedureController {
     })
     @PutMapping("/{procedureId}")
     public ResponseEntity<ProcedureDto> update(@PathVariable Long petId, @PathVariable Long procedureId,
-                                         @Validated(OnUpdate.class )@RequestBody ProcedureDto procedureDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            throw new BadRequestException(bindingResult);
-        }
+                                         @Validated(OnUpdate.class )@RequestBody ProcedureDto procedureDto) {
+
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = procedureService.getByKey(procedureId);

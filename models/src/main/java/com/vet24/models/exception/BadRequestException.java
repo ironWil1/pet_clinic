@@ -24,8 +24,5 @@ public class BadRequestException extends RuntimeException {
     public BadRequestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    public BadRequestException(BindingResult bindingResult) {
-        super(bindingResult.getAllErrors().stream()
-                .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";")));
-    }
+
 }

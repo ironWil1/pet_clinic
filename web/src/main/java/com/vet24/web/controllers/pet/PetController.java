@@ -87,10 +87,8 @@ public class PetController {
             @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)
     })
     @PostMapping("/add")
-    public ResponseEntity<AbstractNewPetDto> persistPet(@Valid @RequestBody AbstractNewPetDto petDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            throw new BadRequestException(bindingResult);
-        }
+    public ResponseEntity<AbstractNewPetDto> persistPet(@Valid @RequestBody AbstractNewPetDto petDto) {
+
         Client client = clientService.getCurrentClient();
         if (client != null) {
             Pet pet = newPetMapper.toEntity(petDto);
@@ -129,10 +127,8 @@ public class PetController {
     })
     @PutMapping("/{petId}")
     public ResponseEntity<PetDto> updatePet(@PathVariable("petId") Long petId,@Valid
-                                            @RequestBody AbstractNewPetDto petDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            throw new BadRequestException(bindingResult);
-        }
+                                            @RequestBody AbstractNewPetDto petDto) {
+
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
