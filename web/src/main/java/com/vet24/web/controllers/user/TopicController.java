@@ -1,13 +1,12 @@
 package com.vet24.web.controllers.user;
 
+import com.vet24.models.dto.user.CommentDto;
+import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Topic;
-import com.vet24.models.user.User;
 import com.vet24.service.user.TopicService;
 import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,38 +18,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping(value = "/api/user/topic")
 public class TopicController {
 
     private final TopicService topicService;
     private final UserService userService;
-    private final TopicCommentService topicCommentService;
     private final CommentMapper commentMapper;
 
     @Autowired
     public TopicController(TopicService topicService,
                            UserService userService,
-                           TopicCommentService topicCommentService,
                            CommentMapper commentMapper) {
         this.topicService = topicService;
         this.userService = userService;
-        this.topicCommentService = topicCommentService;
         this.commentMapper = commentMapper;
     }
 
     @Operation(summary = "add comment to topic")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "comment created",
-                content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentDto.class))), /* // TODO: 01.07.2021 CommentDto */
+        @ApiResponse(responseCode = "201", description = "comment created"),
         @ApiResponse(responseCode = "400", description = "comment bad request"),
-        @ApiResponse(responseCode = "403", description = "topic is closed"),
-        @ApiResponse(responseCode = "404", description = "topic not found")
+        @ApiResponse(responseCode = "404", description = "topic not found"),
+        @ApiResponse(responseCode = "403", description = "topic is closed")
     })
     @PostMapping(value = "/{topicId}/addComment")
-    public ResponseEntity<Void> persistTopicComment(@PathVariable("topicId") Long topicId,
-                                               @RequestBody(required = false) CommentDto commentDto) {
-        if ("".equals(commentDto.getContent())) {
+    public ResponseEntity<CommentDto> persistTopicComment(@PathVariable("topicId") Long topicId,
+                                               @RequestBody(required = false) String content) {
+        if ("".equals(content)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -62,12 +59,12 @@ public class TopicController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        User currentUser = userService.getCurrentUser();
-        Comment comment = commentMapper.toEntity(commentDto);   // TODO: 01.07.2021 currentUser, LocalDateTime, ...
+        Comment comment = new Comment(userService.getCurrentUser(), content, LocalDateTime.now());
+        topic.getComments().add(comment);
+        topicService.persist(topic);
 
-        TopicComment topicComment = new TopicComment(topic, comment);
-        topicCommentService.persist(topicComment);
+        CommentDto commentDto = commentMapper.toDto(comment);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
     }
 }
