@@ -63,7 +63,7 @@ public class TopicController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        Comment comment = new Comment(userService.getCurrentUser(), content, LocalDateTime.now());
+        Comment comment = new Comment(userService.getCurrentUser(), content);
         commentService.persist(comment);
         topic.getComments().add(comment);
         topicService.persist(topic);

@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,7 +43,8 @@ public class Comment implements Serializable {
     @Column(nullable=false)
     private String content;
 
-    @Column(nullable=false)
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime dateTime;
 
     @OneToMany(
@@ -52,9 +54,8 @@ public class Comment implements Serializable {
     )
     private List<CommentReaction> commentReactions = new ArrayList<>();
 
-    public Comment(User user, String content, LocalDateTime dateTime) {
+    public Comment(User user, String content) {
         this.user = user;
         this.content = content;
-        this.dateTime = dateTime;
     }
 }

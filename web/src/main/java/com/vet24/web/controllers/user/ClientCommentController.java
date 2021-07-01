@@ -61,9 +61,7 @@ public class ClientCommentController {
             User currentUser = userService.getCurrentUser();
             Long userId = currentUser.getId();
             if (doctorReviewService.getByDoctorAndClientId(doctorId,userId) == null) {
-                comment = new Comment(
-                        userService.getCurrentUser(), text, LocalDateTime.now()
-                );
+                comment = new Comment(userService.getCurrentUser(), text);
                 doctorReview = new DoctorReview(comment,doctor);
 
                 commentService.persist(comment);
