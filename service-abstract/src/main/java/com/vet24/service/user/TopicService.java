@@ -4,4 +4,6 @@ import com.vet24.models.user.Topic;
 import com.vet24.service.ReadWriteService;
 
 public interface TopicService extends ReadWriteService<Long, Topic> {
+
+    Topic getTopicWithCommentsById(Long topicId);
 }

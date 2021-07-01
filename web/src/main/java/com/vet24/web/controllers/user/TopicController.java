@@ -4,6 +4,7 @@ import com.vet24.models.dto.user.CommentDto;
 import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Topic;
+import com.vet24.service.user.CommentService;
 import com.vet24.service.user.TopicService;
 import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,14 +27,17 @@ public class TopicController {
 
     private final TopicService topicService;
     private final UserService userService;
+    private final CommentService commentService;
     private final CommentMapper commentMapper;
 
     @Autowired
     public TopicController(TopicService topicService,
                            UserService userService,
+                           CommentService commentService,
                            CommentMapper commentMapper) {
         this.topicService = topicService;
         this.userService = userService;
+        this.commentService = commentService;
         this.commentMapper = commentMapper;
     }
 
@@ -46,8 +50,8 @@ public class TopicController {
     })
     @PostMapping(value = "/{topicId}/addComment")
     public ResponseEntity<CommentDto> persistTopicComment(@PathVariable("topicId") Long topicId,
-                                               @RequestBody(required = false) String content) {
-        if ("".equals(content)) {
+                                               @RequestBody String content) {
+        if (content.trim().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -60,9 +64,9 @@ public class TopicController {
         }
 
         Comment comment = new Comment(userService.getCurrentUser(), content, LocalDateTime.now());
+        commentService.persist(comment);
         topic.getComments().add(comment);
         topicService.persist(topic);
-
         CommentDto commentDto = commentMapper.toDto(comment);
 
         return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
