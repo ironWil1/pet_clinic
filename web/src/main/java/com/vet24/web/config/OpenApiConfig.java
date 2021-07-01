@@ -45,7 +45,7 @@ public class OpenApiConfig {
     public GroupedOpenApi managerApi() {
         return GroupedOpenApi.builder()
                 .group("manager")
-                .pathsToMatch("/api/manager/medicine/**")
+                .pathsToMatch("/api/manager/**")
                 .build();
     }
 
