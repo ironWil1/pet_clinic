@@ -27,6 +27,7 @@ import com.vet24.service.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -40,12 +41,14 @@ import java.util.stream.Stream;
 
 
 @Component
+@Profile("!TestProfile")
 public class TestDataInitializer implements ApplicationRunner {
 
     private final RoleService roleService;
     private final UserService userService;
     private final ClientService clientService;
     private final MedicineService medicineService;
+    private final DoctorReviewService doctorReviewService;
     private final VaccinationProcedureService vaccinationProcedureService;
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
     private final EchinococcusProcedureService echinococcusProcedureService;
@@ -77,11 +80,12 @@ public class TestDataInitializer implements ApplicationRunner {
                                ReproductionService reproductionService, PetContactService petContactService,
                                CatService catService, DogService dogService, DoctorService doctorService,
                                PetService petService, Environment environment, CommentService commentService,
-                               CommentReactionService commentReactionService, DiagnosisService diagnosisService, TopicService topicService) {
+                               CommentReactionService commentReactionService,DiagnosisService diagnosisService, DoctorReviewService doctorReviewService, TopicService topicService) {
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
         this.medicineService = medicineService;
+        this.doctorReviewService = doctorReviewService;
         this.vaccinationProcedureService = vaccinationProcedureService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
         this.echinococcusProcedureService = echinococcusProcedureService;
@@ -213,7 +217,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void commentInitializer() {
         List<Comment> comments = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            comments.add(new Comment(clientService.getByKey((long) i), "lorem " + i, LocalDateTime.now(), doctorService.getByKey((long) i + 30)));
+            comments.add(new Comment(userService.getByKey((long) i), "lorem " + i, LocalDateTime.now()));
         }
         commentService.persistAll(comments);
 
@@ -223,6 +227,17 @@ public class TestDataInitializer implements ApplicationRunner {
         for (int i = 1; i <= 30; i++) {
             commentReactionService.update(new CommentReaction(commentService.getByKey((long) i), clientService.getByKey((long) i),true));
         }
+    }
+
+    public void doctorReviewInitializer() {
+        List<DoctorReview> doctorReviews = new ArrayList<>();
+        Comment doctorReviewComment = null;
+        for (int i = 1; i <= 30; i++) {
+            doctorReviewComment = new Comment(userService.getByKey((long) i +30),"lorem " + (i+30), LocalDateTime.now());
+            commentService.persist(doctorReviewComment);
+            doctorReviews.add(new DoctorReview(doctorReviewComment, doctorService.getByKey((long) i + 30)));
+        }
+        doctorReviewService.persistAll(doctorReviews);
     }
 
     public void topicInitializer() {
@@ -251,6 +266,7 @@ public class TestDataInitializer implements ApplicationRunner {
             commentInitializer();
             likeInitilaizer();
             topicInitializer();
+            doctorReviewInitializer();
         }
     }
 }

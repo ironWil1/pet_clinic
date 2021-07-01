@@ -83,3 +83,15 @@ PET_ENTITIES:
     PET_SIZE: "BIG"
     WEIGHT: 21
     CLIENT_ID: 3
+  - ID: 107
+    PET_TYPE: "DOG"
+    AVATAR: "dog.png"
+    BIRTH_DAY: "2000-01-01"
+    BREED: "breed7"
+    COLOR: "BLACK"
+    DESCRIPTION: "Очень старая, но добрая псина"
+    GENDER: "MALE"
+    NAME: "Старый добрый пес"
+    PET_SIZE: "BIG"
+    WEIGHT: 22
+    CLIENT_ID: 102
