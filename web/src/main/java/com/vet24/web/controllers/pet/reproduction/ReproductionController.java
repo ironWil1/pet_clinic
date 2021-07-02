@@ -1,5 +1,7 @@
 package com.vet24.web.controllers.pet.reproduction;
 
+import com.vet24.models.dto.OnCreate;
+import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.reproduction.ReproductionDto;
 import com.vet24.models.exception.BadRequestException;
@@ -18,8 +20,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
+
+import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/client/pet/{petId}/reproduction")
@@ -83,8 +91,9 @@ public class ReproductionController {
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @PostMapping("")
-    public ResponseEntity<ReproductionDto> save(@PathVariable Long petId,
+    public ResponseEntity<ReproductionDto> save(@PathVariable Long petId, @Validated(OnCreate.class)
                                                 @RequestBody ReproductionDto reproductionDto) {
+
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.toEntity(reproductionDto);
         Client client = clientService.getCurrentClient();
@@ -118,7 +127,8 @@ public class ReproductionController {
     })
     @PutMapping("/{reproductionId}")
     public ResponseEntity<ReproductionDto> update(@PathVariable Long petId, @PathVariable Long reproductionId,
-                                                  @RequestBody ReproductionDto reproductionDto) {
+                                                   @RequestBody ReproductionDto reproductionDto) {
+
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
         Client client = clientService.getCurrentClient();
