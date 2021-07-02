@@ -92,10 +92,8 @@ public class ReproductionController {
     })
     @PostMapping("")
     public ResponseEntity<ReproductionDto> save(@PathVariable Long petId, @Validated(OnCreate.class)
-                                                @RequestBody ReproductionDto reproductionDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            throw new BadRequestException(bindingResult);
-        }
+                                                @RequestBody ReproductionDto reproductionDto) {
+
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.toEntity(reproductionDto);
         Client client = clientService.getCurrentClient();
