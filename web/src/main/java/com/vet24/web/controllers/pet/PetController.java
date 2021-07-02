@@ -23,11 +23,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import javax.validation.Valid;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/client/pet")
@@ -82,7 +87,8 @@ public class PetController {
             @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)
     })
     @PostMapping("/add")
-    public ResponseEntity<AbstractNewPetDto> persistPet(@RequestBody AbstractNewPetDto petDto) {
+    public ResponseEntity<AbstractNewPetDto> persistPet(@Valid @RequestBody AbstractNewPetDto petDto) {
+
         Client client = clientService.getCurrentClient();
         if (client != null) {
             Pet pet = newPetMapper.toEntity(petDto);
@@ -120,8 +126,9 @@ public class PetController {
             @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")
     })
     @PutMapping("/{petId}")
-    public ResponseEntity<PetDto> updatePet(@PathVariable("petId") Long petId,
+    public ResponseEntity<PetDto> updatePet(@PathVariable("petId") Long petId,@Valid
                                             @RequestBody AbstractNewPetDto petDto) {
+
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {

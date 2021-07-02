@@ -69,13 +69,8 @@ public class RegistrationController {
 
     @PostMapping("/api/registration")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterDto
-                                                     inputDto, Errors errors,
+                                                     inputDto,
                                          HttpServletRequest request)throws IOException, MessagingException {
-        if (errors.hasErrors()) {
-            String mesBuild = errors.getAllErrors().stream()
-                    .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
-            throw new BadRequestException(mesBuild);
-        }
         if(!inputDto.getPassword().equals(inputDto.getConfirmPassword())){
             throw new BadRequestException(PASSWORDS_UNMATCHED);
         }
