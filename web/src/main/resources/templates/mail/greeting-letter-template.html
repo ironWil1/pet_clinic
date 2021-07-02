@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" th:with="lang=${#locale.language}" th:lang="${lang}">
+<head th:replace="mail/layout :: htmlhead" />
+
+<body style="padding: 2rem; background-color: lightgrey; font-size: large;">
+
+<p th:text="${'Hello, ' + name + '!'}">Hello, Vasya!</p>
+<p>
+    You have been successfully registered to the <span style="font-weight: bold" th:text="${sign}">Pet clinic</span> on
+    <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}">20 jul 2021 08:30</span>
+</p>
+<p>
+    In order to complete your registration and confirm your mail account please follow the
+    <a th:href="${tokenUrl}" th:text="${tokenUrl}">http://localhost:8080/api/registration/confirm/aefd0634-ba32-4081-9243-9b160baee1e5</a>
+</p>
+
+<div th:replace="mail/layout :: htmlfooter" />
+
+</body>
+</html>

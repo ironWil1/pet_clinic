@@ -1,8 +1,10 @@
 package com.vet24.service.media;
 
+import com.vet24.models.pet.PetContact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -10,15 +12,15 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-@Service
-public class MailServiceImpl implements MailService{
 
+@Service
+public class MailServiceImpl implements MailService {
 
     @Value("${spring.mail.username}")
     private String mailFrom;
@@ -32,26 +34,55 @@ public class MailServiceImpl implements MailService{
     @Autowired
     private SpringTemplateEngine templateEngine;
 
-
-    public void sendWelcomeMessage (String emailTo,String name,String tokenLink) throws  MessagingException {
-        MimeMessage message = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,
-                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                StandardCharsets.UTF_8.name());
-        helper.addAttachment("template-cover-cat.png",
-                new ClassPathResource("template-cover-cat.png"));
-        Context context = new Context(Locale.ENGLISH);
-        Map<String, Object> model = new HashMap<>();
-        model.put("name",name );
+    @Override
+    public void sendEmailFromTemplate(String toEmail, String subject, String templateName, Map<String, Object> model) {
+        Locale locale = Locale.forLanguageTag("ru-RU");
+        model.put("sign", mailSign);
         model.put("location", mailLocation);
-        model.put("sign" ,mailSign);
-        model.put("tokenLink", tokenLink);
+        Context context = new Context(locale);
         context.setVariables(model);
-        String html = templateEngine.process("greeting-letter-template", context);
-        helper.setTo(emailTo);
-        helper.setText(html, true);
-        helper.setSubject("Registration greeting");
-        helper.setFrom(mailFrom);
-        emailSender.send(message);
+        String content = templateEngine.process(templateName, context);
+        sendMultipartHtmlMessage(toEmail, subject, content);
+    }
+
+    @Override
+    public void sendMultipartHtmlMessage(String toMail, String subject, String content) {
+        var message = emailSender.createMimeMessage();
+
+        try {
+            var helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+            helper.setFrom(mailFrom, mailSign);
+            helper.setTo(toMail);
+            helper.setSubject(subject);
+            helper.setText(content, true);
+
+            var resource = new ClassPathResource("/template-cover-cat-transparent-80.png");
+            helper.addInline("logoImage", resource);
+
+            emailSender.send(message);
+        } catch (MailException | UnsupportedEncodingException | MessagingException e) {
+            e.getStackTrace();  // TODO: 28.06.2021
+        }
+    }
+
+    @Override
+    public void sendWelcomeMessage(String emailTo, String userName, String tokenUrl) {
+        var model = new HashMap<String, Object>() {{
+            put("tokenUrl", tokenUrl);
+            put("name", userName);
+        }};
+        sendEmailFromTemplate(emailTo, "Registration greeting", "mail/greeting-letter-template", model);
+    }
+
+    @Override
+    public void sendGeolocationPetFoundMessage(PetContact petContact, String geolocationPetFoundUrl, String text) {
+        var model = new HashMap<String, Object>() {{
+            put("name", petContact.getPet().getClient().getFirstname());
+            put("geolocationPetFoundUrl", geolocationPetFoundUrl);
+            put("petName", petContact.getPet().getName());
+            put("text", text);
+        }};
+        sendEmailFromTemplate(petContact.getPet().getClient().getEmail(), "Info about your founded pet",
+                "mail/geolocation-pet-letter-template", model);
     }
 }
