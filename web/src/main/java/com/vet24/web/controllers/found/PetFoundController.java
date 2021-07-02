@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/petFound")
 public class PetFoundController {
 
+    @Value("${googlemaps.service.url}")
+    private String GOOGLE_MAPS_SERVICE_URL;
+
     private final PetFoundService petFoundService;
     private final PetContactService petContactService;
     private final PetFoundMapper petFoundMapper;
@@ -51,8 +54,7 @@ public class PetFoundController {
     })
     @PostMapping(value = "")
     public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "petCode", required = false) String petCode,
-                                                                          @RequestBody PetFoundDto petFoundDto,
-                                                                          @Value("${googlemaps.service.url}") String googlemapsServiceUrl) {
+                                                                          @RequestBody PetFoundDto petFoundDto) {
         if (petContactService.isExistByPetCode(petCode)) {
             PetContact petContact = petContactService.getByPetCode(petCode);
             PetFound petFound = petFoundMapper.toEntity(petFoundDto);
@@ -60,7 +62,7 @@ public class PetFoundController {
             petFoundService.persist(petFound);
 
             String text = petFound.getText();
-            String geolocationPetFoundUrl = String.format(googlemapsServiceUrl, petFound.getLatitude(), petFound.getLongitude());
+            String geolocationPetFoundUrl = String.format(GOOGLE_MAPS_SERVICE_URL, petFound.getLatitude(), petFound.getLongitude());
 
             mailService.sendGeolocationPetFoundMessage(petContact, geolocationPetFoundUrl, text);
             return new ResponseEntity<>(HttpStatus.CREATED);
