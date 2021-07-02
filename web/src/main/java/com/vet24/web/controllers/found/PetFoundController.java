@@ -73,10 +73,10 @@ public class PetFoundController {
                             "Перейдите по ссылке для просмотра местонахождения питомца: https://www.google.com/maps/place/%s+%s",
                     clientName, petName, text, latitude, longitude);
             petFoundMailSender.sendTextAndGeolocationPet(clientEmail, "Информация о вашем питомце", message);
-            log.debug("The pet was found at latitude {} and longitude {}and data of this was sent to mail {}", latitude, longitude, clientEmail);
+            log.info("The pet was found at latitude {} and longitude {}and data of this was sent to mail {}", latitude, longitude, clientEmail);
             return new ResponseEntity <>(HttpStatus.CREATED);
         } else {
-            log.debug("Pet with this petCode {} does not exist or was not found",petCode);
+            log.info("Pet with this petCode {} does not exist or was not found",petCode);
             return new ResponseEntity <>(HttpStatus.NOT_FOUND);
         }
       }

@@ -10,6 +10,16 @@
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %5p %t %-5l - %m%n"/>
         </Console>
 
+        <RollingFile name="logs" fileName="${logPath}/logs.log" filePattern="${logPath}/logs_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
+            <Policies>
+                <!-- Causes a rollover if the log file is older than the current JVM's start time -->
+                <OnStartupTriggeringPolicy />
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
     <RollingFile name="petfound" fileName="${logPath}/petfound.log" filePattern="${logPath}/petfound_%d{yyyy-MM-dd}.log">
             <PatternLayout pattern="[%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}" />
             <Policies>
@@ -144,72 +154,72 @@
 
     </appenders>
     <loggers>
-        <root level="warn">
+        <root level="info">
             <appender-ref ref="Console"/>
-         <!--   <appender-ref ref="logs"/>-->
+            <appender-ref ref="logs"/>
         </root>
         <logger name ="com.vet24.web.controllers.found.PetFoundController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="petfound"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.media.ResourceController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="resource"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.media.UploadController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="upload"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.medicine.DoctorController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="doctor"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.medicine.MedicineController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="medicine"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.notification.NotificationController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="notification"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.pet.procedure.ProcedureController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="procedure"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.pet.reproduction.ReproductionController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="reproduction"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.pet.PetController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="pet"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.qrcode.PetContactQrCodeController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="petcontactqrcode"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.user.ClientCommentController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="clientcomment"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.user.ClientController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="client"/>
         </logger>
 
         <logger name ="com.vet24.web.controllers.user.RegistrationController" level ="debug">
-            <appender-ref ref="Console"/>
+
             <appender-ref ref="registration"/>
         </logger>
 

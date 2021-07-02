@@ -72,10 +72,12 @@ public class DoctorController {
         Doctor doctor = doctorService.getCurrentDoctor();
         Pet pet = petService.getByKey(petId);
         if(pet == null){
+            log.info("No such pet found with Id {}",petId);
             throw new NotFoundException("No such pet found");
         }
         Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
         diagnosisService.persist(diagnosis);
+        log.info("Added new diagnosis {}",text);
         return new ResponseEntity<>(diagnosisMapper.toDto(diagnosis),
                 HttpStatus.CREATED);
     }
@@ -95,22 +97,15 @@ public class DoctorController {
             throw new NotFoundException("diagnoses with id = " + diagnoseId + " not found");
         }
         Diagnosis diagnosis = diagnosisService.getByKey(diagnoseId);
+        log.info("Added new diagnosis Id {}",diagnosis.getId());
         List<Procedure> procedureList = abstractNewProcedureMapper.toEntity(procedures);
         procedureService.persistAll(procedureList);
         Treatment treatment = new Treatment();
         treatment.setProcedureList(procedureList);
         treatment.setDiagnosis(diagnosis);
         treatmentService.persist(treatment);
+        log.info("Added new diagnosis treatment {}",treatment.getProcedureList().toString());
         return new ResponseEntity<>(treatmentMapper.toDto(treatment),HttpStatus.CREATED);
-    }
-
-    {
-        try {
-            log.debug("DoctorController log!!!!!!!!!!!!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
 }

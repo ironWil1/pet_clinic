@@ -33,17 +33,8 @@ public class UploadController {
     @ApiResponse(responseCode = "200", description = "Successful upload",
             content = @Content(schema = @Schema(implementation = UploadedFileDto.class)))
     public ResponseEntity<UploadedFileDto> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+        log.info("Uploadedfile class is {}",UploadedFileDto.class);
         return new ResponseEntity<>(uploadService.store(file), HttpStatus.OK);
     }
-    {
-        try {
-        log.debug("UploadController log!!!!!!!!!!!!");
-    }
-        catch (Exception e) {
-        e.printStackTrace();
-    }
-}
-
-
 
 }

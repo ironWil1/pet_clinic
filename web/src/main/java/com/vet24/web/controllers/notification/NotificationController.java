@@ -40,6 +40,7 @@ public class NotificationController {
     @GetMapping(value = {"/notification"})
     public void doGoogleSignIn(HttpServletResponse response) throws IOException {
         String redirectURL = googleEventService.getRedirectUrl();
+        log.info("The redirect address is {}",redirectURL);
         response.sendRedirect(redirectURL);
     }
 
@@ -50,6 +51,7 @@ public class NotificationController {
         String code = request.getParameter("code");
         if (code != null) {
             googleEventService.saveToken(code, clientService.getCurrentClient().getEmail());
+            log.info("The current client  is {}",clientService.getCurrentClient().getEmail());
         }
         response.sendRedirect("/");
     }
@@ -64,6 +66,7 @@ public class NotificationController {
     private ResponseEntity<GoogleEventDto> createEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.createEvent(googleEventDto);
+            log.info("The google event  is {}",googleEventDto.getDescription());
             return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
         } catch (CredentialException e) {
             return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_REQUEST);
@@ -81,6 +84,7 @@ public class NotificationController {
     private ResponseEntity<GoogleEventDto> editEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.editEvent(googleEventDto);
+            log.info("The edited google event  is {}",googleEventDto.getDescription());
             return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_GATEWAY);
@@ -96,18 +100,11 @@ public class NotificationController {
     private ResponseEntity<GoogleEventDto> deleteEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.deleteEvent(googleEventDto);
+            log.info("The deleted google event  is {}",googleEventDto.getDescription());
             return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_GATEWAY);
         }
-    }
-    {
-        try {
-            log.debug("NotificationController log!!!!!!!!!!!!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
 }
