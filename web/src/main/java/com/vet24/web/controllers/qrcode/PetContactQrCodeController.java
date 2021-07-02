@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/client/pet")
@@ -99,8 +102,9 @@ public class PetContactQrCodeController {
             @ApiResponse(responseCode = "400", description = "PetContact is expecting a pet for persist command"),
     })
     @PostMapping(value = "/{id}/qr")
-    public ResponseEntity<PetContactDto> saveOrUpdatePetContact(@RequestBody(required = false) PetContactDto petContactDto,
-                                                                @PathVariable("id") Long id) {
+    public ResponseEntity<PetContactDto> saveOrUpdatePetContact( @PathVariable("id") Long id,
+                                                                 @Valid @RequestBody PetContactDto petContactDto) {
+
         if (petContactService.isExistByKey(id)) {
             PetContact petContactOld = petContactService.getByKey(id);
             if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {

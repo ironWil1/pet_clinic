@@ -1,5 +1,4 @@
 package com.vet24.models.dto.medicine;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

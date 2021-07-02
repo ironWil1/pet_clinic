@@ -1,7 +1,7 @@
 package com.vet24.web.controllers.medicine;
-
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.medicine.MedicineDto;
+import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.medicine.MedicineMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.service.media.ResourceService;
@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -69,8 +71,9 @@ public class MedicineController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MedicineDto> update(@PathVariable Long id,
+    public ResponseEntity<MedicineDto> update(@PathVariable Long id,@Valid
                                                @RequestBody MedicineDto medicineDto) {
+
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -83,7 +86,8 @@ public class MedicineController {
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<MedicineDto> save(@RequestBody MedicineDto medicineDto) {
+    public ResponseEntity<MedicineDto> save(@Valid @RequestBody MedicineDto medicineDto) {
+
         Medicine medicine = medicineMapper.toEntity(medicineDto);
         medicine.setId(null);
         try {
