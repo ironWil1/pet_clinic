@@ -13,14 +13,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
+@Validated
 @RestController
 @RequestMapping(value = "/api/user/topic")
 public class TopicController {
@@ -41,6 +44,7 @@ public class TopicController {
         this.commentMapper = commentMapper;
     }
 
+
     @Operation(summary = "add comment to topic")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "comment created"),
@@ -50,11 +54,9 @@ public class TopicController {
     })
     @PostMapping(value = "/{topicId}/addComment")
     public ResponseEntity<CommentDto> persistTopicComment(@PathVariable("topicId") Long topicId,
-                                               @RequestBody String content) {
-        if (content.trim().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
+                                                          @NotBlank(message = "{registration.validation.blank.field}")
+                                                          @Size(min = 15)
+                                                          @RequestBody String content) {
         Topic topic = topicService.getByKey(topicId);
         if (topic == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
