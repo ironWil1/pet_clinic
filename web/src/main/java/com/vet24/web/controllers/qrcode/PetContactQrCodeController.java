@@ -142,7 +142,7 @@ public class PetContactQrCodeController {
     }
     {
         try {
-            log.debug("PetContactQrCodeController log!!!!!!!!!!!!");
+            log.info("PetContactQrCodeController log!!!!!!!!!!!!");
         } catch (Exception e) {
             e.printStackTrace();
         }
