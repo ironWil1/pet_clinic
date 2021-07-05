@@ -49,5 +49,11 @@ public class OpenApiConfig {
                 .build();
     }
 
-
+    @Bean
+    public GroupedOpenApi allApi() {
+        return GroupedOpenApi.builder()
+                .group("all controllers")
+                .pathsToMatch("/**")
+                .build();
+    }
 }
