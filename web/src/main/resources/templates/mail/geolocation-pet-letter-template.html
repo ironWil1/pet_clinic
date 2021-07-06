@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" th:with="lang=${#locale.language}" th:lang="${lang}">
+<head th:replace="mail/layout :: htmlhead" />
+
+<body style="padding: 2rem; background-color: lightgrey; font-size: large;">
+
+<p th:text="${'Hello, ' + name + '!'}">Hello, Vasya!</p>
+
+<p>Ваш <span th:text="${petName}">Милый котик</span> нашёлся!</p>
+
+<p>
+    Кто-то отсканировал QR код на ошейнике вашего питомца и отправил вам следующее сообщение: <span th:text="${text}">Какое то сообщение</span><br />
+    Перейдите по ссылке для просмотра местонахождения питомца: <a th:href="${geolocationPetFoundUrl}" th:text="${geolocationPetFoundUrl}">https://www.google.com/maps/place/1.2345600+2.3456700</a>
+</p>
+
+<div th:replace="mail/layout :: htmlfooter" />
+
+</body>
+</html>

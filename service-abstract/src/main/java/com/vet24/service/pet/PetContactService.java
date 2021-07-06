@@ -11,5 +11,5 @@ public interface PetContactService extends ReadWriteService<Long, PetContact> {
     boolean isExistByPetCode(String petCode);
     PetContact getByPetCode(String petCode);
     int getCountId();
-    String randomPetContactUniqueCode(Long id);
+    String randomPetContactUniqueCode();
 }

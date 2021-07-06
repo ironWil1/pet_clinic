@@ -134,7 +134,7 @@ public class PetContactQrCodeController {
             }
             Pet pet = petService.getByKey(id);
             PetContact petContact = petContactMapper.toEntity(petContactDto);
-            petContact.setPetCode(petContactService.randomPetContactUniqueCode(id));
+            petContact.setPetCode(petContactService.randomPetContactUniqueCode());
             petContact.setPet(pet);
             petContactService.persist(petContact);
             return new ResponseEntity<>(HttpStatus.CREATED);
