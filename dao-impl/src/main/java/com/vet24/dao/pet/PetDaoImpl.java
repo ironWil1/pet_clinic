@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class PetDaoImpl extends ReadWriteDaoImpl<Long, Pet> implements PetDao {
-
 }
