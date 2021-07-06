@@ -4,6 +4,7 @@ import com.vet24.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
@@ -25,10 +27,12 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userDetailsService;
+    private final AuthTokenFilter authTokenFilter;
 
     @Autowired
-    public SecurityConfig(UserService userDetailsService) {
+    public SecurityConfig(UserService userDetailsService, AuthTokenFilter authTokenFilter) {
         this.userDetailsService = userDetailsService;
+        this.authTokenFilter = authTokenFilter;
     }
 
     @Bean
@@ -55,24 +59,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .httpBasic()
-                .and()
+                .httpBasic().disable()
                 .formLogin().disable();
         http
                 .authorizeRequests()
+                .antMatchers("/api/auth/submit", "/api/registration","/api/wtf").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/client/**").hasRole("CLIENT")
                 .antMatchers("/api/doctor/**").hasRole("DOCTOR")
                 .antMatchers("/api/manager/**").hasRole("MANAGER")
                 .antMatchers("/swagger-ui/**").permitAll()
-                .antMatchers("/api/auth/submit", "/api/registration").permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         http.logout()
                 .logoutUrl("/logout")
                 .clearAuthentication(true)
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll();
+    }
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     // TODO: BCrypt
