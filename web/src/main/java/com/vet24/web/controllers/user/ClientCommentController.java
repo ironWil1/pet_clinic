@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,11 +59,11 @@ public class ClientCommentController {
         } else {
             Comment comment = null;
             DoctorReview doctorReview = null;
-            User currentUser = userService.getCurrentUser();
+            User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Long userId = currentUser.getId();
             if (doctorReviewService.getByDoctorAndClientId(doctorId,userId) == null) {
                 comment = new Comment(
-                        userService.getCurrentUser(), text, LocalDateTime.now()
+                        currentUser, text, LocalDateTime.now()
                 );
                 doctorReview = new DoctorReview(comment,doctor);
 
@@ -90,7 +91,7 @@ public class ClientCommentController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CommentReaction commentLike = new CommentReaction(comment,client,positive);
         commentReactionService.update(commentLike);
 

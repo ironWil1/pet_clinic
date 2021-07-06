@@ -7,7 +7,4 @@ import com.vet24.service.ReadWriteService;
 import java.util.List;
 
 public interface DoctorService extends ReadWriteService<Long, Doctor> {
-
-    Doctor getCurrentDoctor();
-
 }

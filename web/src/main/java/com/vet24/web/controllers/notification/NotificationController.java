@@ -3,11 +3,13 @@ package com.vet24.web.controllers.notification;
 import com.vet24.models.dto.googleEvent.GoogleEventDto;
 import com.vet24.models.exception.CredentialException;
 import com.vet24.models.exception.EventException;
+import com.vet24.models.user.Client;
 import com.vet24.service.notification.GoogleEventService;
 
 import com.vet24.service.user.ClientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,7 +49,8 @@ public class NotificationController {
     public void saveAuthorizationCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String code = request.getParameter("code");
         if (code != null) {
-            googleEventService.saveToken(code, clientService.getCurrentClient().getEmail());
+            Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            googleEventService.saveToken(code, client.getEmail());
         }
         response.sendRedirect("/");
     }
