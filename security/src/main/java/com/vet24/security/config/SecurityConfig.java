@@ -63,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/api/auth/submit", "/api/registration","/api/wtf").permitAll()
+                .antMatchers("/api/auth/submit", "/api/registration","/api/signin").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/client/**").hasRole("CLIENT")
                 .antMatchers("/api/doctor/**").hasRole("DOCTOR")
