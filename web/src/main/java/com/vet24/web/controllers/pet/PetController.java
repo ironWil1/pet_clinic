@@ -92,7 +92,7 @@ public class PetController {
             Pet pet = newPetMapper.toEntity(petDto);
             pet.setClient(client);
             petService.persist(pet);
-            log.info("We added procedure with this name {}",petDto.getName());
+            log.info("We added new pet {}",petDto.getName());
             return ResponseEntity.ok(petDto);
         }
         return ResponseEntity.notFound().build();
@@ -180,7 +180,7 @@ public class PetController {
                 UploadedFileDto uploadedFileDto = uploadService.store(file);
                 pet.setAvatar(uploadedFileDto.getUrl());
                 petService.update(pet);
-
+                log.info(" The pet with this id {} changes avatar  {} ",petId);
                 return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -53,6 +53,12 @@ public class ClientController {
     @GetMapping()
     public ResponseEntity<ClientDto> getCurrentClient() {
         ClientDto clientDto = clientMapper.toDto(clientService.getCurrentClient());
+        if (clientDto != null){
+            log.info("The current client name is{}",clientDto.getLastname());
+        }
+        else{
+            log.info("The current client is not found");
+        }
         return clientDto != null ? ResponseEntity.ok(clientDto) : ResponseEntity.notFound().build();
     }
 
@@ -67,9 +73,11 @@ public class ClientController {
         if (client != null) {
             String url = client.getAvatar();
             if (url != null) {
+                log.info("The client with this id {} have avatar",client.getId());
                 return new ResponseEntity<>(resourceService.loadAsByteArray(url), addContentHeaders(url), HttpStatus.OK);
             }
         }
+        log.info("The avatar for client with id {} not found",client.getId());
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -88,6 +96,7 @@ public class ClientController {
             UploadedFileDto uploadedFileDto = uploadService.store(file);
             client.setAvatar(uploadedFileDto.getUrl());
             clientService.update(client);
+            log.info("The avatar for client with id {} was uploaded",client.getId());
             return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
         }
     }
@@ -97,11 +106,5 @@ public class ClientController {
         headers.add("Content-Type", resourceService.getContentTypeByFileName(filename));
         return headers;
     }
-    {
-        try {
-            log.debug("ClientController log!!!!!!!!!!!!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 }

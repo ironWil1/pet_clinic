@@ -55,8 +55,10 @@ public class ClientCommentController {
                 comment = new Comment(
                         clientService.getCurrentClient(), text, LocalDateTime.now(), doctor
                 );
+                log.info("The comment {} was added to Doctor with id {}",text,doctorId);
                 commentService.persist(comment);
             } else {
+                log.info("The comment is not correct");
                 throw new RepeatedCommentException("You can add only one comment to Doctor. So you have to update or delete old one.");
             }
             return new ResponseEntity<>(comment.getContent(), HttpStatus.OK);
@@ -79,14 +81,8 @@ public class ClientCommentController {
         }
         CommentReaction commentLike = new CommentReaction(comment,client,positive);
         commentReactionService.update(commentLike);
-
+        log.info("The reaction on the comment was added as positive {}",commentLike.getPositive());
         return new  ResponseEntity<>(HttpStatus.OK);
     }
-    {
-        try {
-            log.debug("ClientCommentController log!!!!!!!!!!!!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 }

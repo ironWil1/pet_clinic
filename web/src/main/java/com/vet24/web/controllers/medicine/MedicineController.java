@@ -127,7 +127,7 @@ public class MedicineController {
             UploadedFileDto uploadedFileDto = uploadService.store(file);
             medicine.setIcon(uploadedFileDto.getUrl());
             medicineService.update(medicine);
-           // log.info(" The medicine with this icon {} was added ",medicine.getIcon());
+            log.info(" The medicine set icon on this url {} was added ",uploadedFileDto.getUrl());
             return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
         }
     }

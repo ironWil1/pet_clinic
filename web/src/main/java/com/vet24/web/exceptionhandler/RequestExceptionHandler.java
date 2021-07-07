@@ -16,14 +16,12 @@ public class RequestExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ExceptionDto> handleException(NotFoundException exception) {
         ExceptionDto data = new ExceptionDto(exception.getMessage());
-
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ExceptionDto> handleException(BadRequestException exception) {
         ExceptionDto data = new ExceptionDto(exception.getMessage());
-
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,6 +1,7 @@
 package com.vet24.web.controllers.found;
 
 import com.vet24.models.dto.pet.PetFoundDto;
+import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.PetFoundMapper;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.PetFound;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,8 +56,7 @@ public class PetFoundController {
             @ApiResponse(responseCode = "404", description = "PetContact by petCode is not found"),
     })
     @PostMapping(value = "/petFound")
-    public ResponseEntity <PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "petCode", required = false) String petCode,
-                                                                           @RequestBody PetFoundDto petFoundDto) {
+    public ResponseEntity <PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "petCode", required = false) String petCode, @RequestBody PetFoundDto petFoundDto)  {
         if (petContactService.isExistByPetCode(petCode)) {
             PetContact petContact = petContactService.getByPetCode(petCode);
             PetFound petFound = petFoundMapper.toEntity(petFoundDto);
@@ -80,7 +81,5 @@ public class PetFoundController {
             return new ResponseEntity <>(HttpStatus.NOT_FOUND);
         }
       }
-
-    }
-
+}
 

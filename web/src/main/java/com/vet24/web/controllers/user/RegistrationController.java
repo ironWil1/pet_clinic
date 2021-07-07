@@ -75,9 +75,12 @@ public class RegistrationController {
         if (errors.hasErrors()) {
             String mesBuild = errors.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
+            log.info("All errors during registration {}",mesBuild);
             throw new BadRequestException(mesBuild);
+
         }
         if(!inputDto.getPassword().equals(inputDto.getConfirmPassword())){
+            log.info("Password confirmation is wrong");
             throw new BadRequestException(PASSWORDS_UNMATCHED);
         }
 
@@ -86,6 +89,7 @@ public class RegistrationController {
             foundOrNew = clientMapper.toEntity(inputDto);
         }
         else if(foundOrNew.getRole().getName()!=RoleNameEnum.UNVERIFIED_CLIENT) {
+            log.info("The client with id {} have repeated registration ",foundOrNew.getId());
             throw new RepeatedRegistrationException(repeatedRegistrationMsg);
         }
 
@@ -98,7 +102,7 @@ public class RegistrationController {
                 verificationService.createVerificationToken(foundOrNew);
 
         mailService.sendWelcomeMessage(inputDto.getEmail(),inputDto.getFirstname(), tokenLink);
-
+        log.info("The registration for client with id {} is created ",foundOrNew.getId());
         return new  ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -119,15 +123,9 @@ public class RegistrationController {
         cl.setRole(new Role(RoleNameEnum.CLIENT));
         ClientDto clientUpdated = clientMapper.toDto(clientService.update(cl));
         verificationService.delete(token);
+        log.info("The client with mail {} is updated ",clientUpdated.getEmail());
         return  ResponseEntity.status(HttpStatus.RESET_CONTENT).body(clientUpdated);
 
-    }
-    {
-        try {
-            log.debug("RegistrationController log!!!!!!!!!!!!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 }
