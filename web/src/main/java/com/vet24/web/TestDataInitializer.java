@@ -260,7 +260,7 @@ public class TestDataInitializer implements ApplicationRunner {
         List<DoctorReview> doctorReviews = new ArrayList<>();
         Comment doctorReviewComment = null;
         for (int i = 1; i <= 30; i++) {
-            doctorReviewComment = new Comment(userService.getByKey((long) i +30),"lorem " + (i+30));
+            doctorReviewComment = new Comment(userService.getByKey((long) i +30),"lorem " + (i+30), LocalDateTime.now());
             commentService.persist(doctorReviewComment);
             doctorReviews.add(new DoctorReview(doctorReviewComment, doctorService.getByKey((long) i + 30)));
         }
@@ -278,6 +278,16 @@ public class TestDataInitializer implements ApplicationRunner {
         }
         topicService.persistAll(listTopic);
     }
+
+//    public void topicInitializer() {
+//        List<Topic> listTopic = new ArrayList<>();
+//        List<Comment> commentList = new ArrayList<>();
+//        for (int i = 1; i <= 30; i++) {
+//            commentList.add(new Comment(userService.getByKey((long) i + 30), "comment for topic " + (i + 30), LocalDateTime.now()));
+//            listTopic.add(new Topic(userService.getByKey((long)i),"topic" + i, "content" + i, false, commentList));
+//        }
+//        topicService.persistAll(listTopic);
+//    }
 
     @Override
     @Transactional

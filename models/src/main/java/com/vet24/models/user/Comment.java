@@ -54,6 +54,12 @@ public class Comment implements Serializable {
     )
     private List<CommentReaction> commentReactions = new ArrayList<>();
 
+    public Comment(User user, String content, LocalDateTime dateTime) {
+        this.user = user;
+        this.content = content;
+        this.dateTime = dateTime;
+    }
+
     public Comment(User user, String content) {
         this.user = user;
         this.content = content;
