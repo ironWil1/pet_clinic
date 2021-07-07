@@ -244,7 +244,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void commentInitializer() {
         List<Comment> comments = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            comments.add(new Comment(userService.getByKey((long) i), "lorem " + i, LocalDateTime.now()));
+            comments.add(new Comment(userService.getByKey((long) i), "lorem " + i));
         }
         commentService.persistAll(comments);
 
@@ -260,7 +260,7 @@ public class TestDataInitializer implements ApplicationRunner {
         List<DoctorReview> doctorReviews = new ArrayList<>();
         Comment doctorReviewComment = null;
         for (int i = 1; i <= 30; i++) {
-            doctorReviewComment = new Comment(userService.getByKey((long) i +30),"lorem " + (i+30), LocalDateTime.now());
+            doctorReviewComment = new Comment(userService.getByKey((long) i +30),"lorem " + (i+30));
             commentService.persist(doctorReviewComment);
             doctorReviews.add(new DoctorReview(doctorReviewComment, doctorService.getByKey((long) i + 30)));
         }

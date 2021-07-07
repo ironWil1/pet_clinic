@@ -8,4 +8,6 @@ import java.util.List;
 public interface TopicService extends ReadWriteService<Long, Topic> {
 
     List<Topic> getTopicByClientId(Long id);
+
+    Topic getTopicWithCommentsById(Long topicId);
 }

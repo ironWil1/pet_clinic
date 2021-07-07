@@ -30,7 +30,7 @@ public class ClientCommentControllerTest extends ControllerAbstractIntegrationTe
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeDislikedComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}",1L,false))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}",101L,false))
                 .andExpect(MockMvcResultMatchers.status().isOk())
         .andDo(
                 (result) -> {
@@ -44,7 +44,7 @@ public class ClientCommentControllerTest extends ControllerAbstractIntegrationTe
     @Test
     @DataSet(cleanBefore = true, value =  {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeLikedComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}",2L,true))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}",102L,true))
                 .andExpect(MockMvcResultMatchers.status().isOk())
         .andDo(
                 (result) -> {
