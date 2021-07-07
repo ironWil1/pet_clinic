@@ -63,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/v3/api-docs/swagger-config","/v3/api-docs", "/swagger-ui/**").permitAll()
+                .antMatchers("/v3/api-docs/swagger-config/**","/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .antMatchers("/api/auth/submit", "/api/registration","/api/signin").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/client/**").hasRole("CLIENT")
