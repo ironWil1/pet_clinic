@@ -9,7 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.webjars.NotFoundException;
-
+import javax.validation.ConstraintViolationException;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -37,4 +37,11 @@ public class RequestExceptionHandler {
 
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ExceptionDto> handleException(ConstraintViolationException exception) {
+        ExceptionDto data = new ExceptionDto(exception.getMessage());
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
 }
