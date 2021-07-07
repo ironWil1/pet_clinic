@@ -34,6 +34,7 @@ public class OpenApiConfig {
                                 .addSecuritySchemes(securitySchemeName,
                                         new SecurityScheme()
                                                 .name(securitySchemeName)
+                                                .description("Токен клиента : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTYyNTY4MDc5OCwiZXhwIjoxNjI1Njk4Nzk4fQ.pRlL6wYk5bmhTJYMOMo_GVoJWXB7-EqU4YGUao8YwnFpm7TplSozoOTtMZV6KEksSrmO2jAylkzhKoPAkKnbbQ                                 Токен доктора : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2N0b3IxQGVtYWlsLmNvbSIsImlhdCI6MTYyNTY4MDgzNiwiZXhwIjoxNjI1Njk4ODM2fQ.3pn85NuzlbpN1unbf4q8VkZ-yhpLKx-b3w7A4MzpLGNKyMA2l3LU0Yzlksd7n_NHgZESTAciHbocd6US0gQIJQ" )
                                                 .type(SecurityScheme.Type.HTTP)
                                                 .scheme("bearer")
                                                 .bearerFormat("JWT")
