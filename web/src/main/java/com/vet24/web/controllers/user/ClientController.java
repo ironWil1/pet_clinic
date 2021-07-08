@@ -17,8 +17,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -44,13 +49,19 @@ public class ClientController {
 
     }
 
-    @Operation(summary = "get current Client")
+    @GetMapping("")
+    @Operation(summary = "get current Client with his pets")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the Client",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientDto.class))),
-            @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ClientDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden access",
+                    content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Client not found exception",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "406", description = "Client not acceptable type",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
-    @GetMapping()
     public ResponseEntity<ClientDto> getCurrentClient() {
         ClientDto clientDto = clientMapper.toDto(clientService.getCurrentClient());
         if (clientDto != null){
@@ -87,18 +98,18 @@ public class ClientController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UploadedFileDto.class))),
             @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)
     })
-    @PostMapping(value = "/avatar", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/avatar", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UploadedFileDto> persistClientAvatar(@RequestParam("file") MultipartFile file) throws IOException {
         Client client = clientService.getCurrentClient();
         if (client == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            UploadedFileDto uploadedFileDto = uploadService.store(file);
-            client.setAvatar(uploadedFileDto.getUrl());
-            clientService.update(client);
-            log.info("The avatar for client with id {} was uploaded",client.getId());
-            return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
         }
+
+        UploadedFileDto uploadedFileDto = uploadService.store(file);
+        client.setAvatar(uploadedFileDto.getUrl());
+        clientService.update(client);
+        log.info("The avatar for client with id {} was uploaded",client.getId());
+        return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
     }
 
     private HttpHeaders addContentHeaders(String filename) {
@@ -106,5 +117,4 @@ public class ClientController {
         headers.add("Content-Type", resourceService.getContentTypeByFileName(filename));
         return headers;
     }
-
 }

@@ -1,5 +1,7 @@
 package com.vet24.web.controllers.pet.procedure;
 
+import com.vet24.models.dto.OnCreate;
+import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
@@ -24,8 +26,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
+
+import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -98,8 +106,9 @@ public class ProcedureController {
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("")
-    public ResponseEntity<ProcedureDto> save(@PathVariable Long petId,
+    public ResponseEntity<ProcedureDto> save(@PathVariable Long petId, @Validated(OnCreate.class)
                                              @RequestBody AbstractNewProcedureDto newProcedureDto) {
+
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = newProcedureMapper.toEntity(newProcedureDto);
@@ -133,7 +142,8 @@ public class ProcedureController {
     })
     @PutMapping("/{procedureId}")
     public ResponseEntity<ProcedureDto> update(@PathVariable Long petId, @PathVariable Long procedureId,
-                                         @RequestBody ProcedureDto procedureDto) {
+                                         @Validated(OnUpdate.class )@RequestBody ProcedureDto procedureDto) {
+
         Client client = clientService.getCurrentClient();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = procedureService.getByKey(procedureId);

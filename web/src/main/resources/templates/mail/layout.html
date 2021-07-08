@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" th:with="lang=${#locale.language}">
+<head th:fragment="htmlhead">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body style="padding: 2rem; background-color: lightgrey; font-size: large;">
+
+<p>Content</p>
+
+<div th:fragment="htmlfooter" style="display: flex; flex-direction: row; justify-content: flex-start; align-items: center; padding-top: 2rem; border-top: gray solid 1px;">
+  <div style="padding-right: 2rem;"><img src='cid:logoImage' /></div>
+  <div style="font-style: italic">Regards, <br /><span th:text="${sign + ', ' + location}">"Pet clinic", Russia(RU)</span></div>
+</div>
+
+</body>
+</html>

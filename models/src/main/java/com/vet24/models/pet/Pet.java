@@ -5,9 +5,11 @@ import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.notification.Notification;
-import com.vet24.models.pet.reproduction.Reproduction;
+import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Procedure;
+import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
+import com.vet24.models.user.Doctor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +25,7 @@ import java.util.List;
 @DiscriminatorColumn(name = "pet_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 public abstract class Pet {
 
     @Id
@@ -103,6 +105,13 @@ public abstract class Pet {
     )
     private List<PetFound> petFounds = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ClinicalExamination> clinicalExaminations = new ArrayList<>();
+
     protected Pet() {
     }
 
@@ -115,10 +124,12 @@ public abstract class Pet {
     }
 
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
-                  List<Procedure> procedures, List<Reproduction> reproductions, List<Notification> notifications) {
+                  List<Procedure> procedures, List<Reproduction> reproductions,
+                  List<ClinicalExamination> clinicalExaminations) {
         this(name, birthDay, gender, breed, client);
         this.procedures = procedures;
         this.reproductions = reproductions;
+        this.clinicalExaminations = clinicalExaminations;
         this.notifications = notifications;
     }
 
@@ -132,7 +143,7 @@ public abstract class Pet {
         procedure.setPet(null);
     }
 
-    public void addReproduction(Reproduction reproduction){
+    public void addReproduction(Reproduction reproduction) {
         reproductions.add(reproduction);
         reproduction.setPet(this);
     }
@@ -142,7 +153,17 @@ public abstract class Pet {
         reproduction.setPet(null);
     }
 
-    public void addNotification(Notification notification){
+    public void addClinicalExamination(ClinicalExamination clinicalExamination) {
+        clinicalExaminations.add(clinicalExamination);
+        clinicalExamination.setPet(this);
+    }
+
+    public void removeClinicalExamination(ClinicalExamination clinicalExamination) {
+        clinicalExaminations.remove(clinicalExamination);
+        clinicalExamination.setPet(null);
+    }
+
+    public void addNotification(Notification notification) {
         notifications.add(notification);
         notification.setPet(this);
     }

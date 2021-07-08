@@ -93,32 +93,34 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
         if (!(newProcedure.getPeriodDays() > 0)) {
             throw new BadRequestException("for periodical procedure need to set period days");
         }
-        Pet pet = oldProcedure.getPet();
-        Notification notification = new Notification(
-                oldProcedure.getNotification().getId(),
-                oldProcedure.getNotification().getEventId(),
-                Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.MIDNIGHT)),
-                Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.NOON)),
-                "Periodic procedure for your pet",
-                "Pet clinic 1",
-                "Procedure '" + newProcedure.getType().name().toLowerCase() + "' \n" +
-                        "for pet " + pet.getName() + " \n" +
-                        "[every " + newProcedure.getPeriodDays() + " day(s)]",
-                pet
-        );
 
-        notificationService.update(notification);
-        newProcedure.setNotification(notification);
+        if (oldProcedure.getNotification() != null) {
+            Pet pet = oldProcedure.getPet();
+
+            Notification notification = new Notification(
+                    oldProcedure.getNotification().getId(),
+                    oldProcedure.getNotification().getEventId(),
+                    Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.MIDNIGHT)),
+                    Timestamp.valueOf(LocalDateTime.of(newProcedure.getDate().plusDays(newProcedure.getPeriodDays()), LocalTime.NOON)),
+                    "Periodic procedure for your pet",
+                    "Pet clinic 1",
+                    "Procedure '" + newProcedure.getType().name().toLowerCase() + "' \n" +
+                            "for pet " + pet.getName() + " \n" +
+                            "[every " + newProcedure.getPeriodDays() + " day(s)]",
+                    pet
+            );
+
+            notificationService.update(notification);
+            newProcedure.setNotification(notification);
+        }
     }
 
     private void deleteProcedureNotification(Procedure procedure) {
-        if (procedure.getNotification() == null) {
-            throw new BadRequestException("notification not found");
+        if (procedure.getNotification() != null) {
+            Notification notification = procedure.getNotification();
+            notificationService.delete(notification);
+            procedure.setNotification(null);
+            procedure.getPet().removeNotification(notification);
         }
-
-        Notification notification = procedure.getNotification();
-        notificationService.delete(notification);
-        procedure.setNotification(null);
-        procedure.getPet().removeNotification(notification);
     }
 }

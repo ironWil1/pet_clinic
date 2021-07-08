@@ -1,19 +1,17 @@
 package com.vet24.web.controllers.found;
 
 import com.vet24.models.dto.pet.PetFoundDto;
-import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.PetFoundMapper;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.PetFound;
+import com.vet24.service.media.MailService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetFoundService;
-import com.vet24.service.user.ClientService;
-import com.vet24.util.mailSender.PetFoundMailSender;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import javassist.NotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,22 +23,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
-@RequestMapping("/api")
+@RequestMapping("/api/petFound")
 public class PetFoundController {
+
+    @Value("${googlemaps.service.url}")
+    private String GOOGLE_MAPS_SERVICE_URL;
 
     private final PetFoundService petFoundService;
     private final PetContactService petContactService;
     private final PetFoundMapper petFoundMapper;
-    private final ClientService clientService;
-    private final PetFoundMailSender petFoundMailSender;
+    private final MailService mailService;
 
     public PetFoundController(PetFoundService petFoundService, PetContactService petContactService,
-                              PetFoundMapper petFoundMapper, ClientService clientService, PetFoundMailSender petFoundMailSender) {
+                              PetFoundMapper petFoundMapper, MailService mailService) {
         this.petFoundService = petFoundService;
         this.petContactService = petContactService;
         this.petFoundMapper = petFoundMapper;
-        this.clientService = clientService;
-        this.petFoundMailSender = petFoundMailSender;
+        this.mailService = mailService;
     }
 
     /* Запрос может выглядеть следующим образом.
@@ -55,8 +54,9 @@ public class PetFoundController {
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "PetContact by petCode is not found"),
     })
-    @PostMapping(value = "/petFound")
-    public ResponseEntity <PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "petCode", required = false) String petCode, @RequestBody PetFoundDto petFoundDto)  {
+    @PostMapping(value = "")
+    public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "petCode", required = false) String petCode,
+                                                                          @RequestBody PetFoundDto petFoundDto) {
         if (petContactService.isExistByPetCode(petCode)) {
             PetContact petContact = petContactService.getByPetCode(petCode);
             PetFound petFound = petFoundMapper.toEntity(petFoundDto);
@@ -64,22 +64,13 @@ public class PetFoundController {
             petFoundService.persist(petFound);
 
             String text = petFound.getText();
-            String latitude = petFound.getLatitude();
-            String longitude = petFound.getLongitude();
-            String clientEmail = petContact.getPet().getClient().getEmail();
-            String clientName = petContact.getPet().getClient().getFirstname();
-            String petName = petContact.getPet().getName();
-            String message = String.format("%s, добрый день! Ваш %s нашёлся!\n\n Кто-то отсканировал QR код" +
-                            " на ошейнике вашего питомца и отправил вам следующее сообщение: \n\"%s\"\n\n" +
-                            "Перейдите по ссылке для просмотра местонахождения питомца: https://www.google.com/maps/place/%s+%s",
-                    clientName, petName, text, latitude, longitude);
-            petFoundMailSender.sendTextAndGeolocationPet(clientEmail, "Информация о вашем питомце", message);
-            log.info("The pet was found at latitude {} and longitude {}and data of this was sent to mail {}", latitude, longitude, clientEmail);
-            return new ResponseEntity <>(HttpStatus.CREATED);
+            String geolocationPetFoundUrl = String.format(GOOGLE_MAPS_SERVICE_URL, petFound.getLatitude(), petFound.getLongitude());
+
+            mailService.sendGeolocationPetFoundMessage(petContact, geolocationPetFoundUrl, text);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             log.info("Pet with this petCode {} does not exist or was not found",petCode);
             return new ResponseEntity <>(HttpStatus.NOT_FOUND);
         }
-      }
+    }
 }
-

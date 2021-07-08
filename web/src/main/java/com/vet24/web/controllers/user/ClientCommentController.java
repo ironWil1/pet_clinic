@@ -5,14 +5,19 @@ import com.vet24.models.user.Client;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.CommentReaction;
 import com.vet24.models.user.Doctor;
+import com.vet24.models.user.DoctorReview;
+import com.vet24.models.user.User;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.CommentReactionService;
 import com.vet24.service.user.CommentService;
+import com.vet24.service.user.DoctorReviewService;
 import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,38 +30,48 @@ import java.time.LocalDateTime;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/client")
+@RequestMapping("/api/client/doctor")
 @Tag(name = "doctor-controller", description = "operations with doctors")
 public class ClientCommentController {
 
     private final DoctorService doctorService;
     private final ClientService clientService;
     private final CommentService commentService;
+    private final DoctorReviewService doctorReviewService;
+    private final UserService userService;
     private final CommentReactionService commentReactionService;
 
-    public ClientCommentController(DoctorService doctorService, ClientService clientService, CommentService commentService, CommentReactionService commentReactionService) {
+    @Autowired
+    public ClientCommentController(DoctorService doctorService, ClientService clientService, CommentService commentService,DoctorReviewService doctorReviewService, UserService userService, CommentReactionService commentReactionService) {
         this.doctorService = doctorService;
         this.clientService = clientService;
         this.commentService = commentService;
+        this.doctorReviewService = doctorReviewService;
+        this.userService = userService;
         this.commentReactionService = commentReactionService;
     }
 
     @Operation(summary = "add comment by Client for Doctor")
-    @PostMapping(value = "/doctor/{doctorId}/addComment")
+    @PostMapping(value = "/{doctorId}/addComment")
     public ResponseEntity<String> persistComment(@PathVariable("doctorId") Long doctorId, String text){
         Doctor doctor = doctorService.getByKey(doctorId);
         if (doctor == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
             Comment comment = null;
-            Client currentClient = clientService.getCurrentClient();
-            Long clientId = currentClient.getId();
-            if (commentService.findByClientIdAndDoctorId(clientId, doctorId) == null) {
+            DoctorReview doctorReview = null;
+            User currentUser = userService.getCurrentUser();
+            Long userId = currentUser.getId();
+            if (doctorReviewService.getByDoctorAndClientId(doctorId,userId) == null) {
                 comment = new Comment(
-                        clientService.getCurrentClient(), text, LocalDateTime.now(), doctor
+                        userService.getCurrentUser(), text, LocalDateTime.now()
                 );
+                doctorReview = new DoctorReview(comment,doctor);
+
                 log.info("The comment {} was added to Doctor with id {}",text,doctorId);
                 commentService.persist(comment);
+
+                doctorReviewService.persist(doctorReview);
             } else {
                 log.info("The comment is not correct");
                 throw new RepeatedCommentException("You can add only one comment to Doctor. So you have to update or delete old one.");
@@ -74,15 +89,15 @@ public class ClientCommentController {
     @PostMapping(value = "/{commentId}/{positive}")
     public ResponseEntity<Void> likeOrDislikeComment(@PathVariable Long commentId, @PathVariable boolean positive)  {
 
-        Client client = clientService.getCurrentClient();
         Comment comment = commentService.getByKey(commentId);
         if (comment == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        Client client = clientService.getCurrentClient();
         CommentReaction commentLike = new CommentReaction(comment,client,positive);
         commentReactionService.update(commentLike);
         log.info("The reaction on the comment was added as positive {}",commentLike.getPositive());
         return new  ResponseEntity<>(HttpStatus.OK);
     }
-
 }

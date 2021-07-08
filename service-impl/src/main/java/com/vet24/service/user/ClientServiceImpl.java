@@ -3,6 +3,8 @@ package com.vet24.service.user;
 import com.vet24.dao.user.ClientDao;
 import com.vet24.models.user.Client;
 import com.vet24.service.ReadWriteServiceImpl;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,22 +24,22 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
         return clientDao.getClientByEmail(email);
     }
 
-    // Always returns Client with id = 3
     @Override
     @Transactional(readOnly = true)
     public Client getCurrentClient() {
-        return clientDao.getByKey(3L);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return clientDao.getClientByEmail(authentication.getName());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Client testGetCurrentClientWithPets() {
-        return clientDao.testGetCurrentClientWithPets();
+    public Client getCurrentClientWithPets() {
+        return clientDao.getClientWithPetsByEmail(getCurrentClient().getUsername());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Client testGetCurrentClientWithReactions() {
-        return clientDao.testGetCurrentClientWithReactions();
+    public Client getCurrentClientWithReactions() {
+        return clientDao.getClientWithReactionsByEmail(getCurrentClient().getUsername());
     }
 }
