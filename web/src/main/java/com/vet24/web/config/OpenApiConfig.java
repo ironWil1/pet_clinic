@@ -34,7 +34,7 @@ public class OpenApiConfig {
                                 .addSecuritySchemes(securitySchemeName,
                                         new SecurityScheme()
                                                 .name(securitySchemeName)
-                                                .description("ТОКЕН КЛИЕНТА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTYyNTY4MDc5OCwiZXhwIjoxNjI1Njk4Nzk4fQ.pRlL6wYk5bmhTJYMOMo_GVoJWXB7-EqU4YGUao8YwnFpm7TplSozoOTtMZV6KEksSrmO2jAylkzhKoPAkKnbbQ                                 ТОКЕН ДОКТОРА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2N0b3IxQGVtYWlsLmNvbSIsImlhdCI6MTYyNTY4MDgzNiwiZXhwIjoxNjI1Njk4ODM2fQ.3pn85NuzlbpN1unbf4q8VkZ-yhpLKx-b3w7A4MzpLGNKyMA2l3LU0Yzlksd7n_NHgZESTAciHbocd6US0gQIJQ" )
+                                                .description("ТОКЕН КЛИЕНТА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTYyNTgzMDI2NywiZXhwIjoxNjI3ODMwMjY3fQ.MKSymqK04NLvctJyz0mAIWQbUv7Mt-EhC8GkOCyoODJSPxIacdALq4J0P3MQoHXPwOy32Xeq1HIcWACzocp12A \n TOКЕН ДОКТОРА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2N0b3IxQGVtYWlsLmNvbSIsImlhdCI6MTYyNTgzMDIwOSwiZXhwIjoxNjI3ODMwMjA5fQ.nMiVtLW98Mvosmi3KnhQiyeudKZKBeaJuJDYKCPHp_zuX8kPyTrDIL3B2Nr7zzkjT75Ebk1_AIY5aAKxw6cs7A" )
                                                 .type(SecurityScheme.Type.HTTP)
                                                 .scheme("bearer")
                                                 .bearerFormat("JWT")
