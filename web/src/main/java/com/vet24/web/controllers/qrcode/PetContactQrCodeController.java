@@ -55,7 +55,7 @@ public class PetContactQrCodeController {
     @GetMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("id") Long id) {
         if (!clientService.getCurrentClient().getPets().contains(petService.getByKey(id))){
-            log.info(" The pet with this id {} does not exist {} ",id);
+         //   log.info(" The pet with this id {} does not exist {} ",id);
             throw new NotFoundException("It's pet is not yours");
         }
         if (petContactService.isExistByKey(id)) {
