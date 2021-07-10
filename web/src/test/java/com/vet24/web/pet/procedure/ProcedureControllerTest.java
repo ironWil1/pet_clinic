@@ -24,7 +24,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.LocalDate;
 
-
 @WithUserDetails(value = "user3@gmail.com")
 public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
 
