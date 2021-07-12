@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @WithUserDetails(value = "doctor103@email.com")
@@ -62,6 +63,20 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+    // GET ClinicalExamination by id - 404 ERROR "ClinicalExamination not found"
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
+    public void testGetClinicalExaminationErrorClinicalExaminationNotFound() {
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .getForEntity(URI + "/10806", ExceptionDto.class, 102, 33);
+
+        Assert.assertEquals(response.getBody(), new ExceptionDto("clinical examination not found"));
+        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    //.getForEntity(URI + "/{petId}/exam/{examinationId}", ExceptionDto.class, 102, 33);
+
+
     // add clinical examination - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
@@ -90,6 +105,20 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
 
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(clinicalExaminationDto3, response.getBody());
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    // delete clinical examination by id - success
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
+    public void testDeleteClinicalExaminationSuccess() {
+        int beforeCount = clinicalExaminationDao.getAll().size();
+        HttpEntity<Void> request = new HttpEntity<>(HEADERS);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/100", HttpMethod.DELETE, request, ExceptionDto.class, 33);
+        int afterCount = clinicalExaminationDao.getAll().size();
+
+        Assert.assertEquals(beforeCount, ++afterCount);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
