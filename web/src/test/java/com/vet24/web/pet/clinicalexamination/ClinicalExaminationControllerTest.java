@@ -133,7 +133,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         int beforeCount = clinicalExaminationDao.getAll().size();
         HttpEntity<Void> request = new HttpEntity<>(HEADERS);
         ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/100", HttpMethod.DELETE, request, ExceptionDto.class, 33);
+                .exchange(URI + "/{examinationId}", HttpMethod.DELETE, request, ExceptionDto.class, 100);
         int afterCount = clinicalExaminationDao.getAll().size();
 
         Assert.assertEquals(beforeCount, ++afterCount);
