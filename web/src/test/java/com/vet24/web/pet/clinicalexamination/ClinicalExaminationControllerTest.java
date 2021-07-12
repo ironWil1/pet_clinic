@@ -74,9 +74,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    //.getForEntity(URI + "/{petId}/exam/{examinationId}", ExceptionDto.class, 102, 33);
-
-
     // add clinical examination - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
