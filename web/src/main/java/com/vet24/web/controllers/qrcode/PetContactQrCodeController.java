@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,7 +53,8 @@ public class PetContactQrCodeController {
     })
     @GetMapping(value = "/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("id") Long id) {
-        if (!clientService.getCurrentClient().getPets().contains(petService.getByKey(id))){
+        Client clientWithPets = clientService.getCurrentClientWithPets();
+        if (!clientWithPets.getPets().contains(petService.getByKey(id))){
             throw new NotFoundException("It's pet is not yours");
         }
         if (petContactService.isExistByKey(id)) {

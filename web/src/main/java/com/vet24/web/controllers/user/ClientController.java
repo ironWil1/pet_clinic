@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,7 +62,8 @@ public class ClientController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
     public ResponseEntity<ClientDto> getCurrentClient() {
-        ClientDto clientDto = clientMapper.toDto(clientService.getCurrentClient());
+        Client client = clientService.getCurrentClientWithPets();
+        ClientDto clientDto = clientMapper.toDto(client);
         return clientDto != null ? ResponseEntity.ok(clientDto) : ResponseEntity.notFound().build();
     }
 
@@ -72,7 +74,7 @@ public class ClientController {
     })
     @GetMapping("/avatar")
     public ResponseEntity<byte[]> getClientAvatar() {
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (client != null) {
             String url = client.getAvatar();
             if (url != null) {
@@ -90,7 +92,7 @@ public class ClientController {
     })
     @PostMapping(value = "/avatar", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UploadedFileDto> persistClientAvatar(@RequestParam("file") MultipartFile file) throws IOException {
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (client == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

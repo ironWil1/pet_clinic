@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 @WithUserDetails(value = "doctor33@gmail.com")
@@ -39,7 +40,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(value = {"/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
     public void shouldBeCreated()  {
         String diagnosis = "bla-bla-bla";
-        Doctor doctor = doctorService.getCurrentDoctor();
+        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(diagnosis, headers);

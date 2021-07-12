@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.pet.clinicalexamination;
 
 import com.vet24.models.dto.exception.ExceptionDto;
-import com.vet24.models.dto.pet.PetDto;
 import com.vet24.models.dto.pet.clinicalexamination.ClinicalExaminationDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.clinicalexamination.ClinicalExaminationMapper;
@@ -10,7 +9,6 @@ import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.user.Doctor;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
-import com.vet24.service.user.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,11 +16,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
-
 import java.time.LocalDate;
-
 
 @RestController
 @RequestMapping("/api/doctor/exam")
@@ -31,22 +35,13 @@ public class ClinicalExaminationController {
     private final PetService petService;
     private final ClinicalExaminationService clinicalExaminationService;
     private final ClinicalExaminationMapper clinicalExaminationMapper;
-    private final DoctorService doctorService;
 
     public ClinicalExaminationController(PetService petService, ClinicalExaminationService clinicalExaminationService,
-                                         ClinicalExaminationMapper clinicalExaminationMapper, //почему то появилась ошибка
-                                         DoctorService doctorService) {
+                                         ClinicalExaminationMapper clinicalExaminationMapper) {
         this.petService = petService;
         this.clinicalExaminationService = clinicalExaminationService;
         this.clinicalExaminationMapper = clinicalExaminationMapper;
-        this.doctorService = doctorService;
     }
-
-//для получения доктора после прикрутки секьюрити
-
-//    public Doctor getCurrentDoctor(){
-//        return  (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//    }
 
     @Operation(
             summary = "get clinical examination by id",
@@ -63,8 +58,6 @@ public class ClinicalExaminationController {
     @GetMapping("/{examinationId}")
     public ResponseEntity<ClinicalExaminationDto> getById(@PathVariable Long examinationId) {
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
-        Doctor doctor = doctorService.getCurrentDoctor();
-        Pet pet = clinicalExamination.getPet();
 
         if (clinicalExamination == null) {
             throw new NotFoundException("clinical examination not found");
@@ -95,7 +88,7 @@ public class ClinicalExaminationController {
             throw new NotFoundException("pet not found");
         }
         clinicalExamination.setId(null);
-        clinicalExamination.setDoctor(doctorService.getCurrentDoctor());
+        clinicalExamination.setDoctor((Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         clinicalExamination.setDate(LocalDate.now());
 
         clinicalExaminationService.persist(clinicalExamination);
@@ -130,7 +123,7 @@ public class ClinicalExaminationController {
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
-        Doctor doctor = doctorService.getCurrentDoctor();
+        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (doctor == null) {
             throw new NotFoundException("there is no doctor assigned to this pet");
         }

@@ -26,7 +26,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
 import java.util.List;
@@ -71,7 +76,7 @@ public class DoctorController {
         if(pet == null){
             throw new NotFoundException("No such pet found");
         }
-        Doctor doctor = doctorService.getCurrentDoctor();
+        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
         diagnosisService.persist(diagnosis);
         return new ResponseEntity<>(diagnosisMapper.toDto(diagnosis),
