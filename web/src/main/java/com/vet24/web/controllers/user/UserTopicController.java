@@ -12,7 +12,6 @@ import com.vet24.models.user.User;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.CommentService;
 import com.vet24.service.user.TopicService;
-import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,15 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 import javax.validation.constraints.NotBlank;
@@ -46,14 +37,13 @@ public class UserTopicController {
     private final ClientService clientService;
     private final TopicService topicService;
     private final TopicMapper topicMapper;
-    private final UserService userService;
     private final CommentService commentService;
     private final CommentMapper commentMapper;
 
+
     @Autowired
-    public UserTopicController(ClientService clientService, TopicService topicService,TopicMapper topicMapper) {
+    public UserTopicController(ClientService clientService, TopicService topicService, TopicMapper topicMapper, CommentService commentService, CommentMapper commentMapper) {
         this.clientService = clientService;
-        this.userService = userService;
         this.topicService = topicService;
         this.topicMapper = topicMapper;
         this.commentService = commentService;
@@ -67,7 +57,7 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "database is empty")
     })
     @GetMapping("/allTopics")
-    public ResponseEntity<List<TopicDto>> getAllTopics(){
+    public ResponseEntity<List<TopicDto>> getAllTopics() {
         List<TopicDto> topicDtoList = topicMapper.toDto(topicService.getAll());
         if (topicDtoList.isEmpty()) {
             throw new NullPointerException("database is empty");
@@ -82,7 +72,7 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "topics are not found")
     })
     @GetMapping("/yourTopics")
-    public ResponseEntity<List<TopicDto>> getAllClientTopic () {
+    public ResponseEntity<List<TopicDto>> getAllClientTopic() {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<>(
                 topicMapper.toDto(topicService.getTopicByClientId(client.getId())), HttpStatus.OK
@@ -111,7 +101,7 @@ public class UserTopicController {
     })
 
     @PostMapping()
-    public ResponseEntity<Void> createTopic(@RequestBody(required = false) TopicDto topicDto){
+    public ResponseEntity<Void> createTopic(@RequestBody(required = false) TopicDto topicDto) {
         if (topicDto.getTitle().trim().equals("") || topicDto.getContent().trim().equals("")) {
             throw new BadRequestException("title or content can't null");
         }
@@ -131,7 +121,7 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
     @PutMapping()
-    public ResponseEntity<TopicDto> updateTopic(@RequestBody(required = false) TopicDto topicDto){
+    public ResponseEntity<TopicDto> updateTopic(@RequestBody(required = false) TopicDto topicDto) {
         if (!topicService.isExistByKey(topicDto.getId())) {
             throw new NotFoundException("topic not found");
         }
@@ -159,7 +149,7 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "topic is not found")
     })
     @DeleteMapping("/{topicId}")
-    public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") Long topicId){
+    public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") Long topicId) {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic is not found");
         }
@@ -192,7 +182,7 @@ public class UserTopicController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        Comment comment = new Comment(userService.getCurrentUser(), content);
+        Comment comment = new Comment(clientService.getCurrentClientWithPets(), content);
         commentService.persist(comment);
         topic.getComments().add(comment);
         topicService.persist(topic);
