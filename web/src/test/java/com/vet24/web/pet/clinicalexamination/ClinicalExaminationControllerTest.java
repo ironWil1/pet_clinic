@@ -37,14 +37,20 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     ClinicalExaminationDto clinicalExaminationDtoNew1;
     ClinicalExaminationDto clinicalExaminationDtoNew2;
     ClinicalExaminationDto clinicalExaminationDto1;
+    ClinicalExaminationDto clinicalExaminationDto2;
     ClinicalExaminationDto clinicalExaminationDto3;
+    ClinicalExaminationDto clinicalExaminationDto4;
+    ClinicalExaminationDto clinicalExaminationDto5;
 
     @Before
     public void createNewClinicalExaminationAndClinicalExaminationDto() {
         this.clinicalExaminationDtoNew1 = new ClinicalExaminationDto(100L, 100L, 10.0, true, "textNew");
         this.clinicalExaminationDtoNew2 = new ClinicalExaminationDto(100L, 107670L, 10.0, true, "textNew");
         this.clinicalExaminationDto1 = new ClinicalExaminationDto(101L, 101L, 20.0, true, "text1");
+        this.clinicalExaminationDto2 = new ClinicalExaminationDto(1545452L, 102L, 40.0, true, "text3");
         this.clinicalExaminationDto3 = new ClinicalExaminationDto(102L, 102L, 40.0, true, "text3");
+        this.clinicalExaminationDto4 = new ClinicalExaminationDto(101L, 1043432L, 40.0, true, "text3");
+        this.clinicalExaminationDto5 = new ClinicalExaminationDto(101L, 106L, 40.0, true, "text3");
     }
 
     // get clinical examination by id - success
@@ -112,6 +118,51 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(clinicalExaminationDto3, response.getBody());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    // put clinical examination by id - PetNotAssigned
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
+    public void testPutClinicalExaminationErrorPetNotAssigned() {
+        int beforeCount = clinicalExaminationDao.getAll().size();
+        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto5, HEADERS);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ExceptionDto.class, 102);
+        int afterCount = clinicalExaminationDao.getAll().size();
+
+        Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(new ExceptionDto("clinical examination not assigned to this pet"), response.getBody());
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    // put clinical examination by id - BadRequest
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
+    public void testPutClinicalExaminationErrorBadRequest() {
+        int beforeCount = clinicalExaminationDao.getAll().size();
+        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto2, HEADERS);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ExceptionDto.class, 102);
+        int afterCount = clinicalExaminationDao.getAll().size();
+
+        Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(new ExceptionDto("examinationId in path and in body not equals"), response.getBody());
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    // put clinical examination by id - pet not found
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
+    public void testPutClinicalExaminationErrorPetNotFound() {
+        int beforeCount = clinicalExaminationDao.getAll().size();
+        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto4, HEADERS);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ExceptionDto.class, 102);
+        int afterCount = clinicalExaminationDao.getAll().size();
+
+        Assert.assertEquals(beforeCount, afterCount);
+        Assert.assertEquals(new ExceptionDto("pet not found"), response.getBody());
+        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // put clinical examination by id - Not Found clinical examination
