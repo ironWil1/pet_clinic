@@ -1,13 +1,10 @@
 package com.vet24.web.pet.clinicalexamination;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.vet24.dao.pet.PetDao;
 import com.vet24.dao.pet.clinicalexamination.ClinicalExaminationDao;
-import com.vet24.dao.user.DoctorDao;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.clinicalexamination.ClinicalExaminationDto;
 import com.vet24.models.mappers.pet.clinicalexamination.ClinicalExaminationMapper;
-import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.pet.clinicalexamination.ClinicalExaminationController;
 import org.junit.Assert;
@@ -21,8 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithUserDetails;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 
 @WithUserDetails(value = "doctor103@email.com")
@@ -39,13 +34,15 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
 
     final String URI = "http://localhost:8090/api/doctor/exam";
     final HttpHeaders HEADERS = new HttpHeaders();
-    ClinicalExaminationDto clinicalExaminationDtoNew;
+    ClinicalExaminationDto clinicalExaminationDtoNew1;
+    ClinicalExaminationDto clinicalExaminationDtoNew2;
     ClinicalExaminationDto clinicalExaminationDto1;
     ClinicalExaminationDto clinicalExaminationDto3;
 
     @Before
     public void createNewClinicalExaminationAndClinicalExaminationDto() {
-        this.clinicalExaminationDtoNew = new ClinicalExaminationDto(100L, 100L, 10.0, true, "textNew");
+        this.clinicalExaminationDtoNew1 = new ClinicalExaminationDto(100L, 100L, 10.0, true, "textNew");
+        this.clinicalExaminationDtoNew2 = new ClinicalExaminationDto(100L, 107670L, 10.0, true, "textNew");
         this.clinicalExaminationDto1 = new ClinicalExaminationDto(101L, 101L, 20.0, true, "text1");
         this.clinicalExaminationDto3 = new ClinicalExaminationDto(102L, 102L, 40.0, true, "text3");
     }
@@ -57,18 +54,18 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         ClinicalExaminationDto dtoFromDao = clinicalExaminationMapper
                 .toDto(clinicalExaminationDao.getByKey(102L));
         ResponseEntity<ClinicalExaminationDto> response = testRestTemplate
-                .getForEntity(URI + "/{examinationId}", ClinicalExaminationDto.class, 102, 102);
+                .getForEntity(URI + "/{examinationId}", ClinicalExaminationDto.class, 102);
 
         Assert.assertEquals(dtoFromDao, response.getBody());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-    // GET ClinicalExamination by id - 404 ERROR "ClinicalExamination not found"
+    // get ClinicalExamination by id - 404 ERROR "ClinicalExamination not found"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationErrorClinicalExaminationNotFound() {
         ResponseEntity<ExceptionDto> response = testRestTemplate
-                .getForEntity(URI + "/10806", ExceptionDto.class, 102, 33);
+                .getForEntity(URI + "/{examinationId}", ExceptionDto.class, 100856);
 
         Assert.assertEquals(response.getBody(), new ExceptionDto("clinical examination not found"));
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -79,15 +76,27 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testAddClinicalExaminationSuccess() {
         int beforeCount = clinicalExaminationDao.getAll().size();
-        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDtoNew, HEADERS);
+        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDtoNew1, HEADERS);
         ResponseEntity<ClinicalExaminationDto> response = testRestTemplate
-                .postForEntity(URI + "", request, ClinicalExaminationDto.class, 102, 102);
+                .postForEntity(URI, request, ClinicalExaminationDto.class);
         int afterCount = clinicalExaminationDao.getAll().size();
-        clinicalExaminationDtoNew.setId(Objects.requireNonNull(response.getBody()).getId());
+        clinicalExaminationDtoNew1.setId(Objects.requireNonNull(response.getBody()).getId());
 
         Assert.assertEquals(++beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), clinicalExaminationDtoNew);
+        Assert.assertEquals(response.getBody(), clinicalExaminationDtoNew1);
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    // add clinical examination - pet not found
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
+    public void testAddClinicalExaminationPetNotFound() {
+        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDtoNew2, HEADERS);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .postForEntity(URI, request, ExceptionDto.class);
+
+        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
+        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // put clinical examination by id - success
@@ -97,12 +106,24 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         int beforeCount = clinicalExaminationDao.getAll().size();
         HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto3, HEADERS);
         ResponseEntity<ClinicalExaminationDto> response = testRestTemplate
-                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ClinicalExaminationDto.class, 102, 102);
+                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ClinicalExaminationDto.class, 102);
         int afterCount = clinicalExaminationDao.getAll().size();
 
         Assert.assertEquals(beforeCount, afterCount);
         Assert.assertEquals(clinicalExaminationDto3, response.getBody());
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    // put clinical examination by id - Not Found
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
+    public void testPutClinicalExaminationNotFound() {
+        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto3, HEADERS);
+        ResponseEntity<ExceptionDto> response = testRestTemplate
+                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ExceptionDto.class, 108562);
+
+        Assert.assertEquals(new ExceptionDto("clinical examination not found"), response.getBody());
+        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // delete clinical examination by id - success
