@@ -60,7 +60,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-    // get ClinicalExamination by id - 404 ERROR "ClinicalExamination not found"
+    // get ClinicalExamination by id - ClinicalExamination not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationErrorClinicalExaminationNotFound() {
@@ -71,7 +71,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    // add clinical examination - success
+    // add ClinicalExamination - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testAddClinicalExaminationSuccess() {
@@ -87,10 +87,10 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
-    // add clinical examination - pet not found
+    // add ClinicalExamination - pet not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testAddClinicalExaminationPetNotFound() {
+    public void testAddClinicalExaminationErrorPetNotFound() {
         HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDtoNew2, HEADERS);
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .postForEntity(URI, request, ExceptionDto.class);
@@ -114,10 +114,10 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-    // put clinical examination by id - Not Found
+    // put clinical examination by id - Not Found clinical examination
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testPutClinicalExaminationNotFound() {
+    public void testPutClinicalExaminationErrorClinicalExaminationNotFound() {
         HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto3, HEADERS);
         ResponseEntity<ExceptionDto> response = testRestTemplate
                 .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ExceptionDto.class, 108562);

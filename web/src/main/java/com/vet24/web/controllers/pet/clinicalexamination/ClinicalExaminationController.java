@@ -148,7 +148,6 @@ public class ClinicalExaminationController {
         clinicalExaminationService.update(clinicalExamination);
 
         return new ResponseEntity<>(clinicalExaminationMapper.toDto(clinicalExamination), HttpStatus.OK);
-
     }
 
 
