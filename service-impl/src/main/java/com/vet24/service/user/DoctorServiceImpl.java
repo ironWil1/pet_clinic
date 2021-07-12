@@ -21,11 +21,4 @@ public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implem
         super(doctorDao);
         this.doctorDao = doctorDao;
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Doctor getCurrentDoctor() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return doctorDao.getDoctorByEmail(authentication.getName());
-    }
 }

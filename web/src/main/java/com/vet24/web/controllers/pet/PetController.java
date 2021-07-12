@@ -24,16 +24,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -69,7 +74,7 @@ public class PetController {
     })
     @GetMapping("/{petId}")
     public ResponseEntity<PetDto> getById(@PathVariable("petId") Long petId) {
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
@@ -94,7 +99,7 @@ public class PetController {
     @PostMapping("/add")
     public ResponseEntity<AbstractNewPetDto> persistPet(@Valid @RequestBody AbstractNewPetDto petDto) {
 
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (client != null) {
             Pet pet = newPetMapper.toEntity(petDto);
             pet.setClient(client);
@@ -113,7 +118,7 @@ public class PetController {
     })
     @DeleteMapping("/{petId}")
     public ResponseEntity<Void> deletePet(@PathVariable("petId") Long petId) {
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(client.getId())) {
@@ -136,7 +141,7 @@ public class PetController {
     public ResponseEntity<PetDto> updatePet(@PathVariable("petId") Long petId,@Valid
                                             @RequestBody AbstractNewPetDto petDto) {
 
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(client.getId())) {
@@ -159,7 +164,7 @@ public class PetController {
     })
     @GetMapping(value = "/{petId}/avatar")
     public ResponseEntity<byte[]> getPetAvatar(@PathVariable("petId") Long petId) {
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             String url = pet.getAvatar();
@@ -181,7 +186,7 @@ public class PetController {
     @PostMapping(value = "/{petId}/avatar", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UploadedFileDto> persistPetAvatar(@PathVariable("petId") Long petId,
                                                             @RequestParam("file") MultipartFile file) throws IOException {
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(client.getId())) {

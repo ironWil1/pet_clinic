@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.pet.reproduction;
 
 import com.vet24.models.dto.OnCreate;
-import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.reproduction.ReproductionDto;
 import com.vet24.models.exception.BadRequestException;
@@ -21,14 +20,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
-
-import javax.validation.Valid;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -62,7 +64,7 @@ public class ReproductionController {
     @GetMapping("/{reproductionId}")
     public ResponseEntity<ReproductionDto> getById(@PathVariable Long petId, @PathVariable Long reproductionId) {
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
@@ -102,7 +104,7 @@ public class ReproductionController {
 
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.toEntity(reproductionDto);
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
@@ -137,7 +139,7 @@ public class ReproductionController {
 
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
@@ -176,7 +178,7 @@ public class ReproductionController {
     public ResponseEntity<Void> deleteById(@PathVariable Long petId, @PathVariable Long reproductionId) {
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = clientService.getCurrentClient();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (pet == null) {
             throw new NotFoundException("pet not found");
