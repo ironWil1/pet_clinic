@@ -3,6 +3,7 @@ package com.vet24.web.controllers.user;
 import com.vet24.models.dto.user.TopicDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.user.TopicMapper;
+import com.vet24.models.user.Client;
 import com.vet24.models.user.Topic;
 import com.vet24.models.user.User;
 import com.vet24.service.user.ClientService;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,8 +70,9 @@ public class UserTopicController {
     })
     @GetMapping("/yourTopics")
     public ResponseEntity<List<TopicDto>> getAllClientTopic () {
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<>(
-                topicMapper.toDto(topicService.getTopicByClientId(clientService.getCurrentClient().getId())), HttpStatus.OK
+                topicMapper.toDto(topicService.getTopicByClientId(client.getId())), HttpStatus.OK
         );
     }
 
@@ -100,7 +103,7 @@ public class UserTopicController {
             throw new BadRequestException("title or content can't null");
         }
         Topic topic = topicMapper.toEntity(topicDto);
-        topic.setTopicStarter(clientService.getCurrentClient());
+        topic.setTopicStarter((Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         topic.setId(null);
         topic.setComments(null);
         topicService.persist(topic);
@@ -119,7 +122,7 @@ public class UserTopicController {
         if (!topicService.isExistByKey(topicDto.getId())) {
             throw new NotFoundException("topic not found");
         }
-        User user = clientService.getCurrentClient();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Topic topic = topicService.getByKey(topicDto.getId());
 
         if (!topic.getTopicStarter().equals(user)) {
@@ -147,7 +150,7 @@ public class UserTopicController {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic is not found");
         }
-        User user = clientService.getCurrentClient();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Topic topic = topicService.getByKey(topicId);
         if (!topic.getTopicStarter().equals(user)) {
             throw new NotFoundException("it's not you topic");

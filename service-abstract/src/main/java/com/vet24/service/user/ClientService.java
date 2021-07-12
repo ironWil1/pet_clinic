@@ -7,8 +7,6 @@ public interface ClientService extends ReadWriteService<Long, Client> {
 
     Client getClientByEmail(String email);
 
-    Client getCurrentClient();
-
     Client getCurrentClientWithPets();
 
     Client getCurrentClientWithReactions();

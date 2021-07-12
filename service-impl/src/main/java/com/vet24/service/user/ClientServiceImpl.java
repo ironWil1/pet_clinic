@@ -26,20 +26,15 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
 
     @Override
     @Transactional(readOnly = true)
-    public Client getCurrentClient() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return clientDao.getClientByEmail(authentication.getName());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Client getCurrentClientWithPets() {
-        return clientDao.getClientWithPetsByEmail(getCurrentClient().getUsername());
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return clientDao.getClientWithPetsByEmail(client.getUsername());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Client getCurrentClientWithReactions() {
-        return clientDao.getClientWithReactionsByEmail(getCurrentClient().getUsername());
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return clientDao.getClientWithReactionsByEmail(client.getUsername());
     }
 }

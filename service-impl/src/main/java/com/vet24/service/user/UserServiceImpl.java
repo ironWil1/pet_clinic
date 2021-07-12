@@ -24,10 +24,4 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
         return userDao.getByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("Email %s doesn't exist!", email)));
     }
-
-    @Override
-    public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return userDao.getByUserEmail(authentication.getName());
-    }
 }

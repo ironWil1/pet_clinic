@@ -3,7 +3,6 @@ package com.vet24.web.controllers.user;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.models.dto.user.ClientDto;
 import com.vet24.web.ControllerAbstractIntegrationTest;
-import com.vet24.web.config.ClinicDBRider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
