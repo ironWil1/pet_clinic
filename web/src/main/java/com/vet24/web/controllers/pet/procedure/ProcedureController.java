@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
 @RestController
+@Slf4j
 @RequestMapping("api/client/pet/{petId}/procedure")
 @Tag(name = "procedure-controller", description = "operations with Procedures")
 public class ProcedureController {
@@ -77,19 +79,23 @@ public class ProcedureController {
         Procedure procedure = procedureService.getByKey(procedureId);
 
         if (pet == null) {
+            log.info("The pet with this id {} was not found",petId);
             throw new NotFoundException("pet not found");
         }
         if (procedure == null) {
+            log.info("The procedure with this id {} was not found",procedureId);
             throw new NotFoundException("procedure not found");
         }
         if (!pet.getClient().getId().equals(client.getId())) {
+            log.info("The pet with this id {} is not yours",petId);
             throw new BadRequestException("pet not yours");
         }
         if (!procedure.getPet().getId().equals(pet.getId())) {
+            log.info("The pet with this id {}  not assigned to this procedure {}",petId,procedure.getPet().getId());
             throw new BadRequestException("pet not assigned to this procedure");
         }
         ProcedureDto procedureDto = procedureMapper.toDto(procedure);
-
+        log.info("We have this procedure {}",procedureId);
         return new ResponseEntity<>(procedureDto, HttpStatus.OK);
     }
 
@@ -124,7 +130,7 @@ public class ProcedureController {
 
         pet.addProcedure(procedure);
         petService.update(pet);
-
+        log.info("We added procedure with this id {}",newProcedureDto.getMedicineId());
         return new ResponseEntity<>(procedureMapper.toDto(procedure), HttpStatus.CREATED);
     }
 
@@ -165,6 +171,7 @@ public class ProcedureController {
         procedure.setMedicine(medicine);
         procedure.setPet(pet);
         procedureService.update(procedure);
+        log.info("We updated procedure with this id {}",procedure.getId());
 
         return new ResponseEntity<>(procedureMapper.toDto(procedure), HttpStatus.OK);
     }
@@ -199,7 +206,9 @@ public class ProcedureController {
         procedureService.delete(procedure);
         pet.removeProcedure(procedure);
         petService.update(pet);
+        log.info("We deleted procedure with this id {}",procedure.getId());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

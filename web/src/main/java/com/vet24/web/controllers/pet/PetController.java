@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,6 +41,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
+@Slf4j
 @RequestMapping("api/client/pet")
 @Tag(name = "pet-controller", description = "operations with Pets")
 public class PetController {
@@ -76,12 +78,15 @@ public class PetController {
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
+            log.info("The pet with this id {} was not found",petId);
             throw new NotFoundException("pet not found");
         }
         if (!pet.getClient().getId().equals(client.getId())) {
+            log.info("The pet with this id {} is not yours",petId);
             throw new BadRequestException("pet not yours");
         }
 
+        log.info("We have pet with this id {}",petId);
         return new ResponseEntity<>(petMapper.toDto(pet), HttpStatus.OK);
     }
 
@@ -99,6 +104,7 @@ public class PetController {
             Pet pet = newPetMapper.toEntity(petDto);
             pet.setClient(client);
             petService.persist(pet);
+            log.info("We added new pet {}",petDto.getName());
             return ResponseEntity.ok(petDto);
         }
         return ResponseEntity.notFound().build();
@@ -117,6 +123,7 @@ public class PetController {
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(client.getId())) {
                 petService.delete(pet);
+                log.info("We deleted pet with this id {}",petId);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -142,6 +149,7 @@ public class PetController {
                 updatedPet.setId(pet.getId());
                 updatedPet.setClient(client);
                 petService.update(updatedPet);
+                log.info("We updated pet with this id {}",petId);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -161,6 +169,7 @@ public class PetController {
         if (client != null && pet != null) {
             String url = pet.getAvatar();
             if (url != null) {
+                log.info(" The pet has avatar  {} ",url);
                 return new ResponseEntity<>(resourceService.loadAsByteArray(url), addContentHeaders(url), HttpStatus.OK);
             }
         }
@@ -184,6 +193,7 @@ public class PetController {
                 UploadedFileDto uploadedFileDto = uploadService.store(file);
                 pet.setAvatar(uploadedFileDto.getUrl());
                 petService.update(pet);
+                log.info(" The pet with this id {} changes avatar  {} ",petId);
                 return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -196,4 +206,5 @@ public class PetController {
         headers.add("Content-Type", resourceService.getContentTypeByFileName(filename));
         return headers;
     }
+
 }
