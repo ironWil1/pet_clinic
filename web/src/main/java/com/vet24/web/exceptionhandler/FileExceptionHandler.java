@@ -16,11 +16,11 @@ import java.io.FileNotFoundException;
 public class FileExceptionHandler {
 
     @ExceptionHandler(FileNotFoundException.class)
-    public ResponseEntity<ExceptionDto> handleException(FileNotFoundException exception) {
+    public ResponseEntity<ExceptionDto> handleException(FileNotFoundException exception, HttpServletRequest request) {
         ExceptionDto data = new ExceptionDto();
         data.setMessage(exception.getMessage());
 
-        log.info("File not found");
+        log.info("File not found, " + request.getRequestURI());
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
 
@@ -28,8 +28,7 @@ public class FileExceptionHandler {
     public ResponseEntity<ExceptionDto> handleException(StorageException exception, HttpServletRequest request) {
         ExceptionDto data = new ExceptionDto();
         data.setMessage(exception.getMessage());
-        log.info(request.getRequestURI());
-        log.info("Storage not found");
+        log.info("Storage not found " + request.getRequestURI());
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
 }
