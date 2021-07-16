@@ -3,24 +3,23 @@ package com.vet24.web.pet.reproduction;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.dao.pet.PetDao;
 import com.vet24.dao.pet.reproduction.ReproductionDao;
-import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.reproduction.ReproductionDto;
 import com.vet24.models.mappers.pet.reproduction.ReproductionMapper;
-import com.vet24.models.pet.reproduction.Reproduction;
+import com.vet24.service.pet.reproduction.ReproductionService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.pet.reproduction.ReproductionController;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDate;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @WithUserDetails(value = "user3@gmail.com")
 public class ReproductionControllerTest extends ControllerAbstractIntegrationTest {
@@ -32,9 +31,10 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     ReproductionDao reproductionDao;
     @Autowired
     PetDao petDao;
+    @Autowired
+    ReproductionService reproductionService;
 
     final String URI = "http://localhost:8090/api/client/pet";
-    final HttpHeaders HEADERS = new HttpHeaders();
 
     ReproductionDto reproductionDtoNew;
     ReproductionDto reproductionDto1;
@@ -52,273 +52,226 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         this.reproductionDto3 = new ReproductionDto(102L, LocalDate.now(), LocalDate.now(), LocalDate.now(), 33);
     }
 
-    // get reproduction by id - success
+
+    // +mock, get reproduction by id - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testGetReproductionSuccess() {
-        ReproductionDto dtoFromDao = reproductionMapper.toDto(reproductionDao.getByKey(102L));
-        ResponseEntity<ReproductionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/reproduction/{id}", ReproductionDto.class, 102, 102);
-
-        Assert.assertEquals(dtoFromDao, response.getBody());
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    public void testGetReproductionSuccess() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 102, 102))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    // get reproduction by id -  error 404 pet not found
+    // +mock, get reproduction by id -  error 404 pet not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testGetReproductionError404pet() {
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 33, 102);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    public void shouldBeNotFoundPet() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 33, 102))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
-    // get reproduction by id -  error 404 reproduction not found
+    // +mock, reproduction by id -  error 404 reproduction not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testGetReproductionError404reproduction() {
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 102, 33);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    public void testGetReproductionError404reproduction() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 102, 33))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
-    // get reproduction by id -  error 400 reproduction not assigned to pet
+    // +mock, reproduction by id -  error 400 reproduction not assigned to pet
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testGetReproductionError400refPetReproduction() {
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 101, 102);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    public void testGetReproductionError400refPetReproduction() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 101, 102))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
-    // get reproduction by id -  error 400 pet not yours
+    // +mock, get reproduction by id -  error 400 pet not yours
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testGetReproductionError400refClientPet() {
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/reproduction/{id}", ExceptionDto.class, 100, 100);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    public void testGetReproductionError400refClientPet() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 100, 100))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
-    // add reproduction - success
+    // +mock, add reproduction - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testAddReproductionSuccess() {
+    public void testAddReproductionSuccess() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDtoNew, HEADERS);
-        ResponseEntity<ReproductionDto> response = testRestTemplate
-                .postForEntity(URI + "/{petId}/reproduction", request, ReproductionDto.class, 102);
-        int afterCount = reproductionDao.getAll().size();
-
-        reproductionDtoNew.setId(response.getBody().getId());
-        Assert.assertEquals(++beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), reproductionDtoNew);
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/reproduction", 102)
+                .content(objectMapper.valueToTree(reproductionDtoNew).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+        assertThat(++beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // add reproduction - error 404 pet not found
+    // +mock, add reproduction - error 404 pet not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testAddReproductionError404() {
+    public void testAddReproductionError404() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto3, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .postForEntity(URI + "/{petId}/reproduction", request, ExceptionDto.class, 33);
-        int afterCount = reproductionDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/reproduction", 33)
+                .content(objectMapper.valueToTree(reproductionDtoNew).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // add reproduction - error 400 pet not yours
+    // + mock, add reproduction - error 400 pet not yours
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testAddReproductionError400() {
+    public void testAddReproductionError400() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDtoNew, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .postForEntity(URI + "/{petId}/reproduction", request, ExceptionDto.class, 100);
-        int afterCount = reproductionDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/reproduction", 100)
+                .content(objectMapper.valueToTree(reproductionDtoNew).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // put reproduction by id - success
+    // + mock, put reproduction by id - success //URI + "/{petId}/reproduction/{id}" 102,102
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testPutReproductionSuccess() {
+    public void testPutReproductionSuccess() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto3, HEADERS);
-        ResponseEntity<ReproductionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ReproductionDto.class, 102, 102);
-        int afterCount = reproductionDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(reproductionDto3, response.getBody());
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 102, 102)
+                .content(objectMapper.valueToTree(reproductionDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // put reproduction by id - error 404 pet not found
+    // +mock, put reproduction by id - error 404 pet not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testPutReproductionError404reproduction() {
+    public void testPutReproductionError404reproduction() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto3, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 33, 102);
-        int afterCount = reproductionDao.getAll().size();
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 33, 102)
+                .content(objectMapper.valueToTree(reproductionDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // put reproduction by id - error 404 reproduction not found
+    // +mock, put reproduction by id - error 404 reproduction not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testPutReproductionError404pet() {
+    public void testPutReproductionError404pet() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto3, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 102, 33);
-        int afterCount = reproductionDao.getAll().size();
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 102, 33)
+                .content(objectMapper.valueToTree(reproductionDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // put reproduction by id - error 400 reproduction not assigned to pet
+    // +mock, put reproduction by id - error 400 reproduction not assigned to pet
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testPutReproductionError400refPetReproduction() {
+    public void testPutReproductionError400refPetReproduction() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto3, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 101, 102);
-        int afterCount = reproductionDao.getAll().size();
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 101, 102)
+                .content(objectMapper.valueToTree(reproductionDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // put reproduction by id - error 400 reproductionId in path and in body not equals
+    // +mock, put reproduction by id - error 400 reproductionId in path and in body not equals
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testPutReproductionError400idInPathAndBody() {
+    public void testPutReproductionError400idInPathAndBody() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto1, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 102, 102);
-        int afterCount = reproductionDao.getAll().size();
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproductionId in path and in body not equals"));
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 102, 102)
+                .content(objectMapper.valueToTree(reproductionDto1).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // put reproduction by id - error 400 pet not yours
+    // +mock, put reproduction by id - error 400 pet not yours
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testPutReproductionError400refClientPet() {
+    public void testPutReproductionError400refClientPet() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<ReproductionDto> request = new HttpEntity<>(reproductionDto1, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.PUT, request, ExceptionDto.class, 100, 100);
-        int afterCount = reproductionDao.getAll().size();
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 100, 100)
+                .content(objectMapper.valueToTree(reproductionDto1).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // delete reproduction by id - success
+    // +mock, delete reproduction by id - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testDeleteReproductionSuccess() {
+    public void testDeleteReproductionSuccess() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<Void> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, Void.class, 102, 102);
-        int afterCount = reproductionDao.getAll().size();
-        Reproduction afterReproduction = reproductionDao.getByKey(102L);
-
-        Assert.assertNull(afterReproduction);
-        Assert.assertEquals(--beforeCount, afterCount);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/reproduction/{id}", 102, 102)
+                .content(objectMapper.valueToTree(reproductionDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        assertThat(--beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // delete reproduction by id - error 404 pet not found
+    // +mock, delete reproduction by id - error 404 pet not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testDeleteReproductionError404reproduction() {
+    public void testDeleteReproductionError404reproduction() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, ExceptionDto.class, 33, 102);
-        int afterCount = reproductionDao.getAll().size();
-        Reproduction afterReproduction = reproductionDao.getByKey(101L);
-
-        Assert.assertNotNull(afterReproduction);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/reproduction/{id}", 33, 102)
+                .content(objectMapper.valueToTree(reproductionDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // delete reproduction by id - error 404 reproduction not found
+    // +mock, delete reproduction by id - error 404 reproduction not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testDeleteReproductionError404pet() {
+    public void testDeleteReproductionError404pet() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, ExceptionDto.class, 102, 33);
-        int afterCount = reproductionDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/reproduction/{id}", 102, 33)
+                .content(objectMapper.valueToTree(reproductionDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // delete reproduction by id - error reproduction not assigned to pet
+    // +mock, delete reproduction by id - error reproduction not assigned to pet
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testDeleteReproductionError400refPetReproduction() {
+    public void testDeleteReproductionError400refPetReproduction() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, ExceptionDto.class, 101, 102);
-        int afterCount = reproductionDao.getAll().size();
-        Reproduction afterReproduction = reproductionDao.getByKey(102L);
-
-        Assert.assertNotNull(afterReproduction);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("reproduction not assigned to this pet"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/reproduction/{id}", 101, 102)
+                .content(objectMapper.valueToTree(reproductionDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // delete reproduction by id - error pet not yours
+    // +mock, delete reproduction by id - error pet not yours
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testDeleteReproductionError400refClientPet() {
+    public void testDeleteReproductionError400refClientPet() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
-        HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/reproduction/{id}", HttpMethod.DELETE, request, ExceptionDto.class, 100, 100);
-        int afterCount = reproductionDao.getAll().size();
-        Reproduction afterReproduction = reproductionDao.getByKey(100L);
-
-        Assert.assertNotNull(afterReproduction);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/reproduction/{id}", 100, 100)
+                .content(objectMapper.valueToTree(reproductionDto1).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 }

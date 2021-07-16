@@ -15,10 +15,16 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Objects;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @WithUserDetails(value = "doctor103@email.com")
 public class ClinicalExaminationControllerTest extends ControllerAbstractIntegrationTest {
@@ -53,156 +59,140 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         this.clinicalExaminationDto5 = new ClinicalExaminationDto(101L, 106L, 40.0, true, "text3");
     }
 
-    // get clinical examination by id - success
+    // +mock, get clinical examination by id - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testGetClinicalExaminationSuccess() {
-        ClinicalExaminationDto dtoFromDao = clinicalExaminationMapper
-                .toDto(clinicalExaminationDao.getByKey(102L));
-        ResponseEntity<ClinicalExaminationDto> response = testRestTemplate
-                .getForEntity(URI + "/{examinationId}", ClinicalExaminationDto.class, 102);
-
-        Assert.assertEquals(dtoFromDao, response.getBody());
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    public void testGetClinicalExaminationSuccess() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{examinationId}", 102)
+                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    // get ClinicalExamination by id - ClinicalExamination not found
+    // +mock, get ClinicalExamination by id - ClinicalExamination not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testGetClinicalExaminationErrorClinicalExaminationNotFound() {
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .getForEntity(URI + "/{examinationId}", ExceptionDto.class, 100856);
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("clinical examination not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    public void testGetClinicalExaminationErrorClinicalExaminationNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{examinationId}", 33)
+                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
-    // add ClinicalExamination - success
+    // +mock, add ClinicalExamination - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testAddClinicalExaminationSuccess() {
+    public void testAddClinicalExaminationSuccess() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
-        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDtoNew1, HEADERS);
-        ResponseEntity<ClinicalExaminationDto> response = testRestTemplate
-                .postForEntity(URI, request, ClinicalExaminationDto.class);
-        int afterCount = clinicalExaminationDao.getAll().size();
-        clinicalExaminationDtoNew1.setId(Objects.requireNonNull(response.getBody()).getId());
-
-        Assert.assertEquals(++beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), clinicalExaminationDtoNew1);
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.post(URI, 102)
+                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+        assertThat(++beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
 
-    // add ClinicalExamination - pet not found
+    // +mock, add ClinicalExamination - pet not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testAddClinicalExaminationErrorPetNotFound() {
-        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDtoNew2, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .postForEntity(URI, request, ExceptionDto.class);
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    public void testAddClinicalExaminationErrorPetNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/reproduction", 33)
+                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
-    // put clinical examination by id - success
+    // +mock, put clinical examination by id - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testPutClinicalExaminationSuccess() {
+    public void testPutClinicalExaminationSuccess() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
-        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto3, HEADERS);
-        ResponseEntity<ClinicalExaminationDto> response = testRestTemplate
-                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ClinicalExaminationDto.class, 102);
-        int afterCount = clinicalExaminationDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(clinicalExaminationDto3, response.getBody());
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
+                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
 
-    // put clinical examination by id - PetNotAssigned
+    // +mock, put clinical examination by id - PetNotAssigned
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testPutClinicalExaminationErrorPetNotAssigned() {
+    public void testPutClinicalExaminationErrorPetNotAssigned() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
-        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto5, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ExceptionDto.class, 102);
-        int afterCount = clinicalExaminationDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(new ExceptionDto("clinical examination not assigned to this pet"), response.getBody());
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
+                .content(objectMapper.valueToTree(clinicalExaminationDto1).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
 
-    // put clinical examination by id - BadRequest
+    // +mock, put clinical examination by id - BadRequest
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testPutClinicalExaminationErrorBadRequest() {
+    public void testPutClinicalExaminationErrorBadRequest() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
-        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto2, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ExceptionDto.class, 102);
-        int afterCount = clinicalExaminationDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(new ExceptionDto("examinationId in path and in body not equals"), response.getBody());
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
+                .content(objectMapper.valueToTree(clinicalExaminationDto1).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
 
-    // put clinical examination by id - pet not found
+    // +mock, put clinical examination by id - pet not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testPutClinicalExaminationErrorPetNotFound() {
+    public void testPutClinicalExaminationErrorPetNotFound() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
-        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto4, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ExceptionDto.class, 102);
-        int afterCount = clinicalExaminationDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(new ExceptionDto("pet not found"), response.getBody());
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
+                .content(objectMapper.valueToTree(clinicalExaminationDto4).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
 
-    // put clinical examination by id - Not Found clinical examination
+    // +mock, put clinical examination by id - Not Found clinical examination
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testPutClinicalExaminationErrorClinicalExaminationNotFound() {
-        HttpEntity<ClinicalExaminationDto> request = new HttpEntity<>(clinicalExaminationDto3, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{examinationId}", HttpMethod.PUT, request, ExceptionDto.class, 108562);
-
-        Assert.assertEquals(new ExceptionDto("clinical examination not found"), response.getBody());
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    // delete clinical examination by id - success
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testDeleteClinicalExaminationSuccess() {
+    public void testPutClinicalExaminationErrorClinicalExaminationNotFound() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
-        HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{examinationId}", HttpMethod.DELETE, request, ExceptionDto.class, 100);
-        int afterCount = clinicalExaminationDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, ++afterCount);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 108562)
+                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
 
-    // delete clinical examination by id - clinical examination not found
+    // +mock, delete clinical examination by id - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
-    public void testDeleteClinicalExaminationErrorNotFound() {
+    public void testDeleteClinicalExaminationSuccess() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
-        HttpEntity<Void> request = new HttpEntity<>(HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{examinationId}", HttpMethod.DELETE, request, ExceptionDto.class, 33);
-        int afterCount = clinicalExaminationDao.getAll().size();
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{examinationId}", 100)
+                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        assertThat(--beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
+    }
 
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("clinical examination not found"));
-        Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    // +mock, delete clinical examination by id - clinical examination not found
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
+    public void testDeleteClinicalExaminationErrorNotFound() throws Exception {
+        int beforeCount = clinicalExaminationDao.getAll().size();
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{examinationId}", 33)
+                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
 }
