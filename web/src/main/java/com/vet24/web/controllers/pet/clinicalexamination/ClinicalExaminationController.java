@@ -68,7 +68,6 @@ public class ClinicalExaminationController {
         return new ResponseEntity<>(clinicalExaminationDto, HttpStatus.OK);
     }
 
-
     @Operation(
             summary = "add new clinical examination",
             description = "to add a new clinical exam, enter the pet ID and fill in the fields: wight, isCanMove, text.")
@@ -149,7 +148,6 @@ public class ClinicalExaminationController {
         clinicalExaminationService.update(clinicalExamination);
 
         return new ResponseEntity<>(clinicalExaminationMapper.toDto(clinicalExamination), HttpStatus.OK);
-
     }
 
 
