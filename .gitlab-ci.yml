@@ -28,11 +28,11 @@
        - web/target/*.jar
      expire_in: 3 days
 
- Build project:
-   stage: build
-   only:
+ # Build project:
+ #  stage: build
+ #  only:
      - master
-   script:
-     - docker rmi $(docker images -f dangling=true -q) || true
-     - docker build -t petclinic:0.0.1 .
+ #  script:
+ #    - docker rmi $(docker images -f dangling=true -q) || true
+ #   - docker build -t petclinic:0.0.1 .
 
