@@ -33,7 +33,7 @@
    only:
      - 89-devops
    script:
-   - docker stop $(docker ps -a -q)
+ #  - docker stop $(docker ps -a -q)
    - docker rm $(docker ps -a -q)
  #   - docker rmi $(docker images -f dangling=true -q) || true
     - docker build -t petclinic:0.0.1 .
