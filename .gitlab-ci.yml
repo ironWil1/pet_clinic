@@ -2,7 +2,7 @@
    - test
    - package
    - build
- #  - deploy
+   - deploy
 
  before_script:
    - docker stop petclinic_run
