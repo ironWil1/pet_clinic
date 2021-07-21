@@ -37,8 +37,10 @@
   - docker rmi $(docker images -f dangling=true -q) || true
   - docker build -t petclinic:0.0.1 .
 
-#   Deploy project:
-#     stage: deploy
-#    only:
-#       - 89-devops
-#       script:
+   Deploy project:
+     stage: deploy
+    only:
+      - merge_requests
+      - master
+ script:
+       - docker-compose up -d
