@@ -4,7 +4,7 @@
  #  - build
 
  before_script:
-   - docker stop petclinic_run || true
+   - docker stop petclinic_run
    - chmod +x mvnw
 
  after_script:
