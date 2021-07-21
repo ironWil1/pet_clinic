@@ -13,7 +13,7 @@
  Test project:
    stage: test
    only:
-     - master
+     - 89-devops
    script:
      - ./mvnw test
 
