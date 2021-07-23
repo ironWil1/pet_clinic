@@ -43,7 +43,7 @@ public class TopicControllerTest extends ControllerAbstractIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post(
                 URI + "/{topicId}/addComment", 102L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("   "))
+                .content(""))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
