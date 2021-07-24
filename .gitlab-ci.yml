@@ -44,7 +44,7 @@
    - 89-devops
   script:
   #     - docker-compose down
-       - docker-compose up -d
+  #     - docker-compose up -d
  # - docker rm pets_db
  # - docker rm test_pets_db
  # - docker rm petclinic_run
