@@ -5,14 +5,14 @@
  #  - deploy
 
  before_script:
-    - docker-compose up -d
+  #  - docker-compose up -d
     - docker stop petclinic_run
  #  - docker stop pets_db
  #  - docker stop test_pets_db
    - chmod +x mvnw
 
-# after_script:
- #  - docker-compose up -d
+ after_script:
+ - docker-compose up -d
   # - docker-compose start
 
 
@@ -20,8 +20,8 @@
  Test project:
    stage: test
    only:
-     - merge_requests
-     - master
+#     - merge_requests
+     - 89-devops
    script:
      - ./mvnw test
 
@@ -30,8 +30,8 @@
    script:
     - ./mvnw package -Dmaven.test.skip=true
    only:
-     - merge_requests
-     - master
+ #    - merge_requests
+     - 89-devops
    artifacts:
      paths:
        - web/target/*.jar
@@ -40,8 +40,8 @@
  Build project:
   stage: build
   only:
-   - merge_requests
-   - master
+#  - merge_requests
+   - 89-devops
   script:
   #     - docker-compose down
   #     - docker-compose up -d
