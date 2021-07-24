@@ -12,7 +12,7 @@
    - docker-compose stop
    - docker-compose down
    - docker-compose up -d
-   - d0cker-comose start
+   - docker-comose start
 
 
 
@@ -20,7 +20,7 @@
    stage: test
    only:
      - merge_requests
-     - 89-devops
+     - master
    script:
      - ./mvnw test
 
@@ -30,7 +30,7 @@
     - ./mvnw package -Dmaven.test.skip=true
    only:
      - merge_requests
-     - 89-devops
+     - master
    artifacts:
      paths:
        - web/target/*.jar
@@ -40,7 +40,7 @@
   stage: build
   only:
    - merge_requests
-   - 89-devops
+   - master
   script:
   - docker rmi $(docker images -f dangling=true -q) || true
   - docker build -t petclinic:0.0.1 .
