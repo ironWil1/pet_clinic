@@ -41,14 +41,14 @@
    - merge_requests
    - master
   script:
+       - docker-compose down
+       - docker-compose up -d
   - docker rmi $(docker images -f dangling=true -q) || true
   - docker build -t petclinic:0.0.1 .
 
-  Deploy project:
-     stage: deploy
-   only:
-      - merge_requests
-     - master
- script:
-      - docker-compose down
-      - docker-compose up -d
+#  Deploy project:
+#     stage: deploy
+#  only:
+#      - merge_requests
+#    - master
+# script:
