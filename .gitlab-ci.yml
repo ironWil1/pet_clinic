@@ -44,9 +44,9 @@
   script:
   #     - docker-compose down
   #     - docker-compose up -d
-#  - docker rm pets_db
-#  - docker rm test_pets_db
-#  - docker rm petclinic_run
+  - docker rm pets_db
+  - docker rm test_pets_db
+  - docker rm petclinic_run
   - docker rmi $(docker images -f dangling=true -q) || true
   - docker build -t pets_db .
   - docker build -t test_pets_db .
