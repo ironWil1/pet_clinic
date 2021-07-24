@@ -2,7 +2,7 @@ stages:
   - test
   - package
   - build
-  - deploy
+  #  - deploy
 
   before_script:
     - docker stop petclinic_run
@@ -11,7 +11,6 @@ stages:
   after_script:
     - docker-compose down
     - docker-compose up -d
-    # - docker-compose start
 
 
 
@@ -19,7 +18,7 @@ stages:
     stage: test
     only:
       - merge_requests
-      - master
+      - 89-devops
     script:
       - ./mvnw test
 
@@ -29,7 +28,7 @@ stages:
       - ./mvnw package -Dmaven.test.skip=true
     only:
       - merge_requests
-      - master
+      - 89-devops
     artifacts:
       paths:
         - web/target/*.jar
@@ -39,16 +38,15 @@ stages:
     stage: build
     only:
       - merge_requests
-      - master
+      - 89-devops
     script:
-      #     - docker-compose down
-      #     - docker-compose up -d
       - docker rmi $(docker images -f dangling=true -q) || true
       - docker build -t petclinic:0.0.1 .
 
-#  Deploy project:
-#     stage: deploy
-#  only:
-#      - merge_requests
-#    - master
-# script:
+  #   Deploy project:
+  #     stage: deploy
+  #   only:
+  #      - merge_requests
+  #     - master
+  #script:
+  #      - docker-compose up -d
