@@ -12,7 +12,7 @@
    stage: test
    only:
      - merge_requests
-     - master
+     - 89-devops
    script:
      - ./mvnw test
 
@@ -22,7 +22,7 @@
     - ./mvnw package -Dmaven.test.skip=true
    only:
      - merge_requests
-     - master
+     - 89-devops
    artifacts:
      paths:
        - web/target/*.jar
@@ -32,7 +32,7 @@
   stage: build
   only:
    - merge_requests
-   - master
+   - 89-devops
   script:
   - docker rmi $(docker images -f dangling=true -q) || true
   - docker build -t petclinic:0.0.1 .
@@ -43,4 +43,4 @@
 #      - merge_requests
  #     - master
  #script:
- #      - docker-compose up -d
+       - docker-compose up -d
