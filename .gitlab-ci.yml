@@ -10,8 +10,8 @@
    - docker stop test_pets_db
    - chmod +x mvnw
 
-  after_script:
-   - docker-compose up -d
+ # after_script:
+ #  - docker-compose up -d
   # - docker-compose start
 
 
