@@ -9,7 +9,6 @@
    - chmod +x mvnw
 
  after_script:
-   - docker-compose down
    - docker-compose up -d
   # - docker-compose start
 
