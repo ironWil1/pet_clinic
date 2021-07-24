@@ -1,6 +1,6 @@
 stages:
   - test
-  #  - package
+  - package
   #  - build
 
     before_script:
@@ -17,16 +17,16 @@ stages:
     script:
       - ./mvnw test
 
-  #Package project:
-  #  stage: package
-  #  script:
-  #   - ./mvnw package -Dmaven.test.skip=true
-  #  only:
-  #    - master
-  #  artifacts:
-  #    paths:
-  #      - web/target/*.jar
-  #    expire_in: 3 days
+  Package project:
+    stage: package
+    script:
+     - ./mvnw package -Dmaven.test.skip=true
+    only:
+      - 89-devops
+    artifacts:
+      paths:
+       - web/target/*.jar
+      expire_in: 3 days
 
   # Build project:
   #  stage: build
