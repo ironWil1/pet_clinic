@@ -1,17 +1,16 @@
 stages:
   - test
-  - package
-  - build
- # - deploy
+ # - package
+ # - build
 
-  before_script:
-    - docker stop petclinic_run
-    - chmod +x mvnw
+ # before_script:
+  #  - docker stop petclinic_run
+  #  - chmod +x mvnw
 
- # after_script:
+  # after_script:
   #  - docker-compose down
   #  - docker-compose up -d
-    # - docker-compose start
+  # - docker-compose start
 
 
 
@@ -23,32 +22,25 @@ stages:
     script:
       - ./mvnw test
 
-  Package project:
-    stage: package
-    script:
-      - ./mvnw package -Dmaven.test.skip=true
-    only:
-      - merge_requests
-      - master
-    artifacts:
-      paths:
-        - web/target/*.jar
-      expire_in: 3 days
+#  Package project:
+#    stage: package
+ #   script:
+ #     - ./mvnw package -Dmaven.test.skip=true
+ #   only:
+ #     - merge_requests
+ #     - master
+ #   artifacts:
+ #     paths:
+ #       - web/target/*.jar
+ #     expire_in: 3 days
 
-  Build project:
-    stage: build
-    only:
-      - merge_requests
-      - master
-    script:
-      #     - docker-compose down
-      #     - docker-compose up -d
-      - docker rmi $(docker images -f dangling=true -q) || true
-      - docker build -t petclinic:0.0.1 .
+ # Build project:
+ #   stage: build
+ #   only:
+ #     - merge_requests
+ #     - master
+ #   script:
+  #    - docker rmi $(docker images -f dangling=true -q) || true
+  #    - docker build -t petclinic:0.0.1 .
 
-#  Deploy project:
-#     stage: deploy
-#  only:
-#      - merge_requests
-#    - master
-# script:
+
