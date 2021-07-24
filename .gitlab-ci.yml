@@ -43,4 +43,4 @@
 #      - merge_requests
  #     - master
  #script:
-       - docker-compose up -d
+ #      - docker-compose up -d
