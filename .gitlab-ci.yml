@@ -1,7 +1,7 @@
 stages:
   - test
   - package
-  - build
+ # - build
   #  - deploy
 
   before_script:
@@ -28,14 +28,14 @@ stages:
         - web/target/*.jar
       expire_in: 3 days
 
-  Build project:
-    stage: build
-    only:
-      - merge_requests
-      - master
-    script:
-      - docker rmi $(docker images -f dangling=true -q) || true
-      - docker build -t petclinic:0.0.1 .
+ # Build project:
+ #   stage: build
+ #  only:
+ #     - merge_requests
+ #    - master
+ #   script:
+  #    - docker rmi $(docker images -f dangling=true -q) || true
+  #    - docker build -t petclinic:0.0.1 .
 
   #   Deploy project:
   #     stage: deploy
