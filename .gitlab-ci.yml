@@ -1,11 +1,11 @@
-stages:
-  - test
+#stages:
+ #- test
  # - package
  # - build
 
-  before_script:
-     - docker stop petclinic_run
-     - chmod +x mvnw
+  #before_script:
+   #  - docker stop petclinic_run
+   #  - chmod +x mvnw
 
   # after_script:
   #  - docker-compose down
@@ -14,13 +14,13 @@ stages:
 
 
 
-  Test project:
-    stage: test
-    only:
-      - merge_requests
-      - master
-    script:
-      - ./mvnw test
+ # Test project:
+  #  stage: test
+  #  only:
+   #   - merge_requests
+  #    - master
+  #  script:
+   #   - ./mvnw test
 
 #  Package project:
 #    stage: package
