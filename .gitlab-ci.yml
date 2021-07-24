@@ -3,12 +3,12 @@ stages:
   #  - package
   #  - build
 
-  before_script:
-    - docker stop petclinic_run || true
-    - chmod +x mvnw
+ # before_script:
+  #  - docker stop petclinic_run || true
+   # - chmod +x mvnw
 
-  after_script:
-    - docker-compose up -d
+  #after_script:
+  #  - docker-compose up -d
 
   Test project:
     stage: test
