@@ -24,12 +24,12 @@ services:
     ports:
     - 5434:5432
 
-  petclinic:
-    container_name: petclinic_run
-    image: petclinic:0.0.1
-    ports:
-      - 8080:8080
-    environment:
-      spring.datasource.url: "jdbc:postgresql://db:5432/pets"
-    depends_on:
-      - db
+  # petclinic:
+  #   container_name: petclinic_run
+  #   image: petclinic:0.0.1
+  #   ports:
+  #     - 8080:8080
+  #   environment:
+  #     spring.datasource.url: "jdbc:postgresql://db:5432/pets"
+  #   depends_on:
+  #     - db

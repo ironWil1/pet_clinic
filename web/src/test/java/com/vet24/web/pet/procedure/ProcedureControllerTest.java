@@ -2,27 +2,25 @@ package com.vet24.web.pet.procedure;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.dao.pet.procedure.ProcedureDao;
-import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.dto.pet.procedure.VaccinationDto;
 import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
-import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.pet.procedure.ProcedureController;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
-
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDate;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @WithUserDetails(value = "user3@gmail.com")
 public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
@@ -56,273 +54,227 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 100L, "4f435", true, 20);
     }
 
-    // GET procedure by id - 200 SUCCESS
+    // +mock, GET procedure by id - 200 SUCCESS
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testGetProcedureSuccess() {
-        ProcedureDto procedureDtoFromDao = procedureMapper
-                .toDto(procedureDao.getByKey(102L));
-        ResponseEntity<ProcedureDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/procedure/{procedureId}", ProcedureDto.class, 102, 102);
-
-        Assert.assertEquals(response.getBody(), procedureDtoFromDao);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
+    public void testGetProcedureSuccess() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 102, 102))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    // GET procedure by id - 404 ERROR "pet not found"
+
+    // +mock, GET procedure by id - 404 ERROR "pet not found"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testGetProcedureErrorPetNotFound() {
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/procedure/{procedureId}", ExceptionDto.class, 33, 102);
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+    public void testGetProcedureErrorPetNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 33, 102))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
-    // GET procedure by id - 404 ERROR "procedure not found"
+    // +mock, GET procedure by id - 404 ERROR "procedure not found"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "/datasets/reproduction.yml"})
-    public void testGetProcedureErrorProcedureNotFound() {
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/procedure/{procedureId}", ExceptionDto.class, 102, 33);
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("procedure not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+    public void testGetProcedureErrorProcedureNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 102, 33))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
-    // GET procedure by id - 400 ERROR "pet not yours"
+    // +mock, GET procedure by id - 400 ERROR "pet not yours"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testGetProcedureErrorPetForbidden() {
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/procedure/{procedureId}", ExceptionDto.class, 100, 100);
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+    public void testGetProcedureErrorPetForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 100, 100))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
-    // GET procedure by id - 400 ERROR "pet not assigned to this procedure"
+    // +mock, GET procedure by id - 400 ERROR "pet not assigned to this procedure"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testGetProcedureErrorProcedureForbidden() {
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .getForEntity(URI + "/{petId}/procedure/{procedureId}", ExceptionDto.class, 101, 102);
-
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not assigned to this procedure"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+    public void testGetProcedureErrorProcedureForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 101, 102))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
-    // ADD new procedure - 201 SUCCESS
+    // +mock, ADD new procedure - 201 SUCCESS
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testAddProcedureSuccess() {
+    public void testAddProcedureSuccess() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<AbstractNewProcedureDto> request = new HttpEntity<>(newProcedureDto, HEADERS);
-        ResponseEntity<ProcedureDto> response = testRestTemplate
-                .postForEntity(URI + "/{petId}/procedure", request, ProcedureDto.class, 102);
-        int afterCount = procedureDao.getAll().size();
-
-        Assert.assertEquals(++beforeCount, afterCount);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.CREATED);
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/procedure", 102)
+                .content(objectMapper.valueToTree(newProcedureDto).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+        assertThat(++beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // ADD new procedure - 404 ERROR "pet not found"
+    // +mock, ADD new procedure - 404 ERROR "pet not found"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testAddProcedureErrorPetNotFound() {
+    public void testAddProcedureErrorPetNotFound() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<AbstractNewProcedureDto> request = new HttpEntity<>(newProcedureDto, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .postForEntity(URI + "/{petId}/procedure", request, ExceptionDto.class, 33);
-        int afterCount = procedureDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/procedure", 33)
+                .content(objectMapper.valueToTree(newProcedureDto).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // ADD new procedure - 400 ERROR "pet not yours"
+    // +mock, ADD new procedure - 400 ERROR "pet not yours"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testAddProcedureErrorPetForbidden() {
+    public void testAddProcedureErrorPetForbidden() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<AbstractNewProcedureDto> request = new HttpEntity<>(newProcedureDto, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .postForEntity(URI + "/{petId}/procedure", request, ExceptionDto.class, 100);
-        int afterCount = procedureDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/procedure", 100)
+                .content(objectMapper.valueToTree(newProcedureDto).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // UPDATE  procedure - 200 SUCCESS
+    // +mock, UPDATE  procedure - 200 SUCCESS
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testUpdateProcedureSuccess() {
+    public void testUpdateProcedureSuccess() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        ProcedureDto procedureDtoBefore = procedureMapper.toDto(procedureDao.getByKey(102L));
-        HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto3, HEADERS);
-        ResponseEntity<ProcedureDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ProcedureDto.class, 102, 102);
-        int afterCount = procedureDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), procedureDto3);
-        Assert.assertNotEquals(response.getBody(), procedureDtoBefore);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 102, 102)
+                .content(objectMapper.valueToTree(procedureDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // UPDATE  procedure - 404 ERROR "pet not found"
+
+    // +mock, UPDATE  procedure - 404 ERROR "pet not found"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testUpdateProcedureErrorPetNotFound() {
+    public void testUpdateProcedureErrorPetNotFound() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto3, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ExceptionDto.class, 33, 102);
-        int afterCount = procedureDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 33, 102)
+                .content(objectMapper.valueToTree(procedureDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // UPDATE  procedure - 404 ERROR "procedure not found"
+    // +mock, UPDATE  procedure - 404 ERROR "procedure not found"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testUpdateProcedureErrorProcedureNotFound() {
+    public void testUpdateProcedureErrorProcedureNotFound() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto3, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ExceptionDto.class, 102, 33);
-        int afterCount = procedureDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("procedure not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 102, 33)
+                .content(objectMapper.valueToTree(procedureDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // UPDATE  procedure - 400 ERROR "pet not yours"
+    // +mock, UPDATE  procedure - 400 ERROR "pet not yours"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testUpdateProcedureErrorPetForbidden() {
+    public void testUpdateProcedureErrorPetForbidden() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto1, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ExceptionDto.class, 100, 100);
-        int afterCount = procedureDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 100, 100)
+                .content(objectMapper.valueToTree(procedureDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // UPDATE  procedure - 400 ERROR "pet not assigned to this procedure"
+    // +mock, UPDATE  procedure - 400 ERROR "pet not assigned to this procedure"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testUpdateProcedureErrorProcedureForbidden() {
+    public void testUpdateProcedureErrorProcedureForbidden() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto3, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ExceptionDto.class, 101, 102);
-        int afterCount = procedureDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not assigned to this procedure"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 101, 102)
+                .content(objectMapper.valueToTree(procedureDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // UPDATE  procedure - 400 ERROR "procedureId in path and in body not equals"
+    // +mock, UPDATE  procedure - 400 ERROR "procedureId in path and in body not equals"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testUpdateProcedureErrorIdDosentMatch() {
+    public void testUpdateProcedureErrorIdDosentMatch() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        HttpEntity<ProcedureDto> request = new HttpEntity<>(procedureDto1, HEADERS);
-        ResponseEntity<ExceptionDto> response = testRestTemplate
-                .exchange(URI + "/{petId}/procedure/{procedureId}", HttpMethod.PUT, request, ExceptionDto.class, 102, 102);
-        int afterCount = procedureDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("procedureId in path and in body not equals"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 102, 102)
+                .content(objectMapper.valueToTree(procedureDto1).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // DELETE procedure - 200 SUCCESS
+    // +mock, DELETE procedure - 200 SUCCESS
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testDeleteProcedureSuccess() {
+    public void testDeleteProcedureSuccess() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        ResponseEntity<Void> response = testRestTemplate.exchange(URI + "/{petId}/procedure/{procedureId}",
-                HttpMethod.DELETE, new HttpEntity<>(HEADERS), Void.class, 102, 102);
-        int afterCount = procedureDao.getAll().size();
-        Procedure procedure = procedureDao.getByKey(102L);
-
-        Assert.assertNull(procedure);
-        Assert.assertEquals(--beforeCount, afterCount);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/procedure/{id}", 102, 102)
+                .content(objectMapper.valueToTree(procedureDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        assertThat(--beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // DELETE procedure - 404 ERROR "pet not found"
+    // +mock, DELETE procedure - 404 ERROR "pet not found"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testDeleteProcedureErrorPetNotFound() {
+    public void testDeleteProcedureErrorPetNotFound() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        ResponseEntity<ExceptionDto> response = testRestTemplate.exchange(URI + "/{petId}/procedure/{procedureId}",
-                HttpMethod.DELETE, new HttpEntity<>(HEADERS), ExceptionDto.class, 33, 102);
-        int afterCount = procedureDao.getAll().size();
-        Procedure procedure = procedureDao.getByKey(102L);
-
-        Assert.assertNotNull(procedure);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/procedure/{id}", 33, 102)
+                .content(objectMapper.valueToTree(procedureDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // DELETE procedure - 404 ERROR "procedure not found"
+    // +mock, DELETE procedure - 404 ERROR "procedure not found"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testDeleteProcedureErrorProcedureNotFound() {
+    public void testDeleteProcedureErrorProcedureNotFound() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        ResponseEntity<ExceptionDto> response = testRestTemplate.exchange(URI + "/{petId}/procedure/{procedureId}",
-                HttpMethod.DELETE, new HttpEntity<>(HEADERS), ExceptionDto.class, 102, 33);
-        int afterCount = procedureDao.getAll().size();
-
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("procedure not found"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/procedure/{id}", 102, 33)
+                .content(objectMapper.valueToTree(procedureDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // DELETE procedure - 400 ERROR "pet not yours"
+    // +mock, DELETE procedure - 400 ERROR "pet not yours"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testDeleteProcedureErrorPetForbidden() {
+    public void testDeleteProcedureErrorPetForbidden() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        ResponseEntity<ExceptionDto> response = testRestTemplate.exchange(URI + "/{petId}/procedure/{procedureId}",
-                HttpMethod.DELETE, new HttpEntity<>(HEADERS), ExceptionDto.class, 100, 100);
-        int afterCount = procedureDao.getAll().size();
-        Procedure procedure = procedureDao.getByKey(100L);
-
-        Assert.assertNotNull(procedure);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not yours"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/procedure/{id}", 100, 100)
+                .content(objectMapper.valueToTree(procedureDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // DELETE procedure - 400 ERROR "pet not assigned to this procedure"
+    // +mock, DELETE procedure - 400 ERROR "pet not assigned to this procedure"
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testDeleteProcedureErrorProcedureForbidden() {
+    public void testDeleteProcedureErrorProcedureForbidden() throws Exception {
         int beforeCount = procedureDao.getAll().size();
-        ResponseEntity<ExceptionDto> response = testRestTemplate.exchange(URI + "/{petId}/procedure/{procedureId}",
-                HttpMethod.DELETE, new HttpEntity<>(HEADERS), ExceptionDto.class, 101, 102);
-        int afterCount = procedureDao.getAll().size();
-        Procedure procedure = procedureDao.getByKey(102L);
-
-        Assert.assertNotNull(procedure);
-        Assert.assertEquals(beforeCount, afterCount);
-        Assert.assertEquals(response.getBody(), new ExceptionDto("pet not assigned to this procedure"));
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/procedure/{id}", 101, 102)
+                .content(objectMapper.valueToTree(procedureDto3).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 }

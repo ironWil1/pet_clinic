@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/petFound")
 public class PetFoundController {
 
@@ -63,11 +65,12 @@ public class PetFoundController {
 
             String text = petFound.getText();
             String geolocationPetFoundUrl = String.format(GOOGLE_MAPS_SERVICE_URL, petFound.getLatitude(), petFound.getLongitude());
-
+            log.info("Pet with this petCode {} found on the latitude{} and longitude {}", petCode,petFound.getLatitude(),petFound.getLongitude());
             mailService.sendGeolocationPetFoundMessage(petContact, geolocationPetFoundUrl, text);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            log.info("Pet with this petCode {} does not exist or was not found",petCode);
+            return new ResponseEntity <>(HttpStatus.NOT_FOUND);
         }
     }
 }

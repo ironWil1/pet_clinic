@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/client/pet/{petId}/reproduction")
 public class ReproductionController {
 
@@ -66,15 +68,19 @@ public class ReproductionController {
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
+            log.info("The pet with this id {} was not found",petId);
             throw new NotFoundException("pet not found");
         }
         if (reproduction == null) {
+            log.info("The reproduction with this id {} was not found",reproductionId);
             throw new NotFoundException("reproduction not found");
         }
         if (!pet.getClient().getId().equals(client.getId())) {
+            log.info("The pet with this id {} is not yours",petId);
             throw new BadRequestException("pet not yours");
         }
         if (!reproduction.getPet().getId().equals(pet.getId())) {
+            log.info("The reproduction with this id {}  not assigned to this pet {}",reproduction.getPet().getId(),petId);
             throw new BadRequestException("reproduction not assigned to this pet");
         }
         ReproductionDto reproductionDto = reproductionMapper.toDto(reproduction);
@@ -112,7 +118,7 @@ public class ReproductionController {
 
         pet.addReproduction(reproduction);
         petService.update(pet);
-
+        log.info("Added reproduction {} to a pet with this id{}",reproductionDto.toString(),petId);
         return new ResponseEntity<>(reproductionMapper.toDto(reproduction), HttpStatus.CREATED);
     }
 
@@ -153,6 +159,7 @@ public class ReproductionController {
         reproduction = reproductionMapper.toEntity(reproductionDto);
         reproduction.setPet(pet);
         reproductionService.update(reproduction);
+        log.info("Updated reproduction with id {} for a pet with this id{}",reproductionId,petId);
 
         return new ResponseEntity<>(reproductionMapper.toDto(reproduction), HttpStatus.OK);
 
@@ -187,7 +194,9 @@ public class ReproductionController {
         }
         pet.removeReproduction(reproduction);
         petService.update(pet);
+        log.info("Deleted reproduction with id{} for a pet with this id {}",reproductionId,petId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

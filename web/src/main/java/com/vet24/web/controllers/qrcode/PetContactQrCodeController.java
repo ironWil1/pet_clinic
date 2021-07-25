@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ import org.webjars.NotFoundException;
 import javax.validation.Valid;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/client/pet")
 public class PetContactQrCodeController {
 
@@ -55,6 +57,7 @@ public class PetContactQrCodeController {
     public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("id") Long id) {
         Client clientWithPets = clientService.getCurrentClientWithPets();
         if (!clientWithPets.getPets().contains(petService.getByKey(id))){
+            log.info(" The pet with this id {} does not exist {} ",id);
             throw new NotFoundException("It's pet is not yours");
         }
         if (petContactService.isExistByKey(id)) {
@@ -65,6 +68,7 @@ public class PetContactQrCodeController {
                     "Адрес - " + petContact.getAddress() + ", " +
                     "Телефон - " + petContact.getPhone() + ", " +
                     "Чтобы сообщить владельцу о находке перейдите по адресу - " + UrlToAlertPetContact;
+            log.info(" The pet with this id {} exist and here is info for owner{} ",id,sb);
             return ResponseEntity.ok(PetContactQrCodeGenerator.generatePetContactQrCodeImage(sb));
         } else if(petService.isExistByKey(id)) {
             Pet pet = petService.getByKey(id);
@@ -123,6 +127,7 @@ public class PetContactQrCodeController {
             petContactOld.setAddress(petContactNew.getAddress());
             petContactOld.setPhone(petContactNew.getPhone());
             petContactService.update(petContactOld);
+            log.info("The pet contact for pet with id {} was updated",id);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else if (petService.isExistByKey(id)) {
             if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
@@ -139,6 +144,7 @@ public class PetContactQrCodeController {
             petContact.setPetCode(petContactService.randomPetContactUniqueCode());
             petContact.setPet(pet);
             petContactService.persist(petContact);
+            log.info("The pet contact for pet with id {} was saved",id);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/client/doctor")
 @Tag(name = "doctor-controller", description = "operations with doctors")
 public class ClientCommentController {
@@ -67,10 +69,12 @@ public class ClientCommentController {
                 );
                 doctorReview = new DoctorReview(comment,doctor);
 
+                log.info("The comment {} was added to Doctor with id {}",text,doctorId);
                 commentService.persist(comment);
 
                 doctorReviewService.persist(doctorReview);
             } else {
+                log.info("The comment is not correct");
                 throw new RepeatedCommentException("You can add only one comment to Doctor. So you have to update or delete old one.");
             }
             return new ResponseEntity<>(comment.getContent(), HttpStatus.OK);
@@ -94,7 +98,7 @@ public class ClientCommentController {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CommentReaction commentLike = new CommentReaction(comment,client,positive);
         commentReactionService.update(commentLike);
-
+        log.info("The reaction on the comment was added as positive {}",commentLike.getPositive());
         return new  ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -8,6 +8,7 @@ import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.medicine.MedicineService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import java.util.List;
 
 
 @RestController
+@Slf4j
 @RequestMapping("api/manager/medicine")
 public class MedicineController {
 
@@ -52,9 +54,11 @@ public class MedicineController {
     public ResponseEntity<MedicineDto> getById(@PathVariable("id") Long id) {
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
+            log.info(" The medicine with this id {}  not found",id);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
             MedicineDto medicineDto = medicineMapper.toDto(medicine);
+            log.info(" The medicine with this id {} we have",id);
             return new ResponseEntity<>(medicineDto, HttpStatus.OK);
         }
     }
@@ -65,6 +69,7 @@ public class MedicineController {
         if (medicine == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
+            log.info(" The medicine with this id {} was deleted",id);
             medicineService.delete(medicine);
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -81,6 +86,7 @@ public class MedicineController {
             medicine = medicineMapper.toEntity(medicineDto);
             medicine.setId(id);
             medicineService.update(medicine);
+            log.info(" The medicine with this id {} was updated",id);
             return new ResponseEntity<>(HttpStatus.OK);
         }
     }
@@ -90,8 +96,10 @@ public class MedicineController {
 
         Medicine medicine = medicineMapper.toEntity(medicineDto);
         medicine.setId(null);
+
         try {
             medicineService.persist(medicine);
+            log.info(" The medicine with this name {} was added",medicineDto.getName());
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -105,6 +113,7 @@ public class MedicineController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             String url = medicine.getIcon();
+            log.info(" The medicine have icon on this url {} ",url);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", resourceService.getContentTypeByFileName(url));
             return url != null
@@ -123,6 +132,7 @@ public class MedicineController {
             UploadedFileDto uploadedFileDto = uploadService.store(file);
             medicine.setIcon(uploadedFileDto.getUrl());
             medicineService.update(medicine);
+            log.info(" The medicine set icon on this url {} was added ",uploadedFileDto.getUrl());
             return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
         }
     }
@@ -134,8 +144,10 @@ public class MedicineController {
             @RequestParam(required = false, name = "searchText", defaultValue = "") String searchText) {
         List<Medicine> medicineList = medicineService.searchFull(manufactureName, name, searchText);
         List<MedicineDto> medicineDtoList = medicineMapper.toDto(medicineList);
+        log.info(" We have this list of  medicine {} ",medicineDtoList.toString());
         return new ResponseEntity<>(medicineDtoList, HttpStatus.OK);
     }
+
 }
 
 
