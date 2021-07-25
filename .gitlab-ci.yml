@@ -8,9 +8,9 @@ stages:
     - docker stop petclinic_run
     - chmod +x mvnw
 
-  after_script:
-    - docker-compose down
-    - docker-compose up -d
+ # after_script:
+ #   - docker-compose down
+  #  - docker-compose up -d
 
 
 
