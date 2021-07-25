@@ -2,7 +2,7 @@ stages:
   - test
   - package
   - build
-  - deploy
+
 
   before_script:
     - docker stop petclinic_run
@@ -17,8 +17,8 @@ stages:
   Test project:
     stage: test
     only:
-      - merge_requests
-      - master
+ #     - merge_requests
+      - 89-devops
     script:
       - ./mvnw test
 
@@ -27,8 +27,8 @@ stages:
     script:
       - ./mvnw package -Dmaven.test.skip=true
     only:
-      - merge_requests
-      - master
+ #     - merge_requests
+      - 89-devops
     artifacts:
       paths:
         - web/target/*.jar
@@ -37,8 +37,8 @@ stages:
   Build project:
     stage: build
     only:
-      - merge_requests
-      - master
+ #     - merge_requests
+      - 89-devops
     script:
       #     - docker-compose down
       #     - docker-compose up -d
