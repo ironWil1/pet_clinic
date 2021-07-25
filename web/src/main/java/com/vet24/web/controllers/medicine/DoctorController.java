@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +38,7 @@ import org.webjars.NotFoundException;
 import java.util.List;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/doctor")
 @Tag(name = "doctor-controller", description = "Doctor's operations")
 public class DoctorController {
@@ -74,11 +76,13 @@ public class DoctorController {
                                                      @RequestBody String text){
         Pet pet = petService.getByKey(petId);
         if(pet == null){
+            log.info("No such pet found with Id {}",petId);
             throw new NotFoundException("No such pet found");
         }
         Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
         diagnosisService.persist(diagnosis);
+        log.info("Added new diagnosis {}",text);
         return new ResponseEntity<>(diagnosisMapper.toDto(diagnosis),
                 HttpStatus.CREATED);
     }
@@ -98,12 +102,15 @@ public class DoctorController {
             throw new NotFoundException("diagnoses with id = " + diagnoseId + " not found");
         }
         Diagnosis diagnosis = diagnosisService.getByKey(diagnoseId);
+        log.info("Added new diagnosis Id {}",diagnosis.getId());
         List<Procedure> procedureList = abstractNewProcedureMapper.toEntity(procedures);
         procedureService.persistAll(procedureList);
         Treatment treatment = new Treatment();
         treatment.setProcedureList(procedureList);
         treatment.setDiagnosis(diagnosis);
         treatmentService.persist(treatment);
+        log.info("Added new diagnosis treatment {}",treatment.getProcedureList().toString());
         return new ResponseEntity<>(treatmentMapper.toDto(treatment),HttpStatus.CREATED);
     }
+
 }

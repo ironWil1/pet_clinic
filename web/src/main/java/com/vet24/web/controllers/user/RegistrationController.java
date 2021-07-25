@@ -35,8 +35,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RestController
+@Slf4j
 @RequestMapping("/api/registration")
 @Tag(name = "registration-controller", description = "operations with creation of new clients")
 public class RegistrationController {
@@ -73,9 +73,11 @@ public class RegistrationController {
         if (errors.hasErrors()) {
             String mesBuild = errors.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage).collect(Collectors.joining(";"));
+            log.info("All errors during registration {}",mesBuild);
             throw new BadRequestException(mesBuild);
         }
         if(!inputDto.getPassword().equals(inputDto.getConfirmPassword())){
+            log.info("Password confirmation is wrong");
             throw new BadRequestException(PASSWORDS_UNMATCHED);
         }
 
@@ -84,6 +86,7 @@ public class RegistrationController {
             foundOrNew = clientMapper.toEntity(inputDto);
         }
         else if(foundOrNew.getRole().getName()!=RoleNameEnum.UNVERIFIED_CLIENT) {
+            log.info("The client with id {} have repeated registration ",foundOrNew.getId());
             throw new RepeatedRegistrationException(repeatedRegistrationMsg);
         }
 
@@ -92,7 +95,7 @@ public class RegistrationController {
         String tokenUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString() +
                 "/api/registration/confirm/" + verificationService.createVerificationToken(foundOrNew);
         mailService.sendWelcomeMessage(inputDto.getEmail(), inputDto.getFirstname(), tokenUrl);
-
+        log.info("The registration for client with id {} is created ",foundOrNew.getId());
         return new  ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -113,6 +116,7 @@ public class RegistrationController {
         cl.setRole(new Role(RoleNameEnum.CLIENT));
         ClientDto clientUpdated = clientMapper.toDto(clientService.update(cl));
         verificationService.delete(verificationToken);
+        log.info("The client with mail {} is updated ",clientUpdated.getEmail());
         return  ResponseEntity.status(HttpStatus.RESET_CONTENT).body(clientUpdated);
 
     }

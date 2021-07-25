@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
+@Slf4j
 @RequestMapping("api/client")
 @Tag(name = "client-controller", description = "operations with current Client")
 public class ClientController {
@@ -64,6 +66,12 @@ public class ClientController {
     public ResponseEntity<ClientDto> getCurrentClient() {
         Client client = clientService.getCurrentClientWithPets();
         ClientDto clientDto = clientMapper.toDto(client);
+        if (clientDto != null){
+            log.info("The current client name is{}",clientDto.getLastname());
+        }
+        else{
+            log.info("The current client is not found");
+        }
         return clientDto != null ? ResponseEntity.ok(clientDto) : ResponseEntity.notFound().build();
     }
 
@@ -78,9 +86,11 @@ public class ClientController {
         if (client != null) {
             String url = client.getAvatar();
             if (url != null) {
+                log.info("The client with this id {} have avatar",client.getId());
                 return new ResponseEntity<>(resourceService.loadAsByteArray(url), addContentHeaders(url), HttpStatus.OK);
             }
         }
+        log.info("The avatar for client with id {} not found",client.getId());
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -100,7 +110,7 @@ public class ClientController {
         UploadedFileDto uploadedFileDto = uploadService.store(file);
         client.setAvatar(uploadedFileDto.getUrl());
         clientService.update(client);
-
+        log.info("The avatar for client with id {} was uploaded",client.getId());
         return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
     }
 

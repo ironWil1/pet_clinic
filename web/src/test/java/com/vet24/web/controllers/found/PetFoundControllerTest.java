@@ -5,6 +5,8 @@ import com.vet24.models.dto.pet.PetFoundDto;
 import com.vet24.models.pet.PetContact;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 
-
+@Slf4j
 @WithUserDetails(value = "client1@email.com")
 public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
 

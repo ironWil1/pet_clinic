@@ -7,6 +7,7 @@ import com.vet24.models.user.Client;
 import com.vet24.service.notification.GoogleEventService;
 
 import com.vet24.service.user.ClientService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
+@Slf4j
 public class NotificationController {
 
     private final GoogleEventService googleEventService;
@@ -40,6 +42,7 @@ public class NotificationController {
     @GetMapping(value = {"/notification"})
     public void doGoogleSignIn(HttpServletResponse response) throws IOException {
         String redirectURL = googleEventService.getRedirectUrl();
+        log.info("The redirect address is {}",redirectURL);
         response.sendRedirect(redirectURL);
     }
 
@@ -51,6 +54,7 @@ public class NotificationController {
         if (code != null) {
             Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             googleEventService.saveToken(code, client.getEmail());
+            log.info("The current client  is {}",client.getEmail());
         }
         response.sendRedirect("/");
     }
@@ -65,6 +69,7 @@ public class NotificationController {
     private ResponseEntity<GoogleEventDto> createEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.createEvent(googleEventDto);
+            log.info("The google event  is {}",googleEventDto.getDescription());
             return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
         } catch (CredentialException e) {
             return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_REQUEST);
@@ -82,6 +87,7 @@ public class NotificationController {
     private ResponseEntity<GoogleEventDto> editEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.editEvent(googleEventDto);
+            log.info("The edited google event  is {}",googleEventDto.getDescription());
             return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_GATEWAY);
@@ -97,6 +103,7 @@ public class NotificationController {
     private ResponseEntity<GoogleEventDto> deleteEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.deleteEvent(googleEventDto);
+            log.info("The deleted google event  is {}",googleEventDto.getDescription());
             return new ResponseEntity<>(googleEventDto, HttpStatus.OK);
         } catch (EventException e) {
             return new ResponseEntity<>(googleEventDto, HttpStatus.BAD_GATEWAY);

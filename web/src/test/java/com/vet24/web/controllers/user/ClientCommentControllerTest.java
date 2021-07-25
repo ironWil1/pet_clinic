@@ -20,38 +20,37 @@ public class ClientCommentControllerTest extends ControllerAbstractIntegrationTe
     private ClientService clientService;
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeNotFoundComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}",10000L, false))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}", 10000L, false))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
-
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeDislikedComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}",1L,false))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}", 1L, false))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-        .andDo(
-                (result) -> {
-                    Client client = clientService.getCurrentClientWithReactions();
-                    Assert.assertEquals(client.getCommentReactions().size(), 1);
-                    Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), false);
-                }
-        );
+                .andDo(
+                        (result) -> {
+                            Client client = clientService.getCurrentClientWithReactions();
+                            Assert.assertEquals(client.getCommentReactions().size(), 1);
+                            Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), false);
+                        }
+                );
     }
 
     @Test
-    @DataSet(cleanBefore = true, value =  {"/datasets/clients.yml","/datasets/doctors.yml", "/datasets/comments.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeLikedComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}",2L,true))
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}", 2L, true))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-        .andDo(
-                (result) -> {
-                    Client client = clientService.getCurrentClientWithReactions();
-                    Assert.assertEquals(client.getCommentReactions().size(), 1);
-                    Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), true);
-                }
-        );
+                .andDo(
+                        (result) -> {
+                            Client client = clientService.getCurrentClientWithReactions();
+                            Assert.assertEquals(client.getCommentReactions().size(), 1);
+                            Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), true);
+                        }
+                );
     }
 }
