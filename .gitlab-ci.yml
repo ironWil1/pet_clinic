@@ -7,10 +7,8 @@
    - docker stop petclinic_run
    - chmod +x mvnw
 
- after_script:
-   - docker-compose stop
-   - docker-compose down
-   - docker-compose up -d
+# after_script:
+
 
  Test project:
    stage: test
@@ -37,4 +35,7 @@
    script:
      - docker rmi $(docker images -f dangling=true -q) || true
      - docker build -t petclinic:0.0.1 .
+     - docker-compose stop
+     - docker-compose down
+     - docker-compose up -d
 
