@@ -22,6 +22,7 @@ public class FileExceptionHandler {
 
         log.info("File not found, " + request.getRequestURI());
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
+
     }
 
     @ExceptionHandler(StorageException.class)

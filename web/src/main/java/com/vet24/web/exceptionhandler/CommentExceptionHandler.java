@@ -22,5 +22,6 @@ public class CommentExceptionHandler {
         ExceptionDto data = new ExceptionDto();
         data.setMessage(exception.getMessage());
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+
     }
 }

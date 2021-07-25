@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class RegistrationExceptionHandler {
 
+
     @ExceptionHandler(MessagingException.class)
     public ResponseEntity<ExceptionDto> handleException(MessagingException exception, HttpServletRequest request) {
         ExceptionDto data = new ExceptionDto();
