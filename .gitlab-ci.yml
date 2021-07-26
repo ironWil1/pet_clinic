@@ -16,7 +16,7 @@
  Test project:
    stage: test
    only:
-     - 89-devops
+     - master
    script:
      - ./mvnw test
 
@@ -25,7 +25,7 @@
    script:
      - ./mvnw package -Dmaven.test.skip=true
    only:
-     - 89-devops
+     - master
    artifacts:
      paths:
        - web/target/*.jar
@@ -34,11 +34,11 @@
  Build project:
    stage: build
    only:
-     - 89-devops
+     - master
    script:
      - docker rmi $(docker images -f dangling=true -q) || true
      - docker build -t petclinic:0.0.1 .
-     - docker rm petcllinic_renamed
+
 
 
 
