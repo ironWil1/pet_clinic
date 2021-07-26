@@ -36,13 +36,11 @@
    only:
      - 89-devops
    script:
- #    - docker stop pets_db
- #    - docker stop test_pets_db
      - docker rmi $(docker images -f dangling=true -q) || true
      - docker build -t petclinic:0.0.1 .
-     - docker rm pets_db
-     - docker rm test_pets_db
-     - docker rm petclinic_run
+#     - docker rm pets_db
+#     - docker rm test_pets_db
+#     - docker rm petclinic_run
 
 
 
