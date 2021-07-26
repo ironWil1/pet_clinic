@@ -40,8 +40,8 @@
  #    - docker stop test_pets_db
      - docker rmi $(docker images -f dangling=true -q) || true
      - docker build -t petclinic:0.0.1 .
-     - docker rename pets_db pets_renamed
-     - docker rename test_pets_db test_pets_renamed
+     - docker rm pets_db
+     - docker rm test_pets_db
 
 
 
