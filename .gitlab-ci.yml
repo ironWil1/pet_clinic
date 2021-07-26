@@ -38,9 +38,6 @@
    script:
      - docker rmi $(docker images -f dangling=true -q) || true
      - docker build -t petclinic:0.0.1 .
-     - docker rename pets_renamed pets_db
-     - docker rename test_pets_renamed test_pets_db
-#     - docker rm petclinic_run
 
 
 
