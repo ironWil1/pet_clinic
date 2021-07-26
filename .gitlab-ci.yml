@@ -42,6 +42,7 @@
      - docker build -t petclinic:0.0.1 .
      - docker rm pets_db
      - docker rm test_pets_db
+     - docker rm petclinic_run
 
 
 
