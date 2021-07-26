@@ -19,7 +19,7 @@
    stage: test
    only:
      - merge-requests
-     - master
+     - 89-devops
    script:
      - ./mvnw test
 
@@ -28,7 +28,7 @@
    script:
      - ./mvnw package -Dmaven.test.skip=true
    only:
-     - master
+     - 89-devops
    artifacts:
      paths:
        - web/target/*.jar
@@ -37,11 +37,11 @@
  Build project:
    stage: build
    only:
-     - master
+     - 89-devops
    script:
      - docker rmi $(docker images -f dangling=true -q) || true
      - docker build -t petclinic:0.0.1 .
-     - docker build -t postgres .
+     - docker build -t postgres:12-alpine .
 
 
 
