@@ -24,7 +24,7 @@ services:
     ports:
       - 5434:5432
 
-   petclinic:
+  petclinic:
      container_name: petclinic_run
      image: petclinic:0.0.1
      ports:
