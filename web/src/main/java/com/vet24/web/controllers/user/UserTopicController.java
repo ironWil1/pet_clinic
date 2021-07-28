@@ -1,12 +1,16 @@
 package com.vet24.web.controllers.user;
 
+import com.vet24.models.dto.user.CommentDto;
 import com.vet24.models.dto.user.TopicDto;
 import com.vet24.models.exception.BadRequestException;
+import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.models.user.Client;
+import com.vet24.models.user.Comment;
 import com.vet24.models.user.Topic;
 import com.vet24.models.user.User;
 import com.vet24.service.user.ClientService;
+import com.vet24.service.user.CommentService;
 import com.vet24.service.user.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,17 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @RestController
@@ -39,12 +37,17 @@ public class UserTopicController {
     private final ClientService clientService;
     private final TopicService topicService;
     private final TopicMapper topicMapper;
+    private final CommentService commentService;
+    private final CommentMapper commentMapper;
+
 
     @Autowired
-    public UserTopicController(ClientService clientService, TopicService topicService,TopicMapper topicMapper) {
+    public UserTopicController(ClientService clientService, TopicService topicService, TopicMapper topicMapper, CommentService commentService, CommentMapper commentMapper) {
         this.clientService = clientService;
         this.topicService = topicService;
         this.topicMapper = topicMapper;
+        this.commentService = commentService;
+        this.commentMapper = commentMapper;
     }
 
     @Operation(summary = "get all topics from base")
@@ -54,7 +57,7 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "database is empty")
     })
     @GetMapping("/allTopics")
-    public ResponseEntity<List<TopicDto>> getAllTopics(){
+    public ResponseEntity<List<TopicDto>> getAllTopics() {
         List<TopicDto> topicDtoList = topicMapper.toDto(topicService.getAll());
         if (topicDtoList.isEmpty()) {
             throw new NullPointerException("database is empty");
@@ -69,7 +72,7 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "topics are not found")
     })
     @GetMapping("/yourTopics")
-    public ResponseEntity<List<TopicDto>> getAllClientTopic () {
+    public ResponseEntity<List<TopicDto>> getAllClientTopic() {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<>(
                 topicMapper.toDto(topicService.getTopicByClientId(client.getId())), HttpStatus.OK
@@ -98,7 +101,7 @@ public class UserTopicController {
     })
 
     @PostMapping()
-    public ResponseEntity<Void> createTopic(@RequestBody(required = false) TopicDto topicDto){
+    public ResponseEntity<Void> createTopic(@RequestBody(required = false) TopicDto topicDto) {
         if (topicDto.getTitle().trim().equals("") || topicDto.getContent().trim().equals("")) {
             throw new BadRequestException("title or content can't null");
         }
@@ -118,7 +121,7 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
     @PutMapping()
-    public ResponseEntity<TopicDto> updateTopic(@RequestBody(required = false) TopicDto topicDto){
+    public ResponseEntity<TopicDto> updateTopic(@RequestBody(required = false) TopicDto topicDto) {
         if (!topicService.isExistByKey(topicDto.getId())) {
             throw new NotFoundException("topic not found");
         }
@@ -146,7 +149,7 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "topic is not found")
     })
     @DeleteMapping("/{topicId}")
-    public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") Long topicId){
+    public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") Long topicId) {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic is not found");
         }
@@ -157,5 +160,34 @@ public class UserTopicController {
         }
         topicService.delete(topic);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "add comment to topic")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "comment created"),
+            @ApiResponse(responseCode = "400", description = "comment bad request"),
+            @ApiResponse(responseCode = "404", description = "topic not found"),
+            @ApiResponse(responseCode = "403", description = "topic is closed")
+    })
+    @PostMapping(value = "/{topicId}/addComment")
+    public ResponseEntity<CommentDto> persistTopicComment(@PathVariable("topicId") Long topicId,
+                                                          @NotBlank(message = "{registration.validation.blank.field}")
+                                                          @Size(min = 15)
+                                                          @RequestBody String content) {
+        Topic topic = topicService.getByKey(topicId);
+        if (topic == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (topic.isClosed()) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        Comment comment = new Comment(clientService.getCurrentClientWithPets(), content);
+        commentService.persist(comment);
+        topic.getComments().add(comment);
+        topicService.persist(topic);
+        CommentDto commentDto = commentMapper.toDto(comment);
+
+        return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
     }
 }
