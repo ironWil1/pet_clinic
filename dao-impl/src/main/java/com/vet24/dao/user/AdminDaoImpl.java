@@ -2,9 +2,11 @@ package com.vet24.dao.user;
 
 import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.models.user.Admin;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
 
+@Repository
 public class AdminDaoImpl extends ReadWriteDaoImpl<Long, Admin> implements AdminDao {
     @Override
     public Admin getAdminByEmail(String email) {
