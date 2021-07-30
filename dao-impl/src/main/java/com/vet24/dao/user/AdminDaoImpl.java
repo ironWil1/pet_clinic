@@ -11,7 +11,7 @@ public class AdminDaoImpl extends ReadWriteDaoImpl<Long, Admin> implements Admin
     @Override
     public Admin getAdminByEmail(String email) {
         try {
-            return manager.createQuery("SELECT adm FROM Client adm WHERE adm.email =:email", Admin.class)
+            return manager.createQuery("SELECT adm FROM Admin adm WHERE adm.email =:email", Admin.class)
                     .setParameter("email", email).getSingleResult();
         }catch (NoResultException e){
             return null;
