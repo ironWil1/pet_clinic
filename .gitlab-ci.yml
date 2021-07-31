@@ -4,7 +4,7 @@
    - build
 
  before_script:
-   - docker run petclinic_run
+   - docker start petclinic_run
 #   - docker stop pets_db
 #   - docker stop test_pets_db
    - chmod +x mvnw
