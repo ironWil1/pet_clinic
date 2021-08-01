@@ -6,6 +6,8 @@
  before_script:
    - docker stop petclinic_run
    - chmod +x mvnw
+   - docker stop pets_db
+   - docker rm pets_db
 
  after_script:
    - docker-compose up -d
@@ -38,8 +40,7 @@
    script:
      - docker rmi $(docker images -f dangling=true -q) || true
      - docker build -t petclinic:0.0.1 .
-     - docker stop pets_db
-     - docker rm pets_db
+
 
 
 
