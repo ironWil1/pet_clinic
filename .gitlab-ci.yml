@@ -6,11 +6,13 @@
  before_script:
    - docker stop petclinic_run
    - chmod +x mvnw
-#   - docker stop pets_db
-#   - docker rm pets_db
+   - docker stop pets_db
+   - docker rm pets_db
+   - docker stop test_pets_db
+   - docker rm test_pets_db
 
  after_script:
-   - docker-compose down
+#   - docker-compose down
    - docker-compose up -d
    - docker-compose start
 
