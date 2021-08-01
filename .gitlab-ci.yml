@@ -38,6 +38,10 @@
    script:
      - docker rmi $(docker images -f dangling=true -q) || true
      - docker build -t petclinic:0.0.1 .
+     - docker stop pets_db
+     - docker stop test_pes_db
+     - docker rm pets_db
+     - docker rm test_pets_db
 
 
 
