@@ -10,7 +10,7 @@
 
  after_script:
    - docker-compose up -d
-   - docker-compose start
+#   - docker-compose start
 
 
  Test project:
