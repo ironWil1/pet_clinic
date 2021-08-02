@@ -35,7 +35,7 @@
  Build project:
    stage: build
    only:
-     - master
+     - 89-devops
    script:
      - docker rmi $(docker images -f dangling=true -q) || true
      - docker build -t petclinic:0.0.1 .
