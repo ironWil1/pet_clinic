@@ -1,6 +1,7 @@
 package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.user.TopicDto;
+import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.models.user.Topic;
 import com.vet24.service.user.TopicService;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "api/admin/topic")
@@ -40,7 +43,7 @@ public class AdminTopicController {
         Topic topic = topicService.getByKey(id);
         if (topic != null) topicService.delete(topic);
         else throw new NotFoundException("topic not found");
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Closing an open topic")
@@ -51,9 +54,12 @@ public class AdminTopicController {
     @PutMapping("{topicId}/close")
     public ResponseEntity<Void> closeTopic(@PathVariable("topicId") Long id) {
         Topic topic = topicService.getByKey(id);
-        if (topic != null && !topic.isClosed()) topic.setClosed(true);
-        else throw new NotFoundException("topic not found");
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        if (topic != null) {
+            if (!topic.isClosed()) {
+                topic.setClosed(true);
+            } else throw new BadRequestException("Топик является закрытым");
+        } else throw new NotFoundException("topic not found");
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Opening a closed topic")
@@ -64,9 +70,12 @@ public class AdminTopicController {
     @PutMapping("{topicId}/open")
     public ResponseEntity<Void> openTopic(@PathVariable("topicId") Long id) {
         Topic topic = topicService.getByKey(id);
-        if (topic != null && topic.isClosed()) topic.setClosed(false);
-        else throw new NotFoundException("topic not found");
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        if (topic != null) {
+            if (topic.isClosed()) {
+                topic.setClosed(false);
+            } else throw new BadRequestException("Топик является открытым");
+        } else throw new NotFoundException("topic not found");
+        return ResponseEntity.ok().build();
     }
 
 
@@ -78,15 +87,12 @@ public class AdminTopicController {
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
     @PutMapping("{topicId}")
-    public ResponseEntity<TopicDto> updateTopic(@RequestBody(required = false) TopicDto topicDto) {
+    public ResponseEntity<TopicDto> updateTopic(@Valid @RequestBody(required = false) TopicDto topicDto) {
         if (!topicService.isExistByKey(topicDto.getId())) throw new NotFoundException("topic not found");
         Topic topic = topicService.getByKey(topicDto.getId());
-        if (topicDto.getTitle() != null
-                && !topicDto.getTitle().trim().equals("")
-                && !topicDto.getTitle().trim().equals(topic.getTitle().trim())) topic.setTitle(topicDto.getTitle());
-        if (topicDto.getContent() != null
-                && topicDto.getContent().trim().equals("")
-                && topicDto.getContent().trim().equals(topic.getContent().trim()))
+        if (!topicDto.getTitle().isBlank() && !topicDto.getTitle().trim().equals(topic.getTitle().trim()))
+            topic.setTitle(topicDto.getTitle());
+        if (!topicDto.getContent().isBlank() && topicDto.getContent().trim().equals(topic.getContent().trim()))
             topic.setContent(topicDto.getContent());
         topicService.update(topic);
         return new ResponseEntity<>(topicMapper.toDto(topic), HttpStatus.OK);
