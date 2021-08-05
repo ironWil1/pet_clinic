@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.user;
 
+import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.user.TopicDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.user.TopicMapper;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
@@ -87,12 +89,13 @@ public class AdminTopicController {
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
     @PutMapping("{topicId}")
-    public ResponseEntity<TopicDto> updateTopic(@Valid @RequestBody(required = false) TopicDto topicDto) {
+    public ResponseEntity<TopicDto> updateTopic(@Validated(OnUpdate.class) @RequestBody(required = false) TopicDto topicDto) {
         if (!topicService.isExistByKey(topicDto.getId())) throw new NotFoundException("topic not found");
         Topic topic = topicService.getByKey(topicDto.getId());
-        if (!topicDto.getTitle().isBlank() && !topicDto.getTitle().trim().equals(topic.getTitle().trim()))
+
+        if (!topicDto.getTitle().trim().equals(topic.getTitle().trim()))
             topic.setTitle(topicDto.getTitle());
-        if (!topicDto.getContent().isBlank() && topicDto.getContent().trim().equals(topic.getContent().trim()))
+        if (topicDto.getContent().trim().equals(topic.getContent().trim()))
             topic.setContent(topicDto.getContent());
         topicService.update(topic);
         return new ResponseEntity<>(topicMapper.toDto(topic), HttpStatus.OK);
