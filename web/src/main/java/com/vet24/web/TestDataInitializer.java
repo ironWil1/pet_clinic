@@ -143,7 +143,7 @@ public class TestDataInitializer implements ApplicationRunner {
         for (int i = 1; i <= 5; i++) {
             adminList.add(new Admin("AdmFirstName " + i,
                     "AdmLastName " + i,
-                    "admin" + i + "@mail.ru",
+                    "admin" + i + "@email.com",
                     "admin", ADMIN));
         }
         adminService.persistAll(adminList);
