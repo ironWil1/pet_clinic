@@ -23,7 +23,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "api/admin/topic")
-@Tag(name = "admin topic controller")
+@Tag(name = "admin topic controller", description = "adminTopicController operations")
 public class AdminTopicController {
 
     private final TopicService topicService;

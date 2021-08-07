@@ -13,13 +13,7 @@ import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.user.Role;
-import com.vet24.models.user.Doctor;
-import com.vet24.models.user.Client;
-import com.vet24.models.user.Comment;
-import com.vet24.models.user.CommentReaction;
-import com.vet24.models.user.DoctorReview;
-import com.vet24.models.user.Topic;
+import com.vet24.models.user.*;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.CatService;
@@ -31,14 +25,7 @@ import com.vet24.service.pet.procedure.EchinococcusProcedureService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
-import com.vet24.service.user.ClientService;
-import com.vet24.service.user.RoleService;
-import com.vet24.service.user.UserService;
-import com.vet24.service.user.DoctorReviewService;
-import com.vet24.service.user.DoctorService;
-import com.vet24.service.user.CommentService;
-import com.vet24.service.user.CommentReactionService;
-import com.vet24.service.user.TopicService;
+import com.vet24.service.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -59,6 +46,7 @@ import java.util.stream.Stream;
 @Profile("!TestProfile")
 public class TestDataInitializer implements ApplicationRunner {
 
+    private final AdminService adminService;
     private final RoleService roleService;
     private final UserService userService;
     private final ClientService clientService;
@@ -82,21 +70,26 @@ public class TestDataInitializer implements ApplicationRunner {
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
+    private final Role ADMIN = new Role(RoleNameEnum.ADMIN);
 
     private final List<Pet> PETS = new ArrayList<>();
     private final Gender MALE = Gender.MALE;
     private final Gender FEMALE = Gender.FEMALE;
 
     @Autowired
-    public TestDataInitializer(RoleService roleService, UserService userService,
+    public TestDataInitializer(AdminService adminService,
+                               RoleService roleService,
+                               UserService userService,
                                ClientService clientService,
-                               MedicineService medicineService, VaccinationProcedureService vaccinationProcedureService,
+                               MedicineService medicineService,
+                               VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
                                ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
                                CatService catService, DogService dogService, DoctorService doctorService,
                                PetService petService, Environment environment, CommentService commentService,
-                               CommentReactionService commentReactionService,DiagnosisService diagnosisService, DoctorReviewService doctorReviewService, TopicService topicService) {
+                               CommentReactionService commentReactionService, DiagnosisService diagnosisService, DoctorReviewService doctorReviewService, TopicService topicService) {
+        this.adminService = adminService;
         this.roleService = roleService;
         this.userService = userService;
         this.clientService = clientService;
@@ -126,21 +119,38 @@ public class TestDataInitializer implements ApplicationRunner {
     public void userInitialize() {
         List<Client> clients = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            clients.add(new Client("ClientFirstName" + i, "ClientLastName" + i,
-                    (i ==3) ? "petclinic.vet24@gmail.com" : "client" + i + "@email.com",
-                    "client", CLIENT, PETS));
+            clients.add(
+                    new Client("ClientFirstName" + i,
+                            "ClientLastName" + i,
+                            (i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + "@email.com",
+                            "client", CLIENT, PETS));
         }
         clientService.persistAll(clients);
 
         List<Doctor> doctors = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            doctors.add(new Doctor("DoctorFirstName" + i, "DoctorLastName" + i, "doctor" + i + "@email.com", "doctor",DOCTOR ));
+            doctors.add(
+                    new Doctor("DoctorFirstName" + i,
+                            "DoctorLastName" + i,
+                            "doctor" + i + "@email.com",
+                            "doctor", DOCTOR));
         }
         doctorService.persistAll(doctors);
     }
 
+    public void adminInit() {
+        List<Admin> adminList = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            adminList.add(new Admin("AdmFirstName " + i,
+                    "AdmLastName " + i,
+                    "admin" + i + "@mail.ru",
+                    "admin", ADMIN));
+        }
+        adminService.persistAll(adminList);
+    }
+
     public void petInitialize() {
-         List<Pet> pets = new ArrayList<>();
+        List<Pet> pets = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             if (i <= 15) {
                 pets.add(new Dog("DogName" + i, LocalDate.now(), MALE, "DogBreed" + i, clientService.getByKey((long) i)));
@@ -151,23 +161,23 @@ public class TestDataInitializer implements ApplicationRunner {
         petService.persistAll(pets);
     }
 
-    public void diagnosisInitilaizer(){
+    public void diagnosisInitilaizer() {
         List<Diagnosis> diagnoses = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-                diagnoses.add(new Diagnosis(doctorService.getByKey(30+(long)i),petService.getByKey((long)i), "some diagnosis "+i));
+            diagnoses.add(new Diagnosis(doctorService.getByKey(30 + (long) i), petService.getByKey((long) i), "some diagnosis " + i));
         }
         diagnosisService.persistAll(diagnoses);
     }
 
     public void medicineInitialize() {
         List<Medicine> medicines = new ArrayList<>();
-        for(int i = 1; i <= 30; i++) {
+        for (int i = 1; i <= 30; i++) {
             medicines.add(new Medicine("manufactureName" + i, "name" + i, "icon" + i, "description" + i));
         }
         medicineService.persistAll(medicines);
     }
 
-    public void procedureInitializer(){
+    public void procedureInitializer() {
         List<VaccinationProcedure> vaccination = new ArrayList<>();
         List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
         List<EchinococcusProcedure> echinococcus = new ArrayList<>();
@@ -179,11 +189,11 @@ public class TestDataInitializer implements ApplicationRunner {
             }
             if (i > 10 && i <= 20) {
                 externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
-                        true, i, medicineService.getByKey((long)i), petService.getByKey((long) i)));
+                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
             }
             if (i > 20) {
                 echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
-                        true, i, medicineService.getByKey((long) i),  petService.getByKey((long) i)));
+                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
             }
         }
         vaccinationProcedureService.persistAll(vaccination);
@@ -191,7 +201,7 @@ public class TestDataInitializer implements ApplicationRunner {
         echinococcusProcedureService.persistAll(echinococcus);
     }
 
-    public void reproductionInitializer(){
+    public void reproductionInitializer() {
         List<Reproduction> reproductions = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             reproductions.add(new Reproduction(LocalDate.now(), LocalDate.now(), LocalDate.now(), i, petService.getByKey((long) i)));
@@ -200,10 +210,10 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     //clinical examination
-    public void clinicalExaminationInitializer(){
+    public void clinicalExaminationInitializer() {
         List<ClinicalExamination> clinicalExaminations = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            clinicalExaminations.add(new ClinicalExamination(LocalDate.now(), petService.getByKey((long) i), doctorService.getByKey((long) i + 30), (double)i, true, "text"));
+            clinicalExaminations.add(new ClinicalExamination(LocalDate.now(), petService.getByKey((long) i), doctorService.getByKey((long) i + 30), (double) i, true, "text"));
         }
         clinicalExaminationService.persistAll(clinicalExaminations);
     }
@@ -250,9 +260,9 @@ public class TestDataInitializer implements ApplicationRunner {
 
     }
 
-    public void likeInitilaizer(){
+    public void likeInitilaizer() {
         for (int i = 1; i <= 30; i++) {
-            commentReactionService.update(new CommentReaction(commentService.getByKey((long) i), clientService.getByKey((long) i),true));
+            commentReactionService.update(new CommentReaction(commentService.getByKey((long) i), clientService.getByKey((long) i), true));
         }
     }
 
@@ -260,7 +270,7 @@ public class TestDataInitializer implements ApplicationRunner {
         List<DoctorReview> doctorReviews = new ArrayList<>();
         Comment doctorReviewComment = null;
         for (int i = 1; i <= 30; i++) {
-            doctorReviewComment = new Comment(userService.getByKey((long) i +30),"lorem " + (i+30), LocalDateTime.now());
+            doctorReviewComment = new Comment(userService.getByKey((long) i + 30), "lorem " + (i + 30), LocalDateTime.now());
             commentService.persist(doctorReviewComment);
             doctorReviews.add(new DoctorReview(doctorReviewComment, doctorService.getByKey((long) i + 30)));
         }
@@ -271,10 +281,10 @@ public class TestDataInitializer implements ApplicationRunner {
         List<Topic> listTopic = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             List<Comment> commentList = new ArrayList<>();
-            commentList.add(new Comment(userService.getByKey((long) i +30),"comment for topic " + (i+30), LocalDateTime.now()));
-            commentList.add(new Comment(userService.getByKey((long) i +30),"comment for topic " + (i+30), LocalDateTime.now()));
+            commentList.add(new Comment(userService.getByKey((long) i + 30), "comment for topic " + (i + 30), LocalDateTime.now()));
+            commentList.add(new Comment(userService.getByKey((long) i + 30), "comment for topic " + (i + 30), LocalDateTime.now()));
             commentService.persistAll(commentList);
-            listTopic.add(new Topic(userService.getByKey((long)i),"topic" + i, "content" + i, false, commentList));
+            listTopic.add(new Topic(userService.getByKey((long) i), "topic" + i, "content" + i, false, commentList));
         }
         topicService.persistAll(listTopic);
     }
@@ -294,7 +304,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (Objects.requireNonNull(environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create")
                 || Objects.requireNonNull(
-                        environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop")) {
+                environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop")) {
             roleInitialize();
             userInitialize();
             petInitialize();
@@ -308,6 +318,7 @@ public class TestDataInitializer implements ApplicationRunner {
             likeInitilaizer();
             topicInitializer();
             doctorReviewInitializer();
+            adminInit();
         }
     }
 }
