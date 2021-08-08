@@ -19,7 +19,7 @@
 #     - merge-requests
      - 89-devops
    script:
-     - ./mvn test
+     - ./mvnw test
 
  Package project:
    stage: package
