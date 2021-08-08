@@ -19,8 +19,7 @@
      - merge-requests
      - 89-devops
    script:
-     - echo "running tests and coverage analysis..."
-     - ./mvnw test
+     - go test ./mvnw test
 
  Package project:
    stage: package
