@@ -16,10 +16,10 @@
  Test project:
    stage: test
    only:
-     - merge-requests
+#     - merge-requests
      - 89-devops
    script:
-     - go test ./mvnw test
+     - ./mvnw test | grep -q "expected string-result"
 
  Package project:
    stage: package
