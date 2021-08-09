@@ -20,7 +20,7 @@
      - 89-devops
    script:
      - mvn -Dtest="com/vet24/web/**" test
-     - ./mvnw test
+  #   - ./mvnw test
 
  Package project:
    stage: package
