@@ -59,9 +59,10 @@ public class AdminTopicController {
         if (topic != null) {
             if (!topic.isClosed()) {
                 topic.setClosed(true);
+                topicService.update(topic);
+                return ResponseEntity.ok().build();
             } else throw new BadRequestException("Топик является закрытым");
-        } else throw new NotFoundException("topic not found");
-        return ResponseEntity.ok().build();
+        } else throw new NotFoundException("Топик не найден");
     }
 
     @Operation(summary = "Opening a closed topic")
@@ -75,9 +76,10 @@ public class AdminTopicController {
         if (topic != null) {
             if (topic.isClosed()) {
                 topic.setClosed(false);
+                topicService.update(topic);
+                return ResponseEntity.ok().build();
             } else throw new BadRequestException("Топик является открытым");
-        } else throw new NotFoundException("topic not found");
-        return ResponseEntity.ok().build();
+        } else throw new NotFoundException("Топик не найден");
     }
 
 
@@ -89,13 +91,14 @@ public class AdminTopicController {
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
     @PutMapping("{topicId}")
-    public ResponseEntity<TopicDto> updateTopic(@Validated(OnUpdate.class) @RequestBody(required = false) TopicDto topicDto) {
-        if (!topicService.isExistByKey(topicDto.getId())) throw new NotFoundException("topic not found");
-        Topic topic = topicService.getByKey(topicDto.getId());
+    public ResponseEntity<TopicDto> updateTopic(@Validated(OnUpdate.class) @RequestBody(required = false) TopicDto topicDto,
+                                                @PathVariable("topicId") Long id) {
+        if (!topicService.isExistByKey(id)) throw new NotFoundException("topic not found");
+        Topic topic = topicService.getByKey(id);
 
         if (!topicDto.getTitle().trim().equals(topic.getTitle().trim()))
             topic.setTitle(topicDto.getTitle());
-        if (topicDto.getContent().trim().equals(topic.getContent().trim()))
+        if (!topicDto.getContent().trim().equals(topic.getContent().trim()))
             topic.setContent(topicDto.getContent());
         topicService.update(topic);
         return new ResponseEntity<>(topicMapper.toDto(topic), HttpStatus.OK);
