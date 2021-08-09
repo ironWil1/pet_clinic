@@ -16,7 +16,7 @@
  Test project:
    stage: test
    only:
-     - merge-requests
+#     - merge-requests
      - 89-devops
    script:
      - ./mvnw test
