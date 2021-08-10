@@ -95,12 +95,9 @@ public class AdminTopicController {
                                                 @PathVariable("topicId") Long id) {
         if (!topicService.isExistByKey(id)) throw new NotFoundException("topic not found");
         Topic topic = topicService.getByKey(id);
-
-        if (!topicDto.getTitle().trim().equals(topic.getTitle().trim()))
-            topic.setTitle(topicDto.getTitle());
-        if (!topicDto.getContent().trim().equals(topic.getContent().trim()))
-            topic.setContent(topicDto.getContent());
+        topic.setTitle(topicDto.getTitle());
+        topic.setContent(topicDto.getContent());
         topicService.update(topic);
-        return new ResponseEntity<>(topicMapper.toDto(topic), HttpStatus.OK);
+        return ResponseEntity.ok(topicMapper.toDto(topic));
     }
 }

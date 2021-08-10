@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
@@ -20,10 +21,10 @@ public class TopicDto {
     @NotNull(groups = {OnUpdate.class})
     private Long id;
 
-    @NotNull(groups = {OnCreate.class, OnUpdate.class})
+    @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     private String title;
 
-    @NotNull(groups = {OnCreate.class, OnUpdate.class})
+    @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     private String content;
 
     private LocalDateTime creationDate;
