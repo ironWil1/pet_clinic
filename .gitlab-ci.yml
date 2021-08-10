@@ -16,18 +16,18 @@
  Test project:
    stage: test
    only:
-#     - merge-requests
-     - 89-devops
+     - merge-requests
+     - 94-vaadin
    script:
-     - mvn -Dtest="com/vet24/web/**" test
-  #   - ./mvnw test
+#     - mvn -Dtest="com/vet24/web/**" test
+      - ./mvnw test
 
  Package project:
    stage: package
    script:
      - ./mvnw package -Dmaven.test.skip=true
    only:
-     - 89-devops
+     - 94-vaadin
    artifacts:
      paths:
        - web/target/*.jar
@@ -36,7 +36,7 @@
  Build project:
    stage: build
    only:
-     - 89-devops
+     - 94-vaadin
    script:
      - docker rmi $(docker images -f dangling=true -q) || true
      - docker build -t petclinic:0.0.1 .
