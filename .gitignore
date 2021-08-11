@@ -4,8 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 node_modules/
-.mvn
-.gitlab-ci.yml
+
 
 ### STS ###
 .apt_generated
@@ -21,6 +20,7 @@ node_modules/
 *.iws
 *.iml
 *.ipr
+ .gitlab-ci.yml
 
 ### NetBeans ###
 /nbproject/private/

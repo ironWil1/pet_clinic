@@ -1,5 +1,5 @@
  stages:
-   - test-buggggaaaaa
+   - test-buggggaaaaa-perets
    - package
    - build
 
