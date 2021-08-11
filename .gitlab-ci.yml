@@ -1,5 +1,5 @@
  stages:
-   - test--ppppp
+   - test
    - package
    - build
 
