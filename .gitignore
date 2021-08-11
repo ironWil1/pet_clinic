@@ -20,8 +20,7 @@ node_modules/
 *.iws
 *.iml
 *.ipr
-.gitlab-ci.yml
-.mvn
+
 
 ### NetBeans ###
 /nbproject/private/
