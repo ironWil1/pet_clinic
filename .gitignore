@@ -22,7 +22,7 @@ web/tokens
 *.iws
 *.iml
 *.ipr
-
+.gitlab-ci.yml
 
 
 ### NetBeans ###
