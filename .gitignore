@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 node_modules/
 .mvn
+.gitlab-ci.yml
 
 ### STS ###
 .apt_generated
