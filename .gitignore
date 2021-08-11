@@ -5,7 +5,7 @@ target/
 !**/src/test/**/target/
 node_modules/
 web/uploads
-
+web/tokens
 
 ### STS ###
 .apt_generated
