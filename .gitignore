@@ -18,10 +18,11 @@ web/tokens
 
 ### IntelliJ IDEA ###
 .idea
+.mvn
 *.iws
 *.iml
 *.ipr
-.mvn
+
 
 
 ### NetBeans ###
