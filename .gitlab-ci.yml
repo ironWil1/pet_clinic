@@ -1,5 +1,5 @@
  stages:
-   - test-prikol1
+   - test
    - package
    - build
 
