@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 node_modules/
+web/uploads
+web/tokens
 
 ### STS ###
 .apt_generated
@@ -16,9 +18,12 @@ node_modules/
 
 ### IntelliJ IDEA ###
 .idea
+.mvn
 *.iws
 *.iml
 *.ipr
+
+
 
 ### NetBeans ###
 /nbproject/private/
