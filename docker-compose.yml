@@ -22,7 +22,7 @@ services:
       - POSTGRES_DB=test_pets
       - PGDATA=/var/lib/postgresql/data/test_pets
     ports:
-    - 5434:5432
+      - 5434:5432
 
   # petclinic:
   #   container_name: petclinic_run
