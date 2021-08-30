@@ -71,10 +71,12 @@ public class TestDataInitializer implements ApplicationRunner {
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
     private final Role ADMIN = new Role(RoleNameEnum.ADMIN);
+    private final Role MANAGER = new Role(RoleNameEnum.MANAGER);
 
     private final List<Pet> PETS = new ArrayList<>();
     private final Gender MALE = Gender.MALE;
     private final Gender FEMALE = Gender.FEMALE;
+    private final ManagerService managerService;
 
     @Autowired
     public TestDataInitializer(AdminService adminService,
@@ -88,7 +90,8 @@ public class TestDataInitializer implements ApplicationRunner {
                                ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
                                CatService catService, DogService dogService, DoctorService doctorService,
                                PetService petService, Environment environment, CommentService commentService,
-                               CommentReactionService commentReactionService, DiagnosisService diagnosisService, DoctorReviewService doctorReviewService, TopicService topicService) {
+                               CommentReactionService commentReactionService, DiagnosisService diagnosisService,
+                               DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService) {
         this.adminService = adminService;
         this.roleService = roleService;
         this.userService = userService;
@@ -110,6 +113,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.commentReactionService = commentReactionService;
         this.diagnosisService = diagnosisService;
         this.topicService = topicService;
+        this.managerService = managerService;
     }
 
     public void roleInitialize() {
@@ -289,6 +293,17 @@ public class TestDataInitializer implements ApplicationRunner {
         topicService.persistAll(listTopic);
     }
 
+    private void managerInit() {
+        List<Manager> managerList = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            managerList.add(new Manager("ManagerFirstName " + i,
+                    "ManagerLastName " + i,
+                    "manager" + i + "@email.com",
+                    "manager", MANAGER));
+        }
+        managerService.persistAll(managerList);
+    }
+
 //    public void topicInitializer() {
 //        List<Topic> listTopic = new ArrayList<>();
 //        List<Comment> commentList = new ArrayList<>();
@@ -319,6 +334,7 @@ public class TestDataInitializer implements ApplicationRunner {
             topicInitializer();
             doctorReviewInitializer();
             adminInit();
+            managerInit();
         }
     }
 }
