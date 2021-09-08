@@ -81,6 +81,7 @@ public class RegistrationController {
             throw new BadRequestException(PASSWORDS_UNMATCHED);
         }
 
+
         Client foundOrNew = clientService.getClientByEmail(inputDto.getEmail());
         if(foundOrNew == null){
             foundOrNew = clientMapper.toEntity(inputDto);

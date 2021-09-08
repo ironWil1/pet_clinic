@@ -73,9 +73,10 @@ public class UserTopicController {
     })
     @GetMapping("/yourTopics")
     public ResponseEntity<List<TopicDto>> getAllClientTopic() {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<>(
-                topicMapper.toDto(topicService.getTopicByClientId(client.getId())), HttpStatus.OK
+                topicMapper.toDto(topicService.getTopicByClientId(user.getId())), HttpStatus.OK
         );
     }
 
@@ -106,7 +107,7 @@ public class UserTopicController {
             throw new BadRequestException("title or content can't null");
         }
         Topic topic = topicMapper.toEntity(topicDto);
-        topic.setTopicStarter((Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        topic.setTopicStarter((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         topic.setId(null);
         topic.setComments(null);
         topicService.persist(topic);

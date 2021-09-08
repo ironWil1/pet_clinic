@@ -18,6 +18,8 @@ public class TopicDaoImpl extends ReadWriteDaoImpl<Long, Topic> implements Topic
                 .getResultList();
     }
 
+
+
     @Override
     public Topic getTopicWithCommentsById(Long topicId) {
         try {

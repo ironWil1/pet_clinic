@@ -2,6 +2,7 @@ package com.vet24.service.user;
 
 import com.vet24.dao.user.ClientDao;
 import com.vet24.models.user.Client;
+import com.vet24.models.user.User;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,14 +28,16 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     @Override
     @Transactional(readOnly = true)
     public Client getCurrentClientWithPets() {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return clientDao.getClientWithPetsByEmail(client.getUsername());
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return clientDao.getClientWithPetsByEmail(user.getUsername());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Client getCurrentClientWithReactions() {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return clientDao.getClientWithReactionsByEmail(client.getUsername());
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return clientDao.getClientWithReactionsByEmail(user.getUsername());
     }
 }
