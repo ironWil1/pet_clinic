@@ -25,5 +25,5 @@ public class PetDto {
 
     private Integer notificationCount;
 
-    private PetType type; //dog, cat (в будущем добавим еще видов питомцев)
+    private PetType petType; //dog, cat (в будущем добавим еще видов питомцев)
 }
