@@ -1,25 +1,26 @@
-# stages:
-#   - package
-#   - build
-#
-# Package project:
-#   stage: package
-#   before_script:
-#     - chmod +x mvnw
-#   script:
-#     - ./mvnw package -Dmaven.test.skip=true
-#   only:
-#     - master
-#   artifacts:
-#     paths:
-#       - web/target/*.jar
-#     expire_in: 3 days
-#
-# Build project:
-#   stage: build
-#   only:
-#     - master
-#   script:
-#     - docker build -t petclinic:0.0.1 .
-#   after_script:
-#     - docker-compose up -d
+image: maven:latest
+stages:
+    - package
+    - build
+
+  Package project:
+    stage: package
+    before_script:
+      - chmod +x mvnw
+    script:
+      - ./mvnw package -Dmaven.test.skip=true
+    only:
+      - master
+    artifacts:
+      paths:
+        - web/target/*.jar
+      expire_in: 3 days
+
+  Build project:
+    stage: build
+    only:
+      - master
+    script:
+      - docker build -t petclinic:0.0.1 .
+    after_script:
+      - docker-compose up -d
