@@ -75,7 +75,7 @@ public class MedicineController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") // changed HERE
     public ResponseEntity<MedicineDto> update(@PathVariable Long id,@Valid
                                                @RequestBody MedicineDto medicineDto) {
 
@@ -87,11 +87,11 @@ public class MedicineController {
             medicine.setId(id);
             medicineService.update(medicine);
             log.info(" The medicine with this id {} was updated",id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(medicineDto, HttpStatus.OK);
         }
     }
 
-    @PostMapping(value = "")
+    @PostMapping(value = "") // changed HERE
     public ResponseEntity<MedicineDto> save(@Valid @RequestBody MedicineDto medicineDto) {
 
         Medicine medicine = medicineMapper.toEntity(medicineDto);
@@ -103,7 +103,7 @@ public class MedicineController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(medicineDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}/set-pic")
