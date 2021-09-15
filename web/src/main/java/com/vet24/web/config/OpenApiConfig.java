@@ -74,4 +74,18 @@ public class OpenApiConfig {
                 .pathsToMatch("/**")
                 .build();
     }
+    @Bean
+    public GroupedOpenApi adminApi() {
+        return GroupedOpenApi.builder()
+                .group("admin")
+                .pathsToMatch("/api/admin/**")
+                .build();
+    }
+    @Bean
+    public GroupedOpenApi userApi() {
+        return GroupedOpenApi.builder()
+                .group("user")
+                .pathsToMatch("/api/user/**")
+                .build();
+    }
 }
