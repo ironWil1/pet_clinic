@@ -3,6 +3,7 @@ package com.vet24.web.controllers.pet;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.dao.pet.PetDao;
 import com.vet24.models.dto.pet.AbstractNewPetDto;
+import com.vet24.models.dto.pet.CatDto;
 import com.vet24.models.dto.pet.DogDto;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
@@ -117,6 +118,21 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         int beforeCount = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 100)
                 .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertThat(beforeCount).isEqualTo(petDao.getAll().size());
+    }
+
+    // +mock, put pet by id - error 400 type of pet can not be changed
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
+    public void updatePetChangeTypeBadRequest() throws Exception{
+        int beforeCount = petDao.getAll().size();
+        AbstractNewPetDto abstractCat = new CatDto();
+        abstractCat.setPetType(PetType.CAT);
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 102)
+                .content(objectMapper.valueToTree(abstractCat).toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());

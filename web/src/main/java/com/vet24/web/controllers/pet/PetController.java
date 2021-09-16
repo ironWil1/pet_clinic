@@ -138,21 +138,24 @@ public class PetController {
             @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")
     })
     @PutMapping("/{petId}")
-    public ResponseEntity<PetDto> updatePet(@PathVariable("petId") Long petId,@Valid
-                                            @RequestBody AbstractNewPetDto petDto) {
-
+    public ResponseEntity<AbstractNewPetDto> updatePet(@PathVariable("petId") Long petId, @Valid
+    @RequestBody AbstractNewPetDto petDto) {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
         if (client != null && pet != null) {
-            if (pet.getClient().getId().equals(client.getId())) {
-                Pet updatedPet = newPetMapper.toEntity(petDto);
-                updatedPet.setId(pet.getId());
-                updatedPet.setClient(client);
-                petService.update(updatedPet);
-                log.info("We updated pet with this id {}",petId);
-                return new ResponseEntity<>(HttpStatus.OK);
+            if (pet.getPetType().equals(petDto.getPetType())) {
+                if (pet.getClient().getId().equals(client.getId())) {
+                    Pet updatedPet = newPetMapper.toEntity(petDto);
+                    updatedPet.setId(pet.getId());
+                    updatedPet.setClient(client);
+                    petService.update(updatedPet);
+                    log.info("We updated pet with this id {}", petId);
+                    return ResponseEntity.ok().body(petDto);
+                }
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity("The type of pet can not be changed",HttpStatus.BAD_REQUEST);
             }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
