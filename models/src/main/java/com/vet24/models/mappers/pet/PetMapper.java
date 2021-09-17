@@ -38,7 +38,7 @@ public abstract class PetMapper implements
         mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractPetMapper::getPetType, Function.identity()));
     }
 
-    @Mapping(target = "type", source = "petType")
+    @Mapping(target = "petType", source = "petType")
     @Mapping(target = "notificationCount", source = "pet")
     @Override
     public abstract PetDto toDto(Pet pet);
@@ -52,8 +52,8 @@ public abstract class PetMapper implements
 
     @Override
     public Pet toEntity (PetDto petDto) {
-        if (mapperMap.containsKey(petDto.getType())) {
-            return mapperMap.get(petDto.getType()).abstractPetDtoToPet(petDto);
+        if (mapperMap.containsKey(petDto.getPetType())) {
+            return mapperMap.get(petDto.getPetType()).abstractPetDtoToPet(petDto);
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petDto);
         }
