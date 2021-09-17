@@ -78,15 +78,15 @@ public class PetController {
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
-            log.info("The pet with this id {} was not found",petId);
+            log.info("The pet with this id {} was not found", petId);
             throw new NotFoundException("pet not found");
         }
         if (!pet.getClient().getId().equals(client.getId())) {
-            log.info("The pet with this id {} is not yours",petId);
+            log.info("The pet with this id {} is not yours", petId);
             throw new BadRequestException("pet not yours");
         }
 
-        log.info("We have pet with this id {}",petId);
+        log.info("We have pet with this id {}", petId);
         return new ResponseEntity<>(petMapper.toDto(pet), HttpStatus.OK);
     }
 
@@ -104,7 +104,7 @@ public class PetController {
             Pet pet = newPetMapper.toEntity(petDto);
             pet.setClient(client);
             petService.persist(pet);
-            log.info("We added new pet {}",petDto.getName());
+            log.info("We added new pet {}", petDto.getName());
             return ResponseEntity.ok(petDto);
         }
         return ResponseEntity.notFound().build();
@@ -123,7 +123,7 @@ public class PetController {
         if (client != null && pet != null) {
             if (pet.getClient().getId().equals(client.getId())) {
                 petService.delete(pet);
-                log.info("We deleted pet with this id {}",petId);
+                log.info("We deleted pet with this id {}", petId);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -142,22 +142,21 @@ public class PetController {
     @RequestBody AbstractNewPetDto petDto) {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
-        if (client != null && pet != null) {
-            if (pet.getPetType().equals(petDto.getPetType())) {
-                if (pet.getClient().getId().equals(client.getId())) {
-                    Pet updatedPet = newPetMapper.toEntity(petDto);
-                    updatedPet.setId(pet.getId());
-                    updatedPet.setClient(client);
-                    petService.update(updatedPet);
-                    log.info("We updated pet with this id {}", petId);
-                    return ResponseEntity.ok().body(petDto);
-                }
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            } else {
-                return new ResponseEntity("The type of pet can not be changed",HttpStatus.BAD_REQUEST);
-            }
+        if (client == null || pet == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!(pet.getPetType().equals(petDto.getPetType()))) {
+            return new ResponseEntity("The type of pet can not be changed", HttpStatus.BAD_REQUEST);
+        }
+        if (pet.getClient().getId().equals(client.getId())) {
+            Pet updatedPet = newPetMapper.toEntity(petDto);
+            updatedPet.setId(pet.getId());
+            updatedPet.setClient(client);
+            petService.update(updatedPet);
+            log.info("We updated pet with this id {}", petId);
+            return ResponseEntity.ok().body(petDto);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @Operation(summary = "get avatar of a Pet")
@@ -172,7 +171,7 @@ public class PetController {
         if (client != null && pet != null) {
             String url = pet.getAvatar();
             if (url != null) {
-                log.info(" The pet has avatar  {} ",url);
+                log.info(" The pet has avatar  {} ", url);
                 return new ResponseEntity<>(resourceService.loadAsByteArray(url), addContentHeaders(url), HttpStatus.OK);
             }
         }
@@ -196,7 +195,7 @@ public class PetController {
                 UploadedFileDto uploadedFileDto = uploadService.store(file);
                 pet.setAvatar(uploadedFileDto.getUrl());
                 petService.update(pet);
-                log.info(" The pet with this id {} changes avatar  {} ",petId);
+                log.info(" The pet with this id {} changes avatar  {} ", petId);
                 return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
