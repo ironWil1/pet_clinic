@@ -142,22 +142,23 @@ public class PetController {
     @RequestBody AbstractNewPetDto petDto) {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
-        if (client == null || pet == null) {
+        if (pet == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         if (!(pet.getPetType().equals(petDto.getPetType()))) {
             return new ResponseEntity("The type of pet can not be changed", HttpStatus.BAD_REQUEST);
         }
-        if (pet.getClient().getId().equals(client.getId())) {
-            Pet updatedPet = newPetMapper.toEntity(petDto);
-            updatedPet.setId(pet.getId());
-            updatedPet.setClient(client);
-            petService.update(updatedPet);
-            log.info("We updated pet with this id {}", petId);
-            return ResponseEntity.ok().body(petDto);
+        if (!(pet.getClient().getId().equals(client.getId()))) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Pet updatedPet = newPetMapper.toEntity(petDto);
+        updatedPet.setId(pet.getId());
+        updatedPet.setClient(client);
+        petService.update(updatedPet);
+        log.info("We updated pet with this id {}", petId);
+        return ResponseEntity.ok().body(petDto);
     }
+
 
     @Operation(summary = "get avatar of a Pet")
     @ApiResponses(value = {
