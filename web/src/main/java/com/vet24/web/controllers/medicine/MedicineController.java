@@ -75,7 +75,7 @@ public class MedicineController {
         }
     }
 
-    @PutMapping("/{id}") // changed HERE
+    @PutMapping("/{id}")
     public ResponseEntity<MedicineDto> update(@PathVariable Long id,@Valid
                                                @RequestBody MedicineDto medicineDto) {
 
@@ -91,7 +91,7 @@ public class MedicineController {
         }
     }
 
-    @PostMapping(value = "") // changed HERE
+    @PostMapping(value = "")
     public ResponseEntity<MedicineDto> save(@Valid @RequestBody MedicineDto medicineDto) {
 
         Medicine medicine = medicineMapper.toEntity(medicineDto);

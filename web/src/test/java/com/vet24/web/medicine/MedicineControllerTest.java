@@ -57,10 +57,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(4L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.manufactureName").value("tetetete"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.icon").value("ttrtrt"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("ttrrtr"));
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.valueToTree(medicineDtoNew).toString()));
         AssertionsForClassTypes.assertThat(++beforeCount).isEqualTo(medicineDao.getAll().size());
     }
 
@@ -74,9 +71,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.manufactureName").value("tetetete"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.icon").value("ttrtrt"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("ttrrtr"));
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.valueToTree(medicineDto3).toString()));
         AssertionsForClassTypes.assertThat(beforeCount).isEqualTo(medicineDao.getAll().size());
     }
 
