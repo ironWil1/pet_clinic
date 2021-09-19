@@ -208,7 +208,7 @@
             <appender-ref ref="petcontactqrcode"/>
         </logger>
 
-        <logger name ="com.vet24.web.controllers.user.ClientCommentController" level ="debug">
+        <logger name ="com.vet24.web.controllers.user.ClientReviewController" level ="debug">
 
             <appender-ref ref="clientcomment"/>
         </logger>
