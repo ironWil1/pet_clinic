@@ -1,6 +1,7 @@
 package com.vet24.service.media;
 
 import com.vet24.models.pet.PetContact;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 
 @Service
+@Slf4j
 public class MailServiceImpl implements MailService {
 
     @Value("${spring.mail.username}")
@@ -48,7 +50,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendMultipartHtmlMessage(String toMail, String subject, String content) {
         var message = emailSender.createMimeMessage();
-
+        log.info("Message {} is created", message);
         try {
             var helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
             helper.setFrom(mailFrom, mailSign);
@@ -60,7 +62,9 @@ public class MailServiceImpl implements MailService {
             helper.addInline("logoImage", resource);
 
             emailSender.send(message);
+            log.info("Message has been sent");
         } catch (MailException | UnsupportedEncodingException | MessagingException e) {
+            log.warn("{}", e.getMessage());
             e.getStackTrace();  // TODO: 28.06.2021
         }
     }

@@ -85,7 +85,7 @@ public class RegistrationController {
         if(foundOrNew == null){
             foundOrNew = clientMapper.toEntity(inputDto);
         }
-        else if(foundOrNew.getRole().getName() == RoleNameEnum.UNVERIFIED_CLIENT) {
+        else if(foundOrNew.getRole().getName()!=RoleNameEnum.UNVERIFIED_CLIENT) {
             log.info("The client with id {} have repeated registration ",foundOrNew.getId());
             throw new RepeatedRegistrationException(repeatedRegistrationMsg);
         }
