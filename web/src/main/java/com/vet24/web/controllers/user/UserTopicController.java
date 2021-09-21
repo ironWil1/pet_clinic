@@ -5,7 +5,6 @@ import com.vet24.models.dto.user.TopicDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.mappers.user.TopicMapper;
-import com.vet24.models.user.Client;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Topic;
 import com.vet24.models.user.User;
@@ -73,7 +72,6 @@ public class UserTopicController {
     })
     @GetMapping("/yourTopics")
     public ResponseEntity<List<TopicDto>> getAllClientTopic() {
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<>(
                 topicMapper.toDto(topicService.getTopicByClientId(user.getId())), HttpStatus.OK
