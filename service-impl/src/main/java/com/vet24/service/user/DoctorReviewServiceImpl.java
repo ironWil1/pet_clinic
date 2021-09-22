@@ -23,7 +23,4 @@ public class DoctorReviewServiceImpl extends ReadWriteServiceImpl<Long, DoctorRe
     public DoctorReview getByDoctorAndClientId(long doctorId, long clientId) {
         return doctorReviewDao.getByDoctorAndClientId(doctorId, clientId);
     }
-    public DoctorReview getByCommentId (Long commentId){
-        return doctorReviewDao.getByCommentId(commentId);
-    }
 }

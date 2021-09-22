@@ -61,21 +61,19 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml"})
-    @ExpectedDataSet(value = {"/datasets/expected/comments.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml","/datasets/doctor-review.yml", "/datasets/doctors.yml"})
     public void shouldBeUpdatedComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{commentId}/review", 102)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{doctorId}/review", 33)
                 .content("This doctor is very bad!!")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content").value("This doctor is very bad!!"));
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml","/datasets/doctor-review.yml", "/datasets/doctors.yml"})
     public void updatedCommentNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{commentId}/review", 50000)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{doctorId}/review", 50000)
                 .content("This doctor is very GOOOD!!")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -85,15 +83,15 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml", "/datasets/doctor-review.yml", "/datasets/doctors.yml"})
     public void shouldBeDeleteComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{commentId}/review", 101))
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{doctorId}/review", 33))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml","/datasets/doctor-review.yml", "/datasets/doctors.yml"})
     public void deletedCommentNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{commentId}/review", 50000))
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{doctorId}/review", 50000))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }

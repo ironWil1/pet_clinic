@@ -21,13 +21,4 @@ public class DoctorReviewDaoImpl extends ReadWriteDaoImpl<Long, DoctorReview>  i
         }
     }
 
-    public DoctorReview getByCommentId(long commentId) {
-        try {
-            return manager.createQuery("SELECT dr FROM DoctorReview dr WHERE dr.comment.id =:commentId", DoctorReview.class)
-                    .setParameter("commentId", commentId)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
 }

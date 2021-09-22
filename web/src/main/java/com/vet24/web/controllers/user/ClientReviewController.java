@@ -109,20 +109,20 @@ public class ClientReviewController {
             @ApiResponse(responseCode = "404", description = "Comment not found"),
             @ApiResponse(responseCode = "400", description = "Another client's comment")
     })
-    @PutMapping(value = "/{commentId}/review")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable("commentId") Long commentId, @RequestBody String text) {
-        Comment comment = commentService.getByKey(commentId);
+    @PutMapping(value = "/{doctorId}/review")
+    public ResponseEntity<CommentDto> updateComment(@PathVariable("doctorId") Long doctorId, @RequestBody String text) {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (comment == null) {
+        DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
+        if (doctorReview == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (!(comment.getUser().getId().equals(client.getId()))) {
+        if (!(doctorReview.getComment().getUser().getId().equals(client.getId()))) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        comment.setContent(text);
-        commentService.update(comment);
-        log.info("We updated comment with this id {}", commentId);
-        return ResponseEntity.ok().body(commentMapper.toDto(comment));
+        doctorReview.getComment().setContent(text);
+        doctorReviewService.update(doctorReview);
+        log.info("We updated comment with this id {}", doctorReview.getComment().getId());
+        return ResponseEntity.ok().body(commentMapper.toDto(doctorReview.getComment()));
     }
 
     @Operation(summary = "delete a comment")
@@ -131,18 +131,18 @@ public class ClientReviewController {
             @ApiResponse(responseCode = "404", description = "Comment not found"),
             @ApiResponse(responseCode = "400", description = "Another client's comment")
     })
-    @DeleteMapping(value = "/{commentId}/review")
-    public ResponseEntity<Void> deleteComment(@PathVariable("commentId") Long commentId) {
-        Comment comment = commentService.getByKey(commentId);
+    @DeleteMapping(value = "/{doctorId}/review")
+    public ResponseEntity<Void> deleteComment(@PathVariable("doctorId") Long doctorId) {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (comment == null) {
+        DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
+        if (doctorReview == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (!(comment.getUser().getId().equals(client.getId()))) {
+        if (!(doctorReview.getComment().getUser().getId().equals(client.getId()))) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        doctorReviewService.delete(doctorReviewService.getByCommentId(commentId));
-        log.info("We deleted comment with this id {}", commentId);
+        doctorReviewService.delete(doctorReview);
+        log.info("We deleted comment with this id {}", doctorReview.getComment().getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

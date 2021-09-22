@@ -5,5 +5,4 @@ import com.vet24.service.ReadWriteService;
 
 public interface DoctorReviewService extends ReadWriteService<Long, DoctorReview> {
     DoctorReview getByDoctorAndClientId(long doctorId, long clientId);
-    DoctorReview getByCommentId (Long commentId);
 }
