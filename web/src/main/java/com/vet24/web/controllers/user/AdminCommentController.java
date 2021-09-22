@@ -60,11 +60,11 @@ public class AdminCommentController {
             @ApiResponse(responseCode = "404", description = "Comment not found")
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteComment(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") Long id) {
         Comment comment = commentService.getByKey(id);
         if (comment != null) {
-            log.info("Comment with id {} deleted", id);
             commentService.delete(comment);
+            log.info("Comment with id {} deleted", id);
         } else {
             log.info("Comment with id {} not found", id);
             throw new NotFoundException("Comment not found");
