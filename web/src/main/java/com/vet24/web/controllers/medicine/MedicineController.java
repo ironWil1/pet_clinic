@@ -87,7 +87,7 @@ public class MedicineController {
             medicine.setId(id);
             medicineService.update(medicine);
             log.info(" The medicine with this id {} was updated",id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(medicineDto, HttpStatus.OK);
         }
     }
 
@@ -103,7 +103,7 @@ public class MedicineController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(medicineDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}/set-pic")
