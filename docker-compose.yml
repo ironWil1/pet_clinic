@@ -24,8 +24,6 @@ services:
       - PGDATA=${PGDATA}test_pets
     ports:
       - 5434:5432
-    volumes:
-      - pg_test_data:${PGDATA}test_pets
 
   petclinic:
      container_name: petclinic_run
@@ -39,5 +37,4 @@ services:
        - db
 
 volumes:
-  pg_test_data:
   pg_data:
