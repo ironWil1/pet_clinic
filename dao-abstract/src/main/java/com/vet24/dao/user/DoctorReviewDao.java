@@ -5,4 +5,5 @@ import com.vet24.models.user.DoctorReview;
 
 public interface DoctorReviewDao extends ReadWriteDao<Long, DoctorReview> {
     DoctorReview getByDoctorAndClientId(long doctorId, long clientId);
+    DoctorReview getByCommentId (long commentId);
 }

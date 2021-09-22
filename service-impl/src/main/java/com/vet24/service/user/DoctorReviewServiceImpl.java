@@ -6,6 +6,8 @@ import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.print.Doc;
+
 @Service
 public class DoctorReviewServiceImpl extends ReadWriteServiceImpl<Long, DoctorReview> implements DoctorReviewService {
 
@@ -20,5 +22,8 @@ public class DoctorReviewServiceImpl extends ReadWriteServiceImpl<Long, DoctorRe
     @Override
     public DoctorReview getByDoctorAndClientId(long doctorId, long clientId) {
         return doctorReviewDao.getByDoctorAndClientId(doctorId, clientId);
+    }
+    public DoctorReview getByCommentId (Long commentId){
+        return doctorReviewDao.getByCommentId(commentId);
     }
 }

@@ -64,7 +64,7 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml"})
     @ExpectedDataSet(value = {"/datasets/expected/comments.yml"})
     public void shouldBeUpdatedComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{commentId}/review/update", 102)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{commentId}/review", 102)
                 .content("This doctor is very bad!!")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -75,7 +75,7 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml"})
     public void updatedCommentNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{commentId}/review/update", 50000)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{commentId}/review", 50000)
                 .content("This doctor is very GOOOD!!")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -83,9 +83,9 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml", "/datasets/doctor-review.yml", "/datasets/doctors.yml"})
     public void shouldBeDeleteComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{commentId}/review/delete", 103))
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{commentId}/review", 101))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -93,7 +93,7 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml"})
     public void deletedCommentNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{commentId}/review/delete", 50000))
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{commentId}/review", 50000))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }

@@ -9,11 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 
 @Data
@@ -29,8 +25,8 @@ public class DoctorReview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @OneToOne(targetEntity = Comment.class)
+
+    @OneToOne(targetEntity = Comment.class, cascade = CascadeType.REMOVE)
     private Comment comment;
     @OneToOne(targetEntity = Doctor.class)
     private Doctor doctor;

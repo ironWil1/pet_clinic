@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 @RestController
 @Slf4j
 @RequestMapping("/api/client/doctor")
-@Tag(name = "сlient сomment сontroller", description = "operations with comments")
+@Tag(name = "сlient review сontroller", description = "operations with comments")
 public class ClientReviewController {
 
     private final DoctorService doctorService;
@@ -109,7 +109,7 @@ public class ClientReviewController {
             @ApiResponse(responseCode = "404", description = "Comment not found"),
             @ApiResponse(responseCode = "400", description = "Another client's comment")
     })
-    @PutMapping(value = "/{commentId}/review/update")
+    @PutMapping(value = "/{commentId}/review")
     public ResponseEntity<CommentDto> updateComment(@PathVariable("commentId") Long commentId, @RequestBody String text) {
         Comment comment = commentService.getByKey(commentId);
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -131,7 +131,7 @@ public class ClientReviewController {
             @ApiResponse(responseCode = "404", description = "Comment not found"),
             @ApiResponse(responseCode = "400", description = "Another client's comment")
     })
-    @DeleteMapping(value = "/{commentId}/review/delete")
+    @DeleteMapping(value = "/{commentId}/review")
     public ResponseEntity<Void> deleteComment(@PathVariable("commentId") Long commentId) {
         Comment comment = commentService.getByKey(commentId);
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -141,7 +141,7 @@ public class ClientReviewController {
         if (!(comment.getUser().getId().equals(client.getId()))) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        commentService.delete(comment);
+        doctorReviewService.delete(doctorReviewService.getByCommentId(commentId));
         log.info("We deleted comment with this id {}", commentId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

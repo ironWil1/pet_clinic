@@ -1,0 +1,8 @@
+DOCTOR_REVIEW:
+  - ID: 100
+    COMMENT_ID : 101
+    DOCTOR_ID : 33
+
+  - ID : 101
+    COMMENT_ID : 102
+    DOCTOR_ID : 34
