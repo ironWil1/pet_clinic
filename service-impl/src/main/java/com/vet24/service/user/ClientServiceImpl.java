@@ -3,7 +3,6 @@ package com.vet24.service.user;
 import com.vet24.dao.user.ClientDao;
 import com.vet24.models.user.Client;
 import com.vet24.service.ReadWriteServiceImpl;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
