@@ -12,7 +12,7 @@ services:
     ports:
       - 5433:5432
     volumes:
-      -pg_data:${PGDATA}pets
+      - pg_data:${PGDATA}pets
 
   test_db:
     container_name: test_pets_db
