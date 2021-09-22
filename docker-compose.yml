@@ -8,28 +8,33 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=pets
-      - PGDATA=/var/lib/postgresql/data/pets
+      - PGDATA=${PGDATA}pets
     ports:
       - 5433:5432
-#
-#  test_db:
-#    container_name: test_pets_db
-#    image: library/postgres:${POSTGRES_VERSION}
-#
-#    environment:
-#      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-#      - POSTGRES_USER=${POSTGRES_USER}
-#      - POSTGRES_DB=test_pets
-#      - PGDATA=/var/lib/postgresql/data/test_pets
-#    ports:
-#      - 5434:5432
+    volumes:
+      -pg_data:${PGDATA}pets
+
+  test_db:
+    container_name: test_pets_db
+    image: library/postgres:${POSTGRES_VERSION}
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=test_pets
+      - PGDATA=${PGDATA}test_pets
+    ports:
+      - 5434:5432
 
   petclinic:
      container_name: petclinic_run
-     image: petclinic:0.0.1
+#     image: petclinic:0.0.1
+     build: .
      ports:
        - 8080:8080
      environment:
        spring.datasource.url: "jdbc:postgresql://db:5432/pets"
      depends_on:
        - db
+
+volumes:
+  pg_data:
