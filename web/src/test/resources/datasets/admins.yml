@@ -1,0 +1,68 @@
+ROLE:
+  - NAME: "ADMIN"
+
+USER_ENTITIES:
+  - ID: 61
+    USER_TYPE: "ADMIN"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "SuperAdmin"
+    LASTNAME: "SuperAdminov"
+    EMAIL: "superadmin@email.com"
+    PASSWORD: "admin1"
+
+  - ID: 62
+    USER_TYPE: "ADMIN"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Richard"
+    LASTNAME: "Bah"
+    EMAIL: "richard@email.com"
+    PASSWORD: "admin2"
+
+  - ID: 63
+    USER_TYPE: "ADMIN"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Light"
+    LASTNAME: "Yagami"
+    EMAIL: "light@email.com"
+    PASSWORD: "admin3"
+
+#  - ID: 64
+#    USER_TYPE: "ADMIN"
+#    AVATAR: "test.png"
+#    ENABLED: true
+#    FIRSTNAME: "AdmFirstName 4"
+#    LASTNAME: "AdmLastName 4"
+#    EMAIL: "admin4@email.com"
+#    PASSWORD: "admin"
+#
+#  - ID: 65
+#    USER_TYPE: "ADMIN"
+#    AVATAR: "test.png"
+#    ENABLED: true
+#    FIRSTNAME: "AdmFirstName 5"
+#    LASTNAME: "AdmLastName 5"
+#    EMAIL: "admin5@email.com"
+#    PASSWORD: "admin"
+
+USER_ROLE:
+
+  - USER_ID: 61
+    ROLE_NAME: "ADMIN"
+  - USER_ID: 62
+    ROLE_NAME: "ADMIN"
+  - USER_ID: 63
+    ROLE_NAME: "ADMIN"
+#  - USER_ID: 64
+#    ROLE_NAME: "ADMIN"
+#  - USER_ID: 65
+#    ROLE_NAME: "ADMIN"
+
+
+
+
+
+
+
