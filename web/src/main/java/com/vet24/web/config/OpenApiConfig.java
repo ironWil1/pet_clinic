@@ -34,7 +34,10 @@ public class OpenApiConfig {
                                 .addSecuritySchemes(securitySchemeName,
                                         new SecurityScheme()
                                                 .name(securitySchemeName)
-                                                .description("ТОКЕН КЛИЕНТА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTYyNTgzMDI2NywiZXhwIjoxNjI3ODMwMjY3fQ.MKSymqK04NLvctJyz0mAIWQbUv7Mt-EhC8GkOCyoODJSPxIacdALq4J0P3MQoHXPwOy32Xeq1HIcWACzocp12A \n TOКЕН ДОКТОРА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2N0b3IxQGVtYWlsLmNvbSIsImlhdCI6MTYyNTgzMDIwOSwiZXhwIjoxNjI3ODMwMjA5fQ.nMiVtLW98Mvosmi3KnhQiyeudKZKBeaJuJDYKCPHp_zuX8kPyTrDIL3B2Nr7zzkjT75Ebk1_AIY5aAKxw6cs7A" )
+                                                .description("ТОКЕН КЛИЕНТА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTYzMjMyNzE3MSwiZXhwIjoxNjM0MzI3MTcxfQ.j6h-ZfTXcuoLizl0yVREo263dkKu3T6D3SIKsYVQjXFKE7GlvDomG6rxeuGwPJIrZX2lZrowd3Yqy-dkV4Z25w \n " +
+                                                        "TOКЕН ДОКТОРА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2N0b3IxQGVtYWlsLmNvbSIsImlhdCI6MTYyNTgzMDIwOSwiZXhwIjoxNjI3ODMwMjA5fQ.nMiVtLW98Mvosmi3KnhQiyeudKZKBeaJuJDYKCPHp_zuX8kPyTrDIL3B2Nr7zzkjT75Ebk1_AIY5aAKxw6cs7A \n " +
+                                                        "ТОКЕН МЕНЕДЖЕРА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYW5hZ2VyMUBlbWFpbC5jb20iLCJpYXQiOjE2MzIzMjU4NDEsImV4cCI6MTYzNDMyNTg0MX0.Ys9KjhPRl2OVNEBDwsWllRLpVbYn8_XblsLz7XeLKjZ5Invt9zBpP1mt6LO2CDzCH64-gUFgejBI55YNQeIjsg \n " +
+                                                        "ТОКЕН АДМИНИСТРАТОРА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZW1haWwuY29tIiwiaWF0IjoxNjMyMzI2MTc2LCJleHAiOjE2MzQzMjYxNzZ9.zGZpb1caPiPgBm23FVIzeI-Un2RnuBcbOoElzkKn_ikr7A5vs1PQKkydigN3qLG0nwje8YpDTXZltlYxgd6sqg \n ")
                                                 .type(SecurityScheme.Type.HTTP)
                                                 .scheme("bearer")
                                                 .bearerFormat("JWT")
