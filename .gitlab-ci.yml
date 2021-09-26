@@ -22,7 +22,7 @@ building:
 test_maven:
   stage: test
   script:
-    - mvn -Dtest=web.src.test.java.com.vet24.web.ControllerAbstractIntegrationTest test
+    - mvn clean test
   tags:
     - clinic_docker_runner
   artifacts:
