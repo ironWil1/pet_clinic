@@ -1,6 +1,5 @@
 package com.vet24.web.controllers.user;
 
-import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.user.CommentDto;
 import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.user.Comment;
@@ -10,17 +9,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.util.NestedServletException;
 import org.webjars.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(value = "api/admin/comment/")
