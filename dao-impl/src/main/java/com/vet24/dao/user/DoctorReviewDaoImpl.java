@@ -20,4 +20,5 @@ public class DoctorReviewDaoImpl extends ReadWriteDaoImpl<Long, DoctorReview>  i
             return null;
         }
     }
+
 }
