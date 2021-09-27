@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.util.NestedServletException;
 
@@ -56,8 +55,8 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/comments.yml", "/datasets/clients.yml"})
     public void commentUpdated() throws Exception {
-        String tempComment = commentDto.getContent();
-        commentDto.setContent("updatedTestComment");
+        String tempComment = commentService.getByKey(103L).getContent(); // Comment before: "right comment"
+        commentDto.setContent("updatedRightComment");
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 103)
                         .content(objectMapper.valueToTree(commentDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -74,12 +73,11 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
         assertThat(--sizeBefore).isEqualTo(commentService.getAll().size());
     }
 
-    @Test(expected = NestedServletException.class)
+    @Test
     @DataSet(cleanBefore = true, value = {"/datasets/comments.yml", "/datasets/clients.yml",
             "/datasets/doctors.yml", "/datasets/doctor-review.yml"})
     public void commentNotDeletedBecauseConstraints() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 102))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(MockMvcResultMatchers.status().isIAmATeapot());
     }
 }
