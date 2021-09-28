@@ -79,11 +79,18 @@ public class User implements UserDetails {
     )
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL
+    )
+    private List<CommentReaction> commentReactions = new ArrayList<>();
+
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_name"))
     private Role role;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

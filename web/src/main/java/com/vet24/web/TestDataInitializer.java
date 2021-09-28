@@ -266,7 +266,7 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void likeInitilaizer() {
         for (int i = 1; i <= 30; i++) {
-            commentReactionService.update(new CommentReaction(commentService.getByKey((long) i), clientService.getByKey((long) i), true));
+            commentReactionService.update(new CommentReaction(commentService.getByKey((long) i), userService.getByKey((long) i), true));
         }
     }
 
