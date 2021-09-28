@@ -45,7 +45,7 @@ public class UserCommentController {
             @ApiResponse(responseCode = "200", description = "Successfully liked/disliked the comment"),
             @ApiResponse(responseCode = "404", description = "Comment is not found")
     })
-    @PostMapping(value = "/{commentId}/{positive}")
+    @PutMapping(value = "/{commentId}/{positive}")
     public ResponseEntity<Void> likeOrDislikeComment(@PathVariable Long commentId, @PathVariable boolean positive) {
 
         Comment comment = commentService.getByKey(commentId);
@@ -53,8 +53,8 @@ public class UserCommentController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        CommentReaction commentLike = new CommentReaction(comment, client, positive);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CommentReaction commentLike = new CommentReaction(comment, user, positive);
         commentReactionService.update(commentLike);
         log.info("The reaction on the comment was added as positive {}", commentLike.getPositive());
         return new ResponseEntity<>(HttpStatus.OK);
