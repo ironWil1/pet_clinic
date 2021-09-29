@@ -54,13 +54,13 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/comments.yml", "/datasets/clients.yml"})
     public void commentUpdated() throws Exception {
-        String tempComment = commentService.getByKey(103L).getContent(); // Comment before: "right comment"
+        String tempComment = "right comment";
         commentDto.setContent("updatedRightComment");
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 103)
                         .content(objectMapper.valueToTree(commentDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
-        assertThat(tempComment).isNotEqualTo(commentDto.getContent());
+        assertThat(tempComment).isNotEqualTo(commentService.getByKey(103L).getContent());
     }
 
     @Test
