@@ -55,7 +55,9 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                 .content(objectMapper.valueToTree(medicineDtoNew).toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(medicineDtoNew)));
         AssertionsForClassTypes.assertThat(++beforeCount).isEqualTo(medicineDao.getAll().size());
     }
 
@@ -68,7 +70,8 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                 .content(objectMapper.valueToTree(medicineDto3).toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(medicineDto3)));
         AssertionsForClassTypes.assertThat(beforeCount).isEqualTo(medicineDao.getAll().size());
     }
 
