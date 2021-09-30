@@ -10,7 +10,6 @@ import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,7 +30,6 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
     TopicMapper topicMapper;
 
     final String URI = "http://localhost:8090/api/admin/topic";
-    final HttpHeaders HEADERS = new HttpHeaders();
 
     static TopicDto topicDtoClosed;
     static TopicDto topicDtoOpen;
@@ -61,7 +59,6 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
                 ,userInfoDto, commentDtoList);
     }
 
-    // +mock, delete topic by id - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testDeleteTopicSuccess() throws Exception{
@@ -74,7 +71,6 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
         assertThat(--beforeCount).isEqualTo(topicDao.getAll().size());
     }
 
-    // +mock, delete topic by id - topic not found
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testDeleteTopicNotFound() throws Exception {
@@ -87,7 +83,6 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
 
-    // +mock, close topic - Success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testCloseTopicSuccess() throws Exception {
@@ -100,7 +95,6 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
 
-// +mock, close topic by id - NotFound
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testCloseTopicNotFound() throws Exception {
@@ -113,7 +107,6 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
 
-    // +mock, open topic  - Success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testOpenTopicSuccess() throws Exception {
@@ -125,8 +118,6 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
-
-// +mock, open topic where it closed - NotFound
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
@@ -140,15 +131,11 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
 
-    // +mock, put topic by id - Success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testUpdateTopicSuccess() throws Exception {
 
-        topicDtoUpdate = new TopicDto(101L, "Почему Земля круглая?", "Какой то контент"
-                , LocalDateTime.of(2021, 2, 7, 22, 00, 00)
-                ,LocalDateTime.of(2021, 2, 7, 22, 00, 00)
-                ,userInfoDto, commentDtoList);
+        topicDtoUpdate = new TopicDto(101L, "Почему Земля круглая?", "Какой то контент" , LocalDateTime.of(2021, 2, 7, 22, 00, 00),LocalDateTime.of(2021, 2, 7, 22, 00, 00),userInfoDto, commentDtoList);
 
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{topicId}", 100)
@@ -159,7 +146,7 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
                ;
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
-    // +mock, put topic by id - NotFound
+
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testUpdateTopicNotFound() throws Exception {
