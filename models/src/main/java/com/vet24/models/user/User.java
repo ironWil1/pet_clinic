@@ -82,8 +82,7 @@ public class User implements UserDetails {
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
+            orphanRemoval = true
     )
     private List<CommentReaction> commentReactions = new ArrayList<>();
 

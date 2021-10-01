@@ -3,7 +3,6 @@ package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.user.CommentDto;
 import com.vet24.models.mappers.user.CommentMapper;
-import com.vet24.models.user.Client;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.CommentReaction;
 import com.vet24.models.user.User;
