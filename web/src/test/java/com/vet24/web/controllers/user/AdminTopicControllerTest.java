@@ -15,10 +15,12 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 @WithUserDetails("admin@gmail.com")
 class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
 
@@ -51,17 +53,17 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
         commentDtoList.add(commentDto);
         topicDtoOpen = new TopicDto(101L, "Почему Земля круглая?", "Какой то контент"
                 , LocalDateTime.of(2021, 2, 7, 22, 00, 00)
-                ,LocalDateTime.of(2021, 2, 7, 22, 00, 00)
-        ,userInfoDto, commentDtoList);
+                , LocalDateTime.of(2021, 2, 7, 22, 00, 00)
+                , userInfoDto, commentDtoList);
         topicDtoClosed = new TopicDto(100L, "Какой сегодня день?", "Что то понаписал"
-                ,LocalDateTime.of(2021, 1, 2, 00, 00, 00)
-                ,LocalDateTime.of(2021, 6, 8, 14, 20, 00)
-                ,userInfoDto, commentDtoList);
+                , LocalDateTime.of(2021, 1, 2, 00, 00, 00)
+                , LocalDateTime.of(2021, 6, 8, 14, 20, 00)
+                , userInfoDto, commentDtoList);
     }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
-    public void testDeleteTopicSuccess() throws Exception{
+    public void testDeleteTopicSuccess() throws Exception {
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{topicId}", 100)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
@@ -135,15 +137,17 @@ class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testUpdateTopicSuccess() throws Exception {
 
-        topicDtoUpdate = new TopicDto(101L, "Почему Земля круглая?", "Какой то контент" , LocalDateTime.of(2021, 2, 7, 22, 00, 00),LocalDateTime.of(2021, 2, 7, 22, 00, 00),userInfoDto, commentDtoList);
+        topicDtoUpdate = new TopicDto(101L, "Почему Земля круглая?", "Какой то контент",
+                LocalDateTime.of(2021, 2, 7, 22, 00, 00),
+                LocalDateTime.of(2021, 2, 7, 22, 00, 00),
+                userInfoDto, commentDtoList);
 
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{topicId}", 100)
                         .content(objectMapper.valueToTree(topicDtoUpdate).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-               ;
+                .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
 
