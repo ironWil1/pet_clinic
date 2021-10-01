@@ -60,4 +60,15 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>7.15.0</version>
+            </plugin>
+        </plugins>
+    </build>
+
+
 </project>
