@@ -38,3 +38,6 @@ services:
 
 volumes:
   pg_data:
+networks:
+  default:
+    name: proj_dock_net
