@@ -10,4 +10,5 @@ public interface ClientService extends ReadWriteService<Long, Client> {
     Client getCurrentClientWithPets();
 
     Client getCurrentClientWithReactions();
+
 }

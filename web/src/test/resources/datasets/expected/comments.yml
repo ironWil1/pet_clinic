@@ -1,0 +1,30 @@
+COMMENT:
+  - ID : 101
+    CONTENT : "right  comment"
+    DATE_TIME : 2021-06-08 14:20:00
+    USER_ID : 3
+
+  - ID : 102
+    CONTENT : "This doctor is very bad!!"
+    DATE_TIME : 2021-06-08 14:20:00
+    USER_ID : 3
+
+  - ID : 103
+    CONTENT : "right  comment"
+    DATE_TIME : 2021-06-08 14:20:00
+    USER_ID : 3
+
+  - ID : 104
+    CONTENT : "wrong  comment"
+    DATE_TIME : 2021-06-08 14:20:00
+    USER_ID : 4
+
+  - ID : 105
+    CONTENT : "right  comment"
+    DATE_TIME : 2021-06-08 14:20:00
+    USER_ID : 4
+
+  - ID : 106
+    CONTENT : "wrong  comment"
+    DATE_TIME : 2021-06-08 14:20:00
+    USER_ID : 4

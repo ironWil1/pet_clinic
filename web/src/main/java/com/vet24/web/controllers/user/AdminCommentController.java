@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "api/admin/comment/")
 @Tag(name = "admin comment controller", description = "adminCommentController operations")
@@ -39,7 +41,7 @@ public class AdminCommentController {
             @ApiResponse(responseCode = "404", description = "Comment not found")
     })
     @PutMapping("{id}")
-    public ResponseEntity<CommentDto> updateComment(@RequestBody CommentDto commentDto,
+    public ResponseEntity<CommentDto> updateComment(@Valid @RequestBody CommentDto commentDto,
                                                     @PathVariable("id") Long id) {
         if (commentService.isExistByKey(id)) {
             log.info("Comment with id {} found", id);
@@ -71,4 +73,5 @@ public class AdminCommentController {
         }
         return ResponseEntity.ok().build();
     }
+
 }
