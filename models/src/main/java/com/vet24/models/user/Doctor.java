@@ -13,7 +13,7 @@ import java.util.List;
 
 @Entity
 @DiscriminatorValue("DOCTOR")
-@EqualsAndHashCode(callSuper = true,onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 public class Doctor extends User {
 
@@ -22,6 +22,12 @@ public class Doctor extends User {
             cascade = CascadeType.ALL
     )
     private List<Diagnosis> diagnoses = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "doctor",
+            cascade = CascadeType.ALL
+    )
+    private List<DoctorNonWorking> doctorNonWorkings = new ArrayList<>();
 
 
     public Doctor() {
