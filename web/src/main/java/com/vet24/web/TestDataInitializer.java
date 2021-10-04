@@ -327,7 +327,6 @@ public class TestDataInitializer implements ApplicationRunner {
             doctorScheduleList.add(new DoctorSchedule(doctor2, secondShift, 30));
         }
         doctorScheduleService.persistAll(doctorScheduleList);
-
     }
 
 //    public void topicInitializer() {
