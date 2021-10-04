@@ -311,9 +311,9 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void doctorNonWorkingInit() {
         List<DoctorNonWorking> doctorNonWorkings = Arrays.asList(
-                new DoctorNonWorking(doctorService.getByKey(1L), DayOffType.SICK_LEAVE, LocalDate.of(2021, 10, 15)),
-                new DoctorNonWorking(doctorService.getByKey(2L), DayOffType.DAY_OFF, LocalDate.of(2021, 10, 10)),
-                new DoctorNonWorking(doctorService.getByKey(3L), DayOffType.VACATION, LocalDate.of(2021, 10, 7))
+                new DoctorNonWorking(doctorService.getByKey(31L), DayOffType.SICK_LEAVE, LocalDate.of(2021, 10, 15)),
+                new DoctorNonWorking(doctorService.getByKey(32L), DayOffType.DAY_OFF, LocalDate.of(2021, 10, 10)),
+                new DoctorNonWorking(doctorService.getByKey(33L), DayOffType.VACATION, LocalDate.of(2021, 10, 7))
         );
         doctorNonWorkingService.persistAll(doctorNonWorkings);
     }
