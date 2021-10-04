@@ -2,15 +2,11 @@ package com.vet24.security.config;
 
 import java.util.Date;
 
-
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-
-
 
 @Component
 public class JwtUtils {
@@ -41,7 +37,6 @@ public class JwtUtils {
             return true;
         } catch (JwtException e) {
         }
-
         return false;
     }
 }
