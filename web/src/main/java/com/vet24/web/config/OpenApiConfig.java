@@ -16,20 +16,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfig {
 
-//    @Bean
-//    public JwtUtils createJwtUtils() {
-//        return new JwtUtils();
-//    }
-    @Bean
-    public TokenCreator createTokenCreator(){
-        return new TokenCreator();
-    }
+    @Autowired
+    JwtUtils jwtUtils;
 
     @Bean
     public OpenAPI customOpenAPI(@Value("${application-description}") String appDescription,
                                  @Value("${application-version}") String appVersion) {
 
         final String securitySchemeName = "bearerAuth";
+
+        String clientJwt = jwtUtils.generateJwtToken("client1@email.com");
+        String doctorJwt = jwtUtils.generateJwtToken("doctor33@gmail.com");
+        String managerJwt = jwtUtils.generateJwtToken("manager@gmail.com");
+        String adminJwt = jwtUtils.generateJwtToken("admin@gmail.com");
         OpenAPI openAPI = new OpenAPI()
                 .info(new Info()
                         .title("Pet Clinic API")
@@ -45,10 +44,10 @@ public class OpenApiConfig {
                                 .addSecuritySchemes(securitySchemeName,
                                         new SecurityScheme()
                                                 .name(securitySchemeName)
-                                                .description("ТОКЕН КЛИЕНТА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTYzMjMyNzE3MSwiZXhwIjoxNjM0MzI3MTcxfQ.j6h-ZfTXcuoLizl0yVREo263dkKu3T6D3SIKsYVQjXFKE7GlvDomG6rxeuGwPJIrZX2lZrowd3Yqy-dkV4Z25w\n"  + "\n" +
-                                                        "TOКЕН ДОКТОРА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2N0b3IxQGVtYWlsLmNvbSIsImlhdCI6MTYyNTgzMDIwOSwiZXhwIjoxNjI3ODMwMjA5fQ.nMiVtLW98Mvosmi3KnhQiyeudKZKBeaJuJDYKCPHp_zuX8kPyTrDIL3B2Nr7zzkjT75Ebk1_AIY5aAKxw6cs7A \n " + "\n" +
-                                                        "ТОКЕН МЕНЕДЖЕРА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYW5hZ2VyMUBlbWFpbC5jb20iLCJpYXQiOjE2MzIzMjU4NDEsImV4cCI6MTYzNDMyNTg0MX0.Ys9KjhPRl2OVNEBDwsWllRLpVbYn8_XblsLz7XeLKjZ5Invt9zBpP1mt6LO2CDzCH64-gUFgejBI55YNQeIjsg \n " + "\n" +
-                                                        "ТОКЕН АДМИНИСТРАТОРА : eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZW1haWwuY29tIiwiaWF0IjoxNjMyMzI2MTc2LCJleHAiOjE2MzQzMjYxNzZ9.zGZpb1caPiPgBm23FVIzeI-Un2RnuBcbOoElzkKn_ikr7A5vs1PQKkydigN3qLG0nwje8YpDTXZltlYxgd6sqg \n ")
+                                                .description("ТОКЕН КЛИЕНТА : \n" + clientJwt + "\n\n" +
+                                                        "TOКЕН ДОКТОРА : \n " + doctorJwt + "\n\n" +
+                                                        "ТОКЕН МЕНЕДЖЕРА : \n " + managerJwt + "\n\n" +
+                                                        "ТОКЕН АДМИНИСТРАТОРА : \n" + adminJwt)
                                                 .type(SecurityScheme.Type.HTTP)
                                                 .scheme("bearer")
                                                 .bearerFormat("JWT")
