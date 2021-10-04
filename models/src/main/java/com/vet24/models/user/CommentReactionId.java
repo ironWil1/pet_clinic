@@ -25,7 +25,7 @@ public class CommentReactionId implements Serializable {
     private Long commentId;
 
     @EqualsAndHashCode.Include
-    @Column(nullable= false,name="client_id")
-    private Long clientId;
+    @Column(nullable= false,name="user_id")
+    private Long userId;
 
 }

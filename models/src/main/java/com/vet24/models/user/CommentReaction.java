@@ -32,7 +32,7 @@ public class CommentReaction{
 
     @ManyToOne(fetch= FetchType.LAZY)
     @PrimaryKeyJoinColumn
-    @MapsId("clientId")
+    @MapsId("userId")
     private User user;
 
     @Column(nullable = false)
