@@ -10,4 +10,6 @@ public interface UserDao extends ReadWriteDao<Long, User> {
     Optional<User> getByEmail(String email);
 
     User getByUserEmail(String email);
+
+    User getWithAllCommentReactions(String email);
 }

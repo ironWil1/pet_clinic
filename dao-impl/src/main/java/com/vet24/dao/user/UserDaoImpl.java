@@ -30,4 +30,13 @@ public class UserDaoImpl extends ReadWriteDaoImpl<Long, User> implements UserDao
             return null;
         }
     }
+
+    public User getWithAllCommentReactions(String email) {
+        try {
+            return manager.createQuery("SELECT u FROM User u LEFT JOIN FETCH u.commentReactions WHERE u.email=:email", User.class)
+                    .setParameter("email", email).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }
