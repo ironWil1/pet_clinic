@@ -27,7 +27,6 @@ services:
 
   petclinic:
      container_name: petclinic_run
-#     image: petclinic:0.0.1
      build: .
      ports:
        - 8080:8080
