@@ -24,4 +24,10 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
         return userDao.getByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("Email %s doesn't exist!", email)));
     }
+
+
+    @Override
+    public User getWithAllCommentReactions(String email) {
+        return userDao.getWithAllCommentReactions(email);
+    }
 }
