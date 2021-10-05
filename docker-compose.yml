@@ -40,3 +40,4 @@ networks:
     external: true
       name: pet_network
 
+#Повторяем молитву снова
