@@ -39,4 +39,4 @@ networks:
   proj_net:
     external: true
       name: pet_network
-#СТАРЫЙ ДОБРЫЙ КОМЕНТ РАДИ КОМИТА)
+
