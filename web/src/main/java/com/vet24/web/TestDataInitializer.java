@@ -1,5 +1,6 @@
 package com.vet24.web;
 
+import com.vet24.models.enums.DayOffType;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.enums.WorkShift;
@@ -40,6 +41,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -71,6 +73,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final CommentReactionService commentReactionService;
     private final DiagnosisService diagnosisService;
     private final TopicService topicService;
+    private final DoctorNonWorkingService doctorNonWorkingService;
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
@@ -98,7 +101,8 @@ public class TestDataInitializer implements ApplicationRunner {
                                CatService catService, DogService dogService, DoctorService doctorService,
                                PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
-                               DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService) {
+                               DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
+                               DoctorNonWorkingService doctorNonWorkingService) {
         this.adminService = adminService;
         this.roleService = roleService;
         this.userService = userService;
@@ -122,6 +126,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.diagnosisService = diagnosisService;
         this.topicService = topicService;
         this.managerService = managerService;
+        this.doctorNonWorkingService = doctorNonWorkingService;
     }
 
     public void roleInitialize() {
@@ -274,7 +279,7 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void likeInitilaizer() {
         for (int i = 1; i <= 30; i++) {
-            commentReactionService.update(new CommentReaction(commentService.getByKey((long) i), clientService.getByKey((long) i), true));
+            commentReactionService.update(new CommentReaction(commentService.getByKey((long) i), userService.getByKey((long) i), true));
         }
     }
 
@@ -329,6 +334,15 @@ public class TestDataInitializer implements ApplicationRunner {
         doctorScheduleService.persistAll(doctorScheduleList);
     }
 
+    public void doctorNonWorkingInit() {
+        List<DoctorNonWorking> doctorNonWorkings = Arrays.asList(
+                new DoctorNonWorking(doctorService.getByKey(31L), DayOffType.SICK_LEAVE, LocalDate.of(2021, 10, 15)),
+                new DoctorNonWorking(doctorService.getByKey(32L), DayOffType.DAY_OFF, LocalDate.of(2021, 10, 10)),
+                new DoctorNonWorking(doctorService.getByKey(33L), DayOffType.VACATION, LocalDate.of(2021, 10, 7))
+        );
+        doctorNonWorkingService.persistAll(doctorNonWorkings);
+    }
+
 //    public void topicInitializer() {
 //        List<Topic> listTopic = new ArrayList<>();
 //        List<Comment> commentList = new ArrayList<>();
@@ -361,6 +375,7 @@ public class TestDataInitializer implements ApplicationRunner {
             adminInit();
             managerInit();
             doctorScheduleInit();
+            doctorNonWorkingInit();
         }
     }
 }

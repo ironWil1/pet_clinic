@@ -32,16 +32,16 @@ public class CommentReaction{
 
     @ManyToOne(fetch= FetchType.LAZY)
     @PrimaryKeyJoinColumn
-    @MapsId("clientId")
-    private Client client;
+    @MapsId("userId")
+    private User user;
 
     @Column(nullable = false)
     private Boolean positive;
 
-    public CommentReaction(Comment comment, Client client, Boolean positive) {
-        this.id = new CommentReactionId(comment.getId(),client.getId());
+    public CommentReaction(Comment comment, User user, Boolean positive) {
+        this.id = new CommentReactionId(comment.getId(),user.getId());
         this.comment = comment;
-        this.client = client;
+        this.user = user;
         this.positive = positive;
     }
 }
