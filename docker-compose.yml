@@ -13,6 +13,8 @@ services:
       - 5433:5432
     volumes:
       - pg_data:${PGDATA}pets
+    networks:
+      - proj_net
 
   test_db:
     container_name: test_pets_db
@@ -24,6 +26,8 @@ services:
       - PGDATA=${PGDATA}test_pets
     ports:
       - 5434:5432
+    networks:
+      - proj_net
 
   petclinic:
      container_name: petclinic_run
@@ -32,6 +36,8 @@ services:
        - 8080:8080
      depends_on:
        - db
+    networks:
+      - proj_net
 
 volumes:
   pg_data:
