@@ -32,6 +32,8 @@ services:
        - 8080:8080
      depends_on:
        - db
+     environment:
+       spring.profile.active: "prod"
 
 volumes:
   pg_data:
@@ -39,5 +41,3 @@ networks:
   default:
     external:
       name: pet_network
-
-#Повторяем молитву снова
