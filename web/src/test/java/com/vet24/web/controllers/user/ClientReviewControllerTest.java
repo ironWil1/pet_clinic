@@ -41,34 +41,6 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/doctors.yml", "/datasets/comments.yml"})
-    public void shouldBeDislikedComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}", 101L, false))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(
-                        (result) -> {
-                            Client client = clientService.getCurrentClientWithReactions();
-                            Assert.assertEquals(client.getCommentReactions().size(), 1);
-                            Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), false);
-                        }
-                );
-    }
-
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/doctors.yml", "/datasets/comments.yml"})
-    public void shouldBeLikedComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}", 102L, true))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(
-                        (result) -> {
-                            Client client = clientService.getCurrentClientWithReactions();
-                            Assert.assertEquals(client.getCommentReactions().size(), 1);
-                            Assert.assertEquals(client.getCommentReactions().get(0).getPositive(), true);
-                        }
-                );
-    }
-
-    @Test
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml","/datasets/doctor-review.yml", "/datasets/doctors.yml"})
     public void shouldBeUpdatedComment() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{doctorId}/review", 33)
@@ -108,6 +80,4 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
         assertThat(beforeCount).isEqualTo(commentDao.getAll().size());
     }
-
-
 }

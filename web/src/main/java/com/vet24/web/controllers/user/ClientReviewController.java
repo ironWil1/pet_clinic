@@ -39,17 +39,15 @@ public class ClientReviewController {
     private final CommentService commentService;
     private final DoctorReviewService doctorReviewService;
     private final UserService userService;
-    private final CommentReactionService commentReactionService;
     private final CommentMapper commentMapper;
 
     @Autowired
-    public ClientReviewController(DoctorService doctorService, ClientService clientService, CommentService commentService, DoctorReviewService doctorReviewService, UserService userService, CommentReactionService commentReactionService, CommentMapper commentMapper) {
+    public ClientReviewController(DoctorService doctorService, ClientService clientService, CommentService commentService, DoctorReviewService doctorReviewService, UserService userService, CommentMapper commentMapper) {
         this.doctorService = doctorService;
         this.clientService = clientService;
         this.commentService = commentService;
         this.doctorReviewService = doctorReviewService;
         this.userService = userService;
-        this.commentReactionService = commentReactionService;
         this.commentMapper = commentMapper;
     }
 
@@ -83,25 +81,7 @@ public class ClientReviewController {
     }
 
 
-    @Operation(summary = "like or dislike a comment")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully liked/disliked the comment"),
-            @ApiResponse(responseCode = "404", description = "Comment is not found")
-    })
-    @PostMapping(value = "/{commentId}/{positive}")
-    public ResponseEntity<Void> likeOrDislikeComment(@PathVariable Long commentId, @PathVariable boolean positive) {
 
-        Comment comment = commentService.getByKey(commentId);
-        if (comment == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        CommentReaction commentLike = new CommentReaction(comment, client, positive);
-        commentReactionService.update(commentLike);
-        log.info("The reaction on the comment was added as positive {}", commentLike.getPositive());
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 
     @Operation(summary = "update a comment")
     @ApiResponses(value = {
