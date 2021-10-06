@@ -25,7 +25,7 @@ building:
 test_maven:
   stage: test
   script:
-    - mvn clean test
+    - mvn clean test -Pprod
   tags:
     - clinic_docker_runner
   artifacts:

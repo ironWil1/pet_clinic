@@ -114,7 +114,23 @@
         </dependency>
 
     </dependencies>
-
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <activatedProperties> </activatedProperties>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <activatedProperties>prod,testprod</activatedProperties>
+            </properties>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>
