@@ -18,7 +18,7 @@ building:
   tags:
     - clinic_shell
   rules:
-    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH == 'master'
 
 
 
@@ -34,8 +34,7 @@ test_maven:
         - target/surefire-reports/TEST-*.xml
         - target/failsafe-reports/TEST-*.xml
   rules:
-    - if: $CI_COMMIT_BRANCH == 'master'
-
+    - if: $CI_MERGE_REQUEST_IID
 
 
 
