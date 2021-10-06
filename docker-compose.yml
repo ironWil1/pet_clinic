@@ -33,7 +33,7 @@ services:
      depends_on:
        - db
      environment:
-       spring.profile.active: "prod"
+       - SPRING_PROFILES_ACTIVE=testprod
 
 volumes:
   pg_data:
