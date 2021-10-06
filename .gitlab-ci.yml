@@ -9,6 +9,7 @@ building:
   stage: build
   before_script:
     - docker-compose down
+    - docker image prune -a -f
     - docker-compose build
   script:
     - docker-compose up -d
