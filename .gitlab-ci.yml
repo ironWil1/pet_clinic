@@ -2,10 +2,6 @@ stages:
   - test
   - build
 
-cache:
-  paths:
-    - root/.m2/repository
-
 building:
   stage: build
   before_script:
