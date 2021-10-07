@@ -116,6 +116,13 @@
             <artifactId>fast-uuid</artifactId>
             <version>0.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>7.15.0</version>
+        </dependency>
+
 
         <!--        mockito and junit  start    -->
         <dependency>
@@ -130,7 +137,6 @@
             <version>4.13.2</version>
             <scope>test</scope>
             <!--        mockito and junit  end    -->
-
         </dependency>
 
     </dependencies>
