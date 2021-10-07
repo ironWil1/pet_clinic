@@ -1,6 +1,7 @@
 stages:
   - test
   - build
+
 cache:
   paths:
     - .m2/repository
@@ -31,8 +32,8 @@ test_maven:
   artifacts:
     reports:
       junit:
-        - target/surefire-reports/TEST-*.xml
-        - target/failsafe-reports/TEST-*.xml
+        - web/target/surefire-reports/TEST-*.xml
+        - web/target/failsafe-reports/TEST-*.xml
   rules:
     - if: $CI_MERGE_REQUEST_IID
 
