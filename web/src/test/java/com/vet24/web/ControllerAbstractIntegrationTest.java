@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@TestPropertySource("classpath:/application-test.properties")
 @AutoConfigureMockMvc
 @DBUnit(schema = "public", caseInsensitiveStrategy = Orthography.LOWERCASE)
 @ClinicDBRider
