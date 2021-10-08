@@ -1,4 +1,5 @@
 stages:
+  - sonar-check
   - test
   - build
 
@@ -17,6 +18,21 @@ building:
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
 
+sonarqube-check:
+  stage: sonar-check
+  variables:
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+    SONAR_TOKEN: "4819dd90b912c5417be7c6551950ad6becbc1fc6"
+    SONAR_HOST_URL: "http://91.241.64.154:9000"
+    SONAR_PROJECT_KEY: "pet_clinic"
+  script:
+    - mvn test sonar:sonar -e -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+  tags:
+    - clinic_docker_runner
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
 
 
 test_maven:
