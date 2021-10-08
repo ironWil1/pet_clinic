@@ -4,6 +4,7 @@ import com.vet24.models.enums.DayOffType;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.enums.WorkShift;
+import com.vet24.models.medicine.Appointment;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.medicine.Medicine;
@@ -17,6 +18,7 @@ import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.*;
+import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.medicine.MedicineService;
@@ -67,13 +69,13 @@ public class TestDataInitializer implements ApplicationRunner {
     private final DogService dogService;
     private final PetService petService;
     private final DoctorService doctorService;
-    private final DoctorScheduleService doctorScheduleService;
     private final Environment environment;
     private final CommentService commentService;
     private final CommentReactionService commentReactionService;
     private final DiagnosisService diagnosisService;
     private final TopicService topicService;
     private final DoctorNonWorkingService doctorNonWorkingService;
+    private final AppointmentService appointmentService;
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
@@ -102,7 +104,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
-                               DoctorNonWorkingService doctorNonWorkingService) {
+                               DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService) {
         this.adminService = adminService;
         this.roleService = roleService;
         this.userService = userService;
@@ -127,6 +129,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.topicService = topicService;
         this.managerService = managerService;
         this.doctorNonWorkingService = doctorNonWorkingService;
+        this.appointmentService = appointmentService;
     }
 
     public void roleInitialize() {
@@ -334,6 +337,14 @@ public class TestDataInitializer implements ApplicationRunner {
         doctorNonWorkingService.persistAll(doctorNonWorkings);
     }
 
+    public void appointmentInit() {
+        List<Appointment> appointmentList = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            appointmentList.add(new Appointment(doctorService.getByKey((long)i), petService.getByKey((long)i), LocalDateTime.now().plusDays(7), "description" + i ));
+        }
+        appointmentService.persistAll(appointmentList);
+    }
+
 //    public void topicInitializer() {
 //        List<Topic> listTopic = new ArrayList<>();
 //        List<Comment> commentList = new ArrayList<>();
@@ -367,6 +378,7 @@ public class TestDataInitializer implements ApplicationRunner {
             managerInit();
             doctorScheduleInit();
             doctorNonWorkingInit();
+            appointmentInit();
         }
     }
 }
