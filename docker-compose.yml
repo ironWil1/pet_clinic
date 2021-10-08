@@ -27,14 +27,17 @@ services:
 
   petclinic:
      container_name: petclinic_run
-#     image: petclinic:0.0.1
      build: .
      ports:
        - 8080:8080
-     environment:
-       spring.datasource.url: "jdbc:postgresql://db:5432/pets"
      depends_on:
        - db
+     environment:
+       - SPRING_PROFILES_ACTIVE=prod
 
 volumes:
   pg_data:
+networks:
+  default:
+    external:
+      name: pet_network

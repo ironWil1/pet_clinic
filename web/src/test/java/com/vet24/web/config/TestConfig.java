@@ -15,7 +15,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.setup.SharedHttpSessionConfigurer.sharedHttpSession;
 
-@Profile("TestProfile")
+@Profile({"test", "testprod"})
 @Configuration
 public class TestConfig {
 
