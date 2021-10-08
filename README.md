@@ -101,3 +101,13 @@ For start VaadinPetClinicRunner you should:
 2. Install [required tools](https://vaadin.com/docs/v14/guide/install). 
 3. Reload maven dependencies and type ```npm install``` in the terminal.
 4. Run http://localhost:9090 in a browser.
+
+# Sonarqube Guide
+
+Для работы с Sonarqube в Idea нужно подключить плагин Sonarlint.
+1. Идём в настройки IDEA и в разделе Plugins находим плагин SonarLint и устанавливаем его.
+2. Открываем панель плагина, кликаем по иконке "Configure SonarLint".
+3. Далее "Configure the connection...", добавляем новый (SonarQube, не SonarCloud). URL: http://91.241.64.154:9000/
+4. Выбираем авторизацию по логину и паролю, вводим. Ok. Finish.
+5. Из выпадающего списка выбираем проект "pet_clinic". Ok.
+6. Если не получилось - гайд с картинками: https://habr.com/ru/company/krista/blog/469963/
