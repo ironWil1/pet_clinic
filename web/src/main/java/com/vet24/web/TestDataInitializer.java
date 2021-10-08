@@ -76,6 +76,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final TopicService topicService;
     private final DoctorNonWorkingService doctorNonWorkingService;
     private final AppointmentService appointmentService;
+    private final DoctorScheduleService doctorScheduleService;
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
