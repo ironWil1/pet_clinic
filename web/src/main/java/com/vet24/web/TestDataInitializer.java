@@ -3,8 +3,10 @@ package com.vet24.web;
 import com.vet24.models.enums.DayOffType;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.RoleNameEnum;
+import com.vet24.models.enums.WorkShift;
 import com.vet24.models.medicine.Appointment;
 import com.vet24.models.medicine.Diagnosis;
+import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Dog;
@@ -18,6 +20,7 @@ import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.*;
 import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
+import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.CatService;
 import com.vet24.service.pet.DogService;
@@ -73,11 +76,15 @@ public class TestDataInitializer implements ApplicationRunner {
     private final TopicService topicService;
     private final DoctorNonWorkingService doctorNonWorkingService;
     private final AppointmentService appointmentService;
+    private final DoctorScheduleService doctorScheduleService;
 
     private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
     private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
     private final Role ADMIN = new Role(RoleNameEnum.ADMIN);
     private final Role MANAGER = new Role(RoleNameEnum.MANAGER);
+
+    private final WorkShift firstShift = WorkShift.FIRST_SHIFT;
+    private final WorkShift secondShift = WorkShift.SECOND_SHIFT;
 
     private final List<Pet> PETS = new ArrayList<>();
     private final Gender MALE = Gender.MALE;
@@ -95,7 +102,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                EchinococcusProcedureService echinococcusProcedureService,
                                ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
                                CatService catService, DogService dogService, DoctorService doctorService,
-                               PetService petService, Environment environment, CommentService commentService,
+                               PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
                                DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService) {
@@ -104,6 +111,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.userService = userService;
         this.clientService = clientService;
         this.medicineService = medicineService;
+        this.doctorScheduleService = doctorScheduleService;
         this.doctorReviewService = doctorReviewService;
         this.vaccinationProcedureService = vaccinationProcedureService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
@@ -281,7 +289,7 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void doctorReviewInitializer() {
         List<DoctorReview> doctorReviews = new ArrayList<>();
-        Comment doctorReviewComment = null;
+        Comment doctorReviewComment;
         for (int i = 1; i <= 30; i++) {
             doctorReviewComment = new Comment(userService.getByKey((long) i + 30), "lorem " + (i + 30), LocalDateTime.now());
             commentService.persist(doctorReviewComment);
@@ -311,6 +319,14 @@ public class TestDataInitializer implements ApplicationRunner {
                     "manager", MANAGER));
         }
         managerService.persistAll(managerList);
+    }
+
+    private void doctorScheduleInit() {
+        List<DoctorSchedule> doctorScheduleList = new ArrayList<>();
+        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(31L), firstShift, 30));
+        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(32L), secondShift, 30));
+        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(33L), secondShift, 30));
+        doctorScheduleService.persistAll(doctorScheduleList);
     }
 
     public void doctorNonWorkingInit() {
@@ -361,6 +377,7 @@ public class TestDataInitializer implements ApplicationRunner {
             doctorReviewInitializer();
             adminInit();
             managerInit();
+            doctorScheduleInit();
             doctorNonWorkingInit();
             appointmentInit();
         }
