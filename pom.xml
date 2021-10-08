@@ -116,7 +116,7 @@
 
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>local</id>
             <properties>
                 <activatedProperties>local</activatedProperties>
             </properties>
