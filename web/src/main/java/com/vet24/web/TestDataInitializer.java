@@ -325,7 +325,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void appointmentInit() {
         List<Appointment> appointmentList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            appointmentList.add(new Appointment(doctorService.getByKey((long)i), petService.getByKey((long)i), LocalDateTime.now(), "description" + i ));
+            appointmentList.add(new Appointment(doctorService.getByKey((long)i), petService.getByKey((long)i), LocalDateTime.now().plusDays(7), "description" + i ));
         }
         appointmentService.persistAll(appointmentList);
     }
