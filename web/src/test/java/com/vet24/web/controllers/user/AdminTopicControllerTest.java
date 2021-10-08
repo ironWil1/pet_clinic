@@ -8,7 +8,7 @@ import com.vet24.models.dto.user.UserInfoDto;
 import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.BeforeClass;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -22,7 +22,7 @@ import java.util.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @WithUserDetails("admin@gmail.com")
-class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
+public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
     AdminTopicController adminTopicController;
