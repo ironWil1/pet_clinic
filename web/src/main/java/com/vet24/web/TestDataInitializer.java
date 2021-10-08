@@ -319,18 +319,9 @@ public class TestDataInitializer implements ApplicationRunner {
 
     private void doctorScheduleInit() {
         List<DoctorSchedule> doctorScheduleList = new ArrayList<>();
-        for (int i = 1; i < 5; i++) {
-            List<Doctor> doctorList = new ArrayList<>();
-            Doctor doctor1 = new Doctor("Yuriy", "Kuklachev", "kuklachev@rambler.ru",
-                    "testPassword", DOCTOR);
-            Doctor doctor2 = new Doctor("Andrey", "Alalakin", "andrew@rambler.ru",
-                    "testPassword2", DOCTOR);
-            doctorList.add(doctor1);
-            doctorList.add(doctor2);
-            doctorService.persistAll(doctorList);
-            doctorScheduleList.add(new DoctorSchedule(doctor1, firstShift, 30));
-            doctorScheduleList.add(new DoctorSchedule(doctor2, secondShift, 30));
-        }
+        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(31L), firstShift, 30));
+        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(32L), secondShift, 30));
+        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(33L), secondShift, 30));
         doctorScheduleService.persistAll(doctorScheduleList);
     }
 
