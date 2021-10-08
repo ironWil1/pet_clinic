@@ -22,8 +22,8 @@ sonarqube-check:
   stage: sonar-check
   variables:
     GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-    SONAR_TOKEN: "4819dd90b912c5417be7c6551950ad6becbc1fc6"
-    SONAR_HOST_URL: "http://91.241.64.154:9000"
+    SONAR_TOKEN: "ba00cdec2010b5084058842e1595cdb104055c9b"
+    SONAR_HOST_URL: "http://91.241.64.154:9000/"
     SONAR_PROJECT_KEY: "pet_clinic"
   script:
     - mvn test -P test_prod sonar:sonar -e -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
