@@ -9,13 +9,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.time.LocalDateTime;
-
+@WithMockUser(username="admin",roles={"USER","ADMIN"})
 public class AdminCommentControllerTest extends ControllerAbstractIntegrationTest {
 
     private final String URI = "http://localhost:8080/api/admin/comment";
