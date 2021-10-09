@@ -108,8 +108,15 @@ For start VaadinPetClinicRunner you should:
 1. Идём в настройки IDEA и в разделе Plugins находим плагин SonarLint и устанавливаем его.
 2. Открываем панель плагина, кликаем по иконке "Configure SonarLint".
 3. Далее "Configure the connection...", добавляем новый (SonarQube, не SonarCloud). URL: http://91.241.64.154:9000/
-4. Выбираем авторизацию по логину и паролю, вводим. Ok. Finish.
-5. Из выпадающего списка выбираем проект "pet_clinic". Ok.
+4. Выбираем авторизацию по логину и паролю, вводим данные, которые лежат в карточке gitlab "Аккаунты и ссылки на документацию":
+Логин: admin
+Пароль: qwertyASDFGH123456
+Ok. Finish.
+5. Из выпадающего списка выбираем проект "pet_clinic".
+
+![img.png](img.png)
+
+Жмём Ok.
 6. Если не получилось - гайд с картинками: https://habr.com/ru/company/krista/blog/469963/
 
 # Flyway Guide
