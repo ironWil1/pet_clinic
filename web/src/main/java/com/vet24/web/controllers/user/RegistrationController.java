@@ -82,18 +82,35 @@ public class RegistrationController {
         }
 
         Client foundOrNew = clientService.getClientByEmail(inputDto.getEmail());
-        if(foundOrNew == null){
-            foundOrNew = clientMapper.toEntity(inputDto);
-        }
-        else if(foundOrNew.getRole().getName()!=RoleNameEnum.UNVERIFIED_CLIENT) {
-            log.info("The client with id {} have repeated registration ",foundOrNew.getId());
+
+
+        //TODO отключил подтверждение почты при регистрации до момента пока не разберемся почему с сервера не отправляются письма
+
+//        if(foundOrNew == null){
+//            foundOrNew = clientMapper.toEntity(inputDto);
+//        }
+//        else if(foundOrNew.getRole().getName()!=RoleNameEnum.UNVERIFIED_CLIENT) {
+//            log.info("The client with id {} have repeated registration ",foundOrNew.getId());
+//            throw new RepeatedRegistrationException(repeatedRegistrationMsg);
+//        }
+//
+//        foundOrNew.setRole(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
+
+//        String tokenUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString() +
+//                "/api/registration/confirm/" + verificationService.createVerificationToken(foundOrNew);
+
+        if (foundOrNew != null) {
             throw new RepeatedRegistrationException(repeatedRegistrationMsg);
         }
 
-        foundOrNew.setRole(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
+        foundOrNew = clientMapper.toEntity(inputDto);
 
-        String tokenUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString() +
-                "/api/registration/confirm/" + verificationService.createVerificationToken(foundOrNew);
+        foundOrNew.setRole(new Role(RoleNameEnum.CLIENT));
+
+        clientService.persist(foundOrNew);
+
+        String tokenUrl = "";
+
         mailService.sendWelcomeMessage(inputDto.getEmail(), inputDto.getFirstname(), tokenUrl);
         log.info("The registration for client with id {} is created ",foundOrNew.getId());
         return new  ResponseEntity<>(HttpStatus.CREATED);
