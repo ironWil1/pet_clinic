@@ -11,4 +11,6 @@ public interface ClientService extends ReadWriteService<Long, Client> {
 
     Client getCurrentClientWithReactions();
 
+    Client getCurentClientEasy();
+
 }

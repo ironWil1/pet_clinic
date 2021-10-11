@@ -18,6 +18,13 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     }
 
     @Override
+    @Transactional
+    public Client getCurentClientEasy() {
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return clientDao.getClientByEmail(client.getUsername());
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Client getClientByEmail(String email) {
         return clientDao.getClientByEmail(email);
