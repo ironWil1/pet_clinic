@@ -64,7 +64,7 @@ public class ClientController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
     public ResponseEntity<ClientDto> getCurrentClient() {
-        Client client = clientService.getCurrentClientWithPets();
+        Client client = clientService.getCurentClientEasy();
         ClientDto clientDto = clientMapper.toDto(client);
         if (clientDto != null){
             log.info("The current client name is{}",clientDto.getLastname());

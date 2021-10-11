@@ -69,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/v3/api-docs/swagger-config/**","/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                .antMatchers("/api/auth/submit", "/api/registration","/auth").permitAll()
+                .antMatchers("/api/auth/submit", "/api/registration/**","/auth").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/client/**").hasRole("CLIENT")
                 .antMatchers("/api/doctor/**").hasRole("DOCTOR")
@@ -102,6 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
