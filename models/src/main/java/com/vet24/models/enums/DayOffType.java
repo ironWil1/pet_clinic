@@ -1,7 +1,7 @@
 package com.vet24.models.enums;
 
 public enum DayOffType {
-    VACATION,
-    DAY_OFF,
-    SICK_LEAVE;
+    VACATION, //отпуск
+    DAY_OFF, //отгул
+    SICK_LEAVE; //больничный
 }

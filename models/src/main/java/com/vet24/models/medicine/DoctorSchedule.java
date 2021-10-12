@@ -5,7 +5,7 @@ import lombok.*;
 import com.vet24.models.enums.WorkShift;
 
 import javax.persistence.*;
-
+//расписание работы докторов - указывается смена, в какю работает доктор в конкретную неделю
 @Entity
 @Getter
 @Setter
