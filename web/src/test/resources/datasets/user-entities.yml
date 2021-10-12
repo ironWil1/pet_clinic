@@ -46,6 +46,14 @@ USER_ENTITIES:
     LASTNAME: "Petrov"
     EMAIL: "user4@gmail.com"
     PASSWORD: "user4"
+  - ID: 31
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Dr."
+    LASTNAME: "Petrov"
+    EMAIL: "doctor31@email.com"
+    PASSWORD: "doctor"
 
 ROLE:
   - NAME: "ADMIN"
@@ -67,3 +75,5 @@ USER_ROLE:
     ROLE_NAME: "CLIENT"
   - USER_ID: 4
     ROLE_NAME: "CLIENT"
+  - USER_ID: 31
+    ROLE_NAME: "DOCTOR"
