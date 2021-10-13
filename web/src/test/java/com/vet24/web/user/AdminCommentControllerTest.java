@@ -9,13 +9,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 import java.time.LocalDateTime;
 
+@WithUserDetails("admin@gmail.com")
 public class AdminCommentControllerTest extends ControllerAbstractIntegrationTest {
 
     private final String URI = "http://localhost:8080/api/admin/comment";
@@ -35,7 +36,7 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/comments.yml", "/datasets/clients.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void commentUpdatedNotFound() throws Exception {
         commentDto.setContent("updatedTestComment");
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 1_000_000)
@@ -45,14 +46,14 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/comments.yml", "/datasets/clients.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void commentDeletedNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 1_000_000))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/comments.yml", "/datasets/clients.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void commentUpdated() throws Exception {
         String tempComment = "right comment";
         commentDto.setContent("updatedRightComment");
@@ -64,7 +65,7 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/comments.yml", "/datasets/clients.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void commentDeleted() throws Exception {
         int sizeBefore = commentService.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 101))
@@ -73,8 +74,7 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/comments.yml", "/datasets/clients.yml",
-            "/datasets/doctors.yml", "/datasets/doctor-review.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml","/datasets/comments.yml", "/datasets/doctor-review.yml"})
     public void commentNotDeletedBecauseConstraints() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 102))
                 .andExpect(MockMvcResultMatchers.status().isIAmATeapot());
