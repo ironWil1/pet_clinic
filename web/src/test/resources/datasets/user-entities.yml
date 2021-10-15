@@ -30,14 +30,7 @@ USER_ENTITIES:
     LASTNAME: "Petrov"
     EMAIL: "doctor103@email.com"
     PASSWORD: "doctor"
-  - ID: 33
-    USER_TYPE: "DOCTOR"
-    AVATAR: "test.png"
-    ENABLED: true
-    FIRSTNAME: "Doctor"
-    LASTNAME: "Doctor"
-    EMAIL: "doctor33@gmail.com"
-    PASSWORD: "user33"
+
   - ID: 34
     USER_TYPE: "DOCTOR"
     AVATAR: "test.png"
@@ -112,4 +105,6 @@ USER_ROLE:
   - USER_ID: 32
     ROLE_NAME: "DOCTOR"
   - USER_ID: 33
+    ROLE_NAME: "DOCTOR"
+  - USER_ID: 34
     ROLE_NAME: "DOCTOR"
