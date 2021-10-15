@@ -30,6 +30,22 @@ USER_ENTITIES:
     LASTNAME: "Petrov"
     EMAIL: "doctor103@email.com"
     PASSWORD: "doctor"
+  - ID: 33
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Doctor"
+    LASTNAME: "Doctor"
+    EMAIL: "doctor33@gmail.com"
+    PASSWORD: "user33"
+  - ID: 34
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Vinni"
+    LASTNAME: "Pukh"
+    EMAIL: "doctor34@gmail.com"
+    PASSWORD: "user34"
   - ID: 3
     USER_TYPE: "CLIENT"
     AVATAR: "test.png"
