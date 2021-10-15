@@ -1,10 +1,12 @@
 package com.vet24.web.controllers.user;
 
-import com.vet24.models.dto.user.CommentDto;
+
 import com.vet24.models.dto.user.DoctorNonWorkingDto;
 import com.vet24.models.mappers.user.DoctorNonWorikingMapper;
 import com.vet24.models.user.DoctorNonWorking;
 import com.vet24.service.user.DoctorNonWorkingService;
+import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "api/admin/doctor_non_working/")
@@ -27,21 +28,35 @@ public class AdminDoctorNonWorkingController {
 
     private final DoctorNonWorkingService doctorNonWorkingService;
     private final DoctorNonWorikingMapper doctorNonWorikingMapper;
+    private final DoctorService doctorService;
 
     @Autowired
-    public AdminDoctorNonWorkingController(DoctorNonWorkingService doctorNonWorkingService, DoctorNonWorikingMapper doctorNonWorikingMapper) {
+    public AdminDoctorNonWorkingController(DoctorNonWorkingService doctorNonWorkingService, DoctorNonWorikingMapper doctorNonWorikingMapper, DoctorService doctorService) {
         this.doctorNonWorkingService = doctorNonWorkingService;
         this.doctorNonWorikingMapper = doctorNonWorikingMapper;
+        this.doctorService = doctorService;
     }
 
+
     @Operation(summary = "create doctorNonWorking")
-    @ApiResponse(responseCode = "200", description = "Successfully created new DoctorNonWorking")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully created new DoctorNonWorking"),
+            @ApiResponse(responseCode = "404", description = "Doctor in DoctorNonWorking not found")
+    })
     @PostMapping("")
-    public ResponseEntity<DoctorNonWorkingDto> createDoctorNonWorking(@Valid @RequestBody DoctorNonWorkingDto doctorNonWorkingDto){
+    public ResponseEntity<DoctorNonWorkingDto> createDoctorNonWorking(@RequestBody DoctorNonWorkingDto doctorNonWorkingDto){
         DoctorNonWorking doctorNonWorking = doctorNonWorikingMapper.toEntity(doctorNonWorkingDto);
-        doctorNonWorkingService.persist(doctorNonWorking);
-        log.info("DoctorNonWorking create");
-        return ResponseEntity.ok(doctorNonWorikingMapper.toDto(doctorNonWorking));
+        Long docId = doctorNonWorkingDto.getDoctorId();
+        if(doctorService.getByKey(docId)!=null){
+            doctorNonWorking.setDoctor(doctorService.getByKey(docId));
+            doctorNonWorkingService.persist(doctorNonWorking);
+            log.info("DoctorNonWorking create");
+            return ResponseEntity.ok(doctorNonWorkingDto);
+        }else {
+            log.info("DoctorNonWorking have bad doctorId");
+            throw new NotFoundException("Doctor not found");
+        }
+
     }
 
 
@@ -58,10 +73,17 @@ public class AdminDoctorNonWorkingController {
                                                                    @PathVariable("id") Long id){
         if(doctorNonWorkingService.isExistByKey(id)){
             log.info("DoctorNonWorking with id {}",id);
-            DoctorNonWorking doctorNonWorking = doctorNonWorikingMapper.toEntity(doctorNonWorkingDto);
-            doctorNonWorking.setId(id);
-            doctorNonWorkingService.update(doctorNonWorking);
-            return ResponseEntity.ok(doctorNonWorikingMapper.toDto(doctorNonWorking));
+            Long docId = doctorNonWorkingDto.getDoctorId();
+            if(doctorService.getByKey(docId)!=null){
+                DoctorNonWorking doctorNonWorking = doctorNonWorikingMapper.toEntity(doctorNonWorkingDto);
+                doctorNonWorking.setId(id);
+                doctorNonWorking.setDoctor(doctorService.getByKey(docId));
+                doctorNonWorkingService.update(doctorNonWorking);
+                return ResponseEntity.ok(doctorNonWorkingDto);
+            }else {
+                log.info("DoctorNonWorking have bad doctorId");
+                throw new NotFoundException("Doctor not found");
+            }
         }else {
             log.info("DoctorNonWorking with id {} not found", id);
             throw new NotFoundException("DoctorNonWorking not found");

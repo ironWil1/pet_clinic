@@ -10,6 +10,7 @@ import com.vet24.web.ControllerAbstractIntegrationTest;
 import lombok.extern.slf4j.Slf4j;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import java.time.LocalDate;
 
 @Slf4j
-@WithUserDetails(value = "admin1@email.com")
+@WithUserDetails("admin@gmail.com")
 public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractIntegrationTest {
 
     private DoctorNonWorkingDto doctorNonWorkingDto;
@@ -36,18 +37,17 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
         doctorNonWorkingDto = new DoctorNonWorkingDto();
         doctorNonWorkingDto.setDate(LocalDate.of(2016,12,11));
         doctorNonWorkingDto.setType(DayOffType.DAY_OFF);
-        doctorNonWorkingDto.setDoctorDto(new DoctorDto(31L,"doc@email.com","doctorTest","testovich"));
+        doctorNonWorkingDto.setDoctorId(31L);
     }
     @Before
     public void createDoctorNonWorkingDtoTest() throws Exception {
         doctorNonWorkingDtoTest = new DoctorNonWorkingDto();
         doctorNonWorkingDtoTest.setDate(LocalDate.of(2015, 12, 11));
         doctorNonWorkingDtoTest.setType(DayOffType.DAY_OFF);
-        doctorNonWorkingDtoTest.setDoctorDto(new DoctorDto(31L, "doc@email.com", "doctorTest", "testovich"));
-    }
+        doctorNonWorkingDtoTest.setDoctorId(31L);    }
 
     @Test
-    @DataSet( value = {"datasets/doctor-non-working.yml"})
+    @DataSet( value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void updateDNWTest() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.put(URI+"{id}",2)
         .content(objectMapper.valueToTree(doctorNonWorkingDto).toString())
@@ -59,7 +59,7 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
 
 
     @Test
-    @DataSet( value = {"datasets/doctor-non-working.yml"})
+    @DataSet( value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void deleteDNWTest() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.delete(URI+"{id}",2))
                 .andDo(MockMvcResultHandlers.print())
@@ -68,7 +68,7 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     }
 
     @Test
-    @DataSet( value = {"datasets/doctor-non-working.yml"})
+    @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void createDNWTest() throws Exception{
         int count = doctorNonWorkingService.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
