@@ -3,6 +3,7 @@ package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.user.DoctorNonWorkingDto;
 import com.vet24.models.mappers.user.DoctorNonWorikingMapper;
+import com.vet24.models.user.Doctor;
 import com.vet24.models.user.DoctorNonWorking;
 import com.vet24.service.user.DoctorNonWorkingService;
 import com.vet24.service.user.DoctorService;
@@ -46,9 +47,9 @@ public class AdminDoctorNonWorkingController {
     @PostMapping("")
     public ResponseEntity<DoctorNonWorkingDto> createDoctorNonWorking(@RequestBody DoctorNonWorkingDto doctorNonWorkingDto){
         DoctorNonWorking doctorNonWorking = doctorNonWorikingMapper.toEntity(doctorNonWorkingDto);
-        Long docId = doctorNonWorkingDto.getDoctorId();
-        if(doctorService.getByKey(docId)!=null){
-            doctorNonWorking.setDoctor(doctorService.getByKey(docId));
+        Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
+        if(doc!=null){
+            doctorNonWorking.setDoctor(doc);
             doctorNonWorkingService.persist(doctorNonWorking);
             log.info("DoctorNonWorking create");
             return ResponseEntity.ok(doctorNonWorkingDto);
@@ -73,11 +74,11 @@ public class AdminDoctorNonWorkingController {
                                                                    @PathVariable("id") Long id){
         if(doctorNonWorkingService.isExistByKey(id)){
             log.info("DoctorNonWorking with id {}",id);
-            Long docId = doctorNonWorkingDto.getDoctorId();
-            if(doctorService.getByKey(docId)!=null){
+            Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
+            if(doc!=null){
                 DoctorNonWorking doctorNonWorking = doctorNonWorikingMapper.toEntity(doctorNonWorkingDto);
                 doctorNonWorking.setId(id);
-                doctorNonWorking.setDoctor(doctorService.getByKey(docId));
+                doctorNonWorking.setDoctor(doc);
                 doctorNonWorkingService.update(doctorNonWorking);
                 return ResponseEntity.ok(doctorNonWorkingDto);
             }else {
