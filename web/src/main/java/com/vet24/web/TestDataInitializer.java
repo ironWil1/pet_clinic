@@ -50,7 +50,7 @@ import java.util.stream.Stream;
 
 
 @Component
-@Profile("!TestProfile")
+@Profile("!test")
 public class TestDataInitializer implements ApplicationRunner {
 
     private final AdminService adminService;
