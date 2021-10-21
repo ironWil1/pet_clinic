@@ -94,14 +94,6 @@ Now you can create, edit, delete event:
 3) Delete notification in swagger /notification/delete 
 - we need to add event id, that was received in the response when creating event
 
-# Vaadin Guide
-
-For start VaadinPetClinicRunner you should: 
-1. Add vaadin/pom.xml file in your current project. 
-2. Install [required tools](https://vaadin.com/docs/v14/guide/install). 
-3. Reload maven dependencies and type ```npm install``` in the terminal.
-4. Run http://localhost:9090 in a browser.
-
 # Sonarqube Guide
 
 Для работы с Sonarqube в Idea нужно подключить плагин Sonarlint.
