@@ -129,3 +129,4 @@ For start VaadinPetClinicRunner you should:
 
 1. В выпадающем меню выбираем пункт "Edit Configurations..."
 2. В поле "Active profiles" пишем имя профиля "test".
+3. Нажимаем "Apply" и "OK".
