@@ -1,9 +1,7 @@
 package com.vet24.service.user;
 
-import com.vet24.dao.ReadWriteDao;
 import com.vet24.dao.user.ClientDao;
 import com.vet24.models.user.Client;
-import com.vet24.models.user.User;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
