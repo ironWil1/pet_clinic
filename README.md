@@ -94,14 +94,6 @@ Now you can create, edit, delete event:
 3) Delete notification in swagger /notification/delete 
 - we need to add event id, that was received in the response when creating event
 
-# Vaadin Guide
-
-For start VaadinPetClinicRunner you should: 
-1. Add vaadin/pom.xml file in your current project. 
-2. Install [required tools](https://vaadin.com/docs/v14/guide/install). 
-3. Reload maven dependencies and type ```npm install``` in the terminal.
-4. Run http://localhost:9090 in a browser.
-
 # Sonarqube Guide
 
 Для работы с Sonarqube в Idea нужно подключить плагин Sonarlint.
@@ -111,3 +103,27 @@ For start VaadinPetClinicRunner you should:
 4. Выбираем авторизацию по логину и паролю, вводим. Ok. Finish.
 5. Из выпадающего списка выбираем проект "pet_clinic". Ok.
 6. Если не получилось - гайд с картинками: https://habr.com/ru/company/krista/blog/469963/
+
+# Профили
+
+1. Используется по умолчанию: local.
+2. Для запущенного сервера: prod.
+3. Для тестирования в среде разработки: test.
+4. Для прогона тестов на сервере: testprod.
+
+Для изменения профиля "local" на профиль "test" необходимо выполнить следующие действия:
+
+1. В боковом меню открываем дерево проекта, выбираем JUnit тест и правой кнопкой мыши вызываем выпадающее меню.
+2. В меню выбираем пункт "More Run/Debug" -> "Modify Run Configuration..."
+3. Открывается окно создания конфигурации.
+4. В разделе "Build and run" выбираем поле ввода аргументов командной строки "VM options" 
+   и добавляем к ключу "-ea" ключ "-Dspring.profiles.active=test".
+   (Получится "-ea -Dspring.profiles.active=test")
+5. Нажимаем "Apply" и "OK". В результате профиль изменится и тест будет доступен для запуска в панели навигации.
+
+Для смены профиля при запуске сервера, выбираем в дереве проекта com.vet24.web.PetClinicApplication
+и правой кнопкой мыши вызываем выпадающее меню.
+
+1. В выпадающем меню выбираем пункт "Edit Configurations..."
+2. В поле "Active profiles" пишем имя профиля "testprod".
+3. Нажимаем "Apply" и "OK".

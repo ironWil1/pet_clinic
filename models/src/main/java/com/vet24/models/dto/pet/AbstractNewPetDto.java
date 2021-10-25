@@ -8,9 +8,7 @@ import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
@@ -25,8 +23,8 @@ import java.time.LocalDate;
 public abstract class AbstractNewPetDto {
     @NotBlank(message = "Поле name не должно быть пустым")
     private String name;
-    private PetType petType;
-    @PastOrPresent(message = "Поле birthDate должно содержать прошедшую дату")
+    private PetType petType; //cat, dog
+    @PastOrPresent(message = "Поле birthDay должно быть прошедшим либо настоящим временем")
     private LocalDate birthDay;
     private Gender gender; //male, female
     @NotBlank(message = "Поле breed не должно быть пустым")

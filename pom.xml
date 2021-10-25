@@ -137,7 +137,7 @@
             </properties>
         </profile>
         <profile>
-            <id>test_prod</id>
+            <id>testprod</id>
             <properties>
                 <activatedProperties>testprod</activatedProperties>
             </properties>
