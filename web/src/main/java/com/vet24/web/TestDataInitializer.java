@@ -38,7 +38,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -48,9 +47,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-
 @Component
-@Profile("!TestProfile")
+@Profile({"local", "prod"})
 public class TestDataInitializer implements ApplicationRunner {
 
     private final AdminService adminService;
