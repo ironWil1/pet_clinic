@@ -29,3 +29,4 @@ public class DefaultPasswordEncoderFactories {
         return new DelegatingPasswordEncoder(encodingId, encoders);
     }
 }
+
