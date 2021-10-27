@@ -9,6 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class AdminServiceImpl extends ReadWriteServiceImpl<Long, Admin> implements AdminService {
 
@@ -45,5 +48,28 @@ public class AdminServiceImpl extends ReadWriteServiceImpl<Long, Admin> implemen
             admin.setPassword(password);
         }
         return adminDao.update(admin);
+    }
+
+    @Override
+    @Transactional
+    public void persistAll(List<Admin> admins) {
+        for (Admin admin : admins) {
+            String password = passwordEncoder.encode(admin.getPassword());
+            admin.setPassword(password);
+        }
+        adminDao.persistAll(admins);
+    }
+
+    @Override
+    @Transactional
+    public List<Admin> updateAll(List<Admin> admins) {
+        for (Admin admin : admins) {
+            String newPassword = admin.getPassword();
+            if(passwordEncoder.upgradeEncoding(newPassword)) {
+                String password = passwordEncoder.encode(newPassword);
+                admin.setPassword(password);
+            }
+        }
+        return adminDao.updateAll(admins);
     }
 }
