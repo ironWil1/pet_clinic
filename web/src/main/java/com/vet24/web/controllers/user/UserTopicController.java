@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.user;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.user.CommentDto;
 import com.vet24.models.dto.user.TopicDto;
 import com.vet24.models.exception.BadRequestException;
@@ -8,6 +9,7 @@ import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Topic;
 import com.vet24.models.user.User;
+import com.vet24.models.util.View;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.CommentService;
 import com.vet24.service.user.TopicService;
@@ -112,6 +114,7 @@ public class UserTopicController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @JsonView(View.Public1.class)
     @Operation(summary = "update info from topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic is update",

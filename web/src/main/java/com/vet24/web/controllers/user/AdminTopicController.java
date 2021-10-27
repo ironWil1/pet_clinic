@@ -1,10 +1,12 @@
 package com.vet24.web.controllers.user;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.user.TopicDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.models.user.Topic;
+import com.vet24.models.util.View;
 import com.vet24.service.user.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -82,7 +84,7 @@ public class AdminTopicController {
         } else throw new NotFoundException("Топик не найден");
     }
 
-
+    @JsonView(View.Public2.class)
     @Operation(summary = "update into from topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic is update",
