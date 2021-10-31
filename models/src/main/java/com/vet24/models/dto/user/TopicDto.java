@@ -19,28 +19,28 @@ import java.util.List;
 @NoArgsConstructor
 public class TopicDto {
 
-    @JsonView(View.Public1.class)
+    @JsonView({View.Put.class, View.Get.class})
     @Null(groups = {OnCreate.class})
     @NotNull(groups = {OnUpdate.class})
     private Long id;
 
-    @JsonView({View.Public1.class, View.Public2.class})
+    @JsonView({View.Put.class, View.Post.class, View.Get.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     private String title;
 
-    @JsonView({View.Public1.class, View.Public2.class})
+    @JsonView({View.Put.class, View.Post.class, View.Get.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     private String content;
 
-    @JsonView(View.Ignore.class)
+    @JsonView(View.Get.class)
     private LocalDateTime creationDate;
 
-    @JsonView(View.Ignore.class)
+    @JsonView(View.Get.class)
     private LocalDateTime lastUpdateDate;
 
-    @JsonView(View.Ignore.class)
+    @JsonView(View.Get.class)
     private UserInfoDto topicStarter;
 
-    @JsonView(View.Ignore.class)
+    @JsonView(View.Get.class)
     private List<CommentDto> commentDtoList;
 }

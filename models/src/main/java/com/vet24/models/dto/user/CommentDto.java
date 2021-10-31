@@ -10,21 +10,22 @@ import java.time.LocalDateTime;
 @Data
 public class CommentDto {
 
-    @JsonView(View.Ignore.class)
+    @JsonView(View.Get.class)
     private Long id;
 
-    @JsonView(View.Ignore.class)
-    private UserInfoDto UserInfoDto;
-
+    @JsonView({View.Get.class, View.Put.class})
     @NotBlank
     private String content;
 
-    @JsonView(View.Ignore.class)
+    @JsonView(View.Get.class)
     private LocalDateTime dateTime;
 
-    @JsonView(View.Ignore.class)
+    @JsonView(View.Get.class)
     private int likes;
 
-    @JsonView(View.Ignore.class)
+    @JsonView(View.Get.class)
     private int dislike;
+
+    @JsonView(View.Get.class)
+    private UserInfoDto userInfoDto;
 }

@@ -28,6 +28,7 @@ import org.webjars.NotFoundException;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -102,19 +103,19 @@ public class UserTopicController {
     })
 
     @PostMapping()
-    public ResponseEntity<Void> createTopic(@RequestBody(required = false) TopicDto topicDto) {
+    public ResponseEntity<Void> createTopic(@JsonView(View.Post.class)
+                                            @RequestBody(required = false) TopicDto topicDto) {
         if (topicDto.getTitle().trim().equals("") || topicDto.getContent().trim().equals("")) {
             throw new BadRequestException("title or content can't null");
         }
         Topic topic = topicMapper.toEntity(topicDto);
         topic.setTopicStarter((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        topic.setId(null);
-        topic.setComments(null);
+        topic.setCreationDate(LocalDateTime.now());
+        topic.setLastUpdateDate(LocalDateTime.now());
         topicService.persist(topic);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @JsonView(View.Public1.class)
     @Operation(summary = "update info from topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic is update",
@@ -123,7 +124,8 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
     @PutMapping()
-    public ResponseEntity<TopicDto> updateTopic(@RequestBody(required = false) TopicDto topicDto) {
+    public ResponseEntity<TopicDto> updateTopic(@JsonView(View.Put.class)
+                                                @RequestBody(required = false) TopicDto topicDto) {
         if (!topicService.isExistByKey(topicDto.getId())) {
             throw new NotFoundException("topic not found");
         }

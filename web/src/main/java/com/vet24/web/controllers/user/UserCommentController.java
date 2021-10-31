@@ -67,9 +67,9 @@ public class UserCommentController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentDto.class))),
             @ApiResponse(responseCode = "404", description = "Comment not found"),
     })
-    @PostMapping(value = "/{commentId}")
-    @JsonView(View.Public.class)
+    @PutMapping(value = "/{commentId}")
     public ResponseEntity<CommentDto> createOrUpdate(@PathVariable("commentId") Long commentId,
+                                                     @JsonView(View.Put.class)
                                                      @Valid @RequestBody CommentDto commentDto) {
         if (commentService.isExistByKey(commentId)) {
             log.info("Comment with id {} found", commentId);

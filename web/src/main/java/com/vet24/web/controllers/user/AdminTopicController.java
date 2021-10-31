@@ -84,19 +84,18 @@ public class AdminTopicController {
         } else throw new NotFoundException("Топик не найден");
     }
 
-    @JsonView(View.Public2.class)
-    @Operation(summary = "update into from topic")
+    @Operation(summary = "update info from topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic is update",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = TopicDto.class))),
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
-    @PutMapping("{topicId}")
-    public ResponseEntity<TopicDto> updateTopic(@Validated(OnUpdate.class) @RequestBody(required = false) TopicDto topicDto,
-                                                @PathVariable("topicId") Long id) {
-        if (!topicService.isExistByKey(id)) throw new NotFoundException("topic not found");
-        Topic topic = topicService.getByKey(id);
+    @PutMapping()
+    public ResponseEntity<TopicDto> updateTopic(@JsonView(View.Put.class)
+                                                @Validated(OnUpdate.class) @RequestBody(required = false) TopicDto topicDto) {
+        if (!topicService.isExistByKey(topicDto.getId())) throw new NotFoundException("topic not found");
+        Topic topic = topicService.getByKey(topicDto.getId());
         topic.setTitle(topicDto.getTitle());
         topic.setContent(topicDto.getContent());
         topicService.update(topic);

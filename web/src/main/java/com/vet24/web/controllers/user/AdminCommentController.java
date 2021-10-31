@@ -43,8 +43,8 @@ public class AdminCommentController {
             @ApiResponse(responseCode = "404", description = "Comment not found")
     })
     @PutMapping("{id}")
-    @JsonView(View.Public.class)
-    public ResponseEntity<CommentDto> updateComment(@Valid @RequestBody CommentDto commentDto,
+    public ResponseEntity<CommentDto> updateComment(@JsonView(View.Put.class)
+                                                    @Valid @RequestBody CommentDto commentDto,
                                                     @PathVariable("id") Long id) {
         if (commentService.isExistByKey(id)) {
             log.info("Comment with id {} found", id);

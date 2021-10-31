@@ -36,6 +36,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     static TopicDto topicDtoClosed;
     static TopicDto topicDtoOpen;
     static TopicDto topicDtoUpdate;
+    static TopicDto topicDtoNotFound;
     static UserInfoDto userInfoDto;
     static CommentDto commentDto;
     static List<CommentDto> commentDtoList = new ArrayList<>();
@@ -56,6 +57,10 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                 , LocalDateTime.of(2021, 2, 7, 22, 00, 00)
                 , userInfoDto, commentDtoList);
         topicDtoClosed = new TopicDto(100L, "Какой сегодня день?", "Что то понаписал"
+                , LocalDateTime.of(2021, 1, 2, 00, 00, 00)
+                , LocalDateTime.of(2021, 6, 8, 14, 20, 00)
+                , userInfoDto, commentDtoList);
+        topicDtoNotFound = new TopicDto(100584L, "Какой сегодня день?", "Что то понаписал"
                 , LocalDateTime.of(2021, 1, 2, 00, 00, 00)
                 , LocalDateTime.of(2021, 6, 8, 14, 20, 00)
                 , userInfoDto, commentDtoList);
@@ -143,7 +148,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                 userInfoDto, commentDtoList);
 
         int beforeCount = topicDao.getAll().size();
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{topicId}", 100)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI)
                         .content(objectMapper.valueToTree(topicDtoUpdate).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -155,8 +160,8 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testUpdateTopicNotFound() throws Exception {
         int beforeCount = topicDao.getAll().size();
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{topicId}", 108562)
-                        .content(objectMapper.valueToTree(topicDtoClosed).toString())
+        mockMvc.perform(MockMvcRequestBuilders.put(URI)
+                        .content(objectMapper.valueToTree(topicDtoNotFound).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
