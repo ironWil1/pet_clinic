@@ -50,11 +50,11 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     @DataSet( value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void updateDNWTest() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.put(URI+"{id}",2)
-        .content(objectMapper.valueToTree(doctorNonWorkingDto).toString())
+        .content(objectMapper.writeValueAsString(doctorNonWorkingDto))
         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
-        assertThat(doctorNonWorkingDtoTest).isNotEqualTo(doctorNonWorkingService.getByKey(2l));
+        assertThat(doctorNonWorkingDto).isNotEqualTo(doctorNonWorkingService.getByKey(2l));
     }
 
 
@@ -68,11 +68,11 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     }
 
     @Test
-    @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
+    @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true, transactional = true)
     public void createDNWTest() throws Exception{
         int count = doctorNonWorkingService.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
-                .content(objectMapper.valueToTree(doctorNonWorkingDto).toString())
+                .content(objectMapper.writeValueAsString(doctorNonWorkingDto))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
