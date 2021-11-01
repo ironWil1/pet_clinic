@@ -1,13 +1,13 @@
 DOCTOR_NON_WORKING:
-  - ID: 1
+  - ID: 100
     DATE: 2021-10-15
     TYPE: SICK_LEAVE
     DOCTOR_ID: 31
-  - ID: 2
+  - ID: 101
     DATE: 2021-10-12
     TYPE: DAY_OFF
     DOCTOR_ID: 32
-  - ID: 3
+  - ID: 102
     DATE: 2021-11-10
     TYPE: VACATION
     DOCTOR_ID: 33
