@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.user;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.user.CommentDto;
 import com.vet24.models.dto.user.TopicDto;
 import com.vet24.models.exception.BadRequestException;
@@ -8,6 +9,7 @@ import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Topic;
 import com.vet24.models.user.User;
+import com.vet24.models.util.View;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.CommentService;
 import com.vet24.service.user.TopicService;
@@ -26,6 +28,7 @@ import org.webjars.NotFoundException;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -100,14 +103,15 @@ public class UserTopicController {
     })
 
     @PostMapping()
-    public ResponseEntity<Void> createTopic(@RequestBody(required = false) TopicDto topicDto) {
+    public ResponseEntity<Void> createTopic(@JsonView(View.Post.class)
+                                            @RequestBody(required = false) TopicDto topicDto) {
         if (topicDto.getTitle().trim().equals("") || topicDto.getContent().trim().equals("")) {
             throw new BadRequestException("title or content can't null");
         }
         Topic topic = topicMapper.toEntity(topicDto);
         topic.setTopicStarter((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        topic.setId(null);
-        topic.setComments(null);
+        topic.setCreationDate(LocalDateTime.now());
+        topic.setLastUpdateDate(LocalDateTime.now());
         topicService.persist(topic);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -120,7 +124,8 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
     @PutMapping()
-    public ResponseEntity<TopicDto> updateTopic(@RequestBody(required = false) TopicDto topicDto) {
+    public ResponseEntity<TopicDto> updateTopic(@JsonView(View.Put.class)
+                                                @RequestBody(required = false) TopicDto topicDto) {
         if (!topicService.isExistByKey(topicDto.getId())) {
             throw new NotFoundException("topic not found");
         }
