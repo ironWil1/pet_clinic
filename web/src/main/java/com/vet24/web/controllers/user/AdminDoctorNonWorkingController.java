@@ -35,7 +35,6 @@ public class AdminDoctorNonWorkingController {
         this.doctorService = doctorService;
     }
 
-
     @Operation(summary = "create doctorNonWorking")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully created new DoctorNonWorking"),
@@ -56,7 +55,6 @@ public class AdminDoctorNonWorkingController {
         }
     }
 
-
     @Operation(summary = "edit doctorNonWorking")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "DoctorNonWorking updated",
@@ -69,9 +67,10 @@ public class AdminDoctorNonWorkingController {
                                                                     @PathVariable("id") Long id) {
         if (doctorNonWorkingService.isExistByKey(id)) {
             log.info("DoctorNonWorking with id {}", id);
+            DoctorNonWorking doctorNonWorking = doctorNonWorikingMapper.toEntity(doctorNonWorkingDto);
             Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
             if (doc != null) {
-                DoctorNonWorking doctorNonWorking = doctorNonWorikingMapper.toEntity(doctorNonWorkingDto);
+                doctorNonWorking.setId(id);
                 doctorNonWorking.setDoctor(doc);
                 doctorNonWorkingService.update(doctorNonWorking);
                 return ResponseEntity.ok(doctorNonWorkingDto);
