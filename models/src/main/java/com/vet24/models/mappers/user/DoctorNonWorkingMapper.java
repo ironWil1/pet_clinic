@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface DoctorNonWorikingMapper extends DtoMapper<DoctorNonWorking, DoctorNonWorkingDto>, EntityMapper<DoctorNonWorkingDto,DoctorNonWorking> {
+public interface DoctorNonWorkingMapper extends DtoMapper<DoctorNonWorking, DoctorNonWorkingDto>, EntityMapper<DoctorNonWorkingDto,DoctorNonWorking> {
 
 
     @Override

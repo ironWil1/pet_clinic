@@ -1,7 +1,7 @@
 package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.user.DoctorNonWorkingDto;
-import com.vet24.models.mappers.user.DoctorNonWorikingMapper;
+import com.vet24.models.mappers.user.DoctorNonWorkingMapper;
 import com.vet24.models.user.Doctor;
 import com.vet24.models.user.DoctorNonWorking;
 import com.vet24.service.user.DoctorNonWorkingService;
@@ -25,13 +25,13 @@ import org.webjars.NotFoundException;
 public class AdminDoctorNonWorkingController {
 
     private final DoctorNonWorkingService doctorNonWorkingService;
-    private final DoctorNonWorikingMapper doctorNonWorikingMapper;
+    private final DoctorNonWorkingMapper doctorNonWorkingMapper;
     private final DoctorService doctorService;
 
     @Autowired
-    public AdminDoctorNonWorkingController(DoctorNonWorkingService doctorNonWorkingService, DoctorNonWorikingMapper doctorNonWorikingMapper, DoctorService doctorService) {
+    public AdminDoctorNonWorkingController(DoctorNonWorkingService doctorNonWorkingService, DoctorNonWorkingMapper doctorNonWorkingMapper, DoctorService doctorService) {
         this.doctorNonWorkingService = doctorNonWorkingService;
-        this.doctorNonWorikingMapper = doctorNonWorikingMapper;
+        this.doctorNonWorkingMapper = doctorNonWorkingMapper;
         this.doctorService = doctorService;
     }
 
@@ -42,7 +42,7 @@ public class AdminDoctorNonWorkingController {
     })
     @PostMapping("")
     public ResponseEntity<DoctorNonWorkingDto> createDoctorNonWorking(@RequestBody DoctorNonWorkingDto doctorNonWorkingDto) {
-        DoctorNonWorking doctorNonWorking = doctorNonWorikingMapper.toEntity(doctorNonWorkingDto);
+        DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
         Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
         if (doc != null) {
             doctorNonWorking.setDoctor(doc);
@@ -67,7 +67,7 @@ public class AdminDoctorNonWorkingController {
                                                                     @PathVariable("id") Long id) {
         if (doctorNonWorkingService.isExistByKey(id)) {
             log.info("DoctorNonWorking with id {}", id);
-            DoctorNonWorking doctorNonWorking = doctorNonWorikingMapper.toEntity(doctorNonWorkingDto);
+            DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
             Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
             if (doc != null) {
                 doctorNonWorking.setId(id);
