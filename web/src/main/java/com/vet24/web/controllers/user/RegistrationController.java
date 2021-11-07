@@ -84,19 +84,24 @@ public class RegistrationController {
         if (foundOrNew == null) {
             foundOrNew = clientMapper.toEntity(inputDto);
             foundOrNew.setRole(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
+            String tokenUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString() +
+                    "/api/registration/confirm/" + verificationService.createVerificationToken(foundOrNew);
             clientService.persist(foundOrNew);
+            mailService.sendWelcomeMessage(inputDto.getEmail(), inputDto.getFirstname(), tokenUrl);
+            log.info("The registration for client with id {} is created ", foundOrNew.getId());
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } else if (foundOrNew.getRole().getName() != RoleNameEnum.UNVERIFIED_CLIENT) {
             log.info("The client with id {} have repeated registration ", foundOrNew.getId());
             throw new RepeatedRegistrationException(repeatedRegistrationMsg);
         } else {
             VerificationToken verificationToken = verificationService.findByClientId(foundOrNew.getId());
             verificationService.delete(verificationToken);
+            String tokenUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString() +
+                    "/api/registration/confirm/" + verificationService.createVerificationToken(foundOrNew);
+            mailService.sendWelcomeMessage(inputDto.getEmail(), inputDto.getFirstname(), tokenUrl);
+            log.info("The registration for client with id {} is created ", foundOrNew.getId());
+            return new ResponseEntity<>(HttpStatus.CREATED);
         }
-        String tokenUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString() +
-                "/api/registration/confirm/" + verificationService.createVerificationToken(foundOrNew);
-        mailService.sendWelcomeMessage(inputDto.getEmail(), inputDto.getFirstname(), tokenUrl);
-        log.info("The registration for client with id {} is created ", foundOrNew.getId());
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Operation(summary = "Confirm email of a new client")
