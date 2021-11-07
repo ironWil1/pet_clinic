@@ -9,13 +9,4 @@ public class View {
 
     public static class Put {
     }
-
-    public static class PostAdminSchedule{
-    }
-
-    public static class PutAdminSchedule{
-    }
-
-    public static class GetAdminSchedule{
-    }
 }

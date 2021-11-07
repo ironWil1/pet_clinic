@@ -11,10 +11,10 @@ import org.mapstruct.Mapping;
 public interface DoctorScheduleMapper extends DtoMapper<DoctorSchedule, DoctorScheduleDto>, EntityMapper<DoctorScheduleDto, DoctorSchedule> {
 
     @Override
-    @Mapping(source = "doctorInfo", target = "doctor")
+    @Mapping(source = "doctorId", target = "doctor.id")
     DoctorSchedule toEntity(DoctorScheduleDto dto);
 
     @Override
-    @Mapping(source = "doctor", target = "doctorInfo")
+    @Mapping(source = "doctor.id", target = "doctorId")
     DoctorScheduleDto toDto(DoctorSchedule entity);
 }
