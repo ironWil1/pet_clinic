@@ -58,9 +58,10 @@ public class AdminDoctorScheduleController {
         if (doctorService.isExistByKey(doctorScheduleDto.getDoctorId())) {
             if (!doctorScheduleService.doctorIsBusyAtWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getWeekNumber())) {
                 DoctorSchedule doctorSchedule = doctorScheduleMapper.toEntity(doctorScheduleDto);
+                doctorSchedule.setDoctor(doctorService.getByKey(doctorScheduleDto.getDoctorId()));
                 doctorScheduleService.persist(doctorSchedule);
                 log.info("Schedule with id {} created", doctorSchedule.getId());
-                return ResponseEntity.ok(doctorScheduleDto);
+                return ResponseEntity.ok(doctorScheduleMapper.toDto(doctorSchedule));
             } else {
                 log.error("Doctor already has a work shift at week {}", doctorScheduleDto.getWeekNumber());
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Doctor already has a work shift");
