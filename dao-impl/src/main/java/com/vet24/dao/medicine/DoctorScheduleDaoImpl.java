@@ -4,21 +4,17 @@ import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.models.medicine.DoctorSchedule;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.NoResultException;
-import java.util.ArrayList;
-import java.util.List;
-
 @Repository
 public class DoctorScheduleDaoImpl extends ReadWriteDaoImpl<Long, DoctorSchedule> implements DoctorScheduleDao {
 
     @Override
-    public List<DoctorSchedule> getScheduleByDoctorIdAndWeekNumber(Long doctorId, Integer weekNumber) {
-        try {
-            return manager.createQuery("SELECT sch FROM DoctorSchedule sch WHERE sch.doctor.id =: doctorId AND sch.weekNumber =: weekNumber", DoctorSchedule.class)
-                    .setParameter("doctorId", doctorId)
-                    .setParameter("weekNumber", weekNumber).getResultList();
-        } catch (NoResultException e) {
-            return new ArrayList<>();
-        }
+    public boolean isExistByDoctorIdAndWeekNumber(Long doctorId, Integer weekNumber) {
+        return manager
+                .createQuery("SELECT CASE WHEN (count(*)>0) then true else false end" +
+                        " FROM " + DoctorSchedule.class.getName() +
+                        " WHERE doctor.id = :doctorId AND weekNumber = :weekNumber", Boolean.class)
+                .setParameter("doctorId", doctorId)
+                .setParameter("weekNumber", weekNumber)
+                .getSingleResult();
     }
 }

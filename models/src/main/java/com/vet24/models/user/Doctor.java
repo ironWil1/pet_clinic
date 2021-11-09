@@ -4,7 +4,10 @@ import com.vet24.models.medicine.Diagnosis;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +16,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 public class Doctor extends User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
-    private Long id;
 
     @OneToMany(
             mappedBy = "doctor",

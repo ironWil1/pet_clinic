@@ -56,7 +56,8 @@ public class AdminDoctorScheduleController {
                                                                   @Validated(OnCreate.class)
                                                                           DoctorScheduleDto doctorScheduleDto) {
         if (doctorService.isExistByKey(doctorScheduleDto.getDoctorId())) {
-            if (!doctorScheduleService.doctorIsBusyAtWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getWeekNumber())) {
+            if (!doctorScheduleService
+                    .isExistByDoctorIdAndWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getWeekNumber())) {
                 DoctorSchedule doctorSchedule = doctorScheduleMapper.toEntity(doctorScheduleDto);
                 doctorSchedule.setDoctor(doctorService.getByKey(doctorScheduleDto.getDoctorId()));
                 doctorScheduleService.persist(doctorSchedule);
