@@ -65,9 +65,4 @@ public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implem
         }
         return doctorDao.updateAll(doctors);
     }
-
-    @Override
-    public boolean isExistByKey(Long key) {
-        return doctorDao.isExistByKey(key);
-    }
 }

@@ -10,9 +10,8 @@ public class DoctorScheduleDaoImpl extends ReadWriteDaoImpl<Long, DoctorSchedule
     @Override
     public boolean isExistByDoctorIdAndWeekNumber(Long doctorId, Integer weekNumber) {
         return manager
-                .createQuery("SELECT CASE WHEN (count(*)>0) then true else false end" +
-                        " FROM " + DoctorSchedule.class.getName() +
-                        " WHERE doctor.id = :doctorId AND weekNumber = :weekNumber", Boolean.class)
+                .createQuery("SELECT CASE WHEN (count(id)>0) then true else false end" +
+                        " FROM DoctorSchedule WHERE doctor.id = :doctorId AND weekNumber = :weekNumber", Boolean.class)
                 .setParameter("doctorId", doctorId)
                 .setParameter("weekNumber", weekNumber)
                 .getSingleResult();

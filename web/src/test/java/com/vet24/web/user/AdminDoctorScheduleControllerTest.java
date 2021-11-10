@@ -1,9 +1,7 @@
 package com.vet24.web.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.vet24.models.dto.user.CommentDto;
 import com.vet24.models.dto.user.DoctorScheduleDto;
-import com.vet24.models.dto.user.UserInfoDto;
 import com.vet24.models.enums.WorkShift;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.service.medicine.DoctorScheduleService;
@@ -17,8 +15,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -29,6 +25,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     private DoctorScheduleDto updateNotFoundSchedule;
     private DoctorScheduleDto createDoctorNotFoundSchedule;
     private DoctorScheduleDto createDoctorIsBusySchedule;
+    private DoctorScheduleDto createDoctorSuccess;
 
     @Autowired
     private DoctorScheduleService doctorScheduleService;
@@ -52,6 +49,11 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
         createDoctorIsBusySchedule.setDoctorId(103L);
         createDoctorIsBusySchedule.setWorkShift(WorkShift.SECOND_SHIFT);
         createDoctorIsBusySchedule.setWeekNumber(30);
+
+        createDoctorSuccess = new DoctorScheduleDto();
+        createDoctorSuccess.setDoctorId(103L);
+        createDoctorSuccess.setWorkShift(WorkShift.SECOND_SHIFT);
+        createDoctorSuccess.setWeekNumber(1);
     }
 
     @Test
@@ -112,5 +114,15 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
 
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
+    public void scheduleCreateSuccess() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                        .content(objectMapper.valueToTree(createDoctorSuccess).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

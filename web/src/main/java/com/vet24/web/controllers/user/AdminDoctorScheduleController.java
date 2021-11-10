@@ -55,21 +55,19 @@ public class AdminDoctorScheduleController {
                                                                   @JsonView(View.Post.class)
                                                                   @Validated(OnCreate.class)
                                                                           DoctorScheduleDto doctorScheduleDto) {
-        if (doctorService.isExistByKey(doctorScheduleDto.getDoctorId())) {
-            if (!doctorScheduleService
-                    .isExistByDoctorIdAndWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getWeekNumber())) {
-                DoctorSchedule doctorSchedule = doctorScheduleMapper.toEntity(doctorScheduleDto);
-                doctorSchedule.setDoctor(doctorService.getByKey(doctorScheduleDto.getDoctorId()));
-                doctorScheduleService.persist(doctorSchedule);
-                log.info("Schedule with id {} created", doctorSchedule.getId());
-                return ResponseEntity.ok(doctorScheduleMapper.toDto(doctorSchedule));
-            } else {
-                log.error("Doctor already has a work shift at week {}", doctorScheduleDto.getWeekNumber());
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Doctor already has a work shift");
-            }
-        } else {
+        if (!doctorService.isExistByKey(doctorScheduleDto.getDoctorId())) {
             log.error("User with id {} is not a doctor", doctorScheduleDto.getDoctorId());
             throw new NotFoundException("doctor not found");
+        } else if (doctorScheduleService
+                .isExistByDoctorIdAndWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getWeekNumber())) {
+            log.error("Doctor already has a work shift at week {}", doctorScheduleDto.getWeekNumber());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Doctor already has a work shift");
+        } else {
+            DoctorSchedule doctorSchedule = doctorScheduleMapper.toEntity(doctorScheduleDto);
+            doctorSchedule.setDoctor(doctorService.getByKey(doctorScheduleDto.getDoctorId()));
+            doctorScheduleService.persist(doctorSchedule);
+            log.info("Schedule with id {} created", doctorSchedule.getId());
+            return ResponseEntity.ok(doctorScheduleMapper.toDto(doctorSchedule));
         }
     }
 
