@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.user.DoctorScheduleDto;
-import com.vet24.models.exception.UnprocessableEntityDoctorScheduleException;
+import com.vet24.models.exception.UnprocessableEntityException;
 import com.vet24.models.mappers.user.DoctorScheduleMapper;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.util.View;
@@ -61,7 +61,7 @@ public class AdminDoctorScheduleController {
         if (doctorScheduleService
                 .isExistByDoctorIdAndWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getWeekNumber())) {
             log.error("Doctor already has a work shift at week {}", doctorScheduleDto.getWeekNumber());
-            throw new UnprocessableEntityDoctorScheduleException("Doctor already has a work shift");
+            throw new UnprocessableEntityException("Doctor already has a work shift");
         }
         DoctorSchedule doctorSchedule = doctorScheduleMapper.toEntity(doctorScheduleDto);
         doctorSchedule.setDoctor(doctorService.getByKey(doctorScheduleDto.getDoctorId()));
