@@ -69,18 +69,13 @@ public class AdminDoctorNonWorkingController {
             log.info("DoctorNonWorking with id {}", id);
             DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
             Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
-            if (doc != null) {
-                doctorNonWorking.setId(id);
-                doctorNonWorking.setDoctor(doc);
-                doctorNonWorkingService.update(doctorNonWorking);
-                return ResponseEntity.ok(doctorNonWorkingDto);
-            } else {
-                log.info("DoctorNonWorking have bad doctorId");
-                throw new NotFoundException("Doctor not found");
-            }
+            doctorNonWorking.setId(id);
+            doctorNonWorking.setDoctor(doc);
+            doctorNonWorkingService.update(doctorNonWorking);
+            return ResponseEntity.ok(doctorNonWorkingDto);
         } else {
-            log.info("DoctorNonWorking with id {} not found", id);
-            throw new NotFoundException("DoctorNonWorking not found");
+            log.info("DoctorNonWorking have bad doctorId");
+            throw new NotFoundException("Doctor not found");
         }
     }
 
