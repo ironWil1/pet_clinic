@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.user.DoctorScheduleDto;
+import com.vet24.models.exception.UnprocessableEntityDoctorScheduleException;
 import com.vet24.models.mappers.user.DoctorScheduleMapper;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.util.View;
@@ -17,11 +18,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
 
 @RestController
@@ -58,17 +57,17 @@ public class AdminDoctorScheduleController {
         if (!doctorService.isExistByKey(doctorScheduleDto.getDoctorId())) {
             log.error("User with id {} is not a doctor", doctorScheduleDto.getDoctorId());
             throw new NotFoundException("doctor not found");
-        } else if (doctorScheduleService
+        }
+        if (doctorScheduleService
                 .isExistByDoctorIdAndWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getWeekNumber())) {
             log.error("Doctor already has a work shift at week {}", doctorScheduleDto.getWeekNumber());
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Doctor already has a work shift");
-        } else {
-            DoctorSchedule doctorSchedule = doctorScheduleMapper.toEntity(doctorScheduleDto);
-            doctorSchedule.setDoctor(doctorService.getByKey(doctorScheduleDto.getDoctorId()));
-            doctorScheduleService.persist(doctorSchedule);
-            log.info("Schedule with id {} created", doctorSchedule.getId());
-            return ResponseEntity.ok(doctorScheduleMapper.toDto(doctorSchedule));
+            throw new UnprocessableEntityDoctorScheduleException("Doctor already has a work shift");
         }
+        DoctorSchedule doctorSchedule = doctorScheduleMapper.toEntity(doctorScheduleDto);
+        doctorSchedule.setDoctor(doctorService.getByKey(doctorScheduleDto.getDoctorId()));
+        doctorScheduleService.persist(doctorSchedule);
+        log.info("Schedule with id {} created", doctorSchedule.getId());
+        return ResponseEntity.ok(doctorScheduleMapper.toDto(doctorSchedule));
     }
 
     @Operation(summary = "Update schedule")
