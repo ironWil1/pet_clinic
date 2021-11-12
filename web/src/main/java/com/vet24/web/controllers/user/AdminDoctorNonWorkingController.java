@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "api/admin/doctor_non_working/")
 @Tag(name = "admin doctor_non_working controller", description = "operations with doctor_non_working")
@@ -41,7 +43,7 @@ public class AdminDoctorNonWorkingController {
             @ApiResponse(responseCode = "404", description = "Doctor in DoctorNonWorking not found")
     })
     @PostMapping("")
-    public ResponseEntity<DoctorNonWorkingDto> createDoctorNonWorking(@RequestBody DoctorNonWorkingDto doctorNonWorkingDto) {
+    public ResponseEntity<DoctorNonWorkingDto> createDoctorNonWorking(@Valid @RequestBody DoctorNonWorkingDto doctorNonWorkingDto) {
         DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
         Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
         if (doc != null) {
@@ -63,7 +65,7 @@ public class AdminDoctorNonWorkingController {
             @ApiResponse(responseCode = "404", description = "DoctorNonWorking not found")
     })
     @PutMapping("{id}")
-    public ResponseEntity<DoctorNonWorkingDto> editDoctorNonWorking(@RequestBody DoctorNonWorkingDto doctorNonWorkingDto,
+    public ResponseEntity<DoctorNonWorkingDto> editDoctorNonWorking(@Valid @RequestBody DoctorNonWorkingDto doctorNonWorkingDto,
                                                                     @PathVariable("id") Long id) {
         if (doctorNonWorkingService.isExistByKey(id)) {
             log.info("DoctorNonWorking with id {}", id);
