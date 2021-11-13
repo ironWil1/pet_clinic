@@ -9,12 +9,11 @@ import java.time.LocalDate;
 
 @Data
 public class DoctorNonWorkingDto {
-//    @NotNull(message = "{doctorNonWorking.validation.blank.field}")
+    @NotNull(message = "{doctorNonWorking.validation.blank.field}")
     private Long doctorNonWorkingId;
     @NotNull(message = "{doctorNonWorking.validation.blank.field}")
     private Long doctorId;
     @NotNull(message = "{doctorNonWorking.validation.blank.field}")
-//    @Pattern(regexp = "")
     private DayOffType type;
     @NotNull(message = "{doctorNonWorking.validation.blank.field}")
     private LocalDate date;
