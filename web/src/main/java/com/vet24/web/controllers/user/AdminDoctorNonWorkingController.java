@@ -1,6 +1,7 @@
 package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.user.DoctorNonWorkingDto;
+import com.vet24.models.exception.DoctorEventScheduledException;
 import com.vet24.models.mappers.user.DoctorNonWorkingMapper;
 import com.vet24.models.user.Doctor;
 import com.vet24.models.user.DoctorNonWorking;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "api/admin/doctor_non_working/")
@@ -46,15 +50,26 @@ public class AdminDoctorNonWorkingController {
     public ResponseEntity<DoctorNonWorkingDto> createDoctorNonWorking(@Valid @RequestBody DoctorNonWorkingDto doctorNonWorkingDto) {
         DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
         Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
-        if (doc != null) {
-            doctorNonWorking.setDoctor(doc);
-            doctorNonWorkingService.persist(doctorNonWorking);
-            log.info("DoctorNonWorking create");
-            return ResponseEntity.ok(doctorNonWorkingDto);
-        } else {
+        LocalDate date = doctorNonWorkingDto.getDate();
+        List<DoctorNonWorking> list = doctorNonWorkingService.getAll();
+        boolean dateDoctor = true;
+        for (DoctorNonWorking dnw : list) {
+            if (dnw.getDoctor().equals(doc) && dnw.getDate().equals(date)) {
+                dateDoctor = false;
+                break;
+            }
+        }
+        if (doc == null) {
             log.info("DoctorNonWorking have bad doctorId");
             throw new NotFoundException("Doctor not found");
+        } else if (!dateDoctor) {
+            log.info("This doctor already has an event scheduled for this date");
+            throw new DoctorEventScheduledException("Doctor and date already exist");
         }
+        doctorNonWorking.setDoctor(doc);
+        doctorNonWorkingService.persist(doctorNonWorking);
+        log.info("DoctorNonWorking create");
+        return ResponseEntity.ok(doctorNonWorkingDto);
     }
 
     @Operation(summary = "edit doctorNonWorking")
@@ -69,16 +84,32 @@ public class AdminDoctorNonWorkingController {
                                                                     @PathVariable("id") Long id) {
         if (doctorNonWorkingService.isExistByKey(id)) {
             log.info("DoctorNonWorking with id {}", id);
-            DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
-            Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
-            doctorNonWorking.setId(id);
-            doctorNonWorking.setDoctor(doc);
-            doctorNonWorkingService.update(doctorNonWorking);
-            return ResponseEntity.ok(doctorNonWorkingDto);
         } else {
+            log.info("DoctorNonWorking with id {} not found", id);
+            throw new NotFoundException("DoctorNonWorking not found");
+        }
+        DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
+        Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
+        LocalDate date = doctorNonWorkingDto.getDate();
+        List<DoctorNonWorking> list = doctorNonWorkingService.getAll();
+        boolean dateDoctor = true;
+        for (DoctorNonWorking dnw : list) {
+            if (dnw.getDoctor().equals(doc) && dnw.getDate().equals(date) && !Objects.equals(dnw.getId(), id)) {
+                dateDoctor = false;
+                break;
+            }
+        }
+        if (doc == null) {
             log.info("DoctorNonWorking have bad doctorId");
             throw new NotFoundException("Doctor not found");
+        } else if (!dateDoctor) {
+            log.info("This doctor already has an event scheduled for this date");
+            throw new DoctorEventScheduledException("Doctor and date already exist");
         }
+        doctorNonWorking.setId(id);
+        doctorNonWorking.setDoctor(doc);
+        doctorNonWorkingService.update(doctorNonWorking);
+        return ResponseEntity.ok(doctorNonWorkingDto);
     }
 
     @Operation(summary = "delete doctorNonWorking")
