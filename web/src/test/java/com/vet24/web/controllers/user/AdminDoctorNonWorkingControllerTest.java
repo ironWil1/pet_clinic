@@ -3,7 +3,6 @@ package com.vet24.web.controllers.user;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.models.dto.user.DoctorNonWorkingDto;
 import com.vet24.models.enums.DayOffType;
-import com.vet24.models.exception.DoctorEventScheduledException;
 import com.vet24.models.user.DoctorNonWorking;
 import com.vet24.service.user.DoctorNonWorkingService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
@@ -19,6 +18,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.util.NestedServletException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -31,7 +31,7 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     final String URI = "http://localhost:8080/api/admin/doctor_non_working/";
     private DoctorNonWorkingDto doctorNonWorkingDto;
     private DoctorNonWorkingDto doctorNonWorkingDto2;
-    private DoctorNonWorkingDto doctorNonWorkingDto3;
+
     @Autowired
     private DoctorNonWorkingService doctorNonWorkingService;
 
@@ -90,12 +90,11 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
     @Test
     @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void createDNWIncorrectDataTest() throws Exception {
-        thrown.expect(DoctorEventScheduledException.class);
-        thrown.expectMessage("Doctor and date already exist");
+        thrown.expect(NestedServletException.class);
+        thrown.expectMessage("Doctor and date already exist"); //DoctorEventScheduledException.class
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -109,9 +108,9 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     @Test
     @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void updateDNWIncorrectDataTest() throws Exception {
-        thrown2.expect(DoctorEventScheduledException.class);
-        thrown2.expectMessage("Doctor and date already exist");
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "{id}", 101)
+        thrown2.expect(NestedServletException.class);
+        thrown2.expectMessage("Doctor and date already exist"); //DoctorEventScheduledException.class
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "{id}", 102)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
