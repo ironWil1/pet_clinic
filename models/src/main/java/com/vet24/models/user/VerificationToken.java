@@ -7,12 +7,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -30,7 +25,7 @@ public class VerificationToken  implements Serializable {
     @NonNull
     @OneToOne(targetEntity = Client.class,cascade = {CascadeType.PERSIST},
             fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "user_id")
+    @JoinColumn(nullable = false, unique = true, name = "user_id")
     private Client client;
 
 }

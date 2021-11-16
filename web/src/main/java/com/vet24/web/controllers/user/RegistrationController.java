@@ -45,12 +45,10 @@ public class RegistrationController {
     private static final String PASSWORDS_UNMATCHED = "Passwords don't match";
     @Value("${registration.repeated.error.msg}")
     private  String repeatedRegistrationMsg;
-
     private final ClientService clientService;
     private final MailService mailService;
     private final ClientMapper clientMapper;
     private final VerificationService verificationService;
-
 
     public RegistrationController(ClientService clientService, MailService mailService,
                                   ClientMapper clientMapper, VerificationService verificationService) {
@@ -67,7 +65,6 @@ public class RegistrationController {
             @ApiResponse(responseCode = "406", description = "Inconsistent input data"),
             @ApiResponse(responseCode = "400", description = "DataIntegrityViolationException")
     })
-
     @PostMapping("")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterDto inputDto, Errors errors) throws IOException, MessagingException {
         if (errors.hasErrors()) {
@@ -85,19 +82,18 @@ public class RegistrationController {
 
         if(foundOrNew == null){
             foundOrNew = clientMapper.toEntity(inputDto);
-        }
-        else if(foundOrNew.getRole().getName()!=RoleNameEnum.UNVERIFIED_CLIENT) {
+            foundOrNew.setRole(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
+            clientService.persist(foundOrNew);
+        } else if(foundOrNew.getRole().getName()!= RoleNameEnum.UNVERIFIED_CLIENT) {
             log.info("The client with id {} have repeated registration ",foundOrNew.getId());
             throw new RepeatedRegistrationException(repeatedRegistrationMsg);
+        } else {
+            VerificationToken verificationToken = verificationService.findByClientId(foundOrNew.getId());
+            verificationService.delete(verificationToken);
         }
-
-        foundOrNew.setRole(new Role(RoleNameEnum.UNVERIFIED_CLIENT));
 
         String tokenUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString() +
                 "/api/registration/confirm/" + verificationService.createVerificationToken(foundOrNew);
-
-        clientService.persist(foundOrNew);
-
         mailService.sendWelcomeMessage(inputDto.getEmail(), inputDto.getFirstname(), tokenUrl);
         log.info("The registration for client with id {} is created ",foundOrNew.getId());
         return new  ResponseEntity<>(HttpStatus.CREATED);
@@ -108,7 +104,6 @@ public class RegistrationController {
             @ApiResponse(responseCode = "205", description = "Successfully verified new client"),
             @ApiResponse(responseCode = "400", description = "BadRequestException")
     })
-
     @GetMapping("/confirm/{token}")
     public ResponseEntity<ClientDto> verifyMail(@PathVariable(value="token") String token/* @RequestParam String userCode*/) {
 
@@ -122,8 +117,6 @@ public class RegistrationController {
         verificationService.delete(verificationToken);
         log.info("The client with mail {} is updated ",clientUpdated.getEmail());
         return  ResponseEntity.status(HttpStatus.RESET_CONTENT).body(clientUpdated);
-
     }
-
 }
 
