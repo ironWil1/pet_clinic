@@ -18,13 +18,14 @@ import java.io.Serializable;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class VerificationToken  implements Serializable {
     @Id
+    @NonNull
     @EqualsAndHashCode.Include
     private Long id;
 
-    @MapsId
     @NonNull
     @OneToOne(targetEntity = Client.class,cascade = {CascadeType.PERSIST},
             fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, unique = true, name = "user_id")
     private Client client;
+
 }
