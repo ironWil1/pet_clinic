@@ -12,13 +12,13 @@ import java.util.List;
 
 @Service
 @Transactional
-public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implements DoctorService{
+public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implements DoctorService {
 
     private final DoctorDao doctorDao;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DoctorServiceImpl(DoctorDao  doctorDao, PasswordEncoder passwordEncoder) {
+    public DoctorServiceImpl(DoctorDao doctorDao, PasswordEncoder passwordEncoder) {
         super(doctorDao);
         this.doctorDao = doctorDao;
         this.passwordEncoder = passwordEncoder;
@@ -36,7 +36,7 @@ public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implem
     @Transactional
     public Doctor update(Doctor doctor) {
         String newPassword = doctor.getPassword();
-        if(passwordEncoder.upgradeEncoding(newPassword)) {
+        if (passwordEncoder.upgradeEncoding(newPassword)) {
             String password = passwordEncoder.encode(newPassword);
             doctor.setPassword(password);
         }
@@ -58,7 +58,7 @@ public class DoctorServiceImpl extends ReadWriteServiceImpl<Long, Doctor> implem
     public List<Doctor> updateAll(List<Doctor> doctors) {
         for (Doctor doctor : doctors) {
             String newPassword = doctor.getPassword();
-            if(passwordEncoder.upgradeEncoding(newPassword)) {
+            if (passwordEncoder.upgradeEncoding(newPassword)) {
                 String password = passwordEncoder.encode(newPassword);
                 doctor.setPassword(password);
             }

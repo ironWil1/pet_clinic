@@ -4,4 +4,5 @@ import com.vet24.dao.ReadWriteDao;
 import com.vet24.models.user.VerificationToken;
 
 public interface VerificationDao extends ReadWriteDao<Long, VerificationToken> {
+    VerificationToken findByClientId(long clientId);
 }
