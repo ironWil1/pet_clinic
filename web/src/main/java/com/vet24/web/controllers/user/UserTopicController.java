@@ -9,7 +9,6 @@ import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Topic;
 import com.vet24.models.user.User;
-import com.vet24.models.util.View;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.CommentService;
 import com.vet24.service.user.TopicService;

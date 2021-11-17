@@ -11,10 +11,7 @@ import javax.transaction.Transactional;
 @Transactional
 public class AppointmentServiceImpl extends ReadWriteServiceImpl<Long, Appointment> implements AppointmentService {
 
-    private final AppointmentDao appointmentDao;
-
     protected AppointmentServiceImpl(AppointmentDao appointmentDao) {
         super(appointmentDao);
-        this.appointmentDao = appointmentDao;
     }
 }

@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommentReactionServiceImpl extends ReadWriteServiceImpl<CommentReactionId, CommentReaction>  implements CommentReactionService {
 
-    private final CommentReactionDao likeDao;
-
     public CommentReactionServiceImpl(CommentReactionDao likeDao) {
         super(likeDao);
-        this.likeDao = likeDao;
     }
 }

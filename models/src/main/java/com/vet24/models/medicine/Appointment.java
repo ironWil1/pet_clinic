@@ -5,7 +5,7 @@ import com.vet24.models.user.Doctor;
 import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.io.*;
 import java.time.LocalDateTime;
 
 @Entity

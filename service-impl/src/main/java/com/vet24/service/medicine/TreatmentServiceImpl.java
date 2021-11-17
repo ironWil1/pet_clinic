@@ -12,11 +12,8 @@ import javax.transaction.Transactional;
 @Transactional
 public class TreatmentServiceImpl extends ReadWriteServiceImpl<Long, Treatment> implements TreatmentService {
 
-    private final TreatmentDao treatmentDao;
-
     @Autowired
     protected TreatmentServiceImpl(TreatmentDao treatmentDao) {
         super(treatmentDao);
-        this.treatmentDao = treatmentDao;
     }
 }

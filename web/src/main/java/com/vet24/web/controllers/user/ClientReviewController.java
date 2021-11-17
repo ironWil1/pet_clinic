@@ -5,16 +5,12 @@ import com.vet24.models.exception.RepeatedCommentException;
 import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Comment;
-import com.vet24.models.user.CommentReaction;
 import com.vet24.models.user.Doctor;
 import com.vet24.models.user.DoctorReview;
 import com.vet24.models.user.User;
-import com.vet24.service.user.ClientService;
-import com.vet24.service.user.CommentReactionService;
 import com.vet24.service.user.CommentService;
 import com.vet24.service.user.DoctorReviewService;
 import com.vet24.service.user.DoctorService;
-import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -35,19 +31,15 @@ import java.time.LocalDateTime;
 public class ClientReviewController {
 
     private final DoctorService doctorService;
-    private final ClientService clientService;
     private final CommentService commentService;
     private final DoctorReviewService doctorReviewService;
-    private final UserService userService;
     private final CommentMapper commentMapper;
 
     @Autowired
-    public ClientReviewController(DoctorService doctorService, ClientService clientService, CommentService commentService, DoctorReviewService doctorReviewService, UserService userService, CommentMapper commentMapper) {
+    public ClientReviewController(DoctorService doctorService, CommentService commentService, DoctorReviewService doctorReviewService, CommentMapper commentMapper) {
         this.doctorService = doctorService;
-        this.clientService = clientService;
         this.commentService = commentService;
         this.doctorReviewService = doctorReviewService;
-        this.userService = userService;
         this.commentMapper = commentMapper;
     }
 

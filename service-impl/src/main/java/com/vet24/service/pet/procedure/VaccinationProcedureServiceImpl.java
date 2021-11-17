@@ -9,11 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class VaccinationProcedureServiceImpl extends ReadWriteServiceImpl<Long, VaccinationProcedure> implements VaccinationProcedureService {
 
-    private final VaccinationProcedureDao vaccinationProcedureDao;
-
     @Autowired
     public VaccinationProcedureServiceImpl(VaccinationProcedureDao vaccinationProcedureDao) {
         super(vaccinationProcedureDao);
-        this.vaccinationProcedureDao = vaccinationProcedureDao;
     }
 }

@@ -9,12 +9,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class DiagnosisServiceImpl extends ReadWriteServiceImpl<Long,  Diagnosis>
         implements DiagnosisService{
-    private final DiagnosisDao diagnosisDao;
 
     @Autowired
     public DiagnosisServiceImpl(DiagnosisDao  diagnosisDao) {
         super(diagnosisDao);
-        this.diagnosisDao = diagnosisDao;
 
     }
 

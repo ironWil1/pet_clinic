@@ -10,11 +10,8 @@ import org.springframework.stereotype.Service;
 public class CatServiceImpl extends ReadWriteServiceImpl<Long, Cat>
         implements CatService {
 
-    private final CatDao catDao;
-
     @Autowired
     public CatServiceImpl( CatDao catDao) {
         super(catDao);
-        this.catDao = catDao;
     }
 }

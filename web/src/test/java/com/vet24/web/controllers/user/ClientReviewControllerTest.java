@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 
 @WithUserDetails(value = "user3@gmail.com")
@@ -35,6 +36,7 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/doctors.yml", "/datasets/comments.yml"})
     public void shouldBeNotFoundComment() throws Exception {
+        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{commentId}/{positive}", 10000L, false))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
@@ -43,6 +45,7 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml","/datasets/doctor-review.yml", "/datasets/doctors.yml"})
     public void shouldBeUpdatedComment() throws Exception {
+        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{doctorId}/review", 33)
                 .content("This doctor is very bad!!")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -59,6 +62,7 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+        assertNotNull(mockMvc);
     }
 
     @Test

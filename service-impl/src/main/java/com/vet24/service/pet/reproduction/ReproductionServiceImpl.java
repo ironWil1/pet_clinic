@@ -9,11 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReproductionServiceImpl extends ReadWriteServiceImpl<Long, Reproduction> implements ReproductionService {
 
-    private final ReproductionDao reproductionDao;
-
     @Autowired
     public ReproductionServiceImpl(ReproductionDao reproductionDao) {
         super(reproductionDao);
-        this.reproductionDao = reproductionDao;
     }
 }

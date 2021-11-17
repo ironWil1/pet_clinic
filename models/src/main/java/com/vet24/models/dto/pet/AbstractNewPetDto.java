@@ -54,4 +54,8 @@ public abstract class AbstractNewPetDto {
     protected AbstractNewPetDto() {
 
     }
+
+    public static AbstractNewPetDto dummy() {
+        return new AbstractNewPetDto() {};
+    }
 }

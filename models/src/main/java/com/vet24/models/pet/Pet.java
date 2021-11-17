@@ -137,6 +137,7 @@ public abstract class Pet {
         this.client = client;
     }
 
+    @SuppressWarnings("squid:S107") //No SONAR
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
                   List<Procedure> procedures, List<Reproduction> reproductions,
                   List<ClinicalExamination> clinicalExaminations) {
@@ -144,7 +145,6 @@ public abstract class Pet {
         this.procedures = procedures;
         this.reproductions = reproductions;
         this.clinicalExaminations = clinicalExaminations;
-        this.notifications = notifications;
     }
 
     public void addProcedure(Procedure procedure) {

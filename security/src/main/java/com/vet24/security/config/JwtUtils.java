@@ -5,8 +5,12 @@ import java.util.Date;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
+
 
 @Component
 public class JwtUtils {
@@ -36,6 +40,7 @@ public class JwtUtils {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (JwtException e) {
+            LOGGER.log(Logger.Level.INFO, e);
         }
         return false;
     }

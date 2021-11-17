@@ -58,14 +58,14 @@ public abstract class Procedure implements Serializable {
     private Integer periodDays;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Medicine medicine;
+    private transient Medicine medicine;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Pet pet;
+    private transient Pet pet;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notification_id")
-    private Notification notification;
+    private transient Notification notification;
 
     protected Procedure(LocalDate date, ProcedureType type, String medicineBatchNumber,
                         Boolean isPeriodical, Integer periodDays, Medicine medicine, Pet pet) {

@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,6 +45,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
     public void shouldBeGetMedicineById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{id}", 100))
                 .andExpect(MockMvcResultMatchers.status().isOk());
+        assertNotNull(mockMvc);
     }
 
     // +mock, add medicine

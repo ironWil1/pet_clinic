@@ -27,6 +27,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -171,6 +172,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         ClassPathResource classPathResource = new ClassPathResource("test.png");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
                 classPathResource.getFilename(), null, classPathResource.getInputStream());
+        assertNotNull(mockMvc);
         mockMvc.perform(multipart(URI + "/{petId}/avatar", 107)
                 .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
                 .andExpect(status().isOk());
@@ -185,6 +187,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
+        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/avatar", String.class,  100)
                 .content(objectMapper.valueToTree(abstractNewPetDto).toString())
                 .contentType(MediaType.MULTIPART_FORM_DATA))
@@ -198,6 +201,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         ClassPathResource classPathResource = new ClassPathResource("test.png");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
                 classPathResource.getFilename(), null, classPathResource.getInputStream());
+        assertNotNull(mockMvc);
         mockMvc.perform(multipart(URI + "/{petId}/avatar", 69000)
                 .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
                 .andExpect(status().isNotFound());

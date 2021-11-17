@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 @WithUserDetails(value = "doctor33@gmail.com")
 public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
@@ -38,6 +39,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(diagnosis, headers);
 
+        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.post(URI, entity, DiagnosisDto.class, 1001)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())

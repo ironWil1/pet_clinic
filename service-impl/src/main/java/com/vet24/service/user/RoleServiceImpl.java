@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleServiceImpl extends ReadWriteServiceImpl<RoleNameEnum, Role> implements RoleService {
 
-    private final RoleDao roleDao;
-
     public RoleServiceImpl(RoleDao roleDao) {
         super(roleDao);
-        this.roleDao = roleDao;
     }
 }

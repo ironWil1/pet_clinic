@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +35,8 @@ public class ClinicalExaminationController {
     private final ClinicalExaminationService clinicalExaminationService;
     private final ClinicalExaminationMapper clinicalExaminationMapper;
 
+    private static final String DESCRIPTION_OF_EXCEPTION = "clinical examination not found";
+
     public ClinicalExaminationController(PetService petService, ClinicalExaminationService clinicalExaminationService,
                                          ClinicalExaminationMapper clinicalExaminationMapper) {
         this.petService = petService;
@@ -46,21 +47,19 @@ public class ClinicalExaminationController {
     @Operation(
             summary = "get clinical examination by id",
             description = "is looking for one clinical examination for a unique identifier")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "ok",
-                    content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class))),
-            @ApiResponse(responseCode = "400", description = "incorrect query input is specified",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "404", description = "clinical examination or pet with " +
-                    "this id not found",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-    })
+    @ApiResponse(responseCode = "200", description = "ok",
+            content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class)))
+    @ApiResponse(responseCode = "400", description = "incorrect query input is specified",
+            content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    @ApiResponse(responseCode = "404", description = "clinical examination or pet with " +
+            "this id not found",
+            content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     @GetMapping("/{examinationId}")
     public ResponseEntity<ClinicalExaminationDto> getById(@PathVariable Long examinationId) {
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
 
         if (clinicalExamination == null) {
-            throw new NotFoundException("clinical examination not found");
+            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
         }
 
         ClinicalExaminationDto clinicalExaminationDto =
@@ -71,13 +70,12 @@ public class ClinicalExaminationController {
     @Operation(
             summary = "add new clinical examination",
             description = "to add a new clinical exam, enter the pet ID and fill in the fields: wight, isCanMove, text.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "clinical examination successful " +
-                    "created",
-                    content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class))),
-            @ApiResponse(responseCode = "404", description = "pet with this id not found",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-    })
+    @ApiResponse(responseCode = "201", description = "clinical examination successful " +
+            "created",
+            content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class)))
+    @ApiResponse(responseCode = "404", description = "pet with this id not found",
+            content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+
     @PostMapping("")
     public ResponseEntity<ClinicalExaminationDto> save(@RequestBody ClinicalExaminationDto clinicalExaminationDto) {
         Pet pet = petService.getByKey(clinicalExaminationDto.getPetId());
@@ -102,18 +100,16 @@ public class ClinicalExaminationController {
     @Operation(
             summary = "update clinical examination by id",
             description = "enter pet ID and clinical exam ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "clinical examination successful " +
-                    "updated",
-                    content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class))),
-            @ApiResponse(responseCode = "404", description = "clinical examination or pet with " +
-                    "this id not found",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "clinical examination not assigned " +
-                    "to this pet OR \n" +
-                    "examinationId in path and in body not equals OR \npet has no doctor",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-    })
+    @ApiResponse(responseCode = "200", description = "clinical examination successful " +
+            "updated",
+            content = @Content(schema = @Schema(implementation = ClinicalExaminationDto.class)))
+    @ApiResponse(responseCode = "404", description = "clinical examination or pet with " +
+            "this id not found",
+            content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    @ApiResponse(responseCode = "400", description = "clinical examination not assigned " +
+            "to this pet OR \n" +
+            "examinationId in path and in body not equals OR \npet has no doctor",
+            content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     @PutMapping("/{examinationId}")
     public ResponseEntity<ClinicalExaminationDto> update(@PathVariable Long examinationId,
                                                          @RequestBody ClinicalExaminationDto clinicalExaminationDto) {
@@ -128,7 +124,7 @@ public class ClinicalExaminationController {
         }
 
         if (clinicalExamination == null) {
-            throw new NotFoundException("clinical examination not found");
+            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
         }
 
         if (!clinicalExamination.getPet().getId().equals(pet.getId())) {
@@ -154,18 +150,16 @@ public class ClinicalExaminationController {
     @Operation(
             summary = "delete clinical examination by id",
             description = "enter a unique ID of the pet's clinical examination")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "clinical examination successful deleted"),
-            @ApiResponse(responseCode = "404", description = "clinical examination not found",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-    })
+    @ApiResponse(responseCode = "200", description = "clinical examination successful deleted")
+    @ApiResponse(responseCode = "404", description = "clinical examination not found",
+            content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     @DeleteMapping(value = "/{examinationId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long examinationId) {
 
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
 
         if (clinicalExamination == null) {
-            throw new NotFoundException("clinical examination not found");
+            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
         }
         clinicalExaminationService.delete(clinicalExamination);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -18,7 +18,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class CommentReaction{
+public class CommentReaction {
 
     @EmbeddedId
     @EqualsAndHashCode.Include

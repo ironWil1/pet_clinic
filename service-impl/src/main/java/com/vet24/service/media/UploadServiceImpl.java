@@ -29,7 +29,7 @@ public class UploadServiceImpl implements UploadService {
     public UploadedFileDto store(MultipartFile file) throws IOException {
         String originFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         LocalDateTime now = LocalDateTime.now();
-        int extensionIndex = originFilename.lastIndexOf(".");
+        int extensionIndex = originFilename.lastIndexOf('.');
 
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file " + originFilename);

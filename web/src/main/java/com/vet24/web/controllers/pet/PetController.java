@@ -12,7 +12,6 @@ import com.vet24.models.user.Client;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.pet.PetService;
-import com.vet24.service.user.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -46,16 +45,14 @@ import java.io.IOException;
 @Tag(name = "pet-controller", description = "operations with Pets")
 public class PetController {
 
-    private final ClientService clientService;
     private final PetService petService;
     private final PetMapper petMapper;
     private final AbstractNewPetMapper newPetMapper;
     private final UploadService uploadService;
     private final ResourceService resourceService;
 
-    public PetController(ClientService clientService, PetService petService, PetMapper petMapper,
+    public PetController(PetService petService, PetMapper petMapper,
                          AbstractNewPetMapper newPetMapper, UploadService uploadService, ResourceService resourceService) {
-        this.clientService = clientService;
         this.petService = petService;
         this.petMapper = petMapper;
         this.newPetMapper = newPetMapper;
@@ -146,7 +143,7 @@ public class PetController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         if (!(pet.getPetType().equals(petDto.getPetType()))) {
-            return new ResponseEntity("The type of pet can not be changed", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(AbstractNewPetDto.dummy(), HttpStatus.BAD_REQUEST);
         }
         if (!(pet.getClient().getId().equals(client.getId()))) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

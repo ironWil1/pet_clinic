@@ -28,10 +28,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -92,12 +89,11 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_name"))
     private Role role;
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new HashSet<>() {{
-            add(new SimpleGrantedAuthority("ROLE_" + role.getAuthority()));
-        }};
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getAuthority()));
+        return authorities;
     }
 
     @Override

@@ -43,7 +43,7 @@ public class Reproduction implements Serializable {
     private Integer childCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Pet pet;
+    private transient Pet pet;
 
     public Reproduction(LocalDate estrusStart, LocalDate mating, LocalDate dueDate, Integer childCount, Pet pet) {
         this.estrusStart = estrusStart;

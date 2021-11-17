@@ -9,11 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class EchinococcusProcedureServiceImpl extends ReadWriteServiceImpl<Long, EchinococcusProcedure> implements EchinococcusProcedureService {
 
-    private final EchinococcusProcedureDao echinococcusProcedureDao;
-
     @Autowired
     public EchinococcusProcedureServiceImpl(EchinococcusProcedureDao echinococcusProcedureDao) {
         super(echinococcusProcedureDao);
-        this.echinococcusProcedureDao = echinococcusProcedureDao;
     }
 }

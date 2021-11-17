@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.security.Principal;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -27,6 +28,7 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void shouldGetResponseEntityClientDto_ForCurrentClient() throws Exception {
+        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.get(URI, ClientDto.class))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -39,6 +41,7 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
         ClassPathResource classPathResource = new ClassPathResource("test.png");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
                 classPathResource.getFilename(), null, classPathResource.getInputStream());
+        assertNotNull(mockMvc);
         mockMvc.perform(multipart(URI + "/avatar")
                 .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
                 .andExpect(MockMvcResultMatchers.status().isOk());

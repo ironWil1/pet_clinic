@@ -10,11 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -37,4 +33,5 @@ public class Role implements GrantedAuthority {
     public String getAuthority() {
         return name.toString();
     }
+
 }

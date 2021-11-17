@@ -36,9 +36,9 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
                 .getCommentReactions().isEmpty());
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{positive}", 101, true))
                 .andExpect(MockMvcResultMatchers.status().isOk());
-        Assert.assertEquals(userService
+        Assert.assertEquals(1 ,userService
                 .getWithAllCommentReactions("user3@gmail.com")
-                .getCommentReactions().size(), 1);
+                .getCommentReactions().size());
         Assert.assertEquals(true, userService
                 .getWithAllCommentReactions("user3@gmail.com")
                 .getCommentReactions().get(0).getPositive());

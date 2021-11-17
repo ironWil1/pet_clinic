@@ -7,7 +7,6 @@ import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.CommentReaction;
 import com.vet24.models.user.User;
-import com.vet24.models.util.View;
 import com.vet24.service.user.CommentReactionService;
 import com.vet24.service.user.CommentService;
 import io.swagger.v3.oas.annotations.Operation;

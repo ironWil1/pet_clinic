@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 @WithUserDetails(value = "user3@gmail.com")
 public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
@@ -58,6 +59,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testGetProcedureSuccess() throws Exception {
+        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 102, 102))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -69,6 +71,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testGetProcedureErrorPetNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 33, 102))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertNotNull(mockMvc);
     }
 
     // +mock, GET procedure by id - 404 ERROR "procedure not found"
@@ -77,6 +80,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testGetProcedureErrorProcedureNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 102, 33))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertNotNull(mockMvc);
     }
 
     // +mock, GET procedure by id - 400 ERROR "pet not yours"
@@ -85,6 +89,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testGetProcedureErrorPetForbidden() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 100, 100))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertNotNull(mockMvc);
     }
 
     // +mock, GET procedure by id - 400 ERROR "pet not assigned to this procedure"
@@ -93,6 +98,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testGetProcedureErrorProcedureForbidden() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 101, 102))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertNotNull(mockMvc);
     }
 
     // +mock, ADD new procedure - 201 SUCCESS

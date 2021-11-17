@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DogServiceImpl extends ReadWriteServiceImpl<Long, Dog> implements DogService {
 
-    private final DogDao dogDao;
-
     public DogServiceImpl( DogDao dogDao) {
         super(dogDao);
-        this.dogDao = dogDao;
     }
 }

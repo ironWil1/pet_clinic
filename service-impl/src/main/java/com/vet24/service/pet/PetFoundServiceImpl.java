@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PetFoundServiceImpl extends ReadWriteServiceImpl<Long, PetFound> implements PetFoundService {
 
-    private final PetFoundDao petFoundDao;
-
     public PetFoundServiceImpl(PetFoundDao petFoundDao) {
         super(petFoundDao);
-        this.petFoundDao = petFoundDao;
     }
 }

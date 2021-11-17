@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.vet24.service.user.UserServiceImpl;
 import io.jsonwebtoken.JwtException;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
 
 
 @Component
@@ -43,6 +46,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (JwtException e) {
+            LOGGER.log(Logger.Level.INFO, e);
         }
 
         filterChain.doFilter(request, response);

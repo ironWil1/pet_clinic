@@ -8,11 +8,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DoctorScheduleServiceImpl extends ReadWriteServiceImpl<Long, DoctorSchedule> implements DoctorScheduleService {
-    private final DoctorScheduleDao doctorScheduleDao;
 
     @Autowired
     public DoctorScheduleServiceImpl(DoctorScheduleDao doctorScheduleDao) {
         super(doctorScheduleDao);
-        this.doctorScheduleDao = doctorScheduleDao;
     }
 }

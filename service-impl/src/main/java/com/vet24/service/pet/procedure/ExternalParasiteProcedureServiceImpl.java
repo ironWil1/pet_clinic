@@ -9,11 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExternalParasiteProcedureServiceImpl extends ReadWriteServiceImpl<Long, ExternalParasiteProcedure> implements ExternalParasiteProcedureService {
 
-    private final ExternalParasiteProcedureDao externalParasiteProcedureDao;
-
     @Autowired
     public ExternalParasiteProcedureServiceImpl(ExternalParasiteProcedureDao externalParasiteProcedureDao) {
         super(externalParasiteProcedureDao);
-        this.externalParasiteProcedureDao = externalParasiteProcedureDao;
     }
 }

@@ -22,8 +22,6 @@ import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.medicine.MedicineService;
-import com.vet24.service.pet.CatService;
-import com.vet24.service.pet.DogService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
@@ -63,8 +61,6 @@ public class TestDataInitializer implements ApplicationRunner {
     private final ReproductionService reproductionService;
     private final ClinicalExaminationService clinicalExaminationService;
     private final PetContactService petContactService;
-    private final CatService catService;
-    private final DogService dogService;
     private final PetService petService;
     private final DoctorService doctorService;
     private final Environment environment;
@@ -76,20 +72,23 @@ public class TestDataInitializer implements ApplicationRunner {
     private final AppointmentService appointmentService;
     private final DoctorScheduleService doctorScheduleService;
 
-    private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
-    private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
-    private final Role ADMIN = new Role(RoleNameEnum.ADMIN);
-    private final Role MANAGER = new Role(RoleNameEnum.MANAGER);
+    private final Role client = new Role(RoleNameEnum.CLIENT);
+    private final Role doctor = new Role(RoleNameEnum.DOCTOR);
+    private final Role admin = new Role(RoleNameEnum.ADMIN);
+    private final Role manager = new Role(RoleNameEnum.MANAGER);
 
-    private final WorkShift firstShift = WorkShift.FIRST_SHIFT;
-    private final WorkShift secondShift = WorkShift.SECOND_SHIFT;
+    private static final WorkShift FIRST_SHIFT = WorkShift.FIRST_SHIFT;
+    private static final WorkShift SECOND_SHIFT = WorkShift.SECOND_SHIFT;
 
-    private final List<Pet> PETS = new ArrayList<>();
-    private final Gender MALE = Gender.MALE;
-    private final Gender FEMALE = Gender.FEMALE;
+    private final List<Pet> pets = new ArrayList<>();
+    private static final Gender MALE = Gender.MALE;
+    private static final Gender FEMALE = Gender.FEMALE;
     private final ManagerService managerService;
 
+    private static final String EMAIL = "@email.com";
+
     @Autowired
+    @SuppressWarnings("squid:S107") //No SONAR
     public TestDataInitializer(AdminService adminService,
                                RoleService roleService,
                                UserService userService,
@@ -99,7 +98,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
                                ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
-                               CatService catService, DogService dogService, DoctorService doctorService,
+                               DoctorService doctorService,
                                PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
@@ -117,8 +116,6 @@ public class TestDataInitializer implements ApplicationRunner {
         this.reproductionService = reproductionService;
         this.clinicalExaminationService = clinicalExaminationService;
         this.petContactService = petContactService;
-        this.catService = catService;
-        this.dogService = dogService;
         this.petService = petService;
         this.doctorService = doctorService;
         this.environment = environment;
@@ -141,8 +138,8 @@ public class TestDataInitializer implements ApplicationRunner {
             clients.add(
                     new Client("ClientFirstName" + i,
                             "ClientLastName" + i,
-                            (i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + "@email.com",
-                            "client", CLIENT, PETS));
+                            (i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + EMAIL,
+                            "client", client, pets));
         }
         clientService.persistAll(clients);
 
@@ -151,8 +148,8 @@ public class TestDataInitializer implements ApplicationRunner {
             doctors.add(
                     new Doctor("DoctorFirstName" + i,
                             "DoctorLastName" + i,
-                            "doctor" + i + "@email.com",
-                            "doctor", DOCTOR));
+                            "doctor" + i + EMAIL,
+                            "doctor", doctor));
         }
         doctorService.persistAll(doctors);
     }
@@ -162,22 +159,22 @@ public class TestDataInitializer implements ApplicationRunner {
         for (int i = 1; i <= 5; i++) {
             adminList.add(new Admin("AdmFirstName " + i,
                     "AdmLastName " + i,
-                    "admin" + i + "@email.com",
-                    "admin", ADMIN));
+                    "admin" + i + EMAIL,
+                    "admin", admin));
         }
         adminService.persistAll(adminList);
     }
 
     public void petInitialize() {
-        List<Pet> pets = new ArrayList<>();
+        List<Pet> petList = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             if (i <= 15) {
-                pets.add(new Dog("DogName" + i, LocalDate.now(), MALE, "DogBreed" + i, clientService.getByKey((long) i)));
+                petList.add(new Dog("DogName" + i, LocalDate.now(), MALE, "DogBreed" + i, clientService.getByKey((long) i)));
             } else {
-                pets.add(new Cat("CatName" + i, LocalDate.now(), FEMALE, "CatBreed" + i, clientService.getByKey((long) i)));
+                petList.add(new Cat("CatName" + i, LocalDate.now(), FEMALE, "CatBreed" + i, clientService.getByKey((long) i)));
             }
         }
-        petService.persistAll(pets);
+        petService.persistAll(petList);
     }
 
     public void diagnosisInitilaizer() {
@@ -313,17 +310,17 @@ public class TestDataInitializer implements ApplicationRunner {
         for (int i = 1; i <= 5; i++) {
             managerList.add(new Manager("ManagerFirstName " + i,
                     "ManagerLastName " + i,
-                    "manager" + i + "@email.com",
-                    "manager", MANAGER));
+                    "manager" + i + EMAIL,
+                    "manager", manager));
         }
         managerService.persistAll(managerList);
     }
 
     private void doctorScheduleInit() {
         List<DoctorSchedule> doctorScheduleList = new ArrayList<>();
-        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(31L), firstShift, 30));
-        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(32L), secondShift, 30));
-        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(33L), secondShift, 30));
+        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(31L), FIRST_SHIFT, 30));
+        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(32L), SECOND_SHIFT, 30));
+        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(33L), SECOND_SHIFT, 30));
         doctorScheduleService.persistAll(doctorScheduleList);
     }
 
@@ -343,16 +340,6 @@ public class TestDataInitializer implements ApplicationRunner {
         }
         appointmentService.persistAll(appointmentList);
     }
-
-//    public void topicInitializer() {
-//        List<Topic> listTopic = new ArrayList<>();
-//        List<Comment> commentList = new ArrayList<>();
-//        for (int i = 1; i <= 30; i++) {
-//            commentList.add(new Comment(userService.getByKey((long) i + 30), "comment for topic " + (i + 30), LocalDateTime.now()));
-//            listTopic.add(new Topic(userService.getByKey((long)i),"topic" + i, "content" + i, false, commentList));
-//        }
-//        topicService.persistAll(listTopic);
-//    }
 
     @Override
     @Transactional
