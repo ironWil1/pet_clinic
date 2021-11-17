@@ -47,7 +47,7 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void updateComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI, 101)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI, 101)
                 .content("{\n" +
                         "  \"id\": 0,\n" +
                         "  \"content\": \"aaassdd\",\n" +

@@ -15,4 +15,10 @@ public class DoctorScheduleServiceImpl extends ReadWriteServiceImpl<Long, Doctor
         super(doctorScheduleDao);
         this.doctorScheduleDao = doctorScheduleDao;
     }
+
+    @Override
+    public boolean isExistByDoctorIdAndWeekNumber(Long doctorId, Integer weekNumber) {
+        return doctorScheduleDao.isExistByDoctorIdAndWeekNumber(doctorId, weekNumber);
+    }
 }
+

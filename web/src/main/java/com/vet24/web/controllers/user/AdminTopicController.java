@@ -1,10 +1,12 @@
 package com.vet24.web.controllers.user;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.user.TopicDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.models.user.Topic;
+import com.vet24.models.util.View;
 import com.vet24.service.user.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -82,19 +84,18 @@ public class AdminTopicController {
         } else throw new NotFoundException("Топик не найден");
     }
 
-
-    @Operation(summary = "update into from topic")
+    @Operation(summary = "update info from topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic is update",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = TopicDto.class))),
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
-    @PutMapping("{topicId}")
-    public ResponseEntity<TopicDto> updateTopic(@Validated(OnUpdate.class) @RequestBody(required = false) TopicDto topicDto,
-                                                @PathVariable("topicId") Long id) {
-        if (!topicService.isExistByKey(id)) throw new NotFoundException("topic not found");
-        Topic topic = topicService.getByKey(id);
+    @PutMapping()
+    public ResponseEntity<TopicDto> updateTopic(@JsonView(View.Put.class)
+                                                @Validated(OnUpdate.class) @RequestBody(required = false) TopicDto topicDto) {
+        if (!topicService.isExistByKey(topicDto.getId())) throw new NotFoundException("topic not found");
+        Topic topic = topicService.getByKey(topicDto.getId());
         topic.setTitle(topicDto.getTitle());
         topic.setContent(topicDto.getContent());
         topicService.update(topic);

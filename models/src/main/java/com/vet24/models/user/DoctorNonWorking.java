@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-
+//Учет нерабочих дней.
 @Getter
 @Setter
 @NoArgsConstructor
