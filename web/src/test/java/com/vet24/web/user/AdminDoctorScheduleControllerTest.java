@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WithUserDetails("admin@gmail.com")
@@ -93,6 +94,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertNotNull(mockMvc);
     }
 
     @Test
@@ -103,6 +105,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+        assertNotNull(mockMvc);
     }
 
     @Test
@@ -113,6 +116,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
+        assertNotNull(mockMvc);
 
     }
 
@@ -124,5 +128,6 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
+        assertNotNull(mockMvc);
     }
 }

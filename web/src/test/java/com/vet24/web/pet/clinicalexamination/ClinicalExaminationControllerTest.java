@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 @WithUserDetails(value = "doctor103@email.com")
 public class ClinicalExaminationControllerTest extends ControllerAbstractIntegrationTest {
@@ -63,6 +64,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationSuccess() throws Exception {
+        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{examinationId}", 102)
                 .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -74,6 +76,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationErrorClinicalExaminationNotFound() throws Exception {
+        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{examinationId}", 33)
                 .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -98,6 +101,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testAddClinicalExaminationErrorPetNotFound() throws Exception {
+        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/reproduction", 33)
                 .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                 .contentType(MediaType.APPLICATION_JSON))
