@@ -12,11 +12,12 @@ import java.time.LocalDate;
 @Service
 public class DoctorNonWorkingServiceImpl extends ReadWriteServiceImpl<Long, DoctorNonWorking> implements DoctorNonWorkingService {
 
-    public DoctorNonWorkingDao doctorNonWorkingDao;
+    private final DoctorNonWorkingDao doctorNonWorkingDao;
 
     @Autowired
-    public DoctorNonWorkingServiceImpl(DoctorNonWorkingDao readWriteDao) {
+    public DoctorNonWorkingServiceImpl(DoctorNonWorkingDao readWriteDao, DoctorNonWorkingDao doctorNonWorkingDao) {
         super(readWriteDao);
+        this.doctorNonWorkingDao = doctorNonWorkingDao;
     }
 
     public Long existDoctorEvent(Doctor doctor, LocalDate date) {
