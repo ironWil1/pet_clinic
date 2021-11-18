@@ -1,7 +1,7 @@
 package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.user.DoctorNonWorkingDto;
-import com.vet24.models.exception.DoctorEventScheduledException;
+import com.vet24.models.exception.DoctorNonWorkingEventException;
 import com.vet24.models.mappers.user.DoctorNonWorkingMapper;
 import com.vet24.models.user.Doctor;
 import com.vet24.models.user.DoctorNonWorking;
@@ -64,7 +64,7 @@ public class AdminDoctorNonWorkingController {
             throw new NotFoundException("Doctor not found");
         } else if (!dateDoctor) {
             log.info("This doctor already has an event scheduled for this date");
-            throw new DoctorEventScheduledException("Doctor and date already exist");
+            throw new DoctorNonWorkingEventException("Doctor and date already exist");
         }
         doctorNonWorking.setDoctor(doc);
         doctorNonWorkingService.persist(doctorNonWorking);
@@ -104,7 +104,7 @@ public class AdminDoctorNonWorkingController {
             throw new NotFoundException("Doctor not found");
         } else if (!dateDoctor) {
             log.info("This doctor already has an event scheduled for this date");
-            throw new DoctorEventScheduledException("Doctor and date already exist");
+            throw new DoctorNonWorkingEventException("Doctor and date already exist");
         }
         doctorNonWorking.setId(id);
         doctorNonWorking.setDoctor(doc);

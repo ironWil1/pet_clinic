@@ -92,7 +92,7 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void createDNWIncorrectDataTest() throws Exception {
         thrown.expect(NestedServletException.class);
-        thrown.expectMessage("Doctor and date already exist"); //DoctorEventScheduledException.class
+        thrown.expectMessage("Doctor and date already exist");
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -107,7 +107,7 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void updateDNWIncorrectDataTest() throws Exception {
         thrown2.expect(NestedServletException.class);
-        thrown2.expectMessage("Doctor and date already exist"); //DoctorEventScheduledException.class
+        thrown2.expectMessage("Doctor and date already exist");
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "{id}", 102)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
