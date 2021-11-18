@@ -21,8 +21,6 @@ import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "api/admin/doctor_non_working/")
@@ -52,21 +50,18 @@ public class AdminDoctorNonWorkingController {
         DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
         Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
         LocalDate date = doctorNonWorkingDto.getDate();
-        List<DoctorNonWorking> list = doctorNonWorkingService.getAll();
-        boolean dateDoctor = true;
-        for (DoctorNonWorking dnw : list) {
-            if (dnw.getDoctor().equals(doc) && dnw.getDate().equals(date)) {
-                dateDoctor = false;
-                break;
-            }
-        }
+
         if (doc == null) {
             log.info("DoctorNonWorking have bad doctorId");
             throw new NotFoundException("Doctor not found");
-        } else if (!dateDoctor) {
+        }
+
+        Long idOfExistEvent = doctorNonWorkingService.existDoctorEvent(doc, date);
+        if (idOfExistEvent != null) {
             log.info("This doctor already has an event scheduled for this date");
             throw new DoctorNonWorkingEventException("Doctor already has an event on the day");
         }
+
         doctorNonWorking.setDoctor(doc);
         doctorNonWorkingService.persist(doctorNonWorking);
         log.info("DoctorNonWorking create");
@@ -78,7 +73,8 @@ public class AdminDoctorNonWorkingController {
             @ApiResponse(responseCode = "200", description = "DoctorNonWorking updated",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = DoctorNonWorkingDto.class))),
-            @ApiResponse(responseCode = "404", description = "DoctorNonWorking not found")
+            @ApiResponse(responseCode = "404", description = "DoctorNonWorking not found"),
+            @ApiResponse(responseCode = "422", description = "Doctor already has an event on the day")
     })
     @PutMapping("{id}")
     public ResponseEntity<DoctorNonWorkingDto> editDoctorNonWorking(@Valid @RequestBody DoctorNonWorkingDto doctorNonWorkingDto,
@@ -89,24 +85,22 @@ public class AdminDoctorNonWorkingController {
             log.info("DoctorNonWorking with id {} not found", id);
             throw new NotFoundException("DoctorNonWorking not found");
         }
+
         DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
         Doctor doc = doctorService.getByKey(doctorNonWorkingDto.getDoctorId());
         LocalDate date = doctorNonWorkingDto.getDate();
-        List<DoctorNonWorking> list = doctorNonWorkingService.getAll();
-        boolean dateDoctor = true;
-        for (DoctorNonWorking dnw : list) {
-            if (dnw.getDoctor().equals(doc) && dnw.getDate().equals(date) && !Objects.equals(dnw.getId(), id)) {
-                dateDoctor = false;
-                break;
-            }
-        }
+
         if (doc == null) {
             log.info("DoctorNonWorking have bad doctorId");
             throw new NotFoundException("Doctor not found");
-        } else if (!dateDoctor) {
-            log.info("This doctor already has an event scheduled for this date");
-            throw new DoctorNonWorkingEventException("Doctor and date already exist");
         }
+
+        Long idOfExistEvent = doctorNonWorkingService.existDoctorEvent(doc, date);
+        if (idOfExistEvent != null && !idOfExistEvent.equals(id)) {
+            log.info("This doctor already has an event scheduled for this date");
+            throw new DoctorNonWorkingEventException("Doctor already has an event on the day");
+        }
+
         doctorNonWorking.setId(id);
         doctorNonWorking.setDoctor(doc);
         doctorNonWorkingService.update(doctorNonWorking);
