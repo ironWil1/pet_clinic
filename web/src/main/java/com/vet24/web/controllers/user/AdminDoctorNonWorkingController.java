@@ -44,7 +44,8 @@ public class AdminDoctorNonWorkingController {
     @Operation(summary = "create doctorNonWorking")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully created new DoctorNonWorking"),
-            @ApiResponse(responseCode = "404", description = "Doctor in DoctorNonWorking not found")
+            @ApiResponse(responseCode = "404", description = "Doctor in DoctorNonWorking not found"),
+            @ApiResponse(responseCode = "422", description = "Doctor already has an event on the day")
     })
     @PostMapping("")
     public ResponseEntity<DoctorNonWorkingDto> createDoctorNonWorking(@Valid @RequestBody DoctorNonWorkingDto doctorNonWorkingDto) {
@@ -64,7 +65,7 @@ public class AdminDoctorNonWorkingController {
             throw new NotFoundException("Doctor not found");
         } else if (!dateDoctor) {
             log.info("This doctor already has an event scheduled for this date");
-            throw new DoctorNonWorkingEventException("Doctor and date already exist");
+            throw new DoctorNonWorkingEventException("Doctor already has an event on the day");
         }
         doctorNonWorking.setDoctor(doc);
         doctorNonWorkingService.persist(doctorNonWorking);
