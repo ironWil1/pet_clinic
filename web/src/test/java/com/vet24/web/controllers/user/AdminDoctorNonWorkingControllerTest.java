@@ -38,13 +38,11 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     @Before
     public void createDoctorNonWorkingDto() {
         doctorNonWorkingDto = new DoctorNonWorkingDto();
-        doctorNonWorkingDto.setDoctorNonWorkingId(101L);
         doctorNonWorkingDto.setDate(LocalDate.of(2021, 10, 05));
         doctorNonWorkingDto.setType(DayOffType.VACATION);
         doctorNonWorkingDto.setDoctorId(32L);
 
         doctorNonWorkingDto2 = new DoctorNonWorkingDto();
-        doctorNonWorkingDto2.setDoctorNonWorkingId(102L);
         doctorNonWorkingDto2.setDate(LocalDate.of(2021, 10, 12));
         doctorNonWorkingDto2.setType(DayOffType.DAY_OFF);
         doctorNonWorkingDto2.setDoctorId(32L);
