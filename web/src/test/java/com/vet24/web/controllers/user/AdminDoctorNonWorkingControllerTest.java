@@ -86,32 +86,23 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
         assertThat(++count).isEqualTo(doctorNonWorkingService.getAll().size());
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
     @Test
     @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void createDNWIncorrectDataTest() throws Exception {
-        thrown.expect(NestedServletException.class);
-        thrown.expectMessage("Doctor and date already exist");
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
-                        .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
     }
-
-    @Rule
-    public ExpectedException thrown2 = ExpectedException.none();
 
     @Test
     @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void updateDNWIncorrectDataTest() throws Exception {
-        thrown2.expect(NestedServletException.class);
-        thrown2.expectMessage("Doctor and date already exist");
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "{id}", 102)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
     }
 }
