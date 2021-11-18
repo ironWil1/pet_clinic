@@ -4,8 +4,6 @@ import lombok.*;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.List;
 
 @Entity
 @Data

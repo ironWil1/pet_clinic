@@ -18,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,12 +60,12 @@ public class PetContactQrCodeController {
         }
         if (petContactService.isExistByKey(id)) {
             PetContact petContact = petContactService.getByKey(id);
-            String UrlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
+            String urlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
             String sb = "Имя питомца - " + petContact.getPet().getName() + ", " +
                     "Владелец - " + petContact.getOwnerName() + ", " +
                     "Адрес - " + petContact.getAddress() + ", " +
                     "Телефон - " + petContact.getPhone() + ", " +
-                    "Чтобы сообщить владельцу о находке перейдите по адресу - " + UrlToAlertPetContact;
+                    "Чтобы сообщить владельцу о находке перейдите по адресу - " + urlToAlertPetContact;
             log.info(" The pet with this id {} exist and here is info for owner{} ",id,sb);
             return ResponseEntity.ok(PetContactQrCodeGenerator.generatePetContactQrCodeImage(sb));
         } else if(petService.isExistByKey(id)) {
@@ -113,41 +111,49 @@ public class PetContactQrCodeController {
 
         if (petContactService.isExistByKey(id)) {
             PetContact petContactOld = petContactService.getByKey(id);
-            if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
-                petContactDto.setOwnerName(petContactOld.getOwnerName());
-            }
-            if (petContactDto.getAddress() == null || petContactDto.getAddress().equals("")) {
-                petContactDto.setAddress(petContactOld.getAddress());
-            }
-            if (petContactDto.getPhone() == null || petContactDto.getPhone() == 0) {
-                petContactDto.setPhone(petContactOld.getPhone());
-            }
-            PetContact petContactNew = petContactMapper.toEntity(petContactDto);
-            petContactOld.setOwnerName(petContactNew.getOwnerName());
-            petContactOld.setAddress(petContactNew.getAddress());
-            petContactOld.setPhone(petContactNew.getPhone());
-            petContactService.update(petContactOld);
-            log.info("The pet contact for pet with id {} was updated",id);
+            savePetContact(id, petContactDto, petContactOld);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else if (petService.isExistByKey(id)) {
-            if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
-                throw new BadRequestException("name can't is null or is empty for create Contact");
-            }
-            if (petContactDto.getAddress() == null || petContactDto.getAddress().equals("")) {
-                throw new BadRequestException("Address can't is null or is empty for create Contact");
-            }
-            if (petContactDto.getPhone() == null || petContactDto.getPhone() == 0) {
-                throw new BadRequestException("phone can't is null or empty for create Contact");
-            }
-            Pet pet = petService.getByKey(id);
-            PetContact petContact = petContactMapper.toEntity(petContactDto);
-            petContact.setPetCode(petContactService.randomPetContactUniqueCode());
-            petContact.setPet(pet);
-            petContactService.persist(petContact);
-            log.info("The pet contact for pet with id {} was saved",id);
+            updatePetContact(id, petContactDto);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    private void savePetContact(Long id, PetContactDto petContactDto, PetContact petContactOld) {
+        if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
+            petContactDto.setOwnerName(petContactOld.getOwnerName());
+        }
+        if (petContactDto.getAddress() == null || petContactDto.getAddress().equals("")) {
+            petContactDto.setAddress(petContactOld.getAddress());
+        }
+        if (petContactDto.getPhone() == null || petContactDto.getPhone() == 0) {
+            petContactDto.setPhone(petContactOld.getPhone());
+        }
+        PetContact petContactNew = petContactMapper.toEntity(petContactDto);
+        petContactOld.setOwnerName(petContactNew.getOwnerName());
+        petContactOld.setAddress(petContactNew.getAddress());
+        petContactOld.setPhone(petContactNew.getPhone());
+        petContactService.update(petContactOld);
+        log.info("The pet contact for pet with id {} was updated", id);
+    }
+
+    private void updatePetContact(Long id, PetContactDto petContactDto) {
+        if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
+            throw new BadRequestException("name can't is null or is empty for create Contact");
+        }
+        if (petContactDto.getAddress() == null || petContactDto.getAddress().equals("")) {
+            throw new BadRequestException("Address can't is null or is empty for create Contact");
+        }
+        if (petContactDto.getPhone() == null || petContactDto.getPhone() == 0) {
+            throw new BadRequestException("phone can't is null or empty for create Contact");
+        }
+        Pet pet = petService.getByKey(id);
+        PetContact petContact = petContactMapper.toEntity(petContactDto);
+        petContact.setPetCode(petContactService.randomPetContactUniqueCode());
+        petContact.setPet(pet);
+        petContactService.persist(petContact);
+        log.info("The pet contact for pet with id {} was saved", id);
     }
 }

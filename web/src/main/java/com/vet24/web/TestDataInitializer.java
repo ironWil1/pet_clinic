@@ -76,18 +76,20 @@ public class TestDataInitializer implements ApplicationRunner {
     private final AppointmentService appointmentService;
     private final DoctorScheduleService doctorScheduleService;
 
-    private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
-    private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
-    private final Role ADMIN = new Role(RoleNameEnum.ADMIN);
-    private final Role MANAGER = new Role(RoleNameEnum.MANAGER);
+    private final Role client = new Role(RoleNameEnum.CLIENT);
+    private final Role doctor = new Role(RoleNameEnum.DOCTOR);
+    private final Role admin = new Role(RoleNameEnum.ADMIN);
+    private final Role manager = new Role(RoleNameEnum.MANAGER);
 
-    private final WorkShift firstShift = WorkShift.FIRST_SHIFT;
-    private final WorkShift secondShift = WorkShift.SECOND_SHIFT;
+    private static final WorkShift firstShift = WorkShift.FIRST_SHIFT;
+    private static final WorkShift secondShift = WorkShift.SECOND_SHIFT;
 
-    private final List<Pet> PETS = new ArrayList<>();
-    private final Gender MALE = Gender.MALE;
-    private final Gender FEMALE = Gender.FEMALE;
+    private final List<Pet> petList = new ArrayList<>();
+    private static final Gender MALE = Gender.MALE;
+    private static final Gender FEMALE = Gender.FEMALE;
     private final ManagerService managerService;
+
+    private static final String EMAIL = "@email.com";
 
     @Autowired
     public TestDataInitializer(AdminService adminService,
@@ -141,8 +143,8 @@ public class TestDataInitializer implements ApplicationRunner {
             clients.add(
                     new Client("ClientFirstName" + i,
                             "ClientLastName" + i,
-                            (i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + "@email.com",
-                            "client", CLIENT, PETS));
+                            (i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + EMAIL,
+                            "client", client, petList));
         }
         clientService.persistAll(clients);
 
@@ -151,8 +153,8 @@ public class TestDataInitializer implements ApplicationRunner {
             doctors.add(
                     new Doctor("DoctorFirstName" + i,
                             "DoctorLastName" + i,
-                            "doctor" + i + "@email.com",
-                            "doctor", DOCTOR));
+                            "doctor" + i + EMAIL,
+                            "doctor", doctor));
         }
         doctorService.persistAll(doctors);
     }
@@ -162,8 +164,8 @@ public class TestDataInitializer implements ApplicationRunner {
         for (int i = 1; i <= 5; i++) {
             adminList.add(new Admin("AdmFirstName " + i,
                     "AdmLastName " + i,
-                    "admin" + i + "@email.com",
-                    "admin", ADMIN));
+                    "admin" + i + EMAIL,
+                    "admin", admin));
         }
         adminService.persistAll(adminList);
     }
@@ -313,8 +315,8 @@ public class TestDataInitializer implements ApplicationRunner {
         for (int i = 1; i <= 5; i++) {
             managerList.add(new Manager("ManagerFirstName " + i,
                     "ManagerLastName " + i,
-                    "manager" + i + "@email.com",
-                    "manager", MANAGER));
+                    "manager" + i + EMAIL,
+                    "manager", manager));
         }
         managerService.persistAll(managerList);
     }

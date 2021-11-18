@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.CheckForNull;
 import java.io.IOException;
+import java.util.Objects;
 
 @RestController
 @Slf4j
@@ -80,17 +82,19 @@ public class ClientController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the avatar"),
             @ApiResponse(responseCode = "404", description = "Client or avatar is not found")
     })
+
+    @CheckForNull
     @GetMapping("/avatar")
     public ResponseEntity<byte[]> getClientAvatar() {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (client != null) {
             String url = client.getAvatar();
             if (url != null) {
-                log.info("The client with this id {} have avatar",client.getId());
+                log.info("The client with this id {} have avatar", Objects.requireNonNull(client).getId());
                 return new ResponseEntity<>(resourceService.loadAsByteArray(url), addContentHeaders(url), HttpStatus.OK);
             }
         }
-        log.info("The avatar for client with id {} not found",client.getId());
+        log.info("The avatar for client with id {} not found",Objects.requireNonNull(client).getId());
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

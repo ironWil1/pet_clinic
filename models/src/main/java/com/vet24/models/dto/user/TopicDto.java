@@ -3,7 +3,9 @@ package com.vet24.models.dto.user;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
-import com.vet24.models.util.View;
+import com.vet24.models.util.Get;
+import com.vet24.models.util.Post;
+import com.vet24.models.util.Put;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,28 +21,28 @@ import java.util.List;
 @NoArgsConstructor
 public class TopicDto {
 
-    @JsonView({View.Put.class, View.Get.class})
+    @JsonView({Put.class, Get.class})
     @Null(groups = {OnCreate.class})
     @NotNull(groups = {OnUpdate.class})
     private Long id;
 
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
+    @JsonView({Put.class, Post.class, Get.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     private String title;
 
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
+    @JsonView({Put.class, Post.class, Get.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     private String content;
 
-    @JsonView(View.Get.class)
+    @JsonView(Get.class)
     private LocalDateTime creationDate;
 
-    @JsonView(View.Get.class)
+    @JsonView(Get.class)
     private LocalDateTime lastUpdateDate;
 
-    @JsonView(View.Get.class)
+    @JsonView(Get.class)
     private UserInfoDto topicStarter;
 
-    @JsonView(View.Get.class)
+    @JsonView(Get.class)
     private List<CommentDto> commentDtoList;
 }

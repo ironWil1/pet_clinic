@@ -1,10 +1,7 @@
 package com.vet24.service.notification;
 
 import com.vet24.dao.notification.NotificationDao;
-import com.vet24.models.dto.googleEvent.GoogleEventDto;
-import com.vet24.models.exception.BadRequestException;
-import com.vet24.models.exception.CredentialException;
-import com.vet24.models.exception.EventException;
+import com.vet24.models.dto.google_event.GoogleEventDto;
 import com.vet24.models.mappers.notification.NotificationEventMapper;
 import com.vet24.models.notification.Notification;
 import com.vet24.service.ReadWriteServiceImpl;

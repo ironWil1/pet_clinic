@@ -137,6 +137,7 @@ public abstract class Pet {
         this.client = client;
     }
 
+    @SuppressWarnings("squid:S4165") //No SONAR
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
                   List<Procedure> procedures, List<Reproduction> reproductions,
                   List<ClinicalExamination> clinicalExaminations) {

@@ -65,27 +65,25 @@ public class MailServiceImpl implements MailService {
             log.info("Message has been sent");
         } catch (MailException | UnsupportedEncodingException | MessagingException e) {
             log.warn("{}", e.getMessage());
-            e.getStackTrace();  // TODO: 28.06.2021
+            e.getStackTrace();
         }
     }
 
     @Override
     public void sendWelcomeMessage(String emailTo, String userName, String tokenUrl) {
-        var model = new HashMap<String, Object>() {{
-            put("tokenUrl", tokenUrl);
-            put("name", userName);
-        }};
+        var model = new HashMap<String, Object>();
+        model.put("tokenUrl", tokenUrl);
+        model.put("name", userName);
         sendEmailFromTemplate(emailTo, "Registration greeting", "mail/greeting-letter-template", model);
     }
 
     @Override
     public void sendGeolocationPetFoundMessage(PetContact petContact, String geolocationPetFoundUrl, String text) {
-        var model = new HashMap<String, Object>() {{
-            put("name", petContact.getPet().getClient().getFirstname());
-            put("geolocationPetFoundUrl", geolocationPetFoundUrl);
-            put("petName", petContact.getPet().getName());
-            put("text", text);
-        }};
+        var model = new HashMap<String, Object>();
+        model.put("name", petContact.getPet().getClient().getFirstname());
+        model.put("geolocationPetFoundUrl", geolocationPetFoundUrl);
+        model.put("petName", petContact.getPet().getName());
+        model.put("text", text);
         sendEmailFromTemplate(petContact.getPet().getClient().getEmail(), "Info about your founded pet",
                 "mail/geolocation-pet-letter-template", model);
     }

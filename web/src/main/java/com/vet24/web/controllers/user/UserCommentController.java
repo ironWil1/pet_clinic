@@ -7,7 +7,7 @@ import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.CommentReaction;
 import com.vet24.models.user.User;
-import com.vet24.models.util.View;
+import com.vet24.models.util.Put;
 import com.vet24.service.user.CommentReactionService;
 import com.vet24.service.user.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,7 +69,7 @@ public class UserCommentController {
     })
     @PutMapping(value = "/{commentId}")
     public ResponseEntity<CommentDto> createOrUpdate(@PathVariable("commentId") Long commentId,
-                                                     @JsonView(View.Put.class)
+                                                     @JsonView(Put.class)
                                                      @Valid @RequestBody CommentDto commentDto) {
         if (commentService.isExistByKey(commentId)) {
             log.info("Comment with id {} found", commentId);

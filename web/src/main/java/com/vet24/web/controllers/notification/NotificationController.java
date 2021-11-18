@@ -1,6 +1,6 @@
 package com.vet24.web.controllers.notification;
 
-import com.vet24.models.dto.googleEvent.GoogleEventDto;
+import com.vet24.models.dto.google_event.GoogleEventDto;
 import com.vet24.models.exception.CredentialException;
 import com.vet24.models.exception.EventException;
 import com.vet24.models.user.Client;
@@ -66,7 +66,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "502", description = "Cannot create event"),
     })
     @PostMapping(value = {"/notification/create"})
-    private ResponseEntity<GoogleEventDto> createEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
+    public ResponseEntity<GoogleEventDto> createEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.createEvent(googleEventDto);
             log.info("The google event  is {}",googleEventDto.getDescription());
@@ -84,7 +84,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "502", description = "Cannot edit event"),
     })
     @PostMapping(value = {"/notification/edit"})
-    private ResponseEntity<GoogleEventDto> editEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
+    public ResponseEntity<GoogleEventDto> editEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.editEvent(googleEventDto);
             log.info("The edited google event  is {}",googleEventDto.getDescription());
@@ -100,7 +100,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "502", description = "Cannot delete event"),
     })
     @PostMapping(value = {"/notification/delete"})
-    private ResponseEntity<GoogleEventDto> deleteEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
+    public ResponseEntity<GoogleEventDto> deleteEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.deleteEvent(googleEventDto);
             log.info("The deleted google event  is {}",googleEventDto.getDescription());

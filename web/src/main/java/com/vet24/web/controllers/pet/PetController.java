@@ -146,7 +146,7 @@ public class PetController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         if (!(pet.getPetType().equals(petDto.getPetType()))) {
-            return new ResponseEntity("The type of pet can not be changed", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(AbstractNewPetDto.dummy(), HttpStatus.BAD_REQUEST);
         }
         if (!(pet.getClient().getId().equals(client.getId()))) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

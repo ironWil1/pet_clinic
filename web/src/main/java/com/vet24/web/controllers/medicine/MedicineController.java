@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.medicine;
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.medicine.MedicineDto;
-import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.medicine.MedicineMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.service.media.ResourceService;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

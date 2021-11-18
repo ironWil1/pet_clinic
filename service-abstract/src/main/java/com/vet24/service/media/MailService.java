@@ -2,7 +2,6 @@ package com.vet24.service.media;
 
 import com.vet24.models.pet.PetContact;
 
-import javax.mail.MessagingException;
 import java.util.Map;
 
 public interface MailService {

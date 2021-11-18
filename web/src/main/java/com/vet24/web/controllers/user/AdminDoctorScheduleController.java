@@ -7,7 +7,8 @@ import com.vet24.models.dto.user.DoctorScheduleDto;
 import com.vet24.models.exception.UnprocessableEntityException;
 import com.vet24.models.mappers.user.DoctorScheduleMapper;
 import com.vet24.models.medicine.DoctorSchedule;
-import com.vet24.models.util.View;
+import com.vet24.models.util.Post;
+import com.vet24.models.util.Put;
 import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.user.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,7 +52,7 @@ public class AdminDoctorScheduleController {
     })
     @PostMapping
     public ResponseEntity<DoctorScheduleDto> createDoctorSchedule(@RequestBody(required = false)
-                                                                  @JsonView(View.Post.class)
+                                                                  @JsonView(Post.class)
                                                                   @Validated(OnCreate.class)
                                                                           DoctorScheduleDto doctorScheduleDto) {
         if (!doctorService.isExistByKey(doctorScheduleDto.getDoctorId())) {
@@ -79,7 +80,7 @@ public class AdminDoctorScheduleController {
     })
     @PutMapping
     public ResponseEntity<DoctorScheduleDto> updateDoctorSchedule(@RequestBody(required = false)
-                                                                  @JsonView(View.Put.class)
+                                                                  @JsonView(Put.class)
                                                                   @Validated(OnUpdate.class)
                                                                           DoctorScheduleDto doctorScheduleDto) {
         DoctorSchedule doctorSchedule = doctorScheduleService.getByKey(doctorScheduleDto.getId());
