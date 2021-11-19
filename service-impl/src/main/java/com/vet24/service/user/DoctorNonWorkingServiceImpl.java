@@ -20,7 +20,7 @@ public class DoctorNonWorkingServiceImpl extends ReadWriteServiceImpl<Long, Doct
         this.doctorNonWorkingDao = doctorNonWorkingDao;
     }
 
-    public Long existDoctorEvent(Doctor doctor, LocalDate date) {
+    public Long isExistByDoctorIdAndDate(Doctor doctor, LocalDate date) {
         return doctorNonWorkingDao.existDoctorEvent(doctor, date);
     }
 }

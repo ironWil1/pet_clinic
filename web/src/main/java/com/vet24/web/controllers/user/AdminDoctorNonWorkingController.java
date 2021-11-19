@@ -56,7 +56,7 @@ public class AdminDoctorNonWorkingController {
             throw new NotFoundException("Doctor not found");
         }
 
-        Long idOfExistEvent = doctorNonWorkingService.existDoctorEvent(doc, date);
+        Long idOfExistEvent = doctorNonWorkingService.isExistByDoctorIdAndDate(doc, date);
         if (idOfExistEvent != null) {
             log.info("This doctor already has an event scheduled for this date");
             throw new DoctorNonWorkingEventException("Doctor already has an event on the day");
@@ -95,7 +95,7 @@ public class AdminDoctorNonWorkingController {
             throw new NotFoundException("Doctor not found");
         }
 
-        Long idOfExistEvent = doctorNonWorkingService.existDoctorEvent(doc, date);
+        Long idOfExistEvent = doctorNonWorkingService.isExistByDoctorIdAndDate(doc, date);
         if (idOfExistEvent != null && !idOfExistEvent.equals(id)) {
             log.info("This doctor already has an event scheduled for this date");
             throw new DoctorNonWorkingEventException("Doctor already has an event on the day");

@@ -8,6 +8,6 @@ import java.time.LocalDate;
 
 public interface DoctorNonWorkingService extends ReadWriteService<Long, DoctorNonWorking> {
 
-    Long existDoctorEvent(Doctor doctor, LocalDate date);
+    Long isExistByDoctorIdAndDate(Doctor doctor, LocalDate date);
 
 }
