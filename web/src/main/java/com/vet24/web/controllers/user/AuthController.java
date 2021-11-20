@@ -22,11 +22,11 @@ public class AuthController {
 
 
     @PostMapping("/auth")
-    public ResponseEntity authenticateUser(@RequestBody AuthRequest authRequest) {
-        if (!authRequest.equals(null)) {
-        return new ResponseEntity(jwtUtils.generateJwtToken(authRequest.getUsername()), HttpStatus.OK);
+    public ResponseEntity<String> authenticateUser(@RequestBody AuthRequest authRequest) {
+        if (!authRequest.getUsername().contains("")) {
+        return new ResponseEntity<>(jwtUtils.generateJwtToken(authRequest.getUsername()), HttpStatus.OK);
         } else {
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
