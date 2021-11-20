@@ -9,14 +9,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import java.time.LocalDateTime;
 
-@WithUserDetails("admin@gmail.com")
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+//@WithUserDetails("admin@gmail.com")
 public class AdminCommentControllerTest extends ControllerAbstractIntegrationTest {
 
     private final String URI = "http://localhost:8080/api/admin/comment";
@@ -38,6 +38,9 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void commentUpdatedNotFound() throws Exception {
+
+        String token = this.getAccessToken("admin@gmail.com","admin");
+
         commentDto.setContent("updatedTestComment");
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 1_000_000)
                         .content(objectMapper.valueToTree(commentDto).toString())
@@ -55,9 +58,11 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void commentUpdated() throws Exception {
+        String token = getAccessToken("admin@gmail.com","admin");
         String tempComment = "right comment";
         commentDto.setContent("updatedRightComment");
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 103)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(commentDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());

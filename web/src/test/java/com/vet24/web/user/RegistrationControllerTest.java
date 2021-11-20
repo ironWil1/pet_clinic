@@ -1,7 +1,6 @@
 package com.vet24.web.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 import com.vet24.models.dto.user.RegisterDto;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import lombok.extern.slf4j.Slf4j;

@@ -18,13 +18,11 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-
     @PostMapping("/auth")
     public AuthResponse authenticateUser(@RequestBody AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         String jwt = jwtUtils.generateJwtToken(authRequest.getUsername());
-
-        return new AuthResponse(jwt);  }
-
+        return new AuthResponse(jwt);
+    }
 }
