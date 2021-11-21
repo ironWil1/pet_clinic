@@ -356,11 +356,11 @@ public class TestDataInitializer implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        if (Objects.requireNonNull(environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create")
-                || Objects.requireNonNull(
-                    environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop")) {
-//                && Objects.requireNonNull(
-//                environment.getProperty("createTestData")).equals("true")) {
+//        if ((Objects.requireNonNull(environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create")
+//                || Objects.requireNonNull(
+//                    environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop"))
+
+        if (Objects.requireNonNull(environment.getProperty("createTestData")).equals("true")) {
             roleInitialize();
             userInitialize();
             petInitialize();
