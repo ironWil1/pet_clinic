@@ -31,11 +31,9 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     @Before
     public void setToken() {
         token = getAccessToken("user3@gmail.com","user3");
-        System.out.println("token..........." + token);
     }
 
     @Test
-    @WithUserDetails("user3@gmail.com")
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void likeOrDislikeComment() throws Exception {
         Assert.assertTrue(userService
