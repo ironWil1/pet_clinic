@@ -21,7 +21,7 @@ public class DoctorNonWorkingDaoImpl extends ReadWriteDaoImpl<Long, DoctorNonWor
                     .setParameter("date", date)
                     .getSingleResult();
             return dnw.equals(id);
-        } catch(NoResultException e) {
+        } catch (NoResultException e) {
             e.getStackTrace();
         }
         return false;
