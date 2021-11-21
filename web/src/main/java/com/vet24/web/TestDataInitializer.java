@@ -237,7 +237,6 @@ public class TestDataInitializer implements ApplicationRunner {
         clinicalExaminationService.persistAll(clinicalExaminations);
     }
 
-
     public void petContactInitializer() {
         Pet pet1 = petService.getByKey(1L);
         PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_18_00L, petContactService.randomPetContactUniqueCode());
@@ -359,7 +358,9 @@ public class TestDataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (Objects.requireNonNull(environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create")
                 || Objects.requireNonNull(
-                environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop")) {
+                    environment.getProperty("spring.jpa.hibernate.ddl-auto")).equals("create-drop")) {
+//                && Objects.requireNonNull(
+//                environment.getProperty("createTestData")).equals("true")) {
             roleInitialize();
             userInitialize();
             petInitialize();
