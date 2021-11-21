@@ -1,4 +1,4 @@
-create table role
+create table IF NOT EXISTS role
 (
     name varchar(25) not null,
     primary key (name)
