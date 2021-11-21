@@ -7,21 +7,21 @@ import com.vet24.models.dto.user.TopicDto;
 import com.vet24.models.dto.user.UserInfoDto;
 import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.web.ControllerAbstractIntegrationTest;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@WithUserDetails("admin@gmail.com")
 public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
@@ -32,6 +32,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     TopicMapper topicMapper;
 
     final String URI = "http://localhost:8090/api/admin/topic";
+    private String token;
 
     static TopicDto topicDtoClosed;
     static TopicDto topicDtoOpen;
@@ -66,11 +67,17 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                 , userInfoDto, commentDtoList);
     }
 
+    @Before
+    public void setToken() {
+        token = getAccessToken("admin@gmail.com","admin");
+    }
+
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testDeleteTopicSuccess() throws Exception {
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{topicId}", 100)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -83,6 +90,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     public void testDeleteTopicNotFound() throws Exception {
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{topicId}", 33)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -95,6 +103,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     public void testCloseTopicSuccess() throws Exception {
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{topicId}/close", 100)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoOpen).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -107,6 +116,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     public void testCloseTopicNotFound() throws Exception {
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{topicId}/close", 108562)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -119,6 +129,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     public void testOpenTopicSuccess() throws Exception {
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{topicId}/open", 101)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -131,6 +142,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     public void testOpenTopicNotFound() throws Exception {
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{topicId}/open", 108562)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -149,6 +161,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
 
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoUpdate).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -161,6 +174,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     public void testUpdateTopicNotFound() throws Exception {
         int beforeCount = topicDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoNotFound).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())

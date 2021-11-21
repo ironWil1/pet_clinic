@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -19,7 +18,6 @@ public class TopicControllerTest extends ControllerAbstractIntegrationTest {
     private TopicService topicService;
 
     @Test
-    @WithUserDetails("client1@email.com")
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void persistTopicComment() throws Exception {
 
@@ -28,46 +26,51 @@ public class TopicControllerTest extends ControllerAbstractIntegrationTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post(
                 URI + "/{topicId}/addComment", topicId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("Some comment string"))
+                        .header("Authorization",
+                                "Bearer " + getAccessToken("client1@email.com","client"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("Some comment string"))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
         Assert.assertEquals(++beforeCount, topicService.getTopicWithCommentsById(topicId).getComments().size());
     }
 
     @Test
-    @WithUserDetails("manager@gmail.com")
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void whenManagerTryAddEmptyComment_thenBadRequestException() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post(
                 URI + "/{topicId}/addComment", 102L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        .header("Authorization",
+                                "Bearer " + getAccessToken("manager@gmail.com","manager"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
-    @WithUserDetails("client1@email.com")
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void whenClientTryAddCommentToNotExistsTopic_thenNotFoundException() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post(
                 URI + "/{topicId}/addComment", 7_123L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("Any comment string"))
+                        .header("Authorization",
+                                "Bearer " + getAccessToken("client1@email.com","client"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("Any comment string"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
-    @WithUserDetails("client1@email.com")
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void whenClientTryAddCommentToClosedTopic_thenForbiddenException() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post(
                 URI + "/{topicId}/addComment", 101L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("Mockito.anyString()"))
+                        .header("Authorization",
+                                "Bearer " + getAccessToken("client1@email.com","client"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("Mockito.anyString()"))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 

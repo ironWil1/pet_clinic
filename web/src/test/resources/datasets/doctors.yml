@@ -9,7 +9,7 @@ USER_ENTITIES:
     FIRSTNAME: "Doctor"
     LASTNAME: "Doctor"
     EMAIL: "doctor33@gmail.com"
-    PASSWORD: "user33"
+    PASSWORD: "{bcrypt}$2a$12$0HcODBhE9XaLTV3dfxAPZ.oCmzAc5YAKnfhjsj7pa98CD0S72ynzC" #"user33"
 
   - ID: 34
     USER_TYPE: "DOCTOR"
@@ -18,7 +18,7 @@ USER_ENTITIES:
     FIRSTNAME: "Vinni"
     LASTNAME: "Pukh"
     EMAIL: "doctor34@gmail.com"
-    PASSWORD: "user34"
+    PASSWORD: "{bcrypt}$2a$12$kWsvJ6Tw4yOqUWG/g71J/OeRq5RJNse5KL9QCQYzAsyF4pualpZl." #"user34"
 
   - ID: 35
     USER_TYPE: "DOCTOR"
@@ -27,7 +27,7 @@ USER_ENTITIES:
     FIRSTNAME: "Doctor"
     LASTNAME: "House"
     EMAIL: "doctor35@gmail.com"
-    PASSWORD: "user35"
+    PASSWORD: "{bcrypt}$2a$12$.OJH8Y8Wm7j0iCEjOKEJIept8OwNno317DPkj3aA0/kwnBaGQcnFu" #"user35"
 
   - ID: 42
     USER_TYPE: "DOCTOR"
@@ -36,7 +36,7 @@ USER_ENTITIES:
     FIRSTNAME: "Doctor2"
     LASTNAME: "House2"
     EMAIL: "doctor2@gmail.com"
-    PASSWORD: "doctor2"
+    PASSWORD: "{bcrypt}$2a$12$824blNtff1sxj3FEPvfBcerTv6mQ1kiYX.1iVyrV2TEkBGBfzBpOe" #"doctor2"
 
 USER_ROLE:
 

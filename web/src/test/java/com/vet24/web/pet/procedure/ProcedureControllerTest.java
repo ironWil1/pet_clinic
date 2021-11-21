@@ -14,15 +14,14 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
 import java.time.LocalDate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@WithUserDetails(value = "user3@gmail.com")
 public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
@@ -36,6 +35,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
 
     final String URI = "http://localhost:8090/api/client/pet";
     final HttpHeaders HEADERS = new HttpHeaders();
+    private String token;
     AbstractNewProcedureDto newProcedureDto;
     ProcedureDto procedureDto1;
     ProcedureDto procedureDto3;
@@ -54,11 +54,17 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
                 100L, "4f435", true, 20);
     }
 
+    @Before
+    public void setToken() {
+        token = getAccessToken("user3@gmail.com","user3");
+    }
+
     // +mock, GET procedure by id - 200 SUCCESS
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testGetProcedureSuccess() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 102, 102))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 102, 102)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -67,7 +73,8 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testGetProcedureErrorPetNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 33, 102))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 33, 102)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -75,7 +82,8 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "/datasets/reproduction.yml"})
     public void testGetProcedureErrorProcedureNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 102, 33))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 102, 33)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -83,7 +91,8 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testGetProcedureErrorPetForbidden() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 100, 100))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 100, 100)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -91,7 +100,8 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
     public void testGetProcedureErrorProcedureForbidden() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 101, 102))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/procedure/{procedureId}", 101, 102)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -101,8 +111,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testAddProcedureSuccess() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/procedure", 102)
-                .content(objectMapper.valueToTree(newProcedureDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(newProcedureDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -114,8 +125,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testAddProcedureErrorPetNotFound() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/procedure", 33)
-                .content(objectMapper.valueToTree(newProcedureDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(newProcedureDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -127,8 +139,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testAddProcedureErrorPetForbidden() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/procedure", 100)
-                .content(objectMapper.valueToTree(newProcedureDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(newProcedureDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -140,8 +153,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testUpdateProcedureSuccess() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 102, 102)
-                .content(objectMapper.valueToTree(procedureDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -154,8 +168,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testUpdateProcedureErrorPetNotFound() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 33, 102)
-                .content(objectMapper.valueToTree(procedureDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -167,8 +182,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testUpdateProcedureErrorProcedureNotFound() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 102, 33)
-                .content(objectMapper.valueToTree(procedureDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -180,8 +196,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testUpdateProcedureErrorPetForbidden() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 100, 100)
-                .content(objectMapper.valueToTree(procedureDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -193,8 +210,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testUpdateProcedureErrorProcedureForbidden() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 101, 102)
-                .content(objectMapper.valueToTree(procedureDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -206,8 +224,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testUpdateProcedureErrorIdDosentMatch() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 102, 102)
-                .content(objectMapper.valueToTree(procedureDto1).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto1).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -219,8 +238,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testDeleteProcedureSuccess() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/procedure/{id}", 102, 102)
-                .content(objectMapper.valueToTree(procedureDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -232,8 +252,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testDeleteProcedureErrorPetNotFound() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/procedure/{id}", 33, 102)
-                .content(objectMapper.valueToTree(procedureDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -245,8 +266,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testDeleteProcedureErrorProcedureNotFound() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/procedure/{id}", 102, 33)
-                .content(objectMapper.valueToTree(procedureDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -258,8 +280,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testDeleteProcedureErrorPetForbidden() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/procedure/{id}", 100, 100)
-                .content(objectMapper.valueToTree(procedureDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
@@ -271,8 +294,9 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     public void testDeleteProcedureErrorProcedureForbidden() throws Exception {
         int beforeCount = procedureDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/procedure/{id}", 101, 102)
-                .content(objectMapper.valueToTree(procedureDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(procedureDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());

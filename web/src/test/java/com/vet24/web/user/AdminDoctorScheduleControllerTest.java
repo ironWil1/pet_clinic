@@ -11,14 +11,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@WithUserDetails("admin@gmail.com")
 public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegrationTest {
     private final String URI = "http://localhost:8080/api/admin/schedule";
     private DoctorScheduleDto updateSuccessSchedule;
@@ -26,6 +24,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     private DoctorScheduleDto createDoctorNotFoundSchedule;
     private DoctorScheduleDto createDoctorIsBusySchedule;
     private DoctorScheduleDto createDoctorSuccess;
+    private String token;
 
     @Autowired
     private DoctorScheduleService doctorScheduleService;
@@ -56,10 +55,16 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
         createDoctorSuccess.setWeekNumber(1);
     }
 
+    @Before
+    public void setToken() {
+        token = getAccessToken("admin@gmail.com","admin");
+    }
+
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
     public void updateSchedule() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(updateSuccessSchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -72,7 +77,8 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
     public void removeSchedule() throws Exception {
         assertThat(doctorScheduleService.isExistByKey(101L)).isEqualTo(true);
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 101))
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 101)
+                        .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(doctorScheduleService.isExistByKey(101L)).isEqualTo(false);
@@ -81,7 +87,8 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
     public void scheduleDeletedNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 1_000_000))
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 1_000_000)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -89,6 +96,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
     public void scheduleUpdatedNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(updateNotFoundSchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -99,6 +107,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
     public void scheduleCreateDoctorNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(createDoctorNotFoundSchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -109,6 +118,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
     public void scheduleCreateDoctorIsBusy() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(createDoctorIsBusySchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -120,6 +130,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
     public void scheduleCreateSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(createDoctorSuccess).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

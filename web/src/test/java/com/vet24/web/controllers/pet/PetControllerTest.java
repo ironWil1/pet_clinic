@@ -18,7 +18,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -30,20 +29,24 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WithUserDetails(value = "client1@email.com")
 public class PetControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
     private PetDao petDao;
 
     private final String URI = "http://localhost:8090/api/client/pet";
-
     private AbstractNewPetDto abstractNewPetDto;
+    private String token;
 
     @Before
     public void createNewClientAndDog() {
         this.abstractNewPetDto = new DogDto("name", PetType.DOG, LocalDate.now(), Gender.MALE, "breed",
                 "color", PetSize.MEDIUM, 9.3, "description", "test.png", 0);
+    }
+
+    @Before
+    public void setToken() {
+        token = getAccessToken("client1@email.com","client");
     }
 
     // +mock, add pet - success
@@ -52,8 +55,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void persistPetSuccess() throws Exception {
         int sizeBefore = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/add", AbstractNewPetDto.class)
-                .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(++sizeBefore).isEqualTo(petDao.getAll().size());
@@ -65,8 +69,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void deletePetSuccess() throws Exception {
         int sizeBefore = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}", 107)
-                .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--sizeBefore).isEqualTo(petDao.getAll().size());
@@ -78,8 +83,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void deletePetOfAnotherOwnerBadRequest() throws Exception {
         int sizeBefore = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}", 100)
-                .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(sizeBefore).isEqualTo(petDao.getAll().size());
@@ -91,8 +97,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void deletePetThatDoesNotExistNotFound() throws Exception {
         int beforeCount = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}", 69000)
-                .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
@@ -104,8 +111,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void updatePetSuccess() throws Exception {
         int beforeCount = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 107)
-                .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
@@ -117,8 +125,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void updatePetOfAnotherOwnerBadRequest() throws Exception {
         int beforeCount = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 100)
-                .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
@@ -132,8 +141,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         AbstractNewPetDto abstractCat = new CatDto();
         abstractCat.setPetType(PetType.CAT);
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 102)
-                .content(objectMapper.valueToTree(abstractCat).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(abstractCat).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
@@ -145,8 +155,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void updatePetThatDoesNotExistNotFound() throws Exception {
         int beforeCount = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 69000)
-                .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
@@ -158,8 +169,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     public void getPetAvatarButPetDoesNotExistBadRequest() throws Exception {
         Pet pet = petDao.getByKey(69000L);
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/avatar", byte[].class, 69000L)
-                .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                .contentType(MediaType.MULTIPART_FORM_DATA))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(pet).isNull();
     }
@@ -172,7 +184,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
                 classPathResource.getFilename(), null, classPathResource.getInputStream());
         mockMvc.perform(multipart(URI + "/{petId}/avatar", 107)
-                .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
+                        .file(mockMultipartFile)
+                        .header("Authorization", "Bearer " + token)
+                        .header("Content-Type", "multipart/form-data"))
                 .andExpect(status().isOk());
     }
 
@@ -186,8 +200,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/avatar", String.class,  100)
-                .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                .contentType(MediaType.MULTIPART_FORM_DATA))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -199,7 +214,9 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
                 classPathResource.getFilename(), null, classPathResource.getInputStream());
         mockMvc.perform(multipart(URI + "/{petId}/avatar", 69000)
-                .file(mockMultipartFile).header("Content-Type", "multipart/form-data"))
+                        .file(mockMultipartFile)
+                        .header("Authorization", "Bearer " + token)
+                        .header("Content-Type", "multipart/form-data"))
                 .andExpect(status().isNotFound());
     }
 }

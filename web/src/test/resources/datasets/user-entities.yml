@@ -6,7 +6,7 @@ USER_ENTITIES:
     FIRSTNAME: "Admin"
     LASTNAME: "Admin"
     EMAIL: "admin@gmail.com"
-    PASSWORD: "admin"
+    PASSWORD: "{bcrypt}$2a$12$b5SpHA7tzgKb4bLSDppmS.3aZMdBu8diJKNHQDU7eASiTni2WlwHq" #"admin"
   - ID: 101
     USER_TYPE: "MANAGER"
     AVATAR: "test.png"
@@ -14,14 +14,14 @@ USER_ENTITIES:
     FIRSTNAME: "Manager"
     LASTNAME: "Manager"
     EMAIL: "manager@gmail.com"
-    PASSWORD: "manager"
+    PASSWORD: "{bcrypt}$2a$12$c3tOVldsS88AjG8bLd2t5OMTfctjv.UY2hAg4qWtp2.VlDG7MnFa2" #"manager"
   - ID: 102
     USER_TYPE: "CLIENT"
     ENABLED: true
     FIRSTNAME: "Client"
     LASTNAME: "Client"
     EMAIL: "client1@email.com"
-    PASSWORD: "client"
+    PASSWORD: "{bcrypt}$2a$12$Z/gpYA7gLUuFKZM7EROGduwYlXJnZplTVemX.kpKy52khCANZVJWW" #"client"
   - ID: 103
     USER_TYPE: "DOCTOR"
     AVATAR: "test.png"
@@ -29,7 +29,7 @@ USER_ENTITIES:
     FIRSTNAME: "Dr."
     LASTNAME: "Petrov"
     EMAIL: "doctor103@email.com"
-    PASSWORD: "doctor"
+    PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"
   - ID: 33
     USER_TYPE: "DOCTOR"
     AVATAR: "test.png"
@@ -37,7 +37,7 @@ USER_ENTITIES:
     FIRSTNAME: "Doctor"
     LASTNAME: "Doctor"
     EMAIL: "doctor33@gmail.com"
-    PASSWORD: "user33"
+    PASSWORD: "{bcrypt}$2a$12$0HcODBhE9XaLTV3dfxAPZ.oCmzAc5YAKnfhjsj7pa98CD0S72ynzC" #"user33"
   - ID: 34
     USER_TYPE: "DOCTOR"
     AVATAR: "test.png"
@@ -45,7 +45,7 @@ USER_ENTITIES:
     FIRSTNAME: "Vinni"
     LASTNAME: "Pukh"
     EMAIL: "doctor34@gmail.com"
-    PASSWORD: "user34"
+    PASSWORD: "{bcrypt}$2a$12$kWsvJ6Tw4yOqUWG/g71J/OeRq5RJNse5KL9QCQYzAsyF4pualpZl." #"user34"
   - ID: 3
     USER_TYPE: "CLIENT"
     AVATAR: "test.png"
@@ -53,7 +53,7 @@ USER_ENTITIES:
     FIRSTNAME: "Ivan"
     LASTNAME: "Ivanov"
     EMAIL: "user3@gmail.com"
-    PASSWORD: "user3"
+    PASSWORD: "{bcrypt}$2a$12$qz8vaj1icekMnf.7sXSzw.gDdQWezHs3XKv1YhQPaedWYRNjSQVxm" #"user3"
   - ID: 4
     USER_TYPE: "CLIENT"
     AVATAR: "test.png"
@@ -61,7 +61,7 @@ USER_ENTITIES:
     FIRSTNAME: "Petr"
     LASTNAME: "Petrov"
     EMAIL: "user4@gmail.com"
-    PASSWORD: "user4"
+    PASSWORD: "{bcrypt}$2a$12$sbHmqRpUGv12k/0PhMb8Se5eThsvkUdPXTNuWF2mtj57bD1P8oXbS" #"user4"
 
 ROLE:
   - NAME: "ADMIN"
