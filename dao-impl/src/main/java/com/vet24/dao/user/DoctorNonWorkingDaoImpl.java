@@ -12,17 +12,18 @@ import java.time.LocalDate;
 public class DoctorNonWorkingDaoImpl extends ReadWriteDaoImpl<Long, DoctorNonWorking> implements DoctorNonWorkingDao {
 
     @Override
-    public Long isExistByDoctorIdAndDate(Doctor doctor, LocalDate date) {
+    public boolean isExistByDoctorIdAndDate(Doctor doctor, LocalDate date) {
         try {
             Long id = doctor.getId();
-            DoctorNonWorking dnw = manager.createQuery(
-                            "SELECT d FROM DoctorNonWorking d WHERE d.doctor.id = :id AND d.date = :date", DoctorNonWorking.class)
+            Long dnw = manager.createQuery(
+                            "SELECT d.doctor.id FROM DoctorNonWorking d WHERE d.doctor.id = :id AND d.date = :date", Long.class)
                     .setParameter("id", id)
                     .setParameter("date", date)
                     .getSingleResult();
-            return dnw.getId();
-        } catch (NoResultException e) {
-            return null;
+            return dnw.equals(id);
+        } catch(NoResultException e) {
+            e.getStackTrace();
         }
+        return false;
     }
 }
