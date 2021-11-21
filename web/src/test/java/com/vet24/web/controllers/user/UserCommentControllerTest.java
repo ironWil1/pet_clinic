@@ -31,6 +31,7 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     @Before
     public void setToken() {
         token = getAccessToken("user3@gmail.com","user3");
+        System.out.println("token..........." + token);
     }
 
     @Test
@@ -40,8 +41,8 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
         Assert.assertTrue(userService
                 .getWithAllCommentReactions("user3@gmail.com")
                 .getCommentReactions().isEmpty());
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{positive}", 101, true))
-                        //.header("Authorization", "Bearer " + token))
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{positive}", 101, true)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         Assert.assertEquals(userService
                 .getWithAllCommentReactions("user3@gmail.com")
