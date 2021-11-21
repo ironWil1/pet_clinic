@@ -6,11 +6,13 @@ import com.github.database.rider.core.api.configuration.Orthography;
 import com.vet24.service.media.MailService;
 import com.vet24.web.config.ClinicDBRider;
 import com.vet24.web.controllers.user.AuthRequest;
+import lombok.NoArgsConstructor;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +28,9 @@ import javax.annotation.Nullable;
 @ClinicDBRider
 public abstract class ControllerAbstractIntegrationTest {
 
+    @Autowired
+    private Environment environment;
+
     @MockBean
     protected MailService mailService;
 
@@ -37,7 +42,7 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @Nullable
     protected String getAccessToken(String email, String password) {
-        String url = "http://localhost:8090/auth";
+        String url = environment.getProperty("application.domain.name") +  "/auth";
         AuthRequest authRequest = new AuthRequest(email, password);
         RestTemplate template = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
