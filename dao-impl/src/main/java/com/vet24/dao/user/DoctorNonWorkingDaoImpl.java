@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class DoctorNonWorkingDaoImpl extends ReadWriteDaoImpl<Long, DoctorNonWorking> implements DoctorNonWorkingDao {
 
     @Override
-    public Long existDoctorEvent(Doctor doctor, LocalDate date) {
+    public Long isExistByDoctorIdAndDate(Doctor doctor, LocalDate date) {
         try {
             Long id = doctor.getId();
             DoctorNonWorking dnw = manager.createQuery(

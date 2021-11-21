@@ -8,6 +8,6 @@ import java.time.LocalDate;
 
 public interface DoctorNonWorkingDao extends ReadWriteDao<Long, DoctorNonWorking> {
 
-    Long existDoctorEvent(Doctor doctor, LocalDate date);
+    Long isExistByDoctorIdAndDate(Doctor doctor, LocalDate date);
 
 }
