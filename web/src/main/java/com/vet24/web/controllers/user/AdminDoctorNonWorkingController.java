@@ -65,7 +65,7 @@ public class AdminDoctorNonWorkingController {
         doctorNonWorking.setDoctor(doc);
         doctorNonWorkingService.persist(doctorNonWorking);
         log.info("DoctorNonWorking create");
-        return ResponseEntity.ok(doctorNonWorkingDto);
+        return ResponseEntity.ok(doctorNonWorkingMapper.toDto(doctorNonWorking));
     }
 
     @Operation(summary = "edit doctorNonWorking")
@@ -104,7 +104,7 @@ public class AdminDoctorNonWorkingController {
         doctorNonWorking.setId(id);
         doctorNonWorking.setDoctor(doc);
         doctorNonWorkingService.update(doctorNonWorking);
-        return ResponseEntity.ok(doctorNonWorkingDto);
+        return ResponseEntity.ok(doctorNonWorkingMapper.toDto(doctorNonWorking));
     }
 
     @Operation(summary = "delete doctorNonWorking")
