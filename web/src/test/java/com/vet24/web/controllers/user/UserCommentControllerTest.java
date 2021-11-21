@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -33,13 +34,14 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     }
 
     @Test
+    @WithUserDetails("user3@gmail.com")
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void likeOrDislikeComment() throws Exception {
         Assert.assertTrue(userService
                 .getWithAllCommentReactions("user3@gmail.com")
                 .getCommentReactions().isEmpty());
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{positive}", 101, true)
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{positive}", 101, true))
+                        //.header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         Assert.assertEquals(userService
                 .getWithAllCommentReactions("user3@gmail.com")

@@ -25,14 +25,14 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
 
     @Before
     public void setToken() {
-        token = getAccessToken("client1@email.com","client");
+        token = getAccessToken("client1@email.com", "client");
     }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void shouldGetResponseEntityClientDto_ForCurrentClient() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI, ClientDto.class)
-                .header("Authorization", "Bearer " + token))
+                    .header("Authorization", "Bearer " + token))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(containsString(principal.getName())));
