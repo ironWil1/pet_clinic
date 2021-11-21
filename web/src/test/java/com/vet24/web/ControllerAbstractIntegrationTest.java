@@ -37,7 +37,7 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @Nullable
     protected String getAccessToken(String email, String password) {
-        String url = "http://localhost:8080/auth";
+        String url = "http://localhost:8090/auth";
         AuthRequest authRequest = new AuthRequest(email, password);
         RestTemplate template = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
