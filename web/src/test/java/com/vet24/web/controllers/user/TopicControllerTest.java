@@ -49,7 +49,7 @@ public class TopicControllerTest extends ControllerAbstractIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post(
                 URI + "/{topicId}/addComment", 102L)
                         .header("Authorization",
-                                "Bearer " + getAccessToken("manager@gmail.com","manager"))
+                                "Bearer " + getAccessToken("manager1@email.com","manager"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(""))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());

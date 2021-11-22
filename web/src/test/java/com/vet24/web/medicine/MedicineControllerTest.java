@@ -39,7 +39,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
 
     @Before
     public void setToken() throws Exception {
-        token = getAccessToken("manager@gmail.com","manager");
+        token = getAccessToken("manager1@email.com","manager");
     }
 
     // +mock, get medicine by id
