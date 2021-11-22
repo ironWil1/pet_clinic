@@ -8,6 +8,7 @@ import com.github.database.rider.core.api.configuration.Orthography;
 import com.vet24.service.media.MailService;
 import com.vet24.web.config.ClinicDBRider;
 import com.vet24.web.controllers.user.AuthRequest;
+import org.json.JSONObject;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -43,18 +44,16 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @Nullable
     protected String getAccessToken(String email, String password) throws Exception{
-        String url = environment.getProperty("application.domain.name") +  "/auth";
-        AuthRequest authRequest = new AuthRequest(email, password);
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        String url = environment.getProperty("application.domain.name") + "/auth";
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson = objectWriter.writeValueAsString(authRequest);
+        String requestJson = objectWriter.writeValueAsString(new AuthRequest(email, password));
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(url)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-        String response = mvcResult.getResponse().getContentAsString();
-        return response.contains("jwtToken") ? response.substring(13, response.length() - 2) : null;
+        JSONObject json = new JSONObject(mvcResult.getResponse().getContentAsString());
+        return json.getString("jwtToken");
     }
-
 }
