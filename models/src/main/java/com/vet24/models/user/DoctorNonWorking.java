@@ -2,7 +2,6 @@ package com.vet24.models.user;
 
 import com.vet24.models.enums.DayOffType;
 import lombok.*;
-import org.hibernate.validator.internal.util.stereotypes.Immutable;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -26,9 +25,8 @@ public class DoctorNonWorking implements Serializable {
     @Enumerated(EnumType.STRING)
     @EqualsAndHashCode.Include
     private DayOffType type;  //- enum указания причины (VACATION - отпуск, DAY_OFF - выходной, SICK_LEAVE - больничный)
-    @Column
+
     @EqualsAndHashCode.Include
-    @Immutable
     private LocalDate date;
 
     public DoctorNonWorking(Doctor doctor, DayOffType type, LocalDate date) {

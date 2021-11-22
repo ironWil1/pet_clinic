@@ -8,15 +8,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface DoctorNonWorkingMapper extends DtoMapper<DoctorNonWorking, DoctorNonWorkingDto>, EntityMapper<DoctorNonWorkingDto,DoctorNonWorking> {
-
+public interface DoctorNonWorkingMapper extends DtoMapper<DoctorNonWorking, DoctorNonWorkingDto>, EntityMapper<DoctorNonWorkingDto, DoctorNonWorking> {
 
     @Override
+    @Mapping(target = "doctorNonWorkingId", source = "id")
+    @Mapping(target = "doctorId", source = "doctor.id")
     DoctorNonWorkingDto toDto(DoctorNonWorking entity);
 
     @Override
     DoctorNonWorking toEntity(DoctorNonWorkingDto dto);
-
-
 
 }

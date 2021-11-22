@@ -65,9 +65,7 @@ public class AdminDoctorNonWorkingController {
         doctorNonWorking.setDoctor(doc);
         doctorNonWorkingService.persist(doctorNonWorking);
         log.info("DoctorNonWorking create");
-        Long idDnw = doctorNonWorking.getId();
-        doctorNonWorkingDto.setDoctorNonWorkingId(idDnw);
-        return ResponseEntity.ok(doctorNonWorkingDto);
+        return ResponseEntity.ok(doctorNonWorkingMapper.toDto(doctorNonWorking));
     }
 
     @Operation(summary = "edit doctorNonWorking")
@@ -98,7 +96,8 @@ public class AdminDoctorNonWorkingController {
         }
 
         boolean exist = doctorNonWorkingService.isExistByDoctorIdAndDate(doc, date);
-        if (exist) {
+        boolean selfEdited = doctorNonWorkingService.isExistByKey(id);
+        if (exist && !selfEdited) {
             log.info("This doctor already has an event scheduled for this date");
             throw new DoctorNonWorkingEventException("Doctor already has an event on the day");
         }
@@ -106,9 +105,7 @@ public class AdminDoctorNonWorkingController {
         doctorNonWorking.setId(id);
         doctorNonWorking.setDoctor(doc);
         doctorNonWorkingService.update(doctorNonWorking);
-        Long idDnw = doctorNonWorking.getId();
-        doctorNonWorkingDto.setDoctorNonWorkingId(idDnw);
-        return ResponseEntity.ok(doctorNonWorkingDto);
+        return ResponseEntity.ok(doctorNonWorkingMapper.toDto(doctorNonWorking));
     }
 
     @Operation(summary = "delete doctorNonWorking")
