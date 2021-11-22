@@ -26,8 +26,8 @@ public class TopicControllerTest extends ControllerAbstractIntegrationTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post(
                 URI + "/{topicId}/addComment", topicId)
-                        .header("Authorization",
-                                "Bearer " + getAccessToken("client1@email.com","client"))
+                        //.header("Authorization",
+                        //        "Bearer " + getAccessToken("client1@email.com","client"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("Some comment string"))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
