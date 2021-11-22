@@ -29,7 +29,7 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
     private PetContactService petContactService;
 
     @Before
-    public void setToken() {
+    public void setToken() throws Exception {
         token = getAccessToken("client1@email.com","client");
     }
 

@@ -5,7 +5,7 @@ USER_ENTITIES:
     ENABLED: true
     FIRSTNAME: "Admin"
     LASTNAME: "Admin"
-    EMAIL: "admin@gmail.com"
+    EMAIL: "admin1@email.com"
     PASSWORD: "{bcrypt}$2a$12$b5SpHA7tzgKb4bLSDppmS.3aZMdBu8diJKNHQDU7eASiTni2WlwHq" #"admin"
   - ID: 101
     USER_TYPE: "MANAGER"
@@ -13,7 +13,7 @@ USER_ENTITIES:
     ENABLED: true
     FIRSTNAME: "Manager"
     LASTNAME: "Manager"
-    EMAIL: "manager@gmail.com"
+    EMAIL: "manager1@email.com"
     PASSWORD: "{bcrypt}$2a$12$c3tOVldsS88AjG8bLd2t5OMTfctjv.UY2hAg4qWtp2.VlDG7MnFa2" #"manager"
   - ID: 102
     USER_TYPE: "CLIENT"

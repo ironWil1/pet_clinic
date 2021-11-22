@@ -30,7 +30,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
     private String token;
 
     @Before
-    public void setToken() {
+    public void setToken() throws Exception {
         token = getAccessToken("doctor33@gmail.com","user33");
     }
 

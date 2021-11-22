@@ -20,7 +20,7 @@ public class TopicControllerTest extends ControllerAbstractIntegrationTest {
     private TopicService topicService;
 
     @Before
-    public void setToken() {
+    public void setToken() throws Exception {
         token = getAccessToken("client1@email.com", "client");
     }
 

@@ -52,7 +52,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     }
 
     @Before
-    public void setToken() {
+    public void setToken() throws Exception {
         token = getAccessToken("user3@gmail.com","user3");
     }
 

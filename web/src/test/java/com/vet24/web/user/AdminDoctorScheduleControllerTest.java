@@ -56,8 +56,8 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     }
 
     @Before
-    public void setToken() {
-        token = getAccessToken("admin@gmail.com","admin");
+    public void setToken() throws Exception {
+        token = getAccessToken("admin1@email.com","admin");
     }
 
     @Test

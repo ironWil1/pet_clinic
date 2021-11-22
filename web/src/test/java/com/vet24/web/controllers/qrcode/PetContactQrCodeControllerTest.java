@@ -27,7 +27,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     PetContactDto petContactDto2 = new PetContactDto("Ираида", "Кастанаевская 45", 84951447200L);
 
     @Before
-    public void setToken() {
+    public void setToken() throws Exception {
         token = getAccessToken("client1@email.com","client");
     }
 

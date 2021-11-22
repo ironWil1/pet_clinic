@@ -51,7 +51,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     }
 
     @Before
-    public void setToken() {
+    public void setToken() throws Exception {
         token = getAccessToken("doctor103@email.com","doctor");
     }
 

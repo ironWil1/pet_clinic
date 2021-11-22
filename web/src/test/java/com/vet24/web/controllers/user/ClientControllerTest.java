@@ -24,7 +24,7 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     private final Principal principal = () -> "client1@email.com";
 
     @Before
-    public void setToken() {
+    public void setToken() throws Exception {
         token = getAccessToken("client1@email.com", "client");
     }
 

@@ -45,7 +45,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     }
 
     @Before
-    public void setToken() {
+    public void setToken() throws Exception {
         token = getAccessToken("client1@email.com","client");
     }
 

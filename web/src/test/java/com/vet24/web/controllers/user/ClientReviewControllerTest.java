@@ -30,7 +30,7 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
     private DoctorReviewService doctorReviewService;
 
     @Before
-    public void setToken() {
+    public void setToken() throws Exception {
         token = getAccessToken("user3@gmail.com","user3");
     }
 
