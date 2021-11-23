@@ -9,6 +9,18 @@ import java.util.Optional;
 
 @Repository
 public class UserDaoImpl extends ReadWriteDaoImpl<Long, User> implements UserDao {
+
+    @Override
+    public User findUserByUsername(String username) {
+        try {
+            return manager
+                    .createQuery("SELECT u FROM User u WHERE u.username =:username", User.class)
+                    .setParameter("username", username).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     @Override
     public Optional<User> getByEmail(String email) {
         return manager
