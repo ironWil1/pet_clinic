@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,13 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private static final String INVALID_TOKEN_MSG = "Registration token is invalid";
 
-
-    private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final UserServiceImpl userService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserServiceImpl userService) {
-        this.authenticationManager = authenticationManager;
+    public AuthController(JwtUtils jwtUtils, UserServiceImpl userService) {
         this.jwtUtils = jwtUtils;
         this.userService = userService;
     }
@@ -40,7 +36,7 @@ public class AuthController {
         if (authRequest == null) {
             throw new BadRequestException(INVALID_TOKEN_MSG);
         }
-        User user = userService.findUserByUsername(authRequest.getUsername());
+        User user = (User) userService.loadUserByUsername(authRequest.getUsername());
         return new ResponseEntity<>(
                 new AuthResponse(jwtUtils.generateJwtToken(authRequest.getUsername()), String.valueOf(user.getRole())),
                 HttpStatus.OK);

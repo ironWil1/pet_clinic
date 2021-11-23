@@ -75,8 +75,4 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
         }
         return userDao.updateAll(users);
     }
-
-    public User findUserByUsername(String username) {
-       return userDao.findUserByUsername(username);
-    }
 }
