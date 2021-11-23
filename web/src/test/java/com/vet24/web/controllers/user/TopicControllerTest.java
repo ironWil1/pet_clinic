@@ -11,8 +11,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.junit.Assert.assertNotNull;
-
 public class TopicControllerTest extends ControllerAbstractIntegrationTest {
 
     private final String URI = "/api/user/topic";
@@ -41,36 +39,36 @@ public class TopicControllerTest extends ControllerAbstractIntegrationTest {
     @WithUserDetails("manager@gmail.com")
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void whenManagerTryAddEmptyComment_thenBadRequestException() throws Exception {
+
         mockMvc.perform(MockMvcRequestBuilders.post(
                 URI + "/{topicId}/addComment", 102L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(""))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        assertNotNull(mockMvc);
     }
 
     @Test
     @WithUserDetails("client1@email.com")
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void whenClientTryAddCommentToNotExistsTopic_thenNotFoundException() throws Exception {
+
         mockMvc.perform(MockMvcRequestBuilders.post(
                 URI + "/{topicId}/addComment", 7_123L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("Any comment string"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
-        assertNotNull(mockMvc);
     }
 
     @Test
     @WithUserDetails("client1@email.com")
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void whenClientTryAddCommentToClosedTopic_thenForbiddenException() throws Exception {
+
         mockMvc.perform(MockMvcRequestBuilders.post(
                 URI + "/{topicId}/addComment", 101L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("Mockito.anyString()"))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
-        assertNotNull(mockMvc);
     }
 
 }

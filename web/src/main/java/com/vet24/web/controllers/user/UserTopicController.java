@@ -9,8 +9,7 @@ import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.Topic;
 import com.vet24.models.user.User;
-import com.vet24.models.util.Post;
-import com.vet24.models.util.Put;
+import com.vet24.models.util.View;
 import com.vet24.service.user.ClientService;
 import com.vet24.service.user.CommentService;
 import com.vet24.service.user.TopicService;
@@ -104,7 +103,7 @@ public class UserTopicController {
     })
 
     @PostMapping()
-    public ResponseEntity<Void> createTopic(@JsonView(Post.class)
+    public ResponseEntity<Void> createTopic(@JsonView(View.Post.class)
                                             @RequestBody(required = false) TopicDto topicDto) {
         if (topicDto.getTitle().trim().equals("") || topicDto.getContent().trim().equals("")) {
             throw new BadRequestException("title or content can't null");
@@ -125,7 +124,7 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
     @PutMapping()
-    public ResponseEntity<TopicDto> updateTopic(@JsonView(Put.class)
+    public ResponseEntity<TopicDto> updateTopic(@JsonView(View.Put.class)
                                                 @RequestBody(required = false) TopicDto topicDto) {
         if (!topicService.isExistByKey(topicDto.getId())) {
             throw new NotFoundException("topic not found");

@@ -14,8 +14,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.assertNotNull;
-
 import java.time.LocalDateTime;
 
 @WithUserDetails("admin@gmail.com")
@@ -41,7 +39,6 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void commentUpdatedNotFound() throws Exception {
         commentDto.setContent("updatedTestComment");
-        assertNotNull(commentDto);
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 1_000_000)
                         .content(objectMapper.valueToTree(commentDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -51,7 +48,6 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void commentDeletedNotFound() throws Exception {
-        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 1_000_000))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -80,7 +76,6 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml","/datasets/comments.yml", "/datasets/doctor-review.yml"})
     public void commentNotDeletedBecauseConstraints() throws Exception {
-        assertNotNull(mockMvc);
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 102))
                 .andExpect(MockMvcResultMatchers.status().isIAmATeapot());
     }

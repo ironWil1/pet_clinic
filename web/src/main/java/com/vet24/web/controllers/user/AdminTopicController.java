@@ -6,6 +6,7 @@ import com.vet24.models.dto.user.TopicDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.models.user.Topic;
+import com.vet24.models.util.View;
 import com.vet24.service.user.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

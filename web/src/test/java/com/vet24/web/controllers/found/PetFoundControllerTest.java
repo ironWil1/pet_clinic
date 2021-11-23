@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -35,7 +34,6 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/pet-found.yml", "/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void testSaveDataFoundPetAndSendOwnerPetMessage() throws Exception {
         PetContact petContact = petContactService.getByKey(104L);
-        assertNotNull(petContact);
         String petCode = petContact.getPetCode();
 
         PetFoundDto petFoundDto = new PetFoundDto("1.2345678", "2.3456789", "Some text");

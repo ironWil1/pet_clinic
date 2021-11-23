@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.user.CommentDto;
 import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.user.Comment;
-import com.vet24.models.util.Put;
+import com.vet24.models.util.View;
 import com.vet24.service.user.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -43,7 +43,7 @@ public class AdminCommentController {
             @ApiResponse(responseCode = "404", description = "Comment not found")
     })
     @PutMapping("{id}")
-    public ResponseEntity<CommentDto> updateComment(@JsonView(Put.class)
+    public ResponseEntity<CommentDto> updateComment(@JsonView(View.Put.class)
                                                     @Valid @RequestBody CommentDto commentDto,
                                                     @PathVariable("id") Long id) {
         if (commentService.isExistByKey(id)) {

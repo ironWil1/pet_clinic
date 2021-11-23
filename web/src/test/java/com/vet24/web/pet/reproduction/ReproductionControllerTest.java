@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.assertNotNull;
 
 @WithUserDetails(value = "user3@gmail.com")
 public class ReproductionControllerTest extends ControllerAbstractIntegrationTest {
@@ -60,8 +59,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testGetReproductionSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 102, 102))
                 .andExpect(MockMvcResultMatchers.status().isOk());
-        assertNotNull(mockMvc);
-
     }
 
     // +mock, get reproduction by id -  error 404 pet not found
@@ -70,8 +67,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void shouldBeNotFoundPet() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 33, 102))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
-        assertNotNull(mockMvc);
-
     }
 
     // +mock, reproduction by id -  error 404 reproduction not found
@@ -80,8 +75,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testGetReproductionError404reproduction() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 102, 33))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
-        assertNotNull(mockMvc);
-
     }
 
     // +mock, reproduction by id -  error 400 reproduction not assigned to pet
@@ -90,8 +83,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testGetReproductionError400refPetReproduction() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 101, 102))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        assertNotNull(mockMvc);
-
     }
 
     // +mock, get reproduction by id -  error 400 pet not yours
@@ -100,8 +91,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testGetReproductionError400refClientPet() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 100, 100))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        assertNotNull(mockMvc);
-
     }
 
     // +mock, add reproduction - success

@@ -55,7 +55,5 @@ public abstract class AbstractNewPetDto {
 
     }
 
-    public static AbstractNewPetDto dummy() {
-        return new AbstractNewPetDto() {};
-    }
+
 }

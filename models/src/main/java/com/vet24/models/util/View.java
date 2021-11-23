@@ -1,4 +1,12 @@
 package com.vet24.models.util;
 
-public interface View {
+public class View {
+    public interface Get {
+    }
+
+    public interface Post {
+    }
+
+    public interface Put {
+    }
 }

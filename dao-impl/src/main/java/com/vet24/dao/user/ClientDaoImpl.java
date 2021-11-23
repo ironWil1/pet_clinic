@@ -10,14 +10,12 @@ import javax.persistence.NoResultException;
 @Repository
 public class ClientDaoImpl extends ReadWriteDaoImpl<Long, Client> implements ClientDao {
 
-    private static final String EMAIL = "email";
-
     @Override
     public Client getClientByEmail(String email) {
         try {
             return manager
                     .createQuery("SELECT c FROM Client c WHERE c.email =:email", Client.class)
-                    .setParameter(EMAIL, email).getSingleResult();
+                    .setParameter("email", email).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -28,7 +26,7 @@ public class ClientDaoImpl extends ReadWriteDaoImpl<Long, Client> implements Cli
         try {
             return manager
                     .createQuery("SELECT c FROM Client c JOIN FETCH c.pets WHERE c.email =:email", Client.class)
-                    .setParameter(EMAIL, email).getSingleResult();
+                    .setParameter("email", email).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -39,7 +37,7 @@ public class ClientDaoImpl extends ReadWriteDaoImpl<Long, Client> implements Cli
         try {
             return manager
                     .createQuery("SELECT c FROM Client c JOIN FETCH c.commentReactions WHERE c.email =:email", Client.class)
-                    .setParameter(EMAIL, email).getSingleResult();
+                    .setParameter("email", email).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

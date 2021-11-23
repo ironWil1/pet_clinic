@@ -111,49 +111,41 @@ public class PetContactQrCodeController {
 
         if (petContactService.isExistByKey(id)) {
             PetContact petContactOld = petContactService.getByKey(id);
-            savePetContact(id, petContactDto, petContactOld);
+            if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
+                petContactDto.setOwnerName(petContactOld.getOwnerName());
+            }
+            if (petContactDto.getAddress() == null || petContactDto.getAddress().equals("")) {
+                petContactDto.setAddress(petContactOld.getAddress());
+            }
+            if (petContactDto.getPhone() == null || petContactDto.getPhone() == 0) {
+                petContactDto.setPhone(petContactOld.getPhone());
+            }
+            PetContact petContactNew = petContactMapper.toEntity(petContactDto);
+            petContactOld.setOwnerName(petContactNew.getOwnerName());
+            petContactOld.setAddress(petContactNew.getAddress());
+            petContactOld.setPhone(petContactNew.getPhone());
+            petContactService.update(petContactOld);
+            log.info("The pet contact for pet with id {} was updated",id);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else if (petService.isExistByKey(id)) {
-            updatePetContact(id, petContactDto);
+            if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
+                throw new BadRequestException("name can't is null or is empty for create Contact");
+            }
+            if (petContactDto.getAddress() == null || petContactDto.getAddress().equals("")) {
+                throw new BadRequestException("Address can't is null or is empty for create Contact");
+            }
+            if (petContactDto.getPhone() == null || petContactDto.getPhone() == 0) {
+                throw new BadRequestException("phone can't is null or empty for create Contact");
+            }
+            Pet pet = petService.getByKey(id);
+            PetContact petContact = petContactMapper.toEntity(petContactDto);
+            petContact.setPetCode(petContactService.randomPetContactUniqueCode());
+            petContact.setPet(pet);
+            petContactService.persist(petContact);
+            log.info("The pet contact for pet with id {} was saved",id);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
-
-    private void savePetContact(Long id, PetContactDto petContactDto, PetContact petContactOld) {
-        if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
-            petContactDto.setOwnerName(petContactOld.getOwnerName());
-        }
-        if (petContactDto.getAddress() == null || petContactDto.getAddress().equals("")) {
-            petContactDto.setAddress(petContactOld.getAddress());
-        }
-        if (petContactDto.getPhone() == null || petContactDto.getPhone() == 0) {
-            petContactDto.setPhone(petContactOld.getPhone());
-        }
-        PetContact petContactNew = petContactMapper.toEntity(petContactDto);
-        petContactOld.setOwnerName(petContactNew.getOwnerName());
-        petContactOld.setAddress(petContactNew.getAddress());
-        petContactOld.setPhone(petContactNew.getPhone());
-        petContactService.update(petContactOld);
-        log.info("The pet contact for pet with id {} was updated", id);
-    }
-
-    private void updatePetContact(Long id, PetContactDto petContactDto) {
-        if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
-            throw new BadRequestException("name can't is null or is empty for create Contact");
-        }
-        if (petContactDto.getAddress() == null || petContactDto.getAddress().equals("")) {
-            throw new BadRequestException("Address can't is null or is empty for create Contact");
-        }
-        if (petContactDto.getPhone() == null || petContactDto.getPhone() == 0) {
-            throw new BadRequestException("phone can't is null or empty for create Contact");
-        }
-        Pet pet = petService.getByKey(id);
-        PetContact petContact = petContactMapper.toEntity(petContactDto);
-        petContact.setPetCode(petContactService.randomPetContactUniqueCode());
-        petContact.setPet(pet);
-        petContactService.persist(petContact);
-        log.info("The pet contact for pet with id {} was saved", id);
     }
 }
