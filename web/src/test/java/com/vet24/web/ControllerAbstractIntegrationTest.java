@@ -30,9 +30,6 @@ import javax.annotation.Nullable;
 @ClinicDBRider
 public abstract class ControllerAbstractIntegrationTest {
 
-    @Autowired
-    private Environment environment;
-
     @MockBean
     protected MailService mailService;
 
@@ -44,12 +41,11 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @Nullable
     protected String getAccessToken(String email, String password) throws Exception{
-        String url = environment.getProperty("application.domain.name") + "/auth";
         ObjectMapper mapper = new ObjectMapper()
                 .configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = objectWriter.writeValueAsString(new AuthRequest(email, password));
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(url)
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/auth")
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();

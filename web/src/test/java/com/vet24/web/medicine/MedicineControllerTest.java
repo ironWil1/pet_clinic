@@ -23,7 +23,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     private MedicineDaoImpl medicineDao;
 
-    private final String URI = "http://localhost:8090/api/manager/medicine";
+    private final String URI = "/api/manager/medicine";
     private String token;
 
     MedicineDto medicineDtoNew;

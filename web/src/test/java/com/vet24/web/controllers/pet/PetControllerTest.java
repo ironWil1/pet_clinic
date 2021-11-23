@@ -34,7 +34,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     private PetDao petDao;
 
-    private final String URI = "http://localhost:8090/api/client/pet";
+    private final String URI = "/api/client/pet";
     private AbstractNewPetDto abstractNewPetDto;
     private String token;
 

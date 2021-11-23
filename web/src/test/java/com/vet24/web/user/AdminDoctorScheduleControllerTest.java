@@ -18,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegrationTest {
-    private final String URI = "http://localhost:8080/api/admin/schedule";
+    private final String URI = "/api/admin/schedule";
     private DoctorScheduleDto updateSuccessSchedule;
     private DoctorScheduleDto updateNotFoundSchedule;
     private DoctorScheduleDto createDoctorNotFoundSchedule;

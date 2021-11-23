@@ -26,7 +26,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
 
     DiagnosisDto diagnosisDto = new DiagnosisDto(4L, 4L, 33L, "text");
 
-    private final String URI = "http://localhost:8090/api/doctor/pet/{petId}/addDiagnosis";
+    private final String URI = "/api/doctor/pet/{petId}/addDiagnosis";
     private String token;
 
     @Before

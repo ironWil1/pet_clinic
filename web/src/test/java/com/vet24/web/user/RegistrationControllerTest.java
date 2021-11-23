@@ -19,16 +19,16 @@ import static org.mockito.Mockito.times;
 @Slf4j
 public class RegistrationControllerTest extends ControllerAbstractIntegrationTest {
 
-    final String URI = "http://localhost:8090/api/registration";
+    final String URI = "/api/registration";
 
     @Test
     @DataSet(value = "/datasets/user-entities.yml", cleanBefore = true)
     public void shouldBeNotAcceptableWrongEmail() throws Exception {
-        RegisterDto registerDto = new RegisterDto("342354234.com","Vera","P",
-                "Congo","Congo");
+        RegisterDto registerDto = new RegisterDto("342354234.com", "Vera", "P",
+                "Congo", "Congo");
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
-                .content(objectMapper.valueToTree(registerDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.valueToTree(registerDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Valid email is required")));
@@ -38,11 +38,11 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(value = "/datasets/user-entities.yml", cleanBefore = true)
     public void shouldBeNotAcceptablePasswords() throws Exception {
-        RegisterDto registerDto = new RegisterDto("342354234@gmail.com","Vera","P",
-                "Congo","Congo2");
+        RegisterDto registerDto = new RegisterDto("342354234@gmail.com", "Vera", "P",
+                "Congo", "Congo2");
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
-                .content(objectMapper.valueToTree(registerDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.valueToTree(registerDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Passwords don't match")));
@@ -52,14 +52,14 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(value = "/datasets/user-entities.yml", cleanBefore = true)
     public void shouldBeCreated() throws Exception {
-        RegisterDto registerDto = new RegisterDto("342354234@gmail.com","Vera","P",
-                "Congo","Congo");
+        RegisterDto registerDto = new RegisterDto("342354234@gmail.com", "Vera", "P",
+                "Congo", "Congo");
         Mockito.doNothing()
                 .when(mailService)
                 .sendWelcomeMessage(anyString(), anyString(), anyString());
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
-                .content(objectMapper.valueToTree(registerDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.valueToTree(registerDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         Mockito.verify(mailService)

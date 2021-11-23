@@ -28,7 +28,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     @Autowired
     ClinicalExaminationMapper clinicalExaminationMapper;
 
-    final String URI = "http://localhost:8090/api/doctor/exam";
+    final String URI = "/api/doctor/exam";
     final HttpHeaders HEADERS = new HttpHeaders();
     private String token;
     ClinicalExaminationDto clinicalExaminationDtoNew1;

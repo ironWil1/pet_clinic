@@ -31,7 +31,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     @Autowired
     TopicMapper topicMapper;
 
-    final String URI = "http://localhost:8090/api/admin/topic";
+    final String URI = "/api/admin/topic";
     private String token;
 
     static TopicDto topicDtoClosed;

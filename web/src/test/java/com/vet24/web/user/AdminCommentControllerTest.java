@@ -18,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class AdminCommentControllerTest extends ControllerAbstractIntegrationTest {
 
-    private final String URI = "http://localhost:8080/api/admin/comment";
+    private final String URI = "/api/admin/comment";
     private String token;
     private CommentDto commentDto;
     @Autowired

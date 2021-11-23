@@ -32,7 +32,7 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Autowired
     ReproductionService reproductionService;
 
-    final String URI = "http://localhost:8090/api/client/pet";
+    final String URI = "/api/client/pet";
     private String token;
 
     ReproductionDto reproductionDtoNew;

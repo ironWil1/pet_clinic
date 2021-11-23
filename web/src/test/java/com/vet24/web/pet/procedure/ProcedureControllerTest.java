@@ -33,7 +33,7 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     ProcedureDao procedureDao;
 
-    final String URI = "http://localhost:8090/api/client/pet";
+    final String URI = "/api/client/pet";
     final HttpHeaders HEADERS = new HttpHeaders();
     private String token;
     AbstractNewProcedureDto newProcedureDto;
