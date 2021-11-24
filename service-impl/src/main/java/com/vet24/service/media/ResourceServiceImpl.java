@@ -7,7 +7,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -22,6 +21,8 @@ public class ResourceServiceImpl implements ResourceService {
 
     private String contentTypeDefault = "application/octet-stream";
 
+    private static final String IMAGE = "image/jpeg";
+
     private static Map<String, String> contentTypeMap = new HashMap<>();
 
     static {
@@ -32,9 +33,9 @@ public class ResourceServiceImpl implements ResourceService {
         contentTypeMap.put(".3gpp", "video/3gpp");
         contentTypeMap.put(".wmv", "video/x-ms-wmv");
         contentTypeMap.put(".flv", "video/x-flv");
-        contentTypeMap.put(".jpeg", "image/jpeg");
-        contentTypeMap.put(".jpe", "image/jpeg");
-        contentTypeMap.put(".jpg", "image/jpeg");
+        contentTypeMap.put(".jpeg", IMAGE);
+        contentTypeMap.put(".jpe", IMAGE);
+        contentTypeMap.put(".jpg", IMAGE);
         contentTypeMap.put(".gif", "image/gif");
         contentTypeMap.put(".png", "image/png");
         contentTypeMap.put(".tiff", "image/tiff");
@@ -51,7 +52,7 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     public String getContentTypeByFileName(String filename) {
-        int extensionIndex = filename.lastIndexOf(".");
+        int extensionIndex = filename.lastIndexOf('.');
 
         if (extensionIndex < 0) {
             throw new StorageException("Cannot load file [" + filename + "] without extension");

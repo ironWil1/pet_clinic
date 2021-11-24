@@ -38,7 +38,7 @@ public abstract class ReadWriteDaoImpl<K extends Serializable, T> extends ReadOn
     }
 
     public List<T> updateAll (List<T> entities) {
-        return entities.stream().map(elem -> manager.merge(elem)).collect(Collectors.toList());
+        return entities.stream().map(manager::merge).collect(Collectors.toList());
     }
 
     public void delete(T entity) {

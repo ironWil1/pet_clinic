@@ -144,7 +144,6 @@ public abstract class Pet {
         this.procedures = procedures;
         this.reproductions = reproductions;
         this.clinicalExaminations = clinicalExaminations;
-        this.notifications = notifications;
     }
 
     public void addProcedure(Procedure procedure) {

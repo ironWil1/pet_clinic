@@ -18,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,12 +60,12 @@ public class PetContactQrCodeController {
         }
         if (petContactService.isExistByKey(id)) {
             PetContact petContact = petContactService.getByKey(id);
-            String UrlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
+            String urlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
             String sb = "Имя питомца - " + petContact.getPet().getName() + ", " +
                     "Владелец - " + petContact.getOwnerName() + ", " +
                     "Адрес - " + petContact.getAddress() + ", " +
                     "Телефон - " + petContact.getPhone() + ", " +
-                    "Чтобы сообщить владельцу о находке перейдите по адресу - " + UrlToAlertPetContact;
+                    "Чтобы сообщить владельцу о находке перейдите по адресу - " + urlToAlertPetContact;
             log.info(" The pet with this id {} exist and here is info for owner{} ",id,sb);
             return ResponseEntity.ok(PetContactQrCodeGenerator.generatePetContactQrCodeImage(sb));
         } else if(petService.isExistByKey(id)) {

@@ -30,7 +30,7 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
 
     @Override
     public void persist(Procedure procedure) {
-        if (procedure.getIsPeriodical()) {
+        if (Boolean.TRUE.equals(procedure.getIsPeriodical())) {
             persistProcedureNotification(procedure);
         }
 
@@ -42,7 +42,7 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
         Procedure oldEntity = super.getByKey(procedure.getId());
 
         // old(not periodical) + new(periodical) -> create notification & event
-        if (!oldEntity.getIsPeriodical() && procedure.getIsPeriodical()) {
+        if (Boolean.TRUE.equals(!oldEntity.getIsPeriodical()) && Boolean.TRUE.equals(procedure.getIsPeriodical())) {
             persistProcedureNotification(procedure);
         }
         // old(periodical) + new(periodical) -> update notification & event
@@ -50,7 +50,7 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
             updateProcedureNotification(oldEntity, procedure);
         }
         // old(periodical) + new(not periodical) -> delete notification & event
-        if (oldEntity.getIsPeriodical() && !procedure.getIsPeriodical()) {
+        if (Boolean.TRUE.equals(oldEntity.getIsPeriodical()) && Boolean.TRUE.equals(!procedure.getIsPeriodical())) {
             deleteProcedureNotification(oldEntity);
         }
 
@@ -59,7 +59,7 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
 
     @Override
     public void delete(Procedure procedure) {
-        if (procedure.getIsPeriodical()) {
+        if (Boolean.TRUE.equals(procedure.getIsPeriodical())) {
             deleteProcedureNotification(procedure);
         }
 
@@ -67,7 +67,7 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
     }
 
     private void persistProcedureNotification(Procedure procedure) {
-        if (!(procedure.getPeriodDays() > 0)) {
+        if (procedure.getPeriodDays() <= 0) {
             throw new BadRequestException("for periodical procedure need to set period days");
         }
         Pet pet = procedure.getPet();
@@ -90,7 +90,7 @@ public class ProcedureServiceImpl extends ReadWriteServiceImpl<Long, Procedure> 
     }
 
     private void updateProcedureNotification(Procedure oldProcedure, Procedure newProcedure) {
-        if (!(newProcedure.getPeriodDays() > 0)) {
+        if (newProcedure.getPeriodDays() <= 0) {
             throw new BadRequestException("for periodical procedure need to set period days");
         }
 

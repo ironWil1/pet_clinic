@@ -9,11 +9,14 @@ import java.util.Optional;
 
 @Repository
 public class UserDaoImpl extends ReadWriteDaoImpl<Long, User> implements UserDao {
+
+    public static final String EMAIL = "email";
+
     @Override
     public Optional<User> getByEmail(String email) {
         return manager
                 .createQuery("FROM User where email = :email", User.class)
-                .setParameter("email", email)
+                .setParameter(EMAIL, email)
                 .setMaxResults(1)
                 .getResultList()
                 .stream()
@@ -25,7 +28,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<Long, User> implements UserDao
         try {
             return manager
                     .createQuery("SELECT u FROM User u WHERE u.email =:email", User.class)
-                    .setParameter("email", email).getSingleResult();
+                    .setParameter(EMAIL, email).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -34,7 +37,7 @@ public class UserDaoImpl extends ReadWriteDaoImpl<Long, User> implements UserDao
     public User getWithAllCommentReactions(String email) {
         try {
             return manager.createQuery("SELECT u FROM User u LEFT JOIN FETCH u.commentReactions WHERE u.email=:email", User.class)
-                    .setParameter("email", email).getSingleResult();
+                    .setParameter(EMAIL, email).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

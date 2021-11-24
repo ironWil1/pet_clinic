@@ -1,4 +1,4 @@
-package com.vet24.models.dto.googleEvent;
+package com.vet24.models.dto.google_event;
 
 import java.sql.Timestamp;
 

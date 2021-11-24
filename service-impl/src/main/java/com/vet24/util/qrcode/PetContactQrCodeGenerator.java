@@ -7,14 +7,16 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumMap;
 
 public class PetContactQrCodeGenerator {
 
+    private PetContactQrCodeGenerator() {
+    }
+
     public static byte[] generatePetContactQrCodeImage(String text) {
         try {
-            Map<EncodeHintType, Object> hints = new HashMap<>();
+            EnumMap<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
             hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 300, 300, hints);

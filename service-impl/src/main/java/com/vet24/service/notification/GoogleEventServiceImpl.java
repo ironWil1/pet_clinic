@@ -40,10 +40,13 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_EVENTS);
 
-    private final String CALLBACK_URI = "/oauth";
-    private final String gdSecretKeys = "/credentials.json";
-    private final String credentialsFolder = "tokens";
+    private static final String CALLBACK_URI = "/oauth";
+    private static final String GD_SECRET_KEYS = "/credentials.json";
+    private static final String CREDENTIALS_FOLDER = "tokens";
     private GoogleAuthorizationCodeFlow flow;
+
+    private static final String PRIMARY = "primary";
+    private static final String DESCRIPTION_OF_EX = "dont have credential for this user";
 
     /**
      * Inizializaciya potoka avtorizacii v google
@@ -52,9 +55,9 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     @PostConstruct
     public void init() throws IOException {
         GoogleClientSecrets secrets = GoogleClientSecrets.load(JSON_FACTORY,
-                new InputStreamReader(GoogleEventServiceImpl.class.getResourceAsStream(gdSecretKeys)));
+                new InputStreamReader(GoogleEventServiceImpl.class.getResourceAsStream(GD_SECRET_KEYS)));
         flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, secrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(credentialsFolder))).build();
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(CREDENTIALS_FOLDER))).build();
     }
 
     /**
@@ -64,8 +67,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     @Override
     public String getRedirectUrl() {
         GoogleAuthorizationCodeRequestUrl url = flow.newAuthorizationUrl();
-        String redirectURL = url.setRedirectUri(CALLBACK_URI).setAccessType("offline").build();
-        return redirectURL;
+        return url.setRedirectUri(CALLBACK_URI).setAccessType("offline").build();
     }
 
     /**
@@ -97,10 +99,9 @@ public class GoogleEventServiceImpl implements GoogleEventService {
      */
     private EventDateTime getTime(Timestamp timestamp) {
         DateTime dateTime = new DateTime(timestamp);
-        EventDateTime time = new EventDateTime()
+        return new EventDateTime()
                 .setDateTime(dateTime)
                 .setTimeZone("Europe/Moscow");
-        return time;
     }
 
     /**
@@ -115,7 +116,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
         try {
             credential = flow.loadCredential(googleEventDto.getEmail());
         } catch (IOException e) {
-            throw new CredentialException("dont have credential for this user", googleEventDto.getEmail());
+            throw new CredentialException(DESCRIPTION_OF_EX, googleEventDto.getEmail());
         }
         Event event = new Event()
                 .setSummary(String.valueOf(googleEventDto.getSummary()))
@@ -140,7 +141,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
         };
         event.setAttendees(Arrays.asList(attendees));
         try {
-            event = buildCalendar(credential).events().insert("primary", event)
+            event = buildCalendar(credential).events().insert(PRIMARY, event)
                     .setSendNotifications(true).execute();
         } catch (IOException e) {
             throw new EventException("cannot create event");
@@ -167,7 +168,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
         try {
             credential = flow.loadCredential(googleEventDto.getEmail());
         } catch (IOException e) {
-            throw new CredentialException("dont have credential for this user", googleEventDto.getEmail());
+            throw new CredentialException(DESCRIPTION_OF_EX, googleEventDto.getEmail());
         }
 
         Event changes = new Event().setSummary(googleEventDto.getSummary())
@@ -176,7 +177,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
                 .setStart(getTime(googleEventDto.getStartDate()))
                 .setEnd(getTime(googleEventDto.getEndDate()));
         try {
-            buildCalendar(credential).events().patch("primary",
+            buildCalendar(credential).events().patch(PRIMARY,
                     googleEventDto.getId(), changes).execute();
         } catch (IOException e) {
             throw new EventException("cannot change event");
@@ -202,11 +203,11 @@ public class GoogleEventServiceImpl implements GoogleEventService {
         try {
             credential = flow.loadCredential(googleEventDto.getEmail());
         } catch (IOException e) {
-            throw new CredentialException("dont have credential for this user", googleEventDto.getEmail());
+            throw new CredentialException(DESCRIPTION_OF_EX, googleEventDto.getEmail());
         }
 
         try {
-            buildCalendar(credential).events().delete("primary", googleEventDto.getId()).execute();
+            buildCalendar(credential).events().delete(PRIMARY, googleEventDto.getId()).execute();
         } catch (IOException e) {
             throw new EventException("cannot delete event");
         }
