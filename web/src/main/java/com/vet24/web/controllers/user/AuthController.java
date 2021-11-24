@@ -11,18 +11,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 
 @RestController
 @Tag(name = "Auth Controller", description = "response token")
 public class AuthController {
-    private static final String INVALID_TOKEN_MSG = "Registration token is invalid";
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
@@ -40,13 +39,10 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Something went wrong")
     })
     @PostMapping("/auth")
-    public ResponseEntity<AuthResponse> authenticateUser(@Valid @RequestBody AuthRequest authRequest) {
+    public ResponseEntity<AuthResponse> authenticateUser(@Valid @NotNull @RequestBody AuthRequest authRequest) {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         User user = (User) userService.loadUserByUsername(authRequest.getUsername());
-        if (user == null) {
-            throw new UsernameNotFoundException("Username: " + authRequest.getUsername() + " not found");
-        }
         String token = jwtUtils.generateJwtToken(authRequest.getUsername());
 
         return new ResponseEntity<>(new AuthResponse(token, user.getRole().getName()), HttpStatus.OK);
