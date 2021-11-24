@@ -14,9 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 
 @RestController
@@ -39,7 +37,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Something went wrong")
     })
     @PostMapping("/auth")
-    public ResponseEntity<AuthResponse> authenticateUser(@Valid @NotNull @RequestBody AuthRequest authRequest) {
+    public ResponseEntity<AuthResponse> authenticateUser(@Valid @RequestBody AuthRequest authRequest) {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         User user = (User) userService.loadUserByUsername(authRequest.getUsername());
