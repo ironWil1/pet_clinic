@@ -17,7 +17,7 @@ public interface DoctorNonWorkingMapper extends DtoMapper<DoctorNonWorking, Doct
 
     @Override
     @Mapping(target = "doctor.id", source = "doctorId")
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id", source = "doctorNonWorkingId")
     DoctorNonWorking toEntity(DoctorNonWorkingDto dto);
 
 }
