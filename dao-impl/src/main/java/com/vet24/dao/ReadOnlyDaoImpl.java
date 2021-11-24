@@ -29,11 +29,8 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
     public boolean isExistByKey(K key) {
         Field id = null;
         boolean result = false;
-        id = initIdField(id, type.getDeclaredFields());
 
-        if (id == null) {
-            id = initIdField(id, type.getSuperclass().getDeclaredFields());
-        }
+        id = searchIdInClassAndSuperclasses(id, type);
 
         if (id != null) {
             String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
@@ -44,6 +41,15 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
                     .getSingleResult();
         }
         return result;
+    }
+
+    private Field searchIdInClassAndSuperclasses(Field id, Class<?> classForId) {
+        id = initIdField(id, classForId.getDeclaredFields());
+        if (id == null && !(classForId.equals(Object.class))) {
+            classForId = classForId.getSuperclass();
+            searchIdInClassAndSuperclasses(id, classForId);
+        }
+        return id;
     }
 
     private Field initIdField(Field id, Field[] declaredFields) {
