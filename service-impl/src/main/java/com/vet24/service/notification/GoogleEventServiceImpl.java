@@ -18,7 +18,7 @@ import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
 
-import com.vet24.models.dto.googleEvent.GoogleEventDto;
+import com.vet24.models.dto.google_event.GoogleEventDto;
 import com.vet24.models.exception.CredentialException;
 import com.vet24.models.exception.EventException;
 
