@@ -41,9 +41,7 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @Nullable
     protected String getAccessToken(String email, String password) throws Exception{
-        ObjectMapper mapper = new ObjectMapper()
-                .configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+        ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
         String requestJson = objectWriter.writeValueAsString(new AuthRequest(email, password));
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/auth")
                         .content(requestJson)
