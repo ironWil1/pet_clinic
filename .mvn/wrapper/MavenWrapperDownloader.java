@@ -1,3 +1,6 @@
+//NO SONAR
+@SuppressWarnings({"squid:S2095", "squid:S2093", "squid:S106", "squid:S1066", "squid:S1181", "squid:S112","squid:S1220", "squid:S1197", "squid:S1148" })
+
 /*
  * Copyright 2007-present the original author or authors.
  *

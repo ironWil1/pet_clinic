@@ -54,4 +54,6 @@ public abstract class AbstractNewPetDto {
     protected AbstractNewPetDto() {
 
     }
+
+
 }

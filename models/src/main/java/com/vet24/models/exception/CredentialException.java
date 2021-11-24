@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class CredentialException extends IOException {
 
-    private String mail;
+    private final String mail;
 
     public String getMail() {
         return mail;

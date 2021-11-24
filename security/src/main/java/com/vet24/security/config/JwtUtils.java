@@ -5,11 +5,12 @@ import java.util.Date;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class JwtUtils {
 
     @Value("${pet.jwtSecret}")
@@ -37,6 +38,7 @@ public class JwtUtils {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (JwtException e) {
+            log.info("token for authorization is not found");
         }
         return false;
     }

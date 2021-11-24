@@ -96,6 +96,13 @@
             <artifactId>fast-uuid</artifactId>
             <version>0.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>8.0.2</version>
+        </dependency>
+
 
         <!--        mockito and junit  start    -->
         <dependency>
@@ -110,7 +117,6 @@
             <version>4.13.2</version>
             <scope>test</scope>
             <!--        mockito and junit  end    -->
-
         </dependency>
     </dependencies>
 
@@ -185,6 +191,11 @@
                         <!-- other annotation processors -->
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>8.0.2</version>
             </plugin>
         </plugins>
 

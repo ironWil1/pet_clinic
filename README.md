@@ -94,6 +94,14 @@ Now you can create, edit, delete event:
 3) Delete notification in swagger /notification/delete 
 - we need to add event id, that was received in the response when creating event
 
+# Vaadin Guide
+
+For start VaadinPetClinicRunner you should: 
+1. Add vaadin/pom.xml file in your current project. 
+2. Install [required tools](https://vaadin.com/docs/v14/guide/install). 
+3. Reload maven dependencies and type ```npm install``` in the terminal.
+4. Run http://localhost:9090 in a browser.
+
 # Sonarqube Guide
 
 Для работы с Sonarqube в Idea нужно подключить плагин Sonarlint.
@@ -103,6 +111,13 @@ Now you can create, edit, delete event:
 4. Выбираем авторизацию по логину и паролю, вводим. Ok. Finish.
 5. Из выпадающего списка выбираем проект "pet_clinic". Ok.
 6. Если не получилось - гайд с картинками: https://habr.com/ru/company/krista/blog/469963/
+
+# Flyway Guide
+Flyway - это инструмент для миграции скриптов в формате sql,
+расположенных в pet_clinic\web\src\main\resources\db\migration
+В данном случае с их помощью создаются таблицы по всем сущностям базы данных,
+что позволит легко создать ту же самую структуру БД при переносе на другой сервер.
+Правила написания миграций: https://flywaydb.org/documentation/concepts/migrations
 
 # Профили
 

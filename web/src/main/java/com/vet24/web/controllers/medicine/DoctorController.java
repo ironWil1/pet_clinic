@@ -6,18 +6,15 @@ import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
 import com.vet24.models.mappers.medicine.DiagnosisMapper;
 import com.vet24.models.mappers.medicine.TreatmentMapper;
 import com.vet24.models.mappers.pet.procedure.AbstractNewProcedureMapper;
-import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.Treatment;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Doctor;
 import com.vet24.service.medicine.DiagnosisService;
-import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.medicine.TreatmentService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.ProcedureService;
-import com.vet24.service.user.DoctorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -43,7 +40,6 @@ import java.util.List;
 @Tag(name = "doctor-controller", description = "Doctor's operations")
 public class DoctorController {
     private final PetService petService;
-    private final DoctorService doctorService;
     private final DiagnosisService diagnosisService;
     private final DiagnosisMapper diagnosisMapper;
     private final TreatmentService treatmentService;
@@ -52,10 +48,11 @@ public class DoctorController {
     private final AbstractNewProcedureMapper abstractNewProcedureMapper;
 
 
-    public DoctorController(PetService petService, DoctorService doctorService,
-                            DiagnosisService diagnosisService, DiagnosisMapper diagnosisMapper, TreatmentService treatmentService, TreatmentMapper treatmentMapper, ProcedureMapper procedureMapper, ProcedureService procedureService, MedicineService medicineService, MedicineService medicineService1, AbstractNewProcedureMapper abstractNewProcedureMapper) {
+    public DoctorController(PetService petService, DiagnosisService diagnosisService,
+                            DiagnosisMapper diagnosisMapper, TreatmentService treatmentService,
+                            TreatmentMapper treatmentMapper, ProcedureService procedureService,
+                            AbstractNewProcedureMapper abstractNewProcedureMapper) {
         this.petService = petService;
-        this.doctorService = doctorService;
         this.diagnosisService = diagnosisService;
         this.diagnosisMapper = diagnosisMapper;
         this.treatmentService = treatmentService;
