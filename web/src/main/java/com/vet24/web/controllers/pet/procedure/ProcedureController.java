@@ -15,7 +15,6 @@ import com.vet24.models.user.Client;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.ProcedureService;
-import com.vet24.service.user.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,18 +47,21 @@ public class ProcedureController {
     private final ProcedureService procedureService;
     private final ProcedureMapper procedureMapper;
     private final AbstractNewProcedureMapper newProcedureMapper;
-    private final ClientService clientService;
     private final MedicineService medicineService;
+
+    private static final String PET_NOT_FOUND = "pet not found";
+    private static final String PROCEDURE_NOT_FOUND = "procedure not found";
+    private static final String NOT_YOURS = "pet not yours";
+    private static final String NOT_ASSIGNED = "pet not assigned to this procedure";
 
     @Autowired
     public ProcedureController(PetService petService, ProcedureService procedureService,
                                ProcedureMapper procedureMapper, AbstractNewProcedureMapper newProcedureMapper,
-                               ClientService clientService, MedicineService medicineService) {
+                               MedicineService medicineService) {
         this.petService = petService;
         this.procedureService = procedureService;
         this.procedureMapper = procedureMapper;
         this.newProcedureMapper = newProcedureMapper;
-        this.clientService = clientService;
         this.medicineService = medicineService;
     }
 
@@ -80,19 +82,19 @@ public class ProcedureController {
 
         if (pet == null) {
             log.info("The pet with this id {} was not found",petId);
-            throw new NotFoundException("pet not found");
+            throw new NotFoundException(PET_NOT_FOUND);
         }
         if (procedure == null) {
             log.info("The procedure with this id {} was not found",procedureId);
-            throw new NotFoundException("procedure not found");
+            throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
         if (!pet.getClient().getId().equals(client.getId())) {
             log.info("The pet with this id {} is not yours",petId);
-            throw new BadRequestException("pet not yours");
+            throw new BadRequestException(NOT_YOURS);
         }
         if (!procedure.getPet().getId().equals(pet.getId())) {
             log.info("The pet with this id {}  not assigned to this procedure {}",petId,procedure.getPet().getId());
-            throw new BadRequestException("pet not assigned to this procedure");
+            throw new BadRequestException(NOT_ASSIGNED);
         }
         ProcedureDto procedureDto = procedureMapper.toDto(procedure);
         log.info("We have this procedure {}",procedureId);
@@ -117,10 +119,10 @@ public class ProcedureController {
         Procedure procedure = newProcedureMapper.toEntity(newProcedureDto);
 
         if (pet == null) {
-            throw new NotFoundException("pet not found");
+            throw new NotFoundException(PET_NOT_FOUND);
         }
         if (!pet.getClient().getId().equals(client.getId())) {
-            throw new BadRequestException("pet not yours");
+            throw new BadRequestException(NOT_YOURS);
         }
 
         Medicine medicine = medicineService.getByKey(newProcedureDto.getMedicineId());
@@ -152,16 +154,16 @@ public class ProcedureController {
         Procedure procedure = procedureService.getByKey(procedureId);
 
         if (pet == null) {
-            throw new NotFoundException("pet not found");
+            throw new NotFoundException(PET_NOT_FOUND);
         }
         if (procedure == null) {
-            throw new NotFoundException("procedure not found");
+            throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
         if (!pet.getClient().getId().equals(client.getId())) {
-            throw new BadRequestException("pet not yours");
+            throw new BadRequestException(NOT_YOURS);
         }
         if (!procedure.getPet().getId().equals(pet.getId())) {
-            throw new BadRequestException("pet not assigned to this procedure");
+            throw new BadRequestException(NOT_ASSIGNED);
         }
         if (!procedureDto.getId().equals(procedureId)) {
             throw new BadRequestException("procedureId in path and in body not equals");
@@ -191,16 +193,16 @@ public class ProcedureController {
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
-            throw new NotFoundException("pet not found");
+            throw new NotFoundException(PET_NOT_FOUND);
         }
         if (procedure == null) {
-            throw new NotFoundException("procedure not found");
+            throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
         if (!pet.getClient().getId().equals(client.getId())) {
-            throw new BadRequestException("pet not yours");
+            throw new BadRequestException(NOT_YOURS);
         }
         if (!procedure.getPet().getId().equals(pet.getId())) {
-            throw new BadRequestException("pet not assigned to this procedure");
+            throw new BadRequestException(NOT_ASSIGNED);
         }
 
         procedureService.delete(procedure);

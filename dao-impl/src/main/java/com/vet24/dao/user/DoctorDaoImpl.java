@@ -19,4 +19,13 @@ public class DoctorDaoImpl extends ReadWriteDaoImpl<Long, Doctor> implements Doc
             return null;
         }
     }
+
+    @Override
+    public boolean isExistByKey(Long key) {
+        return manager
+                .createQuery("SELECT CASE WHEN (count(id)>0) then true else false end" +
+                        " FROM Doctor WHERE id = :id", Boolean.class)
+                .setParameter("id", key)
+                .getSingleResult();
+    }
 }

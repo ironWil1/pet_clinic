@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PetFoundController {
 
     @Value("${googlemaps.service.url}")
-    private String GOOGLE_MAPS_SERVICE_URL;
+    private String googleMapsServiceUrl;
 
     private final PetFoundService petFoundService;
     private final PetContactService petContactService;
@@ -64,7 +64,7 @@ public class PetFoundController {
             petFoundService.persist(petFound);
 
             String text = petFound.getText();
-            String geolocationPetFoundUrl = String.format(GOOGLE_MAPS_SERVICE_URL, petFound.getLatitude(), petFound.getLongitude());
+            String geolocationPetFoundUrl = String.format(googleMapsServiceUrl, petFound.getLatitude(), petFound.getLongitude());
             log.info("Pet with this petCode {} found on the latitude{} and longitude {}", petCode,petFound.getLatitude(),petFound.getLongitude());
             mailService.sendGeolocationPetFoundMessage(petContact, geolocationPetFoundUrl, text);
             return new ResponseEntity<>(HttpStatus.CREATED);

@@ -1,8 +1,7 @@
 package com.vet24.service.user;
 
 import com.vet24.dao.user.ManagerDao;
-import com.vet24.models.user.Admin;
-import com.vet24.models.user.Client;
+
 import com.vet24.models.user.Manager;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
