@@ -1,10 +1,7 @@
 package com.vet24.models.dto.user;
 
-import com.vet24.models.dto.medicine.DiagnosisDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
