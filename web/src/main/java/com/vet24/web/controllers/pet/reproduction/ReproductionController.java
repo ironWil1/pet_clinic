@@ -8,7 +8,6 @@ import com.vet24.models.mappers.pet.reproduction.ReproductionMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
-import com.vet24.service.user.ClientService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.reproduction.ReproductionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +38,6 @@ public class ReproductionController {
     private final PetService petService;
     private final ReproductionService reproductionService;
     private final ReproductionMapper reproductionMapper;
-    private final ClientService clientService;
 
     private static final String PET_NOT_FOUND = "pet not found";
     private static final String REPRODUCTION_NOT_FOUND = "reproduction not found";
@@ -48,11 +46,10 @@ public class ReproductionController {
 
     @Autowired
     public ReproductionController(ReproductionService reproductionService, ReproductionMapper reproductionMapper,
-                                  PetService petService, ClientService clientService) {
+                                  PetService petService) {
         this.reproductionService = reproductionService;
         this.reproductionMapper = reproductionMapper;
         this.petService = petService;
-        this.clientService = clientService;
     }
 
 

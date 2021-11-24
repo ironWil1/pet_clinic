@@ -69,6 +69,7 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     }
 
     @Transactional
+    @Override
     public void persistAll(List<Client> clients) {
         for (Client client : clients) {
             String password = passwordEncoder.encode(client.getPassword());
@@ -78,6 +79,7 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     }
 
     @Transactional
+    @Override
     public List<Client> updateAll(List<Client> clients) {
         for (Client client : clients) {
             String newPassword = client.getPassword();

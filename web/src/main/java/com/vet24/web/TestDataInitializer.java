@@ -17,13 +17,20 @@ import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.user.*;
+import com.vet24.models.user.Admin;
+import com.vet24.models.user.Client;
+import com.vet24.models.user.Comment;
+import com.vet24.models.user.CommentReaction;
+import com.vet24.models.user.Doctor;
+import com.vet24.models.user.DoctorNonWorking;
+import com.vet24.models.user.DoctorReview;
+import com.vet24.models.user.Manager;
+import com.vet24.models.user.Role;
+import com.vet24.models.user.Topic;
 import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.medicine.MedicineService;
-import com.vet24.service.pet.CatService;
-import com.vet24.service.pet.DogService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
@@ -31,13 +38,24 @@ import com.vet24.service.pet.procedure.EchinococcusProcedureService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
-import com.vet24.service.user.*;
+import com.vet24.service.user.AdminService;
+import com.vet24.service.user.ClientService;
+import com.vet24.service.user.CommentReactionService;
+import com.vet24.service.user.CommentService;
+import com.vet24.service.user.DoctorNonWorkingService;
+import com.vet24.service.user.DoctorReviewService;
+import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.ManagerService;
+import com.vet24.service.user.RoleService;
+import com.vet24.service.user.TopicService;
+import com.vet24.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -63,8 +81,6 @@ public class TestDataInitializer implements ApplicationRunner {
     private final ReproductionService reproductionService;
     private final ClinicalExaminationService clinicalExaminationService;
     private final PetContactService petContactService;
-    private final CatService catService;
-    private final DogService dogService;
     private final PetService petService;
     private final DoctorService doctorService;
     private final Environment environment;
@@ -101,7 +117,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
                                ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
-                               CatService catService, DogService dogService, DoctorService doctorService,
+                               DoctorService doctorService,
                                PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
@@ -119,8 +135,6 @@ public class TestDataInitializer implements ApplicationRunner {
         this.reproductionService = reproductionService;
         this.clinicalExaminationService = clinicalExaminationService;
         this.petContactService = petContactService;
-        this.catService = catService;
-        this.dogService = dogService;
         this.petService = petService;
         this.doctorService = doctorService;
         this.environment = environment;

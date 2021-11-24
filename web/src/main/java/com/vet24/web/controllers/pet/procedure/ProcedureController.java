@@ -15,7 +15,6 @@ import com.vet24.models.user.Client;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.ProcedureService;
-import com.vet24.service.user.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,7 +47,6 @@ public class ProcedureController {
     private final ProcedureService procedureService;
     private final ProcedureMapper procedureMapper;
     private final AbstractNewProcedureMapper newProcedureMapper;
-    private final ClientService clientService;
     private final MedicineService medicineService;
 
     private static final String PET_NOT_FOUND = "pet not found";
@@ -59,12 +57,11 @@ public class ProcedureController {
     @Autowired
     public ProcedureController(PetService petService, ProcedureService procedureService,
                                ProcedureMapper procedureMapper, AbstractNewProcedureMapper newProcedureMapper,
-                               ClientService clientService, MedicineService medicineService) {
+                               MedicineService medicineService) {
         this.petService = petService;
         this.procedureService = procedureService;
         this.procedureMapper = procedureMapper;
         this.newProcedureMapper = newProcedureMapper;
-        this.clientService = clientService;
         this.medicineService = medicineService;
     }
 

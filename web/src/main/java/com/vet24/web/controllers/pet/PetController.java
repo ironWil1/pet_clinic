@@ -4,15 +4,14 @@ import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.PetDto;
-import com.vet24.models.mappers.pet.AbstractNewPetMapper;
 import com.vet24.models.exception.BadRequestException;
+import com.vet24.models.mappers.pet.AbstractNewPetMapper;
 import com.vet24.models.mappers.pet.PetMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Client;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.pet.PetService;
-import com.vet24.service.user.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -46,16 +45,14 @@ import java.io.IOException;
 @Tag(name = "pet-controller", description = "operations with Pets")
 public class PetController {
 
-    private final ClientService clientService;
     private final PetService petService;
     private final PetMapper petMapper;
     private final AbstractNewPetMapper newPetMapper;
     private final UploadService uploadService;
     private final ResourceService resourceService;
 
-    public PetController(ClientService clientService, PetService petService, PetMapper petMapper,
-                         AbstractNewPetMapper newPetMapper, UploadService uploadService, ResourceService resourceService) {
-        this.clientService = clientService;
+    public PetController(PetService petService, PetMapper petMapper, AbstractNewPetMapper newPetMapper,
+                         UploadService uploadService, ResourceService resourceService) {
         this.petService = petService;
         this.petMapper = petMapper;
         this.newPetMapper = newPetMapper;

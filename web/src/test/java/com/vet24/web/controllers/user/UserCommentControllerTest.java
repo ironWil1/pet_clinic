@@ -13,7 +13,8 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 
@@ -31,7 +32,7 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void likeOrDislikeComment() throws Exception {
-        Assert.assertTrue(userService
+        assertTrue(userService
                 .getWithAllCommentReactions("user3@gmail.com")
                 .getCommentReactions().isEmpty());
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{positive}", 101, true))
@@ -72,22 +73,22 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void removeComment() throws Exception {
-        assertThat(commentDao.isExistByKey(101L)).isEqualTo(true);
+        assertTrue(commentDao.isExistByKey(101L));
         mockMvc.perform(MockMvcRequestBuilders.delete(URI, 101))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
-        assertThat(commentDao.isExistByKey(101L)).isEqualTo(false);
+        assertFalse(commentDao.isExistByKey(101L));
     }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void shouldNotFoundResponse() throws Exception {
-        assertThat(commentDao.isExistByKey(245L)).isEqualTo(false);
+        assertFalse(commentDao.isExistByKey(245L));
         mockMvc.perform(MockMvcRequestBuilders.delete(URI, 245))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
-        assertThat(commentDao.isExistByKey(350L)).isEqualTo(false);
+        assertFalse(commentDao.isExistByKey(350L));
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{positive}", 350, false))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }

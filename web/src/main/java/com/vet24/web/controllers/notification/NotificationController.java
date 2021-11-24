@@ -5,8 +5,9 @@ import com.vet24.models.exception.CredentialException;
 import com.vet24.models.exception.EventException;
 import com.vet24.models.user.Client;
 import com.vet24.service.notification.GoogleEventService;
-
-import com.vet24.service.user.ClientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,25 +17,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.io.IOException;
 
 @RestController
 @Slf4j
 public class NotificationController {
 
     private final GoogleEventService googleEventService;
-    private final ClientService clientService;
 
-    public NotificationController(GoogleEventService googleEventService, ClientService clientService) {
+    public NotificationController(GoogleEventService googleEventService) {
         this.googleEventService = googleEventService;
-        this.clientService = clientService;
     }
 
 
