@@ -10,6 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DefaultPasswordEncoderFactories {
+
+    private DefaultPasswordEncoderFactories() {
+    }
+
     @SuppressWarnings("deprecation")
     static PasswordEncoder createDelegatingPasswordEncoder() {
         String encodingId = "bcrypt";

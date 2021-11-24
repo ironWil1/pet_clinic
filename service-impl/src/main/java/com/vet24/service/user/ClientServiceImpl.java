@@ -1,7 +1,6 @@
 package com.vet24.service.user;
 
 import com.vet24.dao.user.ClientDao;
-import com.vet24.models.user.Admin;
 import com.vet24.models.user.Client;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -71,6 +70,7 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     }
 
     @Transactional
+    @Override
     public void persistAll(List<Client> clients) {
         for (Client client : clients) {
             String password = passwordEncoder.encode(client.getPassword());
@@ -80,6 +80,7 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     }
 
     @Transactional
+    @Override
     public List<Client> updateAll(List<Client> clients) {
         for (Client client : clients) {
             String newPassword = client.getPassword();

@@ -17,13 +17,20 @@ import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.user.*;
+import com.vet24.models.user.Admin;
+import com.vet24.models.user.Client;
+import com.vet24.models.user.Comment;
+import com.vet24.models.user.CommentReaction;
+import com.vet24.models.user.Doctor;
+import com.vet24.models.user.DoctorNonWorking;
+import com.vet24.models.user.DoctorReview;
+import com.vet24.models.user.Manager;
+import com.vet24.models.user.Role;
+import com.vet24.models.user.Topic;
 import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.medicine.MedicineService;
-import com.vet24.service.pet.CatService;
-import com.vet24.service.pet.DogService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
@@ -31,13 +38,24 @@ import com.vet24.service.pet.procedure.EchinococcusProcedureService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
-import com.vet24.service.user.*;
+import com.vet24.service.user.AdminService;
+import com.vet24.service.user.ClientService;
+import com.vet24.service.user.CommentReactionService;
+import com.vet24.service.user.CommentService;
+import com.vet24.service.user.DoctorNonWorkingService;
+import com.vet24.service.user.DoctorReviewService;
+import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.ManagerService;
+import com.vet24.service.user.RoleService;
+import com.vet24.service.user.TopicService;
+import com.vet24.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -63,8 +81,6 @@ public class TestDataInitializer implements ApplicationRunner {
     private final ReproductionService reproductionService;
     private final ClinicalExaminationService clinicalExaminationService;
     private final PetContactService petContactService;
-    private final CatService catService;
-    private final DogService dogService;
     private final PetService petService;
     private final DoctorService doctorService;
     private final Environment environment;
@@ -76,18 +92,20 @@ public class TestDataInitializer implements ApplicationRunner {
     private final AppointmentService appointmentService;
     private final DoctorScheduleService doctorScheduleService;
 
-    private final Role CLIENT = new Role(RoleNameEnum.CLIENT);
-    private final Role DOCTOR = new Role(RoleNameEnum.DOCTOR);
-    private final Role ADMIN = new Role(RoleNameEnum.ADMIN);
-    private final Role MANAGER = new Role(RoleNameEnum.MANAGER);
+    private final Role client = new Role(RoleNameEnum.CLIENT);
+    private final Role doctor = new Role(RoleNameEnum.DOCTOR);
+    private final Role admin = new Role(RoleNameEnum.ADMIN);
+    private final Role manager = new Role(RoleNameEnum.MANAGER);
 
-    private final WorkShift firstShift = WorkShift.FIRST_SHIFT;
-    private final WorkShift secondShift = WorkShift.SECOND_SHIFT;
+    private static final WorkShift firstShift = WorkShift.FIRST_SHIFT;
+    private static final WorkShift secondShift = WorkShift.SECOND_SHIFT;
 
-    private final List<Pet> PETS = new ArrayList<>();
-    private final Gender MALE = Gender.MALE;
-    private final Gender FEMALE = Gender.FEMALE;
+    private final List<Pet> petList = new ArrayList<>();
+    private static final Gender MALE = Gender.MALE;
+    private static final Gender FEMALE = Gender.FEMALE;
     private final ManagerService managerService;
+
+    private static final String EMAIL = "@email.com";
 
     @Autowired
     public TestDataInitializer(AdminService adminService,
@@ -99,7 +117,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                ExternalParasiteProcedureService externalParasiteProcedureService,
                                EchinococcusProcedureService echinococcusProcedureService,
                                ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
-                               CatService catService, DogService dogService, DoctorService doctorService,
+                               DoctorService doctorService,
                                PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
@@ -117,8 +135,6 @@ public class TestDataInitializer implements ApplicationRunner {
         this.reproductionService = reproductionService;
         this.clinicalExaminationService = clinicalExaminationService;
         this.petContactService = petContactService;
-        this.catService = catService;
-        this.dogService = dogService;
         this.petService = petService;
         this.doctorService = doctorService;
         this.environment = environment;
@@ -141,8 +157,8 @@ public class TestDataInitializer implements ApplicationRunner {
             clients.add(
                     new Client("ClientFirstName" + i,
                             "ClientLastName" + i,
-                            (i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + "@email.com",
-                            "client", CLIENT, PETS));
+                            (i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + EMAIL,
+                            "client", client, petList));
         }
         clientService.persistAll(clients);
 
@@ -151,8 +167,8 @@ public class TestDataInitializer implements ApplicationRunner {
             doctors.add(
                     new Doctor("DoctorFirstName" + i,
                             "DoctorLastName" + i,
-                            "doctor" + i + "@email.com",
-                            "doctor", DOCTOR));
+                            "doctor" + i + EMAIL,
+                            "doctor", doctor));
         }
         doctorService.persistAll(doctors);
     }
@@ -162,8 +178,8 @@ public class TestDataInitializer implements ApplicationRunner {
         for (int i = 1; i <= 5; i++) {
             adminList.add(new Admin("AdmFirstName " + i,
                     "AdmLastName " + i,
-                    "admin" + i + "@email.com",
-                    "admin", ADMIN));
+                    "admin" + i + EMAIL,
+                    "admin", admin));
         }
         adminService.persistAll(adminList);
     }
@@ -312,8 +328,8 @@ public class TestDataInitializer implements ApplicationRunner {
         for (int i = 1; i <= 5; i++) {
             managerList.add(new Manager("ManagerFirstName " + i,
                     "ManagerLastName " + i,
-                    "manager" + i + "@email.com",
-                    "manager", MANAGER));
+                    "manager" + i + EMAIL,
+                    "manager", manager));
         }
         managerService.persistAll(managerList);
     }

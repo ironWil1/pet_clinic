@@ -15,7 +15,8 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WithUserDetails("admin@gmail.com")
@@ -71,11 +72,11 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
     public void removeSchedule() throws Exception {
-        assertThat(doctorScheduleService.isExistByKey(101L)).isEqualTo(true);
+        assertTrue(doctorScheduleService.isExistByKey(101L));
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 101))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
-        assertThat(doctorScheduleService.isExistByKey(101L)).isEqualTo(false);
+        assertFalse(doctorScheduleService.isExistByKey(101L));
     }
 
     @Test
