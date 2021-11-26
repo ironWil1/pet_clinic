@@ -174,9 +174,7 @@ create table if not exists doctor_schedule
     primary key (id),
     constraint fk_doctor_schedule_user_entities
         foreign key (doctor_id)
-            references user_entities,
-    constraint doctor_id_week_number_unique
-        unique (doctor_id, week_number)
+            references user_entities
 );
 
 create table if not exists medicine
