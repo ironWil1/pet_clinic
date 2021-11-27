@@ -22,10 +22,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import java.time.LocalDate;
 
 @Slf4j
-@WithUserDetails("admin@gmail.com")
 public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractIntegrationTest {
 
-    final String URI = "http://localhost:8080/api/admin/doctor_non_working/";
+    final String URI = "/api/admin/doctor_non_working/";
+    private String token;
     private DoctorNonWorkingDto doctorNonWorkingDto;
     private DoctorNonWorkingDto doctorNonWorkingDto2;
 
@@ -45,12 +45,18 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
         doctorNonWorkingDto2.setDoctorId(32L);
     }
 
+    @Before
+    public void setToken() throws Exception {
+        token = getAccessToken("admin1@email.com","admin");
+    }
+
     @Test
     @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void updateDNWTest() throws Exception {
         int count = doctorNonWorkingService.getAll().size();
         DoctorNonWorking doctorNonWorking = doctorNonWorkingService.getByKey(101L);
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "{id}", 101)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
@@ -64,7 +70,8 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void deleteDNWTest() throws Exception {
         int count = doctorNonWorkingService.getAll().size();
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "{id}", 101))
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "{id}", 101)
+                        .header("Authorization", "Bearer " + token))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--count).isEqualTo(doctorNonWorkingService.getAll().size());
@@ -76,6 +83,7 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     public void createDNWTest() throws Exception {
         int count = doctorNonWorkingService.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
@@ -87,8 +95,9 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void createDNWIncorrectDataTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
-                .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
     }
@@ -97,6 +106,7 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
     @DataSet(value = {"datasets/doctor-non-working.yml", "datasets/user-entities.yml"}, cleanBefore = true)
     public void updateDNWIncorrectDataTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "{id}", 102)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
