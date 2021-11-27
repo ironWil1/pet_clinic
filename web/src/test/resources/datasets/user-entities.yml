@@ -62,6 +62,30 @@ USER_ENTITIES:
     LASTNAME: "Petrov"
     EMAIL: "user4@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$sbHmqRpUGv12k/0PhMb8Se5eThsvkUdPXTNuWF2mtj57bD1P8oXbS" #"user4"
+  - ID: 31
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Dr."
+    LASTNAME: "Petrov"
+    EMAIL: "doctor31@email.com"
+    PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"
+  - ID: 32
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Dr."
+    LASTNAME: "Ivanov"
+    EMAIL: "doctor32@email.com"
+    PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"
+  - ID: 33
+    USER_TYPE: "DOCTOR"
+    AVATAR: "test.png"
+    ENABLED: true
+    FIRSTNAME: "Doctor"
+    LASTNAME: "Doctor"
+    EMAIL: "doctor33@gmail.com"
+    PASSWORD: "{bcrypt}$2a$12$0HcODBhE9XaLTV3dfxAPZ.oCmzAc5YAKnfhjsj7pa98CD0S72ynzC" #"user33"
 
 ROLE:
   - NAME: "ADMIN"

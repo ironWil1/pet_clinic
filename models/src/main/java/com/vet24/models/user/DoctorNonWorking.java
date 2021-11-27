@@ -25,7 +25,7 @@ public class DoctorNonWorking implements Serializable {
     @Enumerated(EnumType.STRING)
     @EqualsAndHashCode.Include
     private DayOffType type;  //- enum указания причины (VACATION - отпуск, DAY_OFF - выходной, SICK_LEAVE - больничный)
-    @Column
+
     @EqualsAndHashCode.Include
     private LocalDate date;
 
