@@ -36,7 +36,7 @@ public class ReflectionUtil {
 
         for (Class<? extends Enum> cl : classez) {
             if (found.contains(cl.getName())) {
-                List<Enum> o = Arrays.asList(cl.getEnumConstants());
+                List<? extends Enum> o = Arrays.asList(cl.getEnumConstants());
                 for (Enum k : o) {
                     result.add(k.name());
                 }
