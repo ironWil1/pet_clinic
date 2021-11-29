@@ -2,31 +2,21 @@ package com.vet24.web.pet.clinicalexamination;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.dao.pet.clinicalexamination.ClinicalExaminationDao;
-import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.clinicalexamination.ClinicalExaminationDto;
 import com.vet24.models.mappers.pet.clinicalexamination.ClinicalExaminationMapper;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.pet.clinicalexamination.ClinicalExaminationController;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.Objects;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@WithUserDetails(value = "doctor103@email.com")
 public class ClinicalExaminationControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
@@ -38,8 +28,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     @Autowired
     ClinicalExaminationMapper clinicalExaminationMapper;
 
-    final String URI = "http://localhost:8090/api/doctor/exam";
+    final String URI = "/api/doctor/exam";
     final HttpHeaders HEADERS = new HttpHeaders();
+    private String token;
     ClinicalExaminationDto clinicalExaminationDtoNew1;
     ClinicalExaminationDto clinicalExaminationDtoNew2;
     ClinicalExaminationDto clinicalExaminationDto1;
@@ -59,13 +50,19 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         this.clinicalExaminationDto5 = new ClinicalExaminationDto(101L, 106L, 40.0, true, "text3");
     }
 
+    @Before
+    public void setToken() throws Exception {
+        token = getAccessToken("doctor103@email.com","doctor");
+    }
+
     // +mock, get clinical examination by id - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{examinationId}", 102)
-                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -75,8 +72,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testGetClinicalExaminationErrorClinicalExaminationNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{examinationId}", 33)
-                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -87,8 +85,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     public void testAddClinicalExaminationSuccess() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI, 102)
-                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
@@ -99,8 +98,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/clinical-examination.yml"})
     public void testAddClinicalExaminationErrorPetNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/reproduction", 33)
-                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -111,8 +111,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     public void testPutClinicalExaminationSuccess() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
-                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
@@ -124,8 +125,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     public void testPutClinicalExaminationErrorPetNotAssigned() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
-                .content(objectMapper.valueToTree(clinicalExaminationDto1).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto1).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
@@ -137,8 +139,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     public void testPutClinicalExaminationErrorBadRequest() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
-                .content(objectMapper.valueToTree(clinicalExaminationDto1).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto1).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
@@ -150,8 +153,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     public void testPutClinicalExaminationErrorPetNotFound() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
-                .content(objectMapper.valueToTree(clinicalExaminationDto4).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto4).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
@@ -163,8 +167,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     public void testPutClinicalExaminationErrorClinicalExaminationNotFound() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 108562)
-                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
@@ -176,8 +181,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     public void testDeleteClinicalExaminationSuccess() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{examinationId}", 100)
-                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
@@ -189,8 +195,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     public void testDeleteClinicalExaminationErrorNotFound() throws Exception {
         int beforeCount = clinicalExaminationDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{examinationId}", 33)
-                .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());

@@ -3,21 +3,20 @@ package com.vet24.web.controllers.user;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.dao.medicine.DiagnosisDao;
 import com.vet24.models.dto.medicine.DiagnosisDto;
-import com.vet24.models.user.Doctor;
 import com.vet24.service.user.DoctorService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@WithUserDetails(value = "doctor33@gmail.com")
 public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
@@ -27,7 +26,13 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
 
     DiagnosisDto diagnosisDto = new DiagnosisDto(4L, 4L, 33L, "text");
 
-    private final String URI = "http://localhost:8090/api/doctor/pet/{petId}/addDiagnosis";
+    private final String URI = "/api/doctor/pet/{petId}/addDiagnosis";
+    private String token;
+
+    @Before
+    public void setToken() throws Exception {
+        token = getAccessToken("doctor33@gmail.com","user33");
+    }
 
     //+mock, no find diagnosis
     @Test
@@ -39,7 +44,8 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
         HttpEntity<String> entity = new HttpEntity<>(diagnosis, headers);
 
         mockMvc.perform(MockMvcRequestBuilders.post(URI, entity, DiagnosisDto.class, 1001)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -50,8 +56,9 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
     public void shouldBeCreated() throws Exception {
         int beforeCount = diagnosisDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI, 101)
-                .content(objectMapper.valueToTree(diagnosisDto).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(diagnosisDto).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++beforeCount).isEqualTo(diagnosisDao.getAll().size());
