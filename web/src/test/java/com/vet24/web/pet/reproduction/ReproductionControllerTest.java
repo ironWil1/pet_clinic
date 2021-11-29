@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -21,7 +20,6 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@WithUserDetails(value = "user3@gmail.com")
 public class ReproductionControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     ReproductionController reproductionController;
@@ -34,7 +32,8 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Autowired
     ReproductionService reproductionService;
 
-    final String URI = "http://localhost:8090/api/client/pet";
+    final String URI = "/api/client/pet";
+    private String token;
 
     ReproductionDto reproductionDtoNew;
     ReproductionDto reproductionDto1;
@@ -52,12 +51,17 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         this.reproductionDto3 = new ReproductionDto(102L, LocalDate.now(), LocalDate.now(), LocalDate.now(), 33);
     }
 
+    @Before
+    public void setToken() throws Exception {
+        token = getAccessToken("user3@gmail.com","user3");
+    }
 
     // +mock, get reproduction by id - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
     public void testGetReproductionSuccess() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 102, 102))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 102, 102)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -65,7 +69,8 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
     public void shouldBeNotFoundPet() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 33, 102))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 33, 102)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -73,7 +78,8 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
     public void testGetReproductionError404reproduction() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 102, 33))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 102, 33)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -81,7 +87,8 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
     public void testGetReproductionError400refPetReproduction() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 101, 102))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 101, 102)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -89,7 +96,8 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
     public void testGetReproductionError400refClientPet() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 100, 100))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction/{id}", 100, 100)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -99,8 +107,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testAddReproductionSuccess() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/reproduction", 102)
-                .content(objectMapper.valueToTree(reproductionDtoNew).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDtoNew).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -112,8 +121,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testAddReproductionError404() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/reproduction", 33)
-                .content(objectMapper.valueToTree(reproductionDtoNew).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDtoNew).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -125,8 +135,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testAddReproductionError400() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/reproduction", 100)
-                .content(objectMapper.valueToTree(reproductionDtoNew).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDtoNew).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -138,8 +149,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testPutReproductionSuccess() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 102, 102)
-                .content(objectMapper.valueToTree(reproductionDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -151,8 +163,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testPutReproductionError404reproduction() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 33, 102)
-                .content(objectMapper.valueToTree(reproductionDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -164,8 +177,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testPutReproductionError404pet() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 102, 33)
-                .content(objectMapper.valueToTree(reproductionDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -177,8 +191,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testPutReproductionError400refPetReproduction() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 101, 102)
-                .content(objectMapper.valueToTree(reproductionDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -190,8 +205,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testPutReproductionError400idInPathAndBody() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 102, 102)
-                .content(objectMapper.valueToTree(reproductionDto1).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto1).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -203,8 +219,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testPutReproductionError400refClientPet() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 100, 100)
-                .content(objectMapper.valueToTree(reproductionDto1).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto1).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -216,8 +233,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testDeleteReproductionSuccess() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/reproduction/{id}", 102, 102)
-                .content(objectMapper.valueToTree(reproductionDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -229,8 +247,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testDeleteReproductionError404reproduction() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/reproduction/{id}", 33, 102)
-                .content(objectMapper.valueToTree(reproductionDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -242,8 +261,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testDeleteReproductionError404pet() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/reproduction/{id}", 102, 33)
-                .content(objectMapper.valueToTree(reproductionDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -255,8 +275,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testDeleteReproductionError400refPetReproduction() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/reproduction/{id}", 101, 102)
-                .content(objectMapper.valueToTree(reproductionDto3).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto3).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
@@ -268,8 +289,9 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
     public void testDeleteReproductionError400refClientPet() throws Exception {
         int beforeCount = reproductionDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}/reproduction/{id}", 100, 100)
-                .content(objectMapper.valueToTree(reproductionDto1).toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(reproductionDto1).toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());

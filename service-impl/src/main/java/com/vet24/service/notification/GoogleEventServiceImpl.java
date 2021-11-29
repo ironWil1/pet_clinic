@@ -40,7 +40,7 @@ public class GoogleEventServiceImpl implements GoogleEventService {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_EVENTS);
 
-    private static final String CALLBACK_URI = "http://localhost:8080/oauth";
+    private static final String CALLBACK_URI = "/oauth";
     private static final String GD_SECRET_KEYS = "/credentials.json";
     private static final String CREDENTIALS_FOLDER = "tokens";
     private GoogleAuthorizationCodeFlow flow;
