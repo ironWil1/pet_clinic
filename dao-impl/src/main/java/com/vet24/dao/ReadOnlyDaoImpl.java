@@ -30,7 +30,7 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
         Field id = null;
         boolean result = false;
 
-        id = searchIdInClassAndSuperclasses(id, type);
+        id = searchingIdInClassAndSuperclasses(id, type);
 
         if (id != null) {
             String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
@@ -43,11 +43,11 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
         return result;
     }
 
-    private Field searchIdInClassAndSuperclasses(Field id, Class<?> classForId) {
+    private Field searchingIdInClassAndSuperclasses(Field id, Class<?> classForId) {
         id = initIdField(id, classForId.getDeclaredFields());
         if (id == null && !(classForId.equals(Object.class))) {
             classForId = classForId.getSuperclass();
-            searchIdInClassAndSuperclasses(id, classForId);
+            searchingIdInClassAndSuperclasses(id, classForId);
         }
         return id;
     }
