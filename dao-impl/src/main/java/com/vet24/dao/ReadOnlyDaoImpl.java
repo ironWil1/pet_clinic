@@ -7,7 +7,10 @@ import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 
 public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
 
@@ -27,10 +30,22 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
     }
 
     public boolean isExistByKey(K key) {
-        Field id = null;
         boolean result = false;
+        Field id = null;
+        Class<?> classForId = type;
+        Queue<Field> declaredFields = new ArrayDeque<>();
 
-        id = searchingIdInClassAndSuperclasses(id, type);
+        while(!(classForId.equals(Object.class))) {
+            Collections.addAll(declaredFields, classForId.getDeclaredFields());
+            classForId = classForId.getSuperclass();
+        }
+
+        for (Field field : declaredFields) {
+            if (field.isAnnotationPresent(Id.class)) {
+                id = field;
+                break;
+            }
+        }
 
         if (id != null) {
             String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
@@ -41,25 +56,6 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
                     .getSingleResult();
         }
         return result;
-    }
-
-    private Field searchingIdInClassAndSuperclasses(Field id, Class<?> classForId) {
-        id = initIdField(id, classForId.getDeclaredFields());
-        if (id == null && !(classForId.equals(Object.class))) {
-            classForId = classForId.getSuperclass();
-            searchingIdInClassAndSuperclasses(id, classForId);
-        }
-        return id;
-    }
-
-    private Field initIdField(Field id, Field[] declaredFields) {
-        for (Field field : declaredFields) {
-            if (field.isAnnotationPresent(Id.class)) {
-                id = field;
-                break;
-            }
-        }
-        return id;
     }
 
     @SuppressWarnings("unchecked")
