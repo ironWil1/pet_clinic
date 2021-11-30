@@ -3,6 +3,7 @@ package com.vet24.web.util;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,8 +27,6 @@ public class ReflectionUtil {
                 .collect(Collectors.toList());
     }
 
-
-
     public List<String> getEnumConsts(String enumName) {
         String found = enumFoundStr + enumName;
         List<String> result = new ArrayList<>();
@@ -37,12 +36,11 @@ public class ReflectionUtil {
         for (Class<? extends Enum> cl : classez) {
             if (found.contains(cl.getName())) {
                 List<? extends Enum> o = Arrays.asList(cl.getEnumConstants());
-                for (Enum k : o) {
+                for (Enum<? extends Enum> k : o) {
                     result.add(k.name());
                 }
             }
         }
         return result;
     }
-
 }
