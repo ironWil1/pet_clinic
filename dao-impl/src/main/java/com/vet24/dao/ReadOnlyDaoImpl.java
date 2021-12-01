@@ -51,8 +51,7 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
                 return field;
             }
         }
-        getId(classForId.getSuperclass());
-        return null;
+        return getId(classForId.getSuperclass());
     }
 
     @SuppressWarnings("unchecked")
