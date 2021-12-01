@@ -43,15 +43,15 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
     }
 
     private Field getId(Class<?> classForId) {
+        if (classForId.equals(Object.class)) {
+            return null;
+        }
         for (Field field : classForId.getDeclaredFields()) {
             if (field.isAnnotationPresent(Id.class)) {
                 return field;
             }
         }
-        if (!(classForId.equals(Object.class))) {
-            classForId = classForId.getSuperclass();
-            getId(classForId);
-        }
+        getId(classForId.getSuperclass());
         return null;
     }
 
