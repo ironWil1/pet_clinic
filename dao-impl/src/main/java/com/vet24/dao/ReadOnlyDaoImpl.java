@@ -29,7 +29,7 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
     public boolean isExistByKey(K key) {
         boolean result = false;
 
-        Field id = getIdField(type);
+        Field id = getId(type);
 
         if (id != null) {
             String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
@@ -42,7 +42,7 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
         return result;
     }
 
-    private Field getIdField(Class<?> classForId) {
+    private Field getId(Class<?> classForId) {
         for (Field field : classForId.getDeclaredFields()) {
             if (field.isAnnotationPresent(Id.class)) {
                 return field;
@@ -50,7 +50,7 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
         }
         if (!(classForId.equals(Object.class))) {
             classForId = classForId.getSuperclass();
-            getIdField(classForId);
+            getId(classForId);
         }
         return null;
     }
