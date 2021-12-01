@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WithUserDetails("admin@gmail.com")
-class EnumsControllerTest extends ControllerAbstractIntegrationTest {
+public class EnumsControllerTest extends ControllerAbstractIntegrationTest {
 
     @Autowired
     private ReflectionUtil reflectionUtil;
