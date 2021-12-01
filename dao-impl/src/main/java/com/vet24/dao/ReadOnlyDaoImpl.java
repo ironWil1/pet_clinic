@@ -7,10 +7,7 @@ import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.List;
-import java.util.Queue;
 
 public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
 
@@ -31,21 +28,8 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
 
     public boolean isExistByKey(K key) {
         boolean result = false;
-        Field id = null;
-        Class<?> classForId = type;
-        Queue<Field> declaredFields = new ArrayDeque<>();
 
-        while(!(classForId.equals(Object.class))) {
-            Collections.addAll(declaredFields, classForId.getDeclaredFields());
-            classForId = classForId.getSuperclass();
-        }
-
-        for (Field field : declaredFields) {
-            if (field.isAnnotationPresent(Id.class)) {
-                id = field;
-                break;
-            }
-        }
+        Field id = searchIdInClassAndSuperclasses(type);
 
         if (id != null) {
             String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
@@ -56,6 +40,22 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
                     .getSingleResult();
         }
         return result;
+    }
+
+    private Field searchIdInClassAndSuperclasses(Class<?> classForId) {
+        Field id = null;
+        Field[] declaredFields = classForId.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if (field.isAnnotationPresent(Id.class)) {
+                id = field;
+                break;
+            }
+        }
+        if (id == null && !(classForId.equals(Object.class))) {
+            classForId = classForId.getSuperclass();
+            searchIdInClassAndSuperclasses(classForId);
+        }
+        return id;
     }
 
     @SuppressWarnings("unchecked")
