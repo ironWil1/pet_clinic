@@ -26,14 +26,14 @@ public class ReflectionUtil {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getEnumConsts(String enumName) {
-        String found = enumFoundStr + enumName;
+    public List<String> getEnumConsts(String enumName) throws ClassNotFoundException {
+        Class<String> found = (Class<String>) Class.forName(enumLoc + "." + enumName);
         List<String> result = new ArrayList<>();
         Reflections reflections = new Reflections(enumLoc);
         Set<Class<? extends Enum>> classez = reflections.getSubTypesOf(Enum.class);
 
         for (Class<? extends Enum> cl : classez) {
-            if (found.contains(cl.getName())) {
+            if (found.toString().contains(cl.getName())) {
                 result = Arrays.stream(cl.getEnumConstants())
                         .map(Enum::name)
                         .collect(Collectors.toList());

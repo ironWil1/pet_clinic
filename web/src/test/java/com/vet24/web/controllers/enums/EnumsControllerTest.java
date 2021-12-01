@@ -10,8 +10,10 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@WithUserDetails("admin@gmail.com")
+@WithUserDetails("client1@email.com")
 public class EnumsControllerTest extends ControllerAbstractIntegrationTest {
+
+    private final String URI = "http://localhost:8080/api/enums";
 
     @Autowired
     private ReflectionUtil reflectionUtil;
@@ -22,12 +24,14 @@ public class EnumsControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void findAllEnums() {
+
+
         assertThat(reflectionUtil.getAllEnums()).isEqualTo(enumsController.findAllEnums().getBody());
     }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
-    public void checkConstantList() {
+    public void checkConstantList() throws ClassNotFoundException {
         List<String> genList = reflectionUtil.getAllEnums();
         for (String name : genList) {
             assertThat((reflectionUtil.getEnumConsts(name))).isEqualTo(enumsController.getEnumNameList(name).getBody());
