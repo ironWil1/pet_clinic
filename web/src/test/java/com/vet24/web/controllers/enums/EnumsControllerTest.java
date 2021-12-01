@@ -4,22 +4,11 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.media.EnumsController;
 import com.vet24.web.util.ReflectionUtil;
-import org.junit.jupiter.api.Test;
-import org.reflections.Reflections;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WithUserDetails("admin@gmail.com")
 public class EnumsControllerTest extends ControllerAbstractIntegrationTest {
