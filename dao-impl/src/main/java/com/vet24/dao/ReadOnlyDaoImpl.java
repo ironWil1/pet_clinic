@@ -29,7 +29,7 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
     public boolean isExistByKey(K key) {
         boolean result = false;
 
-        Field id = searchIdInClassAndSuperclasses(type);
+        Field id = getIdField(type);
 
         if (id != null) {
             String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
@@ -42,20 +42,17 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
         return result;
     }
 
-    private Field searchIdInClassAndSuperclasses(Class<?> classForId) {
-        Field id = null;
-        Field[] declaredFields = classForId.getDeclaredFields();
-        for (Field field : declaredFields) {
+    private Field getIdField(Class<?> classForId) {
+        for (Field field : classForId.getDeclaredFields()) {
             if (field.isAnnotationPresent(Id.class)) {
-                id = field;
-                break;
+                return field;
             }
         }
-        if (id == null && !(classForId.equals(Object.class))) {
+        if (!(classForId.equals(Object.class))) {
             classForId = classForId.getSuperclass();
-            searchIdInClassAndSuperclasses(classForId);
+            getIdField(classForId);
         }
-        return id;
+        return null;
     }
 
     @SuppressWarnings("unchecked")
