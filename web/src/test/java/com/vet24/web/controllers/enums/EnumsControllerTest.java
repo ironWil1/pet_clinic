@@ -16,27 +16,25 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+//Надо получить токены
 @WithUserDetails("client1@email.com")
 public class EnumsControllerTest extends ControllerAbstractIntegrationTest {
 
-    private final String URI = "http://localhost:8080/api/enums";
+    private final String URI = "/api/enums";
 
     @Autowired
     private ReflectionUtil reflectionUtil;
 
-
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void findAllEnums() throws Exception {
-
         MvcResult listEnumsJSON = mockMvc.perform(MockMvcRequestBuilders.get(URI)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         List<String> list = objectMapper.readValue(
                 listEnumsJSON.getResponse().getContentAsString(),
-                new TypeReference<List<String>>() {
-                });
+                new TypeReference<>() {});
         assertThat(list).isEqualTo(reflectionUtil.getAllEnums());
     }
 
@@ -44,14 +42,7 @@ public class EnumsControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void checkConstantList() throws Exception {
-        MvcResult listEnumsJSON = mockMvc.perform(MockMvcRequestBuilders.get(URI)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-        List<String> listResult = objectMapper.readValue(
-                listEnumsJSON.getResponse().getContentAsString(),
-                new TypeReference<List<String>>() {
-                });
+        List<String> listResult = reflectionUtil.getAllEnums();
 
         for (String name : listResult) {
             MvcResult constListJSON = mockMvc.perform(MockMvcRequestBuilders.get(URI + "/" + name)
@@ -60,11 +51,18 @@ public class EnumsControllerTest extends ControllerAbstractIntegrationTest {
                     .andReturn();
             List<String> constListResult = objectMapper.readValue(
                     constListJSON.getResponse().getContentAsString(),
-                    new TypeReference<List<String>>() {
-                    });
+                    new TypeReference<>() {});
 
             assertThat(constListResult).isEqualTo((reflectionUtil.getEnumConsts(name)));
         }
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
+    public void checkIrrelevantEnum() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/" + "IrrelevantEnum")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
 }

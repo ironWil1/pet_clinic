@@ -39,7 +39,11 @@ public class EnumsController {
             @ApiResponse(responseCode = "40x", description = "Something went wrong")
     })
     @GetMapping("/api/enums/{enumName}")
-    public ResponseEntity<List<String>> getEnumNameList(@Valid @PathVariable String enumName) throws ClassNotFoundException {
+    public ResponseEntity<List<String>> getEnumNameList(@Valid @PathVariable String enumName) {
+        try {
         return new ResponseEntity<>(reflectionUtil.getEnumConsts(enumName), HttpStatus.OK);
+        } catch (ClassNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

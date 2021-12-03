@@ -3,7 +3,6 @@ package com.vet24.web.util;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -24,18 +23,9 @@ public class ReflectionUtil {
     }
 
     public List<String> getEnumConsts(String enumName) throws ClassNotFoundException {
-        Class<String> found = (Class<String>) Class.forName(enumLoc + "." + enumName);
-        List<String> result = new ArrayList<>();
-        Reflections reflections = new Reflections(enumLoc);
-        Set<Class<? extends Enum>> classez = reflections.getSubTypesOf(Enum.class);
-
-        for (Class<? extends Enum> cl : classez) {
-            if (found.toString().contains(cl.getName())) {
-                result = Arrays.stream(cl.getEnumConstants())
-                        .map(Enum::name)
-                        .collect(Collectors.toList());
-            }
-        }
-        return result;
+        Class<? extends Enum> found = (Class<? extends Enum>) Class.forName(enumLoc + "." + enumName);
+        return Arrays.stream(found.getEnumConstants())
+                .map(Enum::name)
+                .collect(Collectors.toList());
     }
 }
