@@ -15,14 +15,11 @@ public class ReflectionUtil {
     @Value("${enums.location}")
     private String enumLoc;
 
-    @Value("${enums.prefix.found}")
-    private String enumFoundStr;
-
     public List<String> getAllEnums() {
         Reflections reflections = new Reflections(enumLoc);
         Set<Class<? extends Enum>> classez = reflections.getSubTypesOf(Enum.class);
         return classez.stream()
-                .map(t -> t.getName().replaceFirst(enumFoundStr, ""))
+                .map(t -> t.getName().replaceFirst(enumLoc + ".", ""))
                 .collect(Collectors.toList());
     }
 
