@@ -27,23 +27,31 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
     }
 
     public boolean isExistByKey(K key) {
-        Field id = null;
         boolean result = false;
-        for (Field field : type.getDeclaredFields()) {
-            if(field.isAnnotationPresent(Id.class)) {
-                id = field;
-                break;
-            }
-        }
+
+        Field id = getId(type);
+
         if (id != null) {
             String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
                     " FROM " + type.getName() + " WHERE " + id.getName() + " = :id";
-           result = manager
+            result = manager
                     .createQuery(query, Boolean.class)
                     .setParameter("id", key)
                     .getSingleResult();
         }
         return result;
+    }
+
+    private Field getId(Class<?> classForId) {
+        if (classForId.equals(Object.class)) {
+            return null;
+        }
+        for (Field field : classForId.getDeclaredFields()) {
+            if (field.isAnnotationPresent(Id.class)) {
+                return field;
+            }
+        }
+        return getId(classForId.getSuperclass());
     }
 
     @SuppressWarnings("unchecked")
