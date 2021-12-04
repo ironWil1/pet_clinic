@@ -4,20 +4,16 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.util.ReflectionUtil;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 import java.util.List;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-//Надо получить токены
-@WithUserDetails("client1@email.com")
 public class EnumsControllerTest extends ControllerAbstractIntegrationTest {
 
     private final String URI = "/api/enums";
@@ -25,28 +21,37 @@ public class EnumsControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     private ReflectionUtil reflectionUtil;
 
+    private String token;
+
+    @Before
+    public void setToken() throws Exception {
+        token = getAccessToken("doctor33@gmail.com","user33");
+    }
+
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
+    @DataSet(value = {"/datasets/doctors.yml"}, cleanBefore = true)
     public void findAllEnums() throws Exception {
         MvcResult listEnumsJSON = mockMvc.perform(MockMvcRequestBuilders.get(URI)
-                .accept(MediaType.APPLICATION_JSON))
+                    .header("Authorization", "Bearer " + token)
+                    .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         List<String> list = objectMapper.readValue(
                 listEnumsJSON.getResponse().getContentAsString(),
                 new TypeReference<>() {});
+
         assertThat(list).isEqualTo(reflectionUtil.getAllEnums());
     }
 
-
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
+    @DataSet(value = {"/datasets/doctors.yml"}, cleanBefore = true)
     public void checkConstantList() throws Exception {
         List<String> listResult = reflectionUtil.getAllEnums();
 
         for (String name : listResult) {
             MvcResult constListJSON = mockMvc.perform(MockMvcRequestBuilders.get(URI + "/" + name)
-                    .accept(MediaType.APPLICATION_JSON))
+                        .header("Authorization", "Bearer " + token)
+                        .accept(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andReturn();
             List<String> constListResult = objectMapper.readValue(
@@ -58,11 +63,11 @@ public class EnumsControllerTest extends ControllerAbstractIntegrationTest {
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
+    @DataSet(value = {"/datasets/doctors.yml"}, cleanBefore = true)
     public void checkIrrelevantEnum() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/" + "IrrelevantEnum")
-                .accept(MediaType.APPLICATION_JSON))
+                    .header("Authorization", "Bearer " + token)
+                    .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
-
 }
