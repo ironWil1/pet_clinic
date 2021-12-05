@@ -3,10 +3,6 @@ stages:
   - test
   - sonar-check
 
-variables:
-  TEST_APP_SERVICE: "test_petclinic"
-  TEST_DB_SERVICE: "test_db"
-
 #building:
 #  stage: build
 #  script:
@@ -18,6 +14,9 @@ variables:
 
 test_maven:
   stage: test
+  variables:
+    TEST_APP_SERVICE: "test_petclinic"
+    TEST_DB_SERVICE: "test_db"
   before_script:
     - docker-compose up --build $TEST_APP_SERVICE $TEST_DB_SERVICE
   script:
