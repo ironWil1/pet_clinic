@@ -1,34 +1,10 @@
 stages:
-#  - build
   - sonar-check
+  - build
   - test
 
-image: docker/compose:latest
-
-services:
-  - docker:dind
-
-test_maven:
-  stage: test
-  variables:
-    TEST_APP_SERVICE: "test_petclinic"
-    TEST_DB_SERVICE: "test_db"
-  before_script:
-    - docker-compose up --build $TEST_APP_SERVICE $TEST_DB_SERVICE
-  script:
-    - mvn clean test -P testprod
-  after_script:
-    - docker compose stop $TEST_APP_SERVICE $TEST_DB_SERVICE
-    - docker-compose rm $TEST_APP_SERVICE $TEST_DB_SERVICE
-  tags:
-    - clinic_docker_runner
-  artifacts:
-    reports:
-      junit:
-        - web/target/surefire-reports/TEST-*.xml
-        - web/target/failsafe-reports/TEST-*.xml
-  rules:
-    - if: $CI_MERGE_REQUEST_IID
+variables:
+  TEST_SERVICES: "test_db test_petclinic"
 
 sonarqube-check:
   stage: sonar-check
@@ -44,3 +20,29 @@ sonarqube-check:
   allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+building:
+  stage: build
+  script:
+    - docker-compose up --build $TEST_SERVICES
+  tags:
+    - clinic_shell
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == 'master'
+
+test_maven:
+  stage: test
+  script:
+    - mvn clean test -P testprod
+  after_script:
+    - docker compose stop $TEST_SERVICES
+    - docker-compose rm $TEST_SERVICES
+  tags:
+    - clinic_docker_runner
+  artifacts:
+    reports:
+      junit:
+        - web/target/surefire-reports/TEST-*.xml
+        - web/target/failsafe-reports/TEST-*.xml
+#  rules:
+#    - if: $CI_MERGE_REQUEST_IID
