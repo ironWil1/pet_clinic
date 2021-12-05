@@ -36,7 +36,6 @@ test_maven:
   stage: test
   script:
     - mvn clean test -P testprod
-  after_script:
     - docker-compose stop $TEST_SERVICES
     - docker-compose rm $TEST_SERVICES
   tags:
