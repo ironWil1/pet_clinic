@@ -37,10 +37,10 @@ test_maven:
 sonarqube-check:
   stage: sonar-check
   variables:
-  GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-  SONAR_TOKEN: "ba00cdec2010b5084058842e1595cdb104055c9b"
-  SONAR_HOST_URL: "http://sonarqube:9000/"
-  SONAR_PROJECT_KEY: "pet_clinic"
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+    SONAR_TOKEN: "ba00cdec2010b5084058842e1595cdb104055c9b"
+    SONAR_HOST_URL: "http://sonarqube:9000/"
+    SONAR_PROJECT_KEY: "pet_clinic"
   script:
     - mvn compile -P testprod sonar:sonar -e -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
   tags:
