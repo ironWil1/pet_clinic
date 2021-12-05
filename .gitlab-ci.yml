@@ -5,14 +5,10 @@ stages:
 
 building:
   stage: build
-#    - docker-compose down
-#    - docker image prune -a -f
-#    - docker-compose build
   script:
-#    - docker-compose up -d
     - docker-compose up --build test_db test_petclinic
-#  after_script:
-#    - docker image prune -f
+  after_script:
+    - docker-compose down
   tags:
     - clinic_shell
   rules:
@@ -33,20 +29,10 @@ building:
 #  rules:
 #    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-
 test_maven:
   stage: test
-#  before_script:
-#    - docker-compose up --build test_db test_petclinic
-#    - docker-compose down
-#    - docker image prune -a -f
-#    - docker-compose build
-#    - docker-compose up -d
   script:
     - mvn clean test -P testprod
-  after_script:
-    - docker-compose down
-#    - docker image prune -f
   tags:
     - clinic_docker_runner
   artifacts:
