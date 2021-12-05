@@ -1,7 +1,8 @@
 stages:
   - build
-  #  - sonar-check
+  - sonar-check
   - test
+
 
 building:
   stage: build
