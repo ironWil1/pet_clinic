@@ -55,6 +55,7 @@ clean-and-init-prod:
     - docker-compose stop $PROD_SERVICES
     - docker-compose rm $PROD_SERVICES
     - docker-compose up --build $PROD_SERVICES
-  when: manual
+  when:
+    - manual
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == 'master'
