@@ -1,21 +1,22 @@
 stages:
-#  - sonar-check
+  - build
+  #  - sonar-check
   - test
-#  - build
 
-#building:
-#  stage: build
+building:
+  stage: build
 #    - docker-compose down
 #    - docker image prune -a -f
 #    - docker-compose build
-#  script:
+  script:
 #    - docker-compose up -d
+    - docker-compose up --build test_db test_petclinic
 #  after_script:
 #    - docker image prune -f
-#  tags:
-#    - clinic_shell
-#  rules:
-#    - if: $CI_COMMIT_BRANCH == 'master'
+  tags:
+    - clinic_shell
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
 
 #sonarqube-check:
 #  stage: sonar-check
@@ -35,9 +36,9 @@ stages:
 
 test_maven:
   stage: test
-  before_script:
-    - docker-compose up --build test_db test_petclinic
-  #    - docker-compose down
+#  before_script:
+#    - docker-compose up --build test_db test_petclinic
+#    - docker-compose down
 #    - docker image prune -a -f
 #    - docker-compose build
 #    - docker-compose up -d
