@@ -8,27 +8,18 @@ image: docker/compose:latest
 services:
   - docker:dind
 
-#building:
-#  stage: build
-#  script:
-#    - docker-compose up --build $TEST_APP_SERVICE
-#  tags:
-#    - clinic_shell
-#  rules:
-#    - if: $CI_COMMIT_BRANCH == 'master'
-
 test_maven:
   stage: test
   variables:
     TEST_APP_SERVICE: "test_petclinic"
     TEST_DB_SERVICE: "test_db"
-#  before_script:
-  script:
+  before_script:
     - docker-compose up --build $TEST_APP_SERVICE $TEST_DB_SERVICE
+  script:
     - mvn clean test -P testprod
+  after_script:
     - docker compose stop $TEST_APP_SERVICE $TEST_DB_SERVICE
     - docker-compose rm $TEST_APP_SERVICE $TEST_DB_SERVICE
-  #  after_script:
   tags:
     - clinic_docker_runner
   artifacts:
