@@ -27,9 +27,6 @@ building:
   stage: build
   script:
     - docker-compose up --build $TEST_SERVICES
-  after_script:
-    - docker-compose stop $TEST_SERVICES
-    - docker-compose rm $TEST_SERVICES
   tags:
     - clinic_shell
   rules:
@@ -39,6 +36,9 @@ test_maven:
   stage: test
   script:
     - mvn clean test -P testprod
+  after_script:
+    - docker-compose stop $TEST_SERVICES
+    - docker-compose rm $TEST_SERVICES
   tags:
     - clinic_docker_runner
   artifacts:
