@@ -4,11 +4,6 @@ stages:
   - test
   - deploy
 
-image:
-  name: docker/compose:latest
-
-services:
-  - docker:dind
 
 variables:
   TEST_SERVICES: "test_db test_petclinic"
@@ -40,6 +35,13 @@ building:
 
 test_maven:
   stage: test
+
+  image:
+    name: docker/compose:latest
+
+  services:
+    - docker:dind
+
   script:
     - mvn clean test -P testprod
   after_script:
