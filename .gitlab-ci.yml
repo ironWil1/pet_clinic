@@ -3,20 +3,14 @@ stages:
   - test
   - build
 
-building:
-  stage: build
-  before_script:
-    - docker-compose down
-    - docker image prune -a -f
-    - docker-compose build
-  script:
-    - docker-compose up -d
-  after_script:
-    - docker image prune -f
-  tags:
-    - clinic_shell
-  rules:
-    - if: $CI_COMMIT_BRANCH == 'master'
+#building:
+#  stage: build
+#  script:
+#    - docker-compose up -d
+#  tags:
+#    - clinic_shell
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == 'master'
 
 sonarqube-check:
   stage: sonar-check
@@ -33,11 +27,16 @@ sonarqube-check:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-
 test_maven:
   stage: test
+  before_script:
+    - docker-compose up
+    - docker image prune -a -f
+    - docker-compose build
   script:
     - mvn clean test -P testprod
+  after_script:
+    - docker image prune -f
   tags:
     - clinic_docker_runner
   artifacts:
@@ -47,9 +46,3 @@ test_maven:
         - web/target/failsafe-reports/TEST-*.xml
   rules:
     - if: $CI_MERGE_REQUEST_IID
-
-
-
-
-
-
