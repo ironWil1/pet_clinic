@@ -4,7 +4,6 @@ stages:
   - test
   - deploy
 
-
 variables:
   TEST_SERVICES: "test_db test_petclinic"
   PROD_SERVICES: "db petclinic"
@@ -36,7 +35,8 @@ building:
   tags:
     - clinic_shell
   rules:
-    - if: $CI_COMMIT_BRANCH == 'master'
+#    - if: $CI_COMMIT_BRANCH == 'master'
+    - if: $CI_MERGE_REQUEST_IID
 
 test_maven:
   stage: test
