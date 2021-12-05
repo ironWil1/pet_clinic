@@ -1,10 +1,12 @@
 stages:
   - sonar-check
-#  - build
+  - build
   - test
+  - clean-and-init-prod
 
 variables:
   TEST_SERVICES: "test_db test_petclinic"
+  PROD_SERVICES: "db petclinic"
 
 sonarqube-check:
   stage: sonar-check
@@ -21,19 +23,17 @@ sonarqube-check:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-#building:
-#  stage: build
-#  script:
-#    - docker-compose up --build $TEST_SERVICES
-#  tags:
-#    - clinic_shell
-#  rules:
-#    - if: $CI_COMMIT_BRANCH == 'master'
+building:
+  stage: build
+  script:
+    - docker-compose up --build $TEST_SERVICES
+  tags:
+    - clinic_shell
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
 
 test_maven:
   stage: test
-  before_script:
-    - docker-compose up --build $TEST_SERVICES
   script:
     - mvn clean test -P testprod
   after_script:
@@ -48,3 +48,11 @@ test_maven:
         - web/target/failsafe-reports/TEST-*.xml
   rules:
     - if: $CI_MERGE_REQUEST_IID
+
+clean-and-init-prod:
+  stage: clean-and-init-prod
+  script:
+    - docker-compose stop $PROD_SERVICES
+    - docker-compose rm $PROD_SERVICES
+    - docker-compose up --build $PROD_SERVICES
+  when: manual
