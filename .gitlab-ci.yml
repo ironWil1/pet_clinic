@@ -26,23 +26,25 @@ variables:
 building:
   stage: build
   before_script:
-    - docker-compose stop $TEST_SERVICES
-    - docker-compose rm -f $TEST_SERVICES
+    - docker-compose stop "petclinic"
+    - docker-compose rm -f "petclinic"
   script:
-    - docker-compose up --build $TEST_SERVICES
-  after_script:
-    - docker-compose stop $TEST_SERVICES
-    - docker-compose rm -f $TEST_SERVICES
+    - docker-compose up --build "petclinic"
   tags:
     - clinic_shell
   rules:
-#    - if: $CI_COMMIT_BRANCH == 'master'
-    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH == 'master'
+
 
 test_maven:
   stage: test
   script:
+    - docker-compose stop $TEST_SERVICES
+    - docker-compose rm $TEST_SERVICES
+    - docker-compose up --build $TEST_SERVICES
     - mvn clean test -P testprod
+    - docker-compose rm $TEST_SERVICES
+    - docker-compose up --build $TEST_SERVICES
   tags:
     - clinic_docker_runner
   artifacts:
