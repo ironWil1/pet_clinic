@@ -26,12 +26,13 @@ sonarqube-check:
 building:
   stage: build
   before_script:
-    - docker-compose up --build $TEST_SERVICES
+    - docker-compose stop $TEST_SERVICES
+    - docker-compose rm $TEST_SERVICES -f
   script:
-    - echo "services started!"
+    - docker-compose up --build $TEST_SERVICES
   after_script:
     - docker-compose stop $TEST_SERVICES
-    - docker-compose rm $TEST_SERVICES
+    - docker-compose rm $TEST_SERVICES -f
   tags:
     - clinic_shell
   rules:
