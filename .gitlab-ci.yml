@@ -55,9 +55,5 @@ deploy:
     - docker-compose stop $PROD_SERVICES
     - docker-compose rm $PROD_SERVICES
     - docker-compose up --build $PROD_SERVICES
-  environment:
-    name: clean-and-init-prod
   when: manual
   allow_failure: false
-  only:
-    - master
