@@ -4,6 +4,12 @@ stages:
   - test
   - deploy
 
+image:
+  name: docker/compose:latest
+
+services:
+  - docker:dind
+
 variables:
   TEST_SERVICES: "test_db test_petclinic"
   PROD_SERVICES: "db petclinic"
@@ -36,6 +42,7 @@ test_maven:
   stage: test
   script:
     - mvn clean test -P testprod
+  after_script:
     - docker-compose stop $TEST_SERVICES
     - docker-compose rm $TEST_SERVICES
   tags:
@@ -55,4 +62,3 @@ deploy:
     - docker-compose rm $PROD_SERVICES
     - docker-compose up --build $PROD_SERVICES
   when: manual
-  allow_failure: false
