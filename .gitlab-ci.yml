@@ -57,4 +57,4 @@ clean-and-init-prod:
     - docker-compose up --build $PROD_SERVICES
   when: manual
   rules:
-    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
