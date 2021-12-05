@@ -1,6 +1,6 @@
 stages:
   - sonar-check
-  - build
+#  - build
   - test
 
 variables:
@@ -17,25 +17,27 @@ sonarqube-check:
     - mvn compile -P testprod sonar:sonar -e -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
   tags:
     - clinic_docker_runner
-  allow_failure: true
+#  allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-building:
-  stage: build
-  script:
-    - docker-compose up --build $TEST_SERVICES
-  tags:
-    - clinic_shell
-  rules:
-    - if: $CI_COMMIT_BRANCH == 'master'
+#building:
+#  stage: build
+#  script:
+#    - docker-compose up --build $TEST_SERVICES
+#  tags:
+#    - clinic_shell
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == 'master'
 
 test_maven:
   stage: test
+  before_script:
+    - docker-compose up --build $TEST_SERVICES
   script:
     - mvn clean test -P testprod
   after_script:
-    - docker compose stop $TEST_SERVICES
+    - docker-compose stop $TEST_SERVICES
     - docker-compose rm $TEST_SERVICES
   tags:
     - clinic_docker_runner
