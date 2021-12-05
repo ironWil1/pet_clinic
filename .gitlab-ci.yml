@@ -59,5 +59,3 @@ clean-and-init-prod:
     name: clean-and-init-prod
   when: manual
   allow_failure: false
-  rules:
-    - if: $CI_MERGE_REQUEST_IID
