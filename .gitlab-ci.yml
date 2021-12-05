@@ -1,7 +1,7 @@
 stages:
 #  - build
-  - test
   - sonar-check
+  - test
 
 image: docker/compose:latest
 
