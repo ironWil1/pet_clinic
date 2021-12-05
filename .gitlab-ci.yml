@@ -3,15 +3,6 @@ stages:
   - test
   - build
 
-#building:
-#  stage: build
-#  script:
-#    - docker-compose up -d
-#  tags:
-#    - clinic_shell
-#  rules:
-#    - if: $CI_COMMIT_BRANCH == 'master'
-
 sonarqube-check:
   stage: sonar-check
   variables:
@@ -46,3 +37,12 @@ test_maven:
         - web/target/failsafe-reports/TEST-*.xml
   rules:
     - if: $CI_MERGE_REQUEST_IID
+
+building:
+  stage: build
+  script:
+    - docker-compose up -d
+  tags:
+    - clinic_shell
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
