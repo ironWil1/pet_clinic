@@ -27,12 +27,12 @@ building:
   stage: build
   before_script:
     - docker-compose stop $TEST_SERVICES
-    - docker-compose rm $TEST_SERVICES -f
+    - docker-compose rm -f $TEST_SERVICES
   script:
     - docker-compose up --build $TEST_SERVICES
   after_script:
     - docker-compose stop $TEST_SERVICES
-    - docker-compose rm $TEST_SERVICES -f
+    - docker-compose rm -f $TEST_SERVICES
   tags:
     - clinic_shell
   rules:
