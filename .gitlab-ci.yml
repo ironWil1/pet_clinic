@@ -3,11 +3,10 @@ stages:
   #  - sonar-check
   - test
 
-variables:
-  TEST_SERVICES: "test_db test_petclinic"
-
 building:
   stage: build
+  variables:
+    TEST_SERVICES: "test_db test_petclinic"
   script:
     - docker-compose up --build $TEST_SERVICES
   after_script:
