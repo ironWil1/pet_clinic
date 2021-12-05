@@ -27,8 +27,8 @@ building:
     - docker-compose up --build $TEST_SERVICES
   tags:
     - clinic_shell
-#  rules:
-#    - if: $CI_COMMIT_BRANCH == 'master'
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
 
 test_maven:
   stage: test
@@ -44,5 +44,5 @@ test_maven:
       junit:
         - web/target/surefire-reports/TEST-*.xml
         - web/target/failsafe-reports/TEST-*.xml
-#  rules:
-#    - if: $CI_MERGE_REQUEST_IID
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
