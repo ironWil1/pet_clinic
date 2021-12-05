@@ -3,6 +3,11 @@ stages:
   - test
   - sonar-check
 
+image: docker/compose:latest
+
+services:
+  - docker:dind
+
 #building:
 #  stage: build
 #  script:
