@@ -2,7 +2,7 @@ stages:
   - sonar-check
   - build
   - test
-  - staging
+  - deploy
 
 variables:
   TEST_SERVICES: "test_db test_petclinic"
@@ -49,8 +49,8 @@ test_maven:
   rules:
     - if: $CI_MERGE_REQUEST_IID
 
-clean-and-init-prod:
-  stage: staging
+deploy:
+  stage: deploy
   script:
     - docker-compose stop $PROD_SERVICES
     - docker-compose rm $PROD_SERVICES
@@ -59,3 +59,5 @@ clean-and-init-prod:
     name: clean-and-init-prod
   when: manual
   allow_failure: false
+  only:
+    - master
