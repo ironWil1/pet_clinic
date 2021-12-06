@@ -123,14 +123,14 @@ public class UserTopicController {
             @ApiResponse(responseCode = "403", description = "it's not you topic"),
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
-    @PutMapping()
-    public ResponseEntity<TopicDto> updateTopic(@JsonView(View.Put.class)
+    @PutMapping("/{topicId}")
+    public ResponseEntity<TopicDto> updateTopic(@PathVariable("topicId") Long topicId, @JsonView(View.Put.class)
                                                 @RequestBody(required = false) TopicDto topicDto) {
-        if (!topicService.isExistByKey(topicDto.getId())) {
+        if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic not found");
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Topic topic = topicService.getByKey(topicDto.getId());
+        Topic topic = topicService.getByKey(topicId);
 
         if (!topic.getTopicStarter().equals(user)) {
             throw new NotFoundException("it's not your topic");
