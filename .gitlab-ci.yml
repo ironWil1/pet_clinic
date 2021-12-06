@@ -50,7 +50,7 @@ test_maven:
     - DRY_RUN=1 sh ./get-docker.sh
     - curl -fsSL https://get.docker.com -o get-docker.sh
     - sh get-docker.sh
-    - dockerd
+    - docker ps -a
     - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     - chmod +x /usr/local/bin/docker-compose
     - docker-compose up -d
