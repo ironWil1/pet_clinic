@@ -19,16 +19,16 @@ import java.util.List;
 @NoArgsConstructor
 public class TopicDto {
 
-    @JsonView({View.Get.class})
+    @JsonView({View.Put.class, View.Get.class})
     @Null(groups = {OnCreate.class})
     @NotNull(groups = {OnUpdate.class})
     private Long id;
 
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
+    @JsonView({View.PutUser.class, View.Put.class, View.Post.class, View.Get.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     private String title;
 
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
+    @JsonView({View.PutUser.class, View.Put.class, View.Post.class, View.Get.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     private String content;
 

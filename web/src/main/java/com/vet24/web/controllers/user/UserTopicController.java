@@ -124,7 +124,7 @@ public class UserTopicController {
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
     @PutMapping("/{topicId}")
-    public ResponseEntity<TopicDto> updateTopic(@PathVariable("topicId") Long topicId, @JsonView(View.Put.class)
+    public ResponseEntity<TopicDto> updateTopic(@PathVariable("topicId") Long topicId, @JsonView(View.PutUser.class)
                                                 @RequestBody(required = false) TopicDto topicDto) {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic not found");
