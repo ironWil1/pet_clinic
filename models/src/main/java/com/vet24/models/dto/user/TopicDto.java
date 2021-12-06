@@ -24,11 +24,11 @@ public class TopicDto {
     @NotNull(groups = {OnUpdate.class})
     private Long id;
 
-    @JsonView({View.PutUser.class, View.Put.class, View.Post.class, View.Get.class})
+    @JsonView({View.Put.class, View.Post.class, View.Get.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     private String title;
 
-    @JsonView({View.PutUser.class, View.Put.class, View.Post.class, View.Get.class})
+    @JsonView({View.Put.class, View.Post.class, View.Get.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class})
     private String content;
 

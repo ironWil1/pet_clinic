@@ -9,7 +9,4 @@ public class View {
 
     public interface Put {
     }
-
-    public interface PutUser {
-    }
 }
