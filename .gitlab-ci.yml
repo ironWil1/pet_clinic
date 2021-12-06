@@ -39,12 +39,10 @@ test_maven:
   #  variables:
   #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
-    - dir
     - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    - dir
-#    - chmod +x /usr/local/bin/docker-compose
-    - sudo docker-compose start test_db
-    - sudo docker-compose start test_petclinic
+    - chmod +x /usr/local/bin/docker-compose
+    - docker-compose start test_db
+    - docker-compose start test_petclinic
   #    - mkdir -p "$MOUNT_POINT"
   #    - docker run -v "$MOUNT_POINT:/mnt" -d -e POSTGRES_PASSWORD=123456Qwe -e POSTGRES_USER=jm -e POSTGRES_DB=test_pets -e PGDATA=/var/lib/postgresql/data/test_pets -p 5434:5432 --name test_pets_db library/postgres:latest
   #    - docker build -t test_petclinic .
