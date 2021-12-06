@@ -26,15 +26,18 @@ variables:
 building:
   stage: build
   before_script:
-    - docker-compose stop "petclinic"
-    - docker-compose rm -f "petclinic"
+    - docker-compose down
+    - docker image prune -a -f
+    - docker-compose build
   script:
-    - docker-compose up --build "petclinic"
+    - docker-compose up -d
+  after_script:
+    - docker image prune -f
   tags:
     - clinic_shell
   rules:
-    - if: $CI_COMMIT_BRANCH == 'master'
-
+#    - if: $CI_COMMIT_BRANCH == 'master'
+    - if: $CI_MERGE_REQUEST_IID
 
 test_maven:
   stage: test
