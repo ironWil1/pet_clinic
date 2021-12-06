@@ -36,10 +36,13 @@ building:
 
 test_maven:
   stage: test
+  variables:
+    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
-    - docker run -d -e POSTGRES_PASSWORD=123456Qwe -e POSTGRES_USER=jm -e POSTGRES_DB=test_pets -e PGDATA=/var/lib/postgresql/data/test_pets -p 5434:5432 --name test_pets_db library/postgres:latest
+    - mkdir -p "$MOUNT_POINT"
+    - docker run -v "$MOUNT_POINT:/mnt" -d -e POSTGRES_PASSWORD=123456Qwe -e POSTGRES_USER=jm -e POSTGRES_DB=test_pets -e PGDATA=/var/lib/postgresql/data/test_pets -p 5434:5432 --name test_pets_db library/postgres:latest
     - docker build -t test_petclinic .
-    - docker run -d -e SPRING_PROFILES_ACTIVE=test -p 8080:8080 --name test_petclinic_run test_petclinic
+    - docker run -v "$MOUNT_POINT:/mnt" -d -e SPRING_PROFILES_ACTIVE=test -p 8080:8080 --name test_petclinic_run test_petclinic
   script:
     - mvn clean test -P testprod
   after_script:
