@@ -1,27 +1,7 @@
 stages:
-#  - sonar-check
-  - build
+  - sonar-check
   - test
-  - deploy
-
-variables:
-  TEST_SERVICES: "test_db test_petclinic"
-  PROD_SERVICES: "db petclinic"
-
-#sonarqube-check:
-#  stage: sonar-check
-#  variables:
-#    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-#    SONAR_TOKEN: "ba00cdec2010b5084058842e1595cdb104055c9b"
-#    SONAR_HOST_URL: "http://sonarqube:9000/"
-#    SONAR_PROJECT_KEY: "pet_clinic"
-#  script:
-#    - mvn compile -P testprod sonar:sonar -e -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
-#  tags:
-#    - clinic_docker_runner
-#  allow_failure: false
-#  rules:
-#    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - build
 
 building:
   stage: build
@@ -36,16 +16,28 @@ building:
   tags:
     - clinic_shell
   rules:
-   - if: $CI_COMMIT_BRANCH == 'master'
+    - if: $CI_COMMIT_BRANCH == 'master'
+
+sonarqube-check:
+  stage: sonar-check
+  variables:
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+    SONAR_TOKEN: "ba00cdec2010b5084058842e1595cdb104055c9b"
+    SONAR_HOST_URL: "http://sonarqube:9000/"
+    SONAR_PROJECT_KEY: "pet_clinic"
+  script:
+    - mvn compile -P testprod sonar:sonar -e -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+  tags:
+    - clinic_docker_runner
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
 
 test_maven:
   stage: test
-  before_script:
-    - docker-compose up --build $TEST_SERVICES
   script:
     - mvn clean test -P testprod
-  after_script:
-    - docker-compose down $TEST_SERVICES
   tags:
     - clinic_docker_runner
   artifacts:
@@ -56,10 +48,70 @@ test_maven:
   rules:
     - if: $CI_MERGE_REQUEST_IID
 
-deploy:
-  stage: deploy
-  script:
-    - docker-compose stop $PROD_SERVICES
-    - docker-compose rm $PROD_SERVICES
-    - docker-compose up --build $PROD_SERVICES
-  when: manual
+
+
+#stages:
+##  - sonar-check
+#  - build
+#  - test
+#  - deploy
+#
+#variables:
+#  TEST_SERVICES: "test_db test_petclinic"
+#  PROD_SERVICES: "db petclinic"
+#
+##sonarqube-check:
+##  stage: sonar-check
+##  variables:
+##    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+##    SONAR_TOKEN: "ba00cdec2010b5084058842e1595cdb104055c9b"
+##    SONAR_HOST_URL: "http://sonarqube:9000/"
+##    SONAR_PROJECT_KEY: "pet_clinic"
+##  script:
+##    - mvn compile -P testprod sonar:sonar -e -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+##  tags:
+##    - clinic_docker_runner
+##  allow_failure: false
+##  rules:
+##    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+#
+#building:
+#  stage: build
+#  before_script:
+#    - docker-compose down
+#    - docker image prune -a -f
+#    - docker-compose build
+#  script:
+#    - docker-compose up -d
+#  after_script:
+#    - docker image prune -f
+#  tags:
+#    - clinic_shell
+#  rules:
+#   - if: $CI_COMMIT_BRANCH == 'master'
+#
+#test_maven:
+#  stage: test
+#  before_script:
+#    - docker-compose up --build $TEST_SERVICES
+#  script:
+#    - mvn clean test -P testprod
+#  after_script:
+#    - docker-compose down $TEST_SERVICES
+#  tags:
+#    - clinic_docker_runner
+#  artifacts:
+#    reports:
+#      junit:
+#        - web/target/surefire-reports/TEST-*.xml
+#        - web/target/failsafe-reports/TEST-*.xml
+#  rules:
+#    - if: $CI_MERGE_REQUEST_IID
+#
+#deploy:
+#  stage: deploy
+#  script:
+#    - docker-compose stop $PROD_SERVICES
+#    - docker-compose rm $PROD_SERVICES
+#    - docker-compose up --build $PROD_SERVICES
+#  when: manual
