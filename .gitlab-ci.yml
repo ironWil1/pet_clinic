@@ -39,8 +39,10 @@ test_maven:
   #  variables:
   #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
-    - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o ./docker-compose
-    - chmod +x ./docker-compose
+    - dir
+    - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o .
+    - dir
+#    - chmod +x ./docker-compose
     - docker-compose start test_db
     - docker-compose start test_petclinic
   #    - mkdir -p "$MOUNT_POINT"
