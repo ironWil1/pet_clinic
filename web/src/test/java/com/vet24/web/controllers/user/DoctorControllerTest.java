@@ -46,7 +46,6 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post(URI, entity, DiagnosisDto.class, 1001)
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -59,7 +58,6 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(diagnosisDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++beforeCount).isEqualTo(diagnosisDao.getAll().size());
     }

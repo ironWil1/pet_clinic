@@ -63,7 +63,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -75,7 +74,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -88,7 +86,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
@@ -101,7 +98,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -114,7 +110,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
@@ -128,7 +123,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto1).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
@@ -142,7 +136,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto1).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
@@ -156,7 +149,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto4).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
@@ -170,7 +162,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
@@ -184,7 +175,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }
@@ -198,7 +188,6 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(clinicalExaminationDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(clinicalExaminationDao.getAll().size());
     }

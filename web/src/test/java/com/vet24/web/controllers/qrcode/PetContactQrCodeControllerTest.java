@@ -40,7 +40,6 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(petContactDtoNew).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++beforeCount).isEqualTo(petContactDao.getAll().size());
     }
@@ -54,7 +53,6 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(petContactDtoNew).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(petContactDao.getAll().size());
     }
@@ -68,7 +66,6 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(petContactDto1).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(beforeCount).isEqualTo(petContactDao.getAll().size());
     }
@@ -82,7 +79,6 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(petContactDtoNew).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++beforeCount).isEqualTo(petContactDao.getAll().size());
     }
@@ -96,7 +92,6 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(petContactDtoNew).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(petContactDao.getAll().size());
     }

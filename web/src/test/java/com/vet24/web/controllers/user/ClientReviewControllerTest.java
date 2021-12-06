@@ -50,7 +50,6 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content("This doctor is very bad!!")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(doctorReviewService.getByDoctorAndClientId(33,3).getComment().getContent()).isEqualTo("This doctor is very bad!!");
     }
@@ -62,7 +61,6 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content("This doctor is very GOOOD!!")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
@@ -72,7 +70,6 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
         int beforeCount = commentDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{doctorId}/review", 33)
                         .header("Authorization", "Bearer " + token))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--beforeCount).isEqualTo(commentDao.getAll().size());
     }
@@ -83,7 +80,6 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
         int beforeCount = commentDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{doctorId}/review", 50000)
                         .header("Authorization", "Bearer " + token))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
         assertThat(beforeCount).isEqualTo(commentDao.getAll().size());
     }

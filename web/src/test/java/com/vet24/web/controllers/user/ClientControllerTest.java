@@ -14,7 +14,6 @@ import java.security.Principal;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 public class ClientControllerTest extends ControllerAbstractIntegrationTest {
@@ -33,7 +32,6 @@ public class ClientControllerTest extends ControllerAbstractIntegrationTest {
     public void shouldGetResponseEntityClientDto_ForCurrentClient() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI, ClientDto.class)
                     .header("Authorization", "Bearer " + token))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(containsString(principal.getName())));
     }

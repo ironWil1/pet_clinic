@@ -80,7 +80,6 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--beforeCount).isEqualTo(topicDao.getAll().size());
     }
@@ -93,7 +92,6 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
@@ -106,7 +104,6 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoOpen).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
@@ -119,7 +116,6 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
@@ -132,7 +128,6 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
@@ -145,7 +140,6 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoClosed).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
@@ -164,7 +158,6 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoUpdate).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }
@@ -177,7 +170,6 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoNotFound).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(topicDao.getAll().size());
     }

@@ -29,7 +29,6 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
                         .content(objectMapper.valueToTree(registerDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Valid email is required")));
         Mockito.verify(mailService, times(0)).sendWelcomeMessage(anyString(), anyString(), anyString());
@@ -43,7 +42,6 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
                         .content(objectMapper.valueToTree(registerDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Passwords don't match")));
         Mockito.verify(mailService, times(0)).sendWelcomeMessage(anyString(), anyString(), anyString());
@@ -60,7 +58,6 @@ public class RegistrationControllerTest extends ControllerAbstractIntegrationTes
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
                         .content(objectMapper.valueToTree(registerDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         Mockito.verify(mailService)
                 .sendWelcomeMessage(eq("342354234@gmail.com"), eq("Vera"), anyString());

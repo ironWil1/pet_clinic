@@ -58,7 +58,6 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(abstractNewPetDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(++sizeBefore).isEqualTo(petDao.getAll().size());
     }
@@ -72,7 +71,6 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(abstractNewPetDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--sizeBefore).isEqualTo(petDao.getAll().size());
     }
@@ -86,7 +84,6 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(abstractNewPetDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(sizeBefore).isEqualTo(petDao.getAll().size());
     }
@@ -100,7 +97,6 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(abstractNewPetDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
     }
@@ -114,7 +110,6 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(abstractNewPetDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
     }
@@ -128,7 +123,6 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(abstractNewPetDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
     }
@@ -144,7 +138,6 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(abstractCat).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
     }
@@ -158,7 +151,6 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(abstractNewPetDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
     }
