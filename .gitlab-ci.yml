@@ -38,7 +38,6 @@ test_maven:
 
   stage: test
   variables:
-    DOCKER_HOST: localhost:2375
     DOCKER_DRIVER: overlay2
 
   # Official docker compose image.
@@ -50,6 +49,7 @@ test_maven:
   #  variables:
 #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
+    - export DOCKER_HOST="tcp://localhost:2375"
 #    - apt-get update
 #    - apt-get -y install ca-certificates curl gnupg lsb-release
 #    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
