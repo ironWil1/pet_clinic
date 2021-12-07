@@ -38,18 +38,19 @@ test_maven:
 
   stage: test
   variables:
-    DOCKER_DRIVER: overlay2
-    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
+#    DOCKER_DRIVER: overlay2
+#    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   # Official docker compose image.
   image:
-    name: docker/compose:latest
+    name: docker/compose:1.23.2
+    entrypoint: [ "" ]
 
   services:
     - docker:dind
   #  variables:
 #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
-    - export DOCKER_HOST="tcp://127.0.0.11:53"
+#    - export DOCKER_HOST="tcp://127.0.0.11:53"
 #    - apt-get update
 #    - apt-get -y install ca-certificates curl gnupg lsb-release
 #    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
