@@ -50,6 +50,7 @@ test_maven:
   #  variables:
 #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
+    - docker-compose --version
     - export DOCKER_HOST="tcp://127.0.0.11:53"
 #    - apt-get update
 #    - apt-get -y install ca-certificates curl gnupg lsb-release
