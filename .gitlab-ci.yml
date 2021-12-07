@@ -52,7 +52,7 @@ test_maven:
   #  variables:
 #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
-    - docker info
+    - chown $USER /var/run/docker.sock
 #    - apt-get update
 #    - apt-get -y install ca-certificates curl gnupg lsb-release
 #    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
