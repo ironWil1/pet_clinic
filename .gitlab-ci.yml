@@ -51,29 +51,29 @@ test_maven:
     - curl -fsSL https://get.docker.com -o get-docker.sh
     - sh get-docker.sh
     - /etc/init.d/docker start
-    - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    - chmod +x /usr/local/bin/docker-compose
+#    - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#    - chmod +x /usr/local/bin/docker-compose
     - docker --version
-    - docker-compose up -d
+#    - docker-compose up -d
 #    - docker-compose start test_db
 #    - docker-compose start test_petclinic
-  #    - mkdir -p "$MOUNT_POINT"
-  #    - docker run -v "$MOUNT_POINT:/mnt" -d -e POSTGRES_PASSWORD=123456Qwe -e POSTGRES_USER=jm -e POSTGRES_DB=test_pets -e PGDATA=/var/lib/postgresql/data/test_pets -p 5434:5432 --name test_pets_db library/postgres:latest
-  #    - docker build -t test_petclinic .
-  #    - docker run -v "$MOUNT_POINT:/mnt" -d -e SPRING_PROFILES_ACTIVE=test -p 8080:8080 --name test_petclinic_run test_petclinic
+      - mkdir -p "$MOUNT_POINT"
+      - docker run -v "$MOUNT_POINT:/mnt" -d -e POSTGRES_PASSWORD=123456Qwe -e POSTGRES_USER=jm -e POSTGRES_DB=test_pets -e PGDATA=/var/lib/postgresql/data/test_pets -p 5434:5432 --name test_pets_db library/postgres:latest
+      - docker build -t test_petclinic .
+      - docker run -v "$MOUNT_POINT:/mnt" -d -e SPRING_PROFILES_ACTIVE=test -p 8080:8080 --name test_petclinic_run test_petclinic
   script:
     - mvn clean test -P testprod
   after_script:
-    - docker-compose down
-    - docker-compose rm -f
+#    - docker-compose down
+#    - docker-compose rm -f
 #    - docker-compose stop test_petclinic
 #    - docker-compose stop test_db
 #    - docker-compose rm -f test_petclinic
 #    - docker-compose rm -f test_db
-  #    - docker stop test_pets_db
-  #    - docker stop test_petclinic_run
-  #    - docker rm test_pets_db
-  #    - docker rm test_petclinic_run
+      - docker stop test_pets_db
+      - docker stop test_petclinic_run
+      - docker rm test_pets_db
+      - docker rm test_petclinic_run
   tags:
     - clinic_docker_runner
   artifacts:
