@@ -38,7 +38,7 @@ test_maven:
 
   stage: test
   variables:
-    DOCKER_HOST: localhost
+    DOCKER_HOST: localhost:2375
     DOCKER_DRIVER: overlay2
 
   # Official docker compose image.
