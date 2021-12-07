@@ -39,7 +39,7 @@ test_maven:
   stage: test
   variables:
     DOCKER_DRIVER: overlay2
-    DOCKER_HOST: 127.0.0.11:53
+    DOCKER_HOST: tcp:/127.0.0.11:53
     MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   # Official docker compose image.
   image:
