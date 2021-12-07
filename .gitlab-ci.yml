@@ -42,7 +42,7 @@ test_maven:
     MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   # Official docker compose image.
   image:
-    name: docker:latest
+    name: docker/compose:latest
 
   services:
     - docker:dind
