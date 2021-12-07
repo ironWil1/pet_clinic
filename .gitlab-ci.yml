@@ -36,8 +36,8 @@ building:
 
 test_maven:
   stage: test
-  #  variables:
-  #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
+  variables:
+    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
 #    - apt-get update
 #    - apt-get -y install ca-certificates curl gnupg lsb-release
