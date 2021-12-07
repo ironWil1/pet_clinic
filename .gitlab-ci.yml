@@ -39,17 +39,17 @@ test_maven:
   stage: test
   variables:
     DOCKER_DRIVER: overlay2
-
+    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   # Official docker compose image.
   image:
-    name: docker/compose:latest
+    name: docker:latest
 
   services:
     - docker:dind
   #  variables:
 #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
-    - export DOCKER_HOST="tcp://localhost:2375"
+#    - export DOCKER_HOST="tcp://localhost:2375"
 #    - apt-get update
 #    - apt-get -y install ca-certificates curl gnupg lsb-release
 #    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -68,26 +68,26 @@ test_maven:
 #    - update-alternatives --set iptables /usr/sbin/iptables-legacy
 #    - update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 #    - dockerd --iptables=false --bridge=pet_network
-    - docker-compose up -d
-    - docker-compose start test_db
-    - docker-compose start test_petclinic
-#    - mkdir -p "$MOUNT_POINT"
-#    - docker run -v "$MOUNT_POINT:/mnt" -d -e POSTGRES_PASSWORD=123456Qwe -e POSTGRES_USER=jm -e POSTGRES_DB=test_pets -e PGDATA=/var/lib/postgresql/data/test_pets -p 5434:5432 --name test_pets_db library/postgres:latest
-#    - docker build -t test_petclinic .
-#    - docker run -v "$MOUNT_POINT:/mnt" -d -e SPRING_PROFILES_ACTIVE=test -p 8080:8080 --name test_petclinic_run test_petclinic
+#    - docker-compose up -d
+#    - docker-compose start test_db
+#    - docker-compose start test_petclinic
+    - mkdir -p "$MOUNT_POINT"
+    - docker run -v "$MOUNT_POINT:/mnt" -d -e POSTGRES_PASSWORD=123456Qwe -e POSTGRES_USER=jm -e POSTGRES_DB=test_pets -e PGDATA=/var/lib/postgresql/data/test_pets -p 5434:5432 --name test_pets_db library/postgres:latest
+    - docker build -t test_petclinic .
+    - docker run -v "$MOUNT_POINT:/mnt" -d -e SPRING_PROFILES_ACTIVE=test -p 8080:8080 --name test_petclinic_run test_petclinic
   script:
     - mvn clean test -P testprod
   after_script:
-    - docker-compose down
-    - docker-compose rm -f
-    - docker-compose stop test_petclinic
-    - docker-compose stop test_db
-    - docker-compose rm -f test_petclinic
-    - docker-compose rm -f test_db
-#    - docker stop test_pets_db
-#    - docker stop test_petclinic_run
-#    - docker rm test_pets_db
-#    - docker rm test_petclinic_run
+#    - docker-compose down
+#    - docker-compose rm -f
+#    - docker-compose stop test_petclinic
+#    - docker-compose stop test_db
+#    - docker-compose rm -f test_petclinic
+#    - docker-compose rm -f test_db
+    - docker stop test_pets_db
+    - docker stop test_petclinic_run
+    - docker rm test_pets_db
+    - docker rm test_petclinic_run
   tags:
     - clinic_docker_runner
   artifacts:
