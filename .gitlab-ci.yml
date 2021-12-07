@@ -56,7 +56,7 @@ test_maven:
 #    - docker --version
     - update-alternatives --set iptables /usr/sbin/iptables-legacy
     - update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
-    - dockerd --iptables=false
+    - dockerd --iptables=false --bridge=pet_network
 #    - docker-compose up -d
 #    - docker-compose start test_db
 #    - docker-compose start test_petclinic
