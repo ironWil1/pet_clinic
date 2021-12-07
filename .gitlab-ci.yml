@@ -38,7 +38,7 @@ test_maven:
 
   stage: test
   variables:
-    DOCKER_HOST: tcp://127.0.0.0:53
+#    DOCKER_HOST: tcp://127.0.0.0:53
     DOCKER_TLS_CERTDIR: ""
 #    DOCKER_DRIVER: overlay2
 #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
