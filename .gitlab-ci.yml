@@ -39,6 +39,7 @@ test_maven:
   stage: test
   variables:
     DOCKER_HOST: tcp://127.0.0.0:53
+    DOCKER_TLS_CERTDIR: ""
 #    DOCKER_DRIVER: overlay2
 #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   # Official docker compose image.
@@ -51,8 +52,8 @@ test_maven:
   #  variables:
 #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
-    - docker -H 0.0.0.0:2375 -d
-    - docker-compose --version
+    - docker -H 0.0.0.0:2375 -d &
+
 #    - apt-get update
 #    - apt-get -y install ca-certificates curl gnupg lsb-release
 #    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
