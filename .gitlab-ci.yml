@@ -36,6 +36,7 @@ building:
 
 test_maven:
   image: docker/compose:latest
+
   stage: test
   variables:
     DOCKER_DRIVER: overlay2
