@@ -1,7 +1,9 @@
 stages:
   #  - sonar-check
   - build
+  - beforetest
   - test
+  - aftertest
   - rebuilding
 
 #sonarqube-check:
@@ -24,9 +26,11 @@ building:
   before_script:
     - docker-compose down
     - docker image prune -a -f
-    - docker-compose build PROD_SERVICES
+    - docker-compose build pets_db
+    - docker-compose build petclinic_run
   script:
-    - docker-compose up -d
+    - docker-compose up -d pets_db
+    - docker-compose up -d petclinic_run
   after_script:
     - docker image prune -f
   tags:
@@ -34,34 +38,22 @@ building:
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
 
-test_maven:
-  image: docker/compose:latest
+beforetest:
+  stage: beforetest
+  script:
+    - docker-compose build test_pets_db
+    - docker-compose build test_petclinic_run
+    - docker-compose up -d test_pets_db
+    - docker-compose up -d test_petclinic_run
+  tags:
+    - clinic_shell
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
 
+test_maven:
   stage: test
-  variables:
-    DOCKER_HOST: 127.0.0.0:8080
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
-  before_script:
-#    - docker run -v "$MOUNT_POINT:/mnt" -d -e POSTGRES_PASSWORD=123456Qwe -e POSTGRES_USER=jm -e POSTGRES_DB=test_pets -e PGDATA=/var/lib/postgresql/data/test_pets -p 5434:5432 --name test_pets_db library/postgres:latest
-#    - docker build -t test_petclinic .
-#    - docker run -v "$MOUNT_POINT:/mnt" -d -e SPRING_PROFILES_ACTIVE=test -p 8080:8080 --name test_petclinic_run test_petclinic
-    - docker-compose up -d
-    - docker-compose start test_db
-    - docker-compose start test_petclinic
   script:
     - mvn clean test -P testprod
-  after_script:
-    - docker-compose down
-    - docker-compose rm -f
-    - docker-compose stop test_petclinic
-    - docker-compose stop test_db
-    - docker-compose rm -f test_petclinic
-    - docker-compose rm -f test_db
-#    - docker stop test_pets_db
-#    - docker stop test_petclinic_run
-#    - docker rm test_pets_db
-#    - docker rm test_petclinic_run
   tags:
     - clinic_docker_runner
   artifacts:
@@ -71,3 +63,31 @@ test_maven:
         - web/target/failsafe-reports/TEST-*.xml
   rules:
     - if: $CI_MERGE_REQUEST_IID
+
+aftertest:
+  stage: aftertest
+  script:
+    - docker-compose rm -f -s test_pets_db
+    - docker-compose rm -f -s test_petclinic_run
+  tags:
+    - clinic_shell
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+
+rebuilding:
+  stage: rebuilding
+  before_script:
+    - docker-compose down -v
+    - docker image prune -a -f
+    - docker-compose build pets_db
+    - docker-compose build petclinic_run
+  script:
+    - docker-compose up -d pets_db
+    - docker-compose up -d petclinic_run
+  after_script:
+    - docker image prune -f
+  tags:
+    - clinic_shell
+  when: manual
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == 'master'
