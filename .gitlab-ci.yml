@@ -42,9 +42,9 @@ beforetest:
   stage: beforetest
   script:
     - docker-compose build test_db
-    - docker-compose build test_petclinic
+#    - docker-compose build test_petclinic
     - docker-compose up -d test_db
-    - docker-compose up -d test_petclinic
+#    - docker-compose up -d test_petclinic
   tags:
     - clinic_shell
   rules:
@@ -67,8 +67,8 @@ test_maven:
 aftertest:
   stage: aftertest
   script:
+#    - docker-compose rm -f -s test_petclinic
     - docker-compose rm -f -s test_db
-    - docker-compose rm -f -s test_petclinic
   tags:
     - clinic_shell
   rules:
