@@ -36,7 +36,7 @@ building:
 
 test_maven:
   image:
-    name: "docker-compose:latest"
+    name: "docker/compose:latest"
   stage: test
   variables:
     DOCKER_HOST: 0.0.0.0:8080
