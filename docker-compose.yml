@@ -35,16 +35,6 @@ services:
      environment:
        - SPRING_PROFILES_ACTIVE=prod
 
-  test_petclinic:
-    container_name: test_petclinic_run
-    build: .
-    ports:
-      - 8080:8080
-    depends_on:
-      - test_db
-    environment:
-      - SPRING_PROFILES_ACTIVE=test
-
 volumes:
   pg_data:
 networks:
