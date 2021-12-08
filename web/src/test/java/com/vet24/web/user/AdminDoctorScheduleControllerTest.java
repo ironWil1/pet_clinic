@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegrationTest {
     private final String URI = "/api/admin/schedule";
@@ -68,7 +67,6 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(updateSuccessSchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         DoctorSchedule doctorSchedule = doctorScheduleService.getByKey(100L);
         Assert.assertEquals(WorkShift.SECOND_SHIFT, doctorSchedule.getWorkShift());
@@ -80,7 +78,6 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
         assertTrue(doctorScheduleService.isExistByKey(101L));
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 101)
                 .header("Authorization", "Bearer " + token))
-        .andDo(print())
         .andExpect(MockMvcResultMatchers.status().isOk());
         assertFalse(doctorScheduleService.isExistByKey(101L));
     }
@@ -100,7 +97,6 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(updateNotFoundSchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -111,7 +107,6 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(createDoctorNotFoundSchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -122,7 +117,6 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(createDoctorIsBusySchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
 
     }
@@ -134,7 +128,6 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(createDoctorSuccess).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

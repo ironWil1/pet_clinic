@@ -10,13 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 public class UserCommentControllerTest extends ControllerAbstractIntegrationTest {
 
@@ -70,7 +68,6 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
                             "  }\n" +
                             "}")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         Comment after = commentDao.getByKey(101L);
         Assert.assertEquals("aaassdd", after.getContent());
@@ -83,7 +80,6 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
         assertTrue(commentDao.isExistByKey(101L));
         mockMvc.perform(MockMvcRequestBuilders.delete(URI, 101)
                         .header("Authorization", "Bearer " + token))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertFalse(commentDao.isExistByKey(101L));
     }
@@ -94,7 +90,6 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
         assertFalse(commentDao.isExistByKey(245L));
         mockMvc.perform(MockMvcRequestBuilders.delete(URI, 245)
                         .header("Authorization", "Bearer " + token))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
         assertFalse(commentDao.isExistByKey(350L));

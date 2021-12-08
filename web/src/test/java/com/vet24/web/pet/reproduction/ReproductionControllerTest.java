@@ -110,7 +110,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDtoNew).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -124,7 +123,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDtoNew).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -138,7 +136,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDtoNew).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -152,7 +149,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -166,7 +162,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -180,7 +175,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -194,7 +188,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -208,7 +201,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto1).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -222,7 +214,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto1).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -236,7 +227,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -250,7 +240,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -264,7 +253,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -278,7 +266,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
@@ -292,7 +279,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(reproductionDto1).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }

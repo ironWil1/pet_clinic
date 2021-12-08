@@ -60,7 +60,6 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(medicineDtoNew).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(medicineDtoNew)));
@@ -76,7 +75,6 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(medicineDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(medicineDto3)));
         AssertionsForClassTypes.assertThat(beforeCount).isEqualTo(medicineDao.getAll().size());
@@ -106,7 +104,6 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(medicineDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         AssertionsForClassTypes.assertThat(--beforeCount).isEqualTo(medicineDao.getAll().size());
     }

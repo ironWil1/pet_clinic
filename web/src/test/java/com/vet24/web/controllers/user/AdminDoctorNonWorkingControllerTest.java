@@ -59,7 +59,6 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         Assert.assertFalse(doctorNonWorking.getDate().isEqual(doctorNonWorkingDto.getDate()) &&
                 doctorNonWorking.getType().equals(doctorNonWorkingDto.getType()));
@@ -72,7 +71,6 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
         int count = doctorNonWorkingService.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "{id}", 101)
                         .header("Authorization", "Bearer " + token))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--count).isEqualTo(doctorNonWorkingService.getAll().size());
         assertThat(doctorNonWorkingService.getByKey(101L)).isNull();
@@ -86,7 +84,6 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(++count).isEqualTo(doctorNonWorkingService.getAll().size());
     }
@@ -98,7 +95,6 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
     }
 
@@ -109,7 +105,6 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto2))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
     }
 }

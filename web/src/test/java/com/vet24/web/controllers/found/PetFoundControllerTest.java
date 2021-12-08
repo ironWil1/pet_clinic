@@ -68,8 +68,7 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(bodyUpdate).contentType(MediaType.APPLICATION_JSON_VALUE)
                         .param("petCode", petCode))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
         Mockito.verify(mailService, times(0))
                 .sendGeolocationPetFoundMessage(any(PetContact.class), anyString(), anyString());
     }
