@@ -53,6 +53,7 @@ test_maven:
 #    MOUNT_POINT: /builds/$CI_PROJECT_PATH/mnt
   before_script:
 #    - chown $USER /var/run/docker.sock
+    - dir
     - chmod +x /var/run/docker.sock
 #    - apt-get update
 #    - apt-get -y install ca-certificates curl gnupg lsb-release
