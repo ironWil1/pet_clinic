@@ -26,11 +26,11 @@ building:
   before_script:
     - docker-compose down
     - docker image prune -a -f
-    - docker-compose build pets_db
-    - docker-compose build petclinic_run
+    - docker-compose build db
+    - docker-compose build petclinic
   script:
-    - docker-compose up -d pets_db
-    - docker-compose up -d petclinic_run
+    - docker-compose up -d db
+    - docker-compose up -d petclinic
   after_script:
     - docker image prune -f
   tags:
@@ -41,10 +41,10 @@ building:
 beforetest:
   stage: beforetest
   script:
-    - docker-compose build test_pets_db
-    - docker-compose build test_petclinic_run
-    - docker-compose up -d test_pets_db
-    - docker-compose up -d test_petclinic_run
+    - docker-compose build test_db
+    - docker-compose build test_petclinic
+    - docker-compose up -d test_db
+    - docker-compose up -d test_petclinic
   tags:
     - clinic_shell
   rules:
@@ -67,8 +67,8 @@ test_maven:
 aftertest:
   stage: aftertest
   script:
-    - docker-compose rm -f -s test_pets_db
-    - docker-compose rm -f -s test_petclinic_run
+    - docker-compose rm -f -s test_db
+    - docker-compose rm -f -s test_petclinic
   tags:
     - clinic_shell
   rules:
@@ -79,11 +79,11 @@ rebuilding:
   before_script:
     - docker-compose down -v
     - docker image prune -a -f
-    - docker-compose build pets_db
-    - docker-compose build petclinic_run
+    - docker-compose build db
+    - docker-compose build petclinic
   script:
-    - docker-compose up -d pets_db
-    - docker-compose up -d petclinic_run
+    - docker-compose up -d db
+    - docker-compose up -d petclinic
   after_script:
     - docker image prune -f
   tags:
