@@ -80,18 +80,18 @@ Last update 20.05.2021 12:50
 https://dbdiagram.io/d/60a62c9db29a09603d15bc72
 
 # Google API Guide
-Go to http://localhost:8080/notification in browser to redirect to google auth
+Go to http://localhost:8080/api/notification in browser to redirect to google auth
 
 Now we just save authorization token for user petclinic.vet24@gmail.com, choose this google account
 
 After success authorization you will be redirect to /hello page
 
 Now you can create, edit, delete event:
-1) Create notification in swagger /notification/create to post event in Calendar
+1) Create notification in swagger /api/notification/create to post event in Calendar
 - email must be user, whose calendar we want to access(now its only petclinic.vet24@gmail.com)
-2) Edit notification in swagger /notification/edit to edit event in Calendar
+2) Edit notification in swagger /api/notification/edit to edit event in Calendar
 - we need to add event id, that was received in the response when creating event
-3) Delete notification in swagger /notification/delete 
+3) Delete notification in swagger /api/notification/delete 
 - we need to add event id, that was received in the response when creating event
 
 # Vaadin Guide
