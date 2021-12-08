@@ -47,6 +47,7 @@ test_maven:
   services:
     - docker:dind
   before_script:
+    - dockerd
     - docker-compose up -d
     - docker-compose start test_db
     - docker-compose start test_petclinic
