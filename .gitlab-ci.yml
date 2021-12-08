@@ -35,13 +35,11 @@ building:
     - if: $CI_COMMIT_BRANCH == 'master'
 
 test_maven:
-  image:
-    name: "docker/compose:latest"
+  image: docker/compose:latest
   stage: test
   variables:
-    DOCKER_HOST: 0.0.0.0:8080
-#    DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
   before_script:
 #    - docker run -v "$MOUNT_POINT:/mnt" -d -e POSTGRES_PASSWORD=123456Qwe -e POSTGRES_USER=jm -e POSTGRES_DB=test_pets -e PGDATA=/var/lib/postgresql/data/test_pets -p 5434:5432 --name test_pets_db library/postgres:latest
 #    - docker build -t test_petclinic .
