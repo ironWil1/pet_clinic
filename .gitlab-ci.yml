@@ -38,8 +38,8 @@ test_maven:
 
   stage: test
   variables:
-#    DOCKER_HOST: tcp://127.0.0.0:53
-    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://127.0.0.0:53
+#    DOCKER_TLS_CERTDIR: ""
 
   # Official docker compose image.
   image:
@@ -47,7 +47,6 @@ test_maven:
   services:
     - docker:dind
   before_script:
-    - dockerd
     - docker-compose up -d
     - docker-compose start test_db
     - docker-compose start test_petclinic
