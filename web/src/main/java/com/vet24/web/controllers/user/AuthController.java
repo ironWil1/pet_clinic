@@ -36,7 +36,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Token was succesful generated"),
             @ApiResponse(responseCode = "400", description = "Something went wrong")
     })
-    @PostMapping("/auth")
+    @PostMapping("api/auth")
     public ResponseEntity<AuthResponse> authenticateUser(@Valid @RequestBody AuthRequest authRequest) {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));

@@ -33,7 +33,7 @@ public class NotificationController {
 
 
     @Operation(summary = "redirect for google authorization window")
-    @GetMapping(value = {"/notification"})
+    @GetMapping(value = {"/api/notification"})
     public void doGoogleSignIn(HttpServletResponse response) throws IOException {
         String redirectURL = googleEventService.getRedirectUrl();
         log.info("The redirect address is {}",redirectURL);
@@ -42,7 +42,7 @@ public class NotificationController {
 
     //redirect back to server with accesstoken
     @Operation(summary = "receive and save auth token")
-    @GetMapping(value = {"/oauth"})
+    @GetMapping(value = {"/api/oauth"})
     public void saveAuthorizationCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String code = request.getParameter("code");
         if (code != null) {
@@ -59,7 +59,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "400", description = "Dont have credential for this user"),
             @ApiResponse(responseCode = "502", description = "Cannot create event"),
     })
-    @PostMapping(value = {"/notification/create"})
+    @PostMapping(value = {"/api/notification/create"})
     public ResponseEntity<GoogleEventDto> createEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.createEvent(googleEventDto);
@@ -77,7 +77,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "200", description = "Successfully edited"),
             @ApiResponse(responseCode = "502", description = "Cannot edit event"),
     })
-    @PostMapping(value = {"/notification/edit"})
+    @PostMapping(value = {"/api/notification/edit"})
     public ResponseEntity<GoogleEventDto> editEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.editEvent(googleEventDto);
@@ -93,7 +93,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "200", description = "Successfully deleted"),
             @ApiResponse(responseCode = "502", description = "Cannot delete event"),
     })
-    @PostMapping(value = {"/notification/delete"})
+    @PostMapping(value = {"/api/notification/delete"})
     public ResponseEntity<GoogleEventDto> deleteEvent(@RequestBody GoogleEventDto googleEventDto) throws IOException {
         try {
             googleEventService.deleteEvent(googleEventDto);
