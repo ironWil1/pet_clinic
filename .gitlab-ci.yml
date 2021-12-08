@@ -1,25 +1,25 @@
 stages:
-  #  - sonar-check
+  - sonar-check
   - build
-  - beforetest
+  - before_test
   - test
-  - aftertest
+  - after_test
   - rebuilding
 
-#sonarqube-check:
-#  stage: sonar-check
-#  variables:
-#    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-#    SONAR_TOKEN: "ba00cdec2010b5084058842e1595cdb104055c9b"
-#    SONAR_HOST_URL: "http://sonarqube:9000/"
-#    SONAR_PROJECT_KEY: "pet_clinic"
-#  script:
-#    - mvn compile -P testprod sonar:sonar -e -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
-#  tags:
-#    - clinic_docker_runner
-#  allow_failure: false
-#  rules:
-#    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+sonarqube-check:
+  stage: sonar-check
+  variables:
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+    SONAR_TOKEN: "ba00cdec2010b5084058842e1595cdb104055c9b"
+    SONAR_HOST_URL: "http://sonarqube:9000/"
+    SONAR_PROJECT_KEY: "pet_clinic"
+  script:
+    - mvn compile -P testprod sonar:sonar -e -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+  tags:
+    - clinic_docker_runner
+  allow_failure: false
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 building:
   stage: build
@@ -38,13 +38,11 @@ building:
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
 
-beforetest:
-  stage: beforetest
+before_test:
+  stage: before_test
   script:
     - docker-compose build test_db
-#    - docker-compose build test_petclinic
     - docker-compose up -d test_db
-#    - docker-compose up -d test_petclinic
   tags:
     - clinic_shell
   rules:
@@ -64,10 +62,9 @@ test_maven:
   rules:
     - if: $CI_MERGE_REQUEST_IID
 
-aftertest:
-  stage: aftertest
+after_test:
+  stage: after_test
   script:
-#    - docker-compose rm -f -s test_petclinic
     - docker-compose rm -f -s test_db
   tags:
     - clinic_shell
@@ -89,5 +86,3 @@ rebuilding:
   tags:
     - clinic_shell
   when: manual
-#  rules:
-#    - if: $CI_COMMIT_BRANCH == 'master'
