@@ -43,7 +43,7 @@ public abstract class ControllerAbstractIntegrationTest {
     protected String getAccessToken(String email, String password) throws Exception{
         ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
         String requestJson = objectWriter.writeValueAsString(new AuthRequest(email, password));
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/auth")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth")
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
