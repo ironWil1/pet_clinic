@@ -154,7 +154,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                 userInfoDto, commentDtoList);
 
         int beforeCount = topicDao.getAll().size();
-        mockMvc.perform(MockMvcRequestBuilders.put(URI)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{topicId}", 101)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoUpdate).toString())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -166,7 +166,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/topics.yml", "/datasets/comments.yml"})
     public void testUpdateTopicNotFound() throws Exception {
         int beforeCount = topicDao.getAll().size();
-        mockMvc.perform(MockMvcRequestBuilders.put(URI)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{topicId}", 100584)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoNotFound).toString())
                         .contentType(MediaType.APPLICATION_JSON))

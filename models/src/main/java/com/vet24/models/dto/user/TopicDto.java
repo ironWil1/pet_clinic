@@ -19,9 +19,8 @@ import java.util.List;
 @NoArgsConstructor
 public class TopicDto {
 
-    @JsonView({View.Put.class, View.Get.class})
+    @JsonView(View.Get.class)
     @Null(groups = {OnCreate.class})
-    @NotNull(groups = {OnUpdate.class})
     private Long id;
 
     @JsonView({View.Put.class, View.Post.class, View.Get.class})
