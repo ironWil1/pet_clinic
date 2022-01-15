@@ -15,10 +15,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "api/admin/topic")
@@ -97,5 +100,34 @@ public class AdminTopicController {
         topic.setContent(topicDto.getContent());
         topicService.update(topic);
         return ResponseEntity.ok(topicMapper.toDto(topic));
+    }
+
+    @Operation(summary = "get all topics from base")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful receipt of topics from base",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TopicDto.class))),
+            @ApiResponse(responseCode = "404", description = "database is empty")
+    })
+    @GetMapping("/allTopics")
+    public ResponseEntity<List<TopicDto>> getAllTopics() {
+        List<TopicDto> topicDtoList = topicMapper.toDto(topicService.getAll());
+        if (topicDtoList.isEmpty()) {
+            throw new NullPointerException("database is empty");
+        }
+        return new ResponseEntity<>(topicDtoList, HttpStatus.OK);
+    }
+
+    @Operation(summary = "get topic by Id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful getting topic",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TopicDto.class))),
+            @ApiResponse(responseCode = "404", description = "Topic not found")
+    })
+    @GetMapping("/{topicId}")
+    public ResponseEntity<TopicDto> getTopicById(@PathVariable("topicId") Long topicId) {
+        if (!topicService.isExistByKey(topicId)) {
+            throw new NotFoundException("topic not found");
+        }
+        return new ResponseEntity<>(topicMapper.toDto(topicService.getByKey(topicId)), HttpStatus.OK);
     }
 }
