@@ -109,8 +109,31 @@ For start VaadinPetClinicRunner you should:
 2. Открываем панель плагина, кликаем по иконке "Configure SonarLint".
 3. Далее "Configure the connection...", добавляем новый (SonarQube, не SonarCloud). URL: http://91.241.64.154:9000/
 4. Выбираем авторизацию по логину и паролю, вводим. Ok. Finish.
-5. Из выпадающего списка выбираем проект "pet_clinic". Ok.
+5. Из выпадающего списка выбираем проект "pet_clinic". В Project key указываем pet_clinic. Ok.
 6. Если не получилось - гайд с картинками: https://habr.com/ru/company/krista/blog/469963/
+
+# Sonarqube. Поднять контейнер на сервере с нуля.
+
+1. Открыть командную строку в ОС и ввести ssh john@91.241.64.154, после запроса пароля указать r43naj5QV2
+2. Ввести команду sudo su и указать пароль r43naj5QV2
+3. Проверить есть ли конфигурационный файл docker-compose.yml на сервере командой **cd /sonarqube** , далее **ll**.
+4. Если файла нет, то ввести команду **nano docker-compose.yml** и скопировать содержимое файла docker-compose.yml из директории devops/sonarqube проекта, после чего сохранить файл на сервере.
+5. Проверить наличие директорий для sonarqube и postgresql по аналогии с п.3:
+   /data/docker-volume/sonarqube1/data
+   /data/docker-volume/sonarqube1/extensions
+   /data/docker-volume/sonarqube1/logs
+   /data/docker-volume/postgres_sonar
+   Если их нет, то создать командой **mkdir /названия/нужных/директорий**
+   И скопировать плагины сюда /data/docker-volume/sonarqube1/extensions из директории /sonarqube/plugins командой **cp -r /sonarqube/plugins /data/docker-volume/sonarqube1/extensions/**
+7. Запустить контейнеры командой **docker-compose up -d**
+8. В браузере перейти по http://91.241.64.154:9000/ и залогиниться логин/пароль admin
+9. Сменить пароль админу на qwertyASDFGH123456 , также добавить пользователя:
+   login - petclinic.vet24@gmail.com
+   password - MFbeSVsb
+10. Создать проект с project key и display name ==> pet_clinic
+11. Сгенерировать токен по названию pet_clinic
+12. Открыть файл .gitlab-ci.yml (с браузером закончили, файл лежит в склонированном в вашу IntelliJ IDEA проекте) и указать в значении переменной SONAR_PROJECT_KEY токен.
+13. Готово, всё работает.
 
 # Flyway Guide
 Flyway - это инструмент для миграции скриптов в формате sql,
