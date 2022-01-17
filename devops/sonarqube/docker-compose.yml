@@ -13,7 +13,7 @@ services:
       - /data/docker-volume/postgres_sonar:/var/lib/postgresql/data
 
   sonarqube:
-    container_name: sonar_qube
+    container_name: sonarqube
     image: sonarqube:8.3.1-community
 
     environment:
@@ -30,5 +30,6 @@ services:
       - 9000:9000
 
 networks:
-  sonar_network:
-    driver: bridge
+  default:
+    external:
+      name: pet_network
