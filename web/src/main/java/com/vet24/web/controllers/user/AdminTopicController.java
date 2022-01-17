@@ -105,15 +105,11 @@ public class AdminTopicController {
     @Operation(summary = "get all topics from base")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful receipt of topics from base",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TopicDto.class))),
-            @ApiResponse(responseCode = "404", description = "database is empty")
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TopicDto.class)))
     })
     @GetMapping("/allTopics")
     public ResponseEntity<List<TopicDto>> getAllTopics() {
         List<TopicDto> topicDtoList = topicMapper.toDto(topicService.getAll());
-        if (topicDtoList.isEmpty()) {
-            throw new NullPointerException("database is empty");
-        }
         return new ResponseEntity<>(topicDtoList, HttpStatus.OK);
     }
 
