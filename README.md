@@ -58,8 +58,6 @@ http://localhost:8080/swagger-ui.html
 ### Generate API documentation based on annotations
 Quick and easy way to document your APIs.
 
-[Live demo](http://158.101.164.60:8081/) — see how it works
-
 [Source code](https://github.com/springdoc/springdoc-openapi-demos/blob/master/springdoc-openapi-spring-boot-2-webmvc/src/main/java/org/springdoc/demo/app2/api/UserApi.java) — check what annotations are used
 
 
@@ -78,29 +76,6 @@ To change login via google-account petclinic.vet24@gmail.com
 Last update 20.05.2021 12:50
 
 https://dbdiagram.io/d/60a62c9db29a09603d15bc72
-
-# Google API Guide
-Go to http://localhost:8080/api/notification in browser to redirect to google auth
-
-Now we just save authorization token for user petclinic.vet24@gmail.com, choose this google account
-
-After success authorization you will be redirect to /hello page
-
-Now you can create, edit, delete event:
-1) Create notification in swagger /api/notification/create to post event in Calendar
-- email must be user, whose calendar we want to access(now its only petclinic.vet24@gmail.com)
-2) Edit notification in swagger /api/notification/edit to edit event in Calendar
-- we need to add event id, that was received in the response when creating event
-3) Delete notification in swagger /api/notification/delete 
-- we need to add event id, that was received in the response when creating event
-
-# Vaadin Guide
-
-For start VaadinPetClinicRunner you should: 
-1. Add vaadin/pom.xml file in your current project. 
-2. Install [required tools](https://vaadin.com/docs/v14/guide/install). 
-3. Reload maven dependencies and type ```npm install``` in the terminal.
-4. Run http://localhost:9090 in a browser.
 
 # Sonarqube Guide
 
