@@ -27,9 +27,9 @@ public class OpenApiConfig {
         final String securitySchemeName = "bearerAuth";
 
         String clientJwt = jwtUtils.generateJwtToken("client1@email.com");
-        String doctorJwt = jwtUtils.generateJwtToken("doctor33@gmail.com");
-        String managerJwt = jwtUtils.generateJwtToken("manager@gmail.com");
-        String adminJwt = jwtUtils.generateJwtToken("admin@gmail.com");
+        String doctorJwt = jwtUtils.generateJwtToken("doctor1@email.com");
+        String managerJwt = jwtUtils.generateJwtToken("manager1@email.com");
+        String adminJwt = jwtUtils.generateJwtToken("admin1@email.com");
         OpenAPI openAPI = new OpenAPI()
                 .info(new Info()
                         .title("Pet Clinic API")
