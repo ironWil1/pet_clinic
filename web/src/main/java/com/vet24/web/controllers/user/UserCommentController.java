@@ -61,6 +61,7 @@ public class UserCommentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+//TODO Добавить проверку на обновляемый коммент, что юзер является его автором
     @Operation(summary = "Update and return comment, changing only content")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comment updated",

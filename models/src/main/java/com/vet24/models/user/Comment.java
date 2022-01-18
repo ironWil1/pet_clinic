@@ -7,18 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,8 +29,7 @@ public class Comment implements Serializable {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     private User user;
 
     @Column(nullable=false)
@@ -49,6 +38,12 @@ public class Comment implements Serializable {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime dateTime;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinTable(name = "topic_comments",
+            joinColumns = @JoinColumn(name = "comments_id"),
+            inverseJoinColumns = @JoinColumn(name = "topic_id"))
+    private Topic topic;
 
     @OneToMany(
             mappedBy = "comment",
