@@ -26,10 +26,10 @@ building:
   before_script:
     - docker-compose down
     - docker image prune -a -f
-    - docker-compose build db
+    - docker-compose build pets_db || true
     - docker-compose build petclinic
   script:
-    - docker-compose up -d db
+    - docker-compose up -d pets_db
     - docker-compose up -d petclinic
   after_script:
     - docker image prune -f
@@ -76,10 +76,10 @@ rebuilding:
   before_script:
     - docker-compose down -v
     - docker image prune -a -f
-    - docker-compose build db
+    - docker-compose build pets_db
     - docker-compose build petclinic
   script:
-    - docker-compose up -d db
+    - docker-compose up -d pets_db
     - docker-compose up -d petclinic
   after_script:
     - docker image prune -f
