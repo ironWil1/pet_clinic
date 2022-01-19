@@ -1,5 +1,6 @@
 package com.vet24.models.dto.pet.procedure;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.enums.ProcedureType;
@@ -16,8 +17,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProcedureDto {
-    @Null(groups = {OnCreate.class}, message = "Поле id должно быть null")
-    @NotNull(groups = {OnUpdate.class}, message = "Поле id не должно быть null")
+    @JsonIgnore
+    @Null(groups = {OnCreate.class, OnUpdate.class}, message = "Поле id должно быть null")
     Long id;
 
     LocalDate date; //if null or blank set now

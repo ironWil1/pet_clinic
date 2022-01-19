@@ -165,11 +165,9 @@ public class ProcedureController {
         if (!procedure.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException(NOT_ASSIGNED);
         }
-        if (!procedureDto.getId().equals(procedureId)) {
-            throw new BadRequestException("procedureId in path and in body not equals");
-        }
         procedure = procedureMapper.toEntity(procedureDto);
         Medicine medicine = medicineService.getByKey(procedureDto.getMedicineId());
+        procedure.setId(procedureId);
         procedure.setMedicine(medicine);
         procedure.setPet(pet);
         procedureService.update(procedure);
