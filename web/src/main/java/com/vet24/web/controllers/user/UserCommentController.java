@@ -28,7 +28,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("api/user/comment/")
 @Slf4j
-@Tag(name = "User comment сontroller", description = "operations with commentreactions")
+@Tag(name = "User comment сontroller", description = "operations with comment reactions")
 public class UserCommentController {
 
     private final CommentService commentService;
@@ -65,23 +65,33 @@ public class UserCommentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comment updated",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentDto.class))),
+            @ApiResponse(responseCode = "404", description = "it's not your comment"),
             @ApiResponse(responseCode = "404", description = "Comment not found"),
     })
     @PutMapping(value = "/{commentId}")
     public ResponseEntity<CommentDto> createOrUpdate(@PathVariable("commentId") Long commentId,
                                                      @JsonView(View.Put.class)
                                                      @Valid @RequestBody CommentDto commentDto) {
-        if (commentService.isExistByKey(commentId)) {
-            log.info("Comment with id {} found", commentId);
-            Comment comment = commentService.getByKey(commentId);
-            comment.setContent(commentDto.getContent());
-            commentService.update(comment);
-            log.info("Comment with id {} updated", commentId);
-            return ResponseEntity.ok(commentMapper.toDto(comment));
-        } else {
+        if (!commentService.isExistByKey(commentId)) {
             log.info("Comment with id {} not found", commentId);
             throw new NotFoundException("Comment not found");
         }
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Comment comment = commentService.getByKey(commentId);
+
+        if (!comment.getUser().equals(user)) {
+            throw new NotFoundException("it's not your comment");
+        }
+
+        if (commentDto.getContent() != null) {
+            comment.setContent(commentDto.getContent());
+        }
+
+        log.info("Comment with id {} found", commentId);
+        commentService.update(comment);
+        log.info("Comment with id {} updated", commentId);
+        return ResponseEntity.ok(commentMapper.toDto(comment));
     }
 
 
