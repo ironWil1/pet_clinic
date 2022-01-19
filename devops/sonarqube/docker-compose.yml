@@ -1,0 +1,35 @@
+version: '3.3'
+services:
+  db:
+    container_name: sonar_db
+    image: postgres:12-alpine
+
+    environment:
+      - POSTGRES_PASSWORD=psgpassword
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=sonarqube
+
+    volumes:
+      - /data/docker-volume/postgres_sonar:/var/lib/postgresql/data
+
+  sonarqube:
+    container_name: sonarqube
+    image: sonarqube:8.3.1-community
+
+    environment:
+      - SONAR_JDBC_URL=jdbc:postgresql://sonar_db/sonarqube
+      - SONAR_JDBC_USERNAME=postgres
+      - SONAR_JDBC_PASSWORD=psgpassword
+
+    volumes:
+      - /data/docker-volume/sonarqube1/data:/opt/sonarqube/data
+      - /data/docker-volume/sonarqube1/extensions:/opt/sonarqube/extensions
+      - /data/docker-volume/sonarqube1/logs:/opt/sonarqube/logs
+
+    ports:
+      - 9000:9000
+
+networks:
+  default:
+    external:
+      name: pet_network
