@@ -130,9 +130,6 @@ public class ClinicalExaminationController {
         if (!clinicalExamination.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("clinical examination not assigned to this pet");
         }
-        if (!examinationId.equals(clinicalExaminationDto.getId())) {
-            throw new BadRequestException("examinationId in path and in body not equals");
-        }
 
         clinicalExamination.setDoctor(doctor);
         clinicalExamination.setDate(LocalDate.now());
