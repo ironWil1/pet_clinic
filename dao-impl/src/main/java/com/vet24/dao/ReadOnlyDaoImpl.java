@@ -60,4 +60,28 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
                 .createQuery("FROM " + type.getName())
                 .getResultList();
     }
+
+    public T getByField(String fieldName, Object fieldValue)
+            throws SecurityException, NoSuchFieldException {
+        Class<?> clazz = fieldValue.getClass();
+        T objectField;
+        try {
+            objectField = (T) clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            while (true) {
+                clazz = clazz.getSuperclass();
+                if (clazz.equals(Object.class)) {
+                    throw e;
+                }
+                try {
+                    objectField = (T) clazz.getDeclaredField(fieldName);
+                    break;
+                } catch (NoSuchFieldException e1) {
+                    System.out.println("The class doesn't have a field of a specified name");
+                }
+            }
+        }
+        return objectField;
+    }
+
 }
