@@ -3,6 +3,7 @@ package com.vet24.web.controllers.user;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.user.CommentDto;
+import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.CommentReaction;
@@ -65,7 +66,7 @@ public class UserCommentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comment updated",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentDto.class))),
-            @ApiResponse(responseCode = "404", description = "it's not your comment"),
+            @ApiResponse(responseCode = "400", description = "it's not your comment"),
             @ApiResponse(responseCode = "404", description = "Comment not found"),
     })
     @PutMapping(value = "/{commentId}")
@@ -73,7 +74,6 @@ public class UserCommentController {
                                                      @JsonView(View.Put.class)
                                                      @Valid @RequestBody CommentDto commentDto) {
         if (!commentService.isExistByKey(commentId)) {
-            log.info("Comment with id {} not found", commentId);
             throw new NotFoundException("Comment not found");
         }
 
@@ -81,16 +81,12 @@ public class UserCommentController {
         Comment comment = commentService.getByKey(commentId);
 
         if (!comment.getUser().equals(user)) {
-            throw new NotFoundException("it's not your comment");
+            throw new BadRequestException("it's not your comment");
         }
 
-        if (commentDto.getContent() != null) {
-            comment.setContent(commentDto.getContent());
-        }
-
-        log.info("Comment with id {} found", commentId);
+        comment.setContent(commentDto.getContent());
         commentService.update(comment);
-        log.info("Comment with id {} updated", commentId);
+
         return ResponseEntity.ok(commentMapper.toDto(comment));
     }
 
