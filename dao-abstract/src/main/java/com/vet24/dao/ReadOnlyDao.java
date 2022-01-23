@@ -11,6 +11,6 @@ public interface ReadOnlyDao<K extends Serializable, T> {
 
     List<T> getAll ();
 
-    public T getByField(String fieldName, Object fieldValue);
+    T getByField(String fieldName, Object fieldValue);
     
 }
