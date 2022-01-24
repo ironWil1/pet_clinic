@@ -135,10 +135,14 @@ public class ClinicalExaminationController {
         clinicalExamination.setDate(LocalDate.now());
         pet.setWeight(clinicalExaminationDto.getWeight());
         clinicalExamination.setDate(LocalDate.now());
-        clinicalExamination =
-                clinicalExaminationMapper.toEntity(clinicalExaminationDto);
         clinicalExamination.setPet(pet);
+        clinicalExamination.setId(examinationId);
+        clinicalExamination.setIsCanMove(clinicalExaminationDto.getIsCanMove());
+        clinicalExamination.setText(clinicalExaminationDto.getText());
         clinicalExaminationService.update(clinicalExamination);
+//        clinicalExamination =
+//                clinicalExaminationMapper.toEntity(clinicalExaminationDto);
+
 
         return new ResponseEntity<>(clinicalExaminationMapper.toDto(clinicalExamination), HttpStatus.OK);
     }

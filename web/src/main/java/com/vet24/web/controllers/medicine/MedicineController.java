@@ -1,8 +1,10 @@
 package com.vet24.web.controllers.medicine;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.medicine.MedicineDto;
 import com.vet24.models.mappers.medicine.MedicineMapper;
 import com.vet24.models.medicine.Medicine;
+import com.vet24.models.util.View;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.medicine.MedicineService;
@@ -74,8 +76,9 @@ public class MedicineController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MedicineDto> update(@PathVariable Long id,@Valid
-                                               @RequestBody MedicineDto medicineDto) {
+    public ResponseEntity<MedicineDto> update(@PathVariable Long id,
+                                              @Valid
+                                              @RequestBody MedicineDto medicineDto) {
 
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
@@ -90,7 +93,8 @@ public class MedicineController {
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<MedicineDto> save(@Valid @RequestBody MedicineDto medicineDto) {
+    public ResponseEntity<MedicineDto> save(@Valid
+                                        @RequestBody MedicineDto medicineDto) {
 
         Medicine medicine = medicineMapper.toEntity(medicineDto);
         medicine.setId(null);

@@ -63,7 +63,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
     public void updateSchedule() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 100)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(updateSuccessSchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -93,7 +93,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/doctor_schedule.yml"})
     public void scheduleUpdatedNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 1_000_000)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(updateNotFoundSchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))

@@ -2,6 +2,8 @@ package com.vet24.models.dto.medicine;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.vet24.models.util.View;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedicineDto {
-    @JsonIgnore
+    @JsonView({View.Get.class})
     Long id;
     @NotBlank( message = "поле manufactureName не должно быть пустым")
     String manufactureName;
