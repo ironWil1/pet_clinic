@@ -1,9 +1,11 @@
 package com.vet24.models.dto.pet.procedure;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.enums.ProcedureType;
+import com.vet24.models.util.View;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProcedureDto {
-    @JsonIgnore
+    @JsonView(View.Get.class)
     @Null(groups = {OnCreate.class, OnUpdate.class}, message = "Поле id должно быть null")
     Long id;
 
