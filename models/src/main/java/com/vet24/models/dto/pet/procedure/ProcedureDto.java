@@ -19,8 +19,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProcedureDto {
+
+    @Null(groups = {OnCreate.class}, message = "Поле id должно быть null")
     @JsonView(View.Get.class)
-    @Null(groups = {OnCreate.class, OnUpdate.class}, message = "Поле id должно быть null")
     Long id;
 
     LocalDate date; //if null or blank set now

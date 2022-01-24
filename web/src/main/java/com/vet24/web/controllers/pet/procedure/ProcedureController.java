@@ -147,7 +147,7 @@ public class ProcedureController {
     })
     @PutMapping("/{procedureId}")
     public ResponseEntity<ProcedureDto> update(@PathVariable Long petId, @PathVariable Long procedureId,
-                                         @Validated(OnUpdate.class )@RequestBody ProcedureDto procedureDto) {
+                                         @Validated(OnUpdate.class)@RequestBody ProcedureDto procedureDto) {
 
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
