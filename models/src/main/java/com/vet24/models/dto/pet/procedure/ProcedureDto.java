@@ -20,19 +20,26 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class ProcedureDto {
 
-    @Null(groups = {OnCreate.class}, message = "Поле id должно быть null")
     @JsonView(View.Get.class)
     Long id;
 
+    @JsonView({View.Put.class, View.Get.class})
     LocalDate date; //if null or blank set now
+
+    @JsonView({View.Put.class, View.Get.class})
     ProcedureType type;
 
     @NotNull(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineId не должно быть null")
+    @JsonView({View.Put.class, View.Get.class})
     Long medicineId;
 
     @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineBatchNumber не должно быть пустым")
+    @JsonView({View.Put.class, View.Get.class})
     String medicineBatchNumber;
 
+    @JsonView({View.Put.class, View.Get.class})
     Boolean isPeriodical;
+
+    @JsonView({View.Put.class, View.Get.class})
     Integer periodDays;
 }

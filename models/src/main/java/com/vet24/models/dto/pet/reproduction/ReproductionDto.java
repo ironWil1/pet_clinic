@@ -15,8 +15,12 @@ import java.time.LocalDate;
 public class ReproductionDto {
     @JsonView(View.Get.class)
     Long id;
+    @JsonView({View.Put.class, View.Get.class})
     LocalDate estrusStart;
+    @JsonView({View.Put.class, View.Get.class})
     LocalDate mating;
+    @JsonView({View.Put.class, View.Get.class})
     LocalDate dueDate;
+    @JsonView({View.Put.class, View.Get.class})
     Integer childCount;
 }

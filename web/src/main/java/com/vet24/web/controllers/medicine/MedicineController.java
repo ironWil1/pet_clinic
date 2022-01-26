@@ -78,6 +78,7 @@ public class MedicineController {
     @PutMapping("/{id}")
     public ResponseEntity<MedicineDto> update(@PathVariable Long id,
                                               @Valid
+                                              @JsonView(View.Put.class)
                                               @RequestBody MedicineDto medicineDto) {
 
         Medicine medicine = medicineService.getByKey(id);
@@ -88,7 +89,7 @@ public class MedicineController {
             medicine.setId(id);
             medicineService.update(medicine);
             log.info(" The medicine with this id {} was updated",id);
-            return new ResponseEntity<>(medicineDto, HttpStatus.OK);
+            return new ResponseEntity<>(medicineMapper.toDto(medicine), HttpStatus.OK);
         }
     }
 

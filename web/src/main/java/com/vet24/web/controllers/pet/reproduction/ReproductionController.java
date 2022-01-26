@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.pet.reproduction;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.reproduction.ReproductionDto;
@@ -8,6 +9,7 @@ import com.vet24.models.mappers.pet.reproduction.ReproductionMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
+import com.vet24.models.util.View;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.reproduction.ReproductionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -132,6 +134,7 @@ public class ReproductionController {
     @PutMapping("/{reproductionId}")
     public ResponseEntity<ReproductionDto> update(@PathVariable Long petId,
                                                   @PathVariable Long reproductionId,
+                                                  @JsonView(View.Put.class)
                                                   @RequestBody ReproductionDto reproductionDto) {
 
         Pet pet = petService.getByKey(petId);

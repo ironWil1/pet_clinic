@@ -17,10 +17,15 @@ public class MedicineDto {
     @JsonView({View.Get.class})
     Long id;
     @NotBlank( message = "поле manufactureName не должно быть пустым")
+    @JsonView({View.Put.class, View.Get.class})
     String manufactureName;
+
     @NotBlank( message = "поле name не должно быть пустым")
+    @JsonView({View.Put.class, View.Get.class})
     String name;
+    @JsonView({View.Put.class, View.Get.class})
     String icon;
     @NotBlank( message = "поле description не должно быть пустым")
+    @JsonView({View.Put.class, View.Get.class})
     String description;
 }
