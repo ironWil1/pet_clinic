@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.annotation.Nullable;
+import javax.persistence.EntityManager;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -32,6 +33,9 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @MockBean
     protected MailService mailService;
+
+    @MockBean
+    protected EntityManager entityManager;
 
     @Autowired
     protected MockMvc mockMvc;
