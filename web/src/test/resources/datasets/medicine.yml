@@ -9,3 +9,8 @@ MEDICINE:
     ICON: "test.png"
     MANUFACTURE_NAME: "test_manufacture_name2"
     NAME: "name2"
+  - ID: 102
+    DESCRIPTION: "test_description3"
+    ICON: "test.png"
+    MANUFACTURE_NAME: "test_manufacture_name3"
+    NAME: "name3"

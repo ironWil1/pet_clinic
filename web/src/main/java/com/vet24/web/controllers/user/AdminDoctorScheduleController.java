@@ -77,19 +77,21 @@ public class AdminDoctorScheduleController {
             @ApiResponse(responseCode = "400", description = "Work shift or schedule's id content can't null"),
             @ApiResponse(responseCode = "404", description = "Schedule not found")
     })
-    @PutMapping
+
+    @PutMapping("/{id}")
     public ResponseEntity<DoctorScheduleDto> updateDoctorSchedule(@RequestBody(required = false)
                                                                   @JsonView(View.Put.class)
                                                                   @Validated(OnUpdate.class)
-                                                                          DoctorScheduleDto doctorScheduleDto) {
-        DoctorSchedule doctorSchedule = doctorScheduleService.getByKey(doctorScheduleDto.getId());
+                                                                          DoctorScheduleDto doctorScheduleDto,
+                                                                            @PathVariable ("id") Long id) {
+        DoctorSchedule doctorSchedule = doctorScheduleService.getByKey(id);
         if (doctorSchedule != null) {
             doctorSchedule.setWorkShift(doctorScheduleDto.getWorkShift());
             doctorScheduleService.update(doctorSchedule);
-            log.info("Schedule with id {} updated", doctorScheduleDto.getId());
+            log.info("Schedule with id {} updated", id);
             return ResponseEntity.ok(doctorScheduleMapper.toDto(doctorSchedule));
         } else {
-            log.error("Schedule with id {} not found", doctorScheduleDto.getId());
+            log.error("Schedule with id {} not found", id);
             throw new NotFoundException("Schedule not found");
         }
     }
