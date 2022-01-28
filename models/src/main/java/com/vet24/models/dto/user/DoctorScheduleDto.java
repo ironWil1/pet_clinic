@@ -1,5 +1,6 @@
 package com.vet24.models.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
@@ -19,9 +20,8 @@ import javax.validation.constraints.Null;
 @AllArgsConstructor
 public class DoctorScheduleDto {
 
-    @NotNull(groups = OnUpdate.class)
-    @Null(groups = OnCreate.class)
-    @JsonView({View.Get.class, View.Put.class})
+    @Null(groups = {OnCreate.class, OnUpdate.class})
+    @JsonView({View.Get.class})
     private Long id;
 
     @NotNull(groups = OnCreate.class)

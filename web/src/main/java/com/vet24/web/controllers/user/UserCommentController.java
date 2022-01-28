@@ -3,6 +3,7 @@ package com.vet24.web.controllers.user;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.user.CommentDto;
+import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.CommentReaction;
@@ -28,7 +29,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("api/user/comment/")
 @Slf4j
-@Tag(name = "User comment сontroller", description = "operations with commentreactions")
+@Tag(name = "User comment сontroller", description = "operations with comment reactions")
 public class UserCommentController {
 
     private final CommentService commentService;
@@ -61,27 +62,33 @@ public class UserCommentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+//TODO Добавить проверку на обновляемый коммент, что юзер является его автором
     @Operation(summary = "Update and return comment, changing only content")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comment updated",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentDto.class))),
+            @ApiResponse(responseCode = "400", description = "it's not your comment"),
             @ApiResponse(responseCode = "404", description = "Comment not found"),
     })
     @PutMapping(value = "/{commentId}")
     public ResponseEntity<CommentDto> createOrUpdate(@PathVariable("commentId") Long commentId,
                                                      @JsonView(View.Put.class)
                                                      @Valid @RequestBody CommentDto commentDto) {
-        if (commentService.isExistByKey(commentId)) {
-            log.info("Comment with id {} found", commentId);
-            Comment comment = commentService.getByKey(commentId);
-            comment.setContent(commentDto.getContent());
-            commentService.update(comment);
-            log.info("Comment with id {} updated", commentId);
-            return ResponseEntity.ok(commentMapper.toDto(comment));
-        } else {
-            log.info("Comment with id {} not found", commentId);
+        if (!commentService.isExistByKey(commentId)) {
             throw new NotFoundException("Comment not found");
         }
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Comment comment = commentService.getByKey(commentId);
+
+        if (!comment.getUser().equals(user)) {
+            throw new BadRequestException("it's not your comment");
+        }
+
+        comment.setContent(commentDto.getContent());
+        commentService.update(comment);
+
+        return ResponseEntity.ok(commentMapper.toDto(comment));
     }
 
 

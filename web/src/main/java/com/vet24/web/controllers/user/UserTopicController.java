@@ -31,6 +31,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
+//TODO: Убрать NPE в getAllTopics
 @RestController
 @RequestMapping(value = "/api/user/topic")
 @Tag(name = "Topic controller", description = "operation with topic")

@@ -192,19 +192,6 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
         assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
     }
 
-    // +mock, put reproduction by id - error 400 reproductionId in path and in body not equals
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
-    public void testPutReproductionError400idInPathAndBody() throws Exception {
-        int beforeCount = reproductionDao.getAll().size();
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/reproduction/{id}", 102, 102)
-                        .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(reproductionDto1).toString())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        assertThat(beforeCount).isEqualTo(reproductionDao.getAll().size());
-    }
-
     // +mock, put reproduction by id - error 400 pet not yours
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/reproduction.yml"})
