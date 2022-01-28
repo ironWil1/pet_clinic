@@ -74,15 +74,14 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
         Assert.assertEquals(Long.valueOf(3L), after.getUser().getId());
     }
 
-    //продолжить тут
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void updateNotYoursComment() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI, 102)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI, 104)
                         .header("Authorization", "Bearer " + token)
                         .content("{\n" +
                                 "  \"id\": 0,\n" +
-                                "  \"content\": \"aaassdd2\",\n" +
+                                "  \"content\": \"Текст которого не должно быть в content\",\n" +
                                 "  \"dateTime\": \"2021-09-28T15:04:12.327Z\",\n" +
                                 "  \"likes\": 0,\n" +
                                 "  \"dislike\": 0,\n" +
@@ -95,8 +94,8 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
                                 "}")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
-        Comment after = commentDao.getByKey(101L);
-        Assert.assertEquals("aaassdd2", after.getContent());
+        Comment after = commentDao.getByKey(104L);
+        Assert.assertNotEquals("Текст которого не должно быть в content", after.getContent());
         Assert.assertNotEquals(Long.valueOf(3L), after.getUser().getId());
     }
 
@@ -108,6 +107,16 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertFalse(commentDao.isExistByKey(101L));
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
+    public void removeNotYoursComment() throws Exception {
+        assertTrue(commentDao.isExistByKey(104L));
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI, 104)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+        assertTrue(commentDao.isExistByKey(104L));
     }
 
     @Test
