@@ -74,6 +74,32 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
         Assert.assertEquals(Long.valueOf(3L), after.getUser().getId());
     }
 
+    //продолжить тут
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
+    public void updateNotYoursComment() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put(URI, 102)
+                        .header("Authorization", "Bearer " + token)
+                        .content("{\n" +
+                                "  \"id\": 0,\n" +
+                                "  \"content\": \"aaassdd2\",\n" +
+                                "  \"dateTime\": \"2021-09-28T15:04:12.327Z\",\n" +
+                                "  \"likes\": 0,\n" +
+                                "  \"dislike\": 0,\n" +
+                                "  \"userInfoDto\": {\n" +
+                                "    \"id\": 0,\n" +
+                                "    \"email\": \"string\",\n" +
+                                "    \"firstname\": \"string\",\n" +
+                                "    \"lastname\": \"string\"\n" +
+                                "  }\n" +
+                                "}")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+        Comment after = commentDao.getByKey(101L);
+        Assert.assertEquals("aaassdd2", after.getContent());
+        Assert.assertNotEquals(Long.valueOf(3L), after.getUser().getId());
+    }
+
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void removeComment() throws Exception {
