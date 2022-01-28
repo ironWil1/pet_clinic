@@ -34,7 +34,7 @@ public abstract class ControllerAbstractIntegrationTest {
     @MockBean
     protected MailService mailService;
 
-    @MockBean
+    @Autowired
     protected EntityManager entityManager;
 
     @Autowired
