@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.pet.clinicalexamination;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.clinicalexamination.ClinicalExaminationDto;
 import com.vet24.models.exception.BadRequestException;
@@ -7,6 +8,7 @@ import com.vet24.models.mappers.pet.clinicalexamination.ClinicalExaminationMappe
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.user.Doctor;
+import com.vet24.models.util.View;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -112,6 +114,7 @@ public class ClinicalExaminationController {
             content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     @PutMapping("/{examinationId}")
     public ResponseEntity<ClinicalExaminationDto> update(@PathVariable Long examinationId,
+                                                         @JsonView(View.Put.class)
                                                          @RequestBody ClinicalExaminationDto clinicalExaminationDto) {
         Pet pet = petService.getByKey(clinicalExaminationDto.getPetId());
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
@@ -130,17 +133,15 @@ public class ClinicalExaminationController {
         if (!clinicalExamination.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException("clinical examination not assigned to this pet");
         }
-        if (!examinationId.equals(clinicalExaminationDto.getId())) {
-            throw new BadRequestException("examinationId in path and in body not equals");
-        }
 
         clinicalExamination.setDoctor(doctor);
         clinicalExamination.setDate(LocalDate.now());
         pet.setWeight(clinicalExaminationDto.getWeight());
         clinicalExamination.setDate(LocalDate.now());
-        clinicalExamination =
-                clinicalExaminationMapper.toEntity(clinicalExaminationDto);
         clinicalExamination.setPet(pet);
+        clinicalExamination.setId(examinationId);
+        clinicalExamination.setIsCanMove(clinicalExaminationDto.getIsCanMove());
+        clinicalExamination.setText(clinicalExaminationDto.getText());
         clinicalExaminationService.update(clinicalExamination);
 
         return new ResponseEntity<>(clinicalExaminationMapper.toDto(clinicalExamination), HttpStatus.OK);

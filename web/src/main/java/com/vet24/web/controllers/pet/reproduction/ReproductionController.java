@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.pet.reproduction;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.reproduction.ReproductionDto;
@@ -8,6 +9,7 @@ import com.vet24.models.mappers.pet.reproduction.ReproductionMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
+import com.vet24.models.util.View;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.reproduction.ReproductionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,7 +63,8 @@ public class ReproductionController {
     @ApiResponse(responseCode = "404", description = "reproduction or pet with this id not found",
             content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     @GetMapping("/{reproductionId}")
-    public ResponseEntity<ReproductionDto> getById(@PathVariable Long petId, @PathVariable Long reproductionId) {
+    public ResponseEntity<ReproductionDto> getById(@PathVariable Long petId,
+                                                   @PathVariable Long reproductionId) {
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
@@ -129,7 +132,9 @@ public class ReproductionController {
             "reproductionId in path and in body not equals OR \npet not yours",
             content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     @PutMapping("/{reproductionId}")
-    public ResponseEntity<ReproductionDto> update(@PathVariable Long petId, @PathVariable Long reproductionId,
+    public ResponseEntity<ReproductionDto> update(@PathVariable Long petId,
+                                                  @PathVariable Long reproductionId,
+                                                  @JsonView(View.Put.class)
                                                   @RequestBody ReproductionDto reproductionDto) {
 
         Pet pet = petService.getByKey(petId);
@@ -148,11 +153,10 @@ public class ReproductionController {
         if (!reproduction.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException(NOT_ASSIGNED);
         }
-        if (!reproductionId.equals(reproductionDto.getId())) {
-            throw new BadRequestException("reproductionId in path and in body not equals");
-        }
+
         reproduction = reproductionMapper.toEntity(reproductionDto);
         reproduction.setPet(pet);
+        reproduction.setId(reproductionId);
         reproductionService.update(reproduction);
         log.info("Updated reproduction with id {} for a pet with this id{}",reproductionId,petId);
 
