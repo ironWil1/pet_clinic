@@ -1,6 +1,5 @@
 package com.vet24.web.controllers.user;
 
-import com.vet24.models.dto.user.CommentDto;
 import com.vet24.models.dto.user.DoctorReviewDto;
 import com.vet24.models.exception.RepeatedCommentException;
 import com.vet24.models.mappers.user.CommentMapper;
@@ -52,7 +51,7 @@ public class ClientReviewController {
 
     @Operation(summary = "add comment by Client for Doctor")
     @PostMapping(value = "/{doctorId}/review")
-    public ResponseEntity<String> persistComment(@PathVariable("doctorId") Long doctorId, String text) {
+    public ResponseEntity<DoctorReviewDto> persistComment(@PathVariable("doctorId") Long doctorId, String text) {
         Doctor doctor = doctorService.getByKey(doctorId);
         if (doctor == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -71,11 +70,14 @@ public class ClientReviewController {
                 log.info("The comment {} was added to Doctor with id {}", text, doctorId);
                 commentService.persist(comment);
                 doctorReviewService.persist(doctorReview);
+                doctorReviewDto = doctorReviewMapper.toDto(doctorReview);
+                doctorReviewDto.setDoctorId(doctorId);
+                doctorReviewDto.setReview(commentMapper.toDto(doctorReview.getComment()));
             } else {
                 log.info("The comment is not correct");
                 throw new RepeatedCommentException("You can add only one comment to Doctor. So you have to update or delete old one.");
             }
-            return new ResponseEntity<>(comment.getContent(), HttpStatus.OK);
+            return ResponseEntity.ok().body(doctorReviewDto);
         }
     }
 
@@ -86,7 +88,7 @@ public class ClientReviewController {
             @ApiResponse(responseCode = "400", description = "Another client's comment")
     })
     @PutMapping(value = "/{doctorId}/review")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable("doctorId") Long doctorId, @RequestBody String text) {
+    public ResponseEntity<DoctorReviewDto> updateComment(@PathVariable("doctorId") Long doctorId, @RequestBody String text) {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
         if (doctorReview == null) {
@@ -97,8 +99,11 @@ public class ClientReviewController {
         }
         doctorReview.getComment().setContent(text);
         doctorReviewService.update(doctorReview);
+        DoctorReviewDto doctorReviewDto = doctorReviewMapper.toDto(doctorReview);
+        doctorReviewDto.setDoctorId(doctorId);
+        doctorReviewDto.setReview(commentMapper.toDto(doctorReview.getComment()));
         log.info("We updated comment with this id {}", doctorReview.getComment().getId());
-        return ResponseEntity.ok().body(commentMapper.toDto(doctorReview.getComment()));
+        return ResponseEntity.ok().body(doctorReviewDto);
     }
 
     @Operation(summary = "delete a comment")
