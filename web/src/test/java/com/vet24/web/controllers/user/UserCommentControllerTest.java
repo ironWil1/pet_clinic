@@ -118,7 +118,6 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void removeNotYoursComment() throws Exception {
-        assertNotNull(entityManager.find(Comment.class, 104L));
         mockMvc.perform(MockMvcRequestBuilders.delete(URI, 104)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
