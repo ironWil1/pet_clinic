@@ -1,5 +1,6 @@
 package com.vet24.web.util;
 
+import com.vet24.models.user.Doctor;
 import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.user.DoctorNonWorkingService;
 import com.vet24.service.user.DoctorService;
@@ -21,13 +22,17 @@ public class DoctorScheduleBalanceUtil {
     private final DoctorScheduleService doctorScheduleService;
     private final DoctorNonWorkingService doctorNonWorkingService;
     private final DoctorService doctorService;
+    private final LocalDate localDate = LocalDate.of(2021, 10, 2);
 
     //Map(Id доктора, List с неделями)
     private Map<Long, List<Integer>> doctorNonWorkingMap = new HashMap<>();
     //Map <ID доктора, List<Неделя>>
-    private Map<Long, List<Integer>> doctorScheduleMap = new HashMap<>();
+    private Map<Long, List<Map<Integer, String>>> doctorScheduleMap = new HashMap<>();
+    //private Map<Long, List<Integer>> doctorScheduleMap = new HashMap<>();
     private int startWeek;
     private int endWeek;
+    private int countWorkWeekFirstShift;
+    private int countWorkWeekSecondShift;
 
     @Autowired
     public DoctorScheduleBalanceUtil(DoctorScheduleService doctorScheduleService, DoctorNonWorkingService doctorNonWorkingService, DoctorService doctorService) {
@@ -36,21 +41,26 @@ public class DoctorScheduleBalanceUtil {
         this.doctorService = doctorService;
     }
 
+    //Проверка доктора, болен ли он на этой неделе
     public boolean doctorNonWorkingByIdAndWeek(Long doctorId, int week) {
-//        if (doctorNonWorkingMap == null) {
-//            initialize();
-//        }
         if (doctorNonWorkingMap.containsKey(doctorId) && doctorNonWorkingMap.get(doctorId).contains(week)) {
             return true;
         }
         return false;
     }
 
+    //Проверка есть ли смена у доктора в текущей неделе
     public boolean doctorScheduleExistsByIdAndWeek(Long doctorId, int week) {
-//        if (doctorScheduleMap == null) {
-//            initialize();
-//        }
-        if (doctorScheduleMap.containsKey(doctorId) && doctorScheduleMap.get(doctorId).contains(week)) {
+        if (doctorScheduleMap.containsKey(doctorId)) {
+            for (Map.Entry<Long, List<Map<Integer, String>>> mapEntites : doctorScheduleMap.entrySet()) {
+                for (Map<Integer, String> mapWeekShift : mapEntites.getValue()) {
+                    for (Map.Entry<Integer, String> result : mapWeekShift.entrySet()) {
+                        if (result.getKey() == week) {
+                            return true;
+                        }
+                    }
+                }
+            }
             return true;
         }
         return false;
@@ -58,8 +68,8 @@ public class DoctorScheduleBalanceUtil {
 
     private void initialize() {
         //LocalDate localDate = LocalDate.now();
-        LocalDate localDate = LocalDate.of(2022, 1, 1);
-        LocalDate startDate = LocalDate.of(localDate.getYear(), localDate.getMonth(), 1);
+        //LocalDate localDate = LocalDate.of(2022, 1, 1);
+        LocalDate startDate = localDate;
         LocalDate endDate = LocalDate.of(localDate.getYear(), localDate.getMonth(), localDate.lengthOfMonth());
 
         int currentDayOfWeek = startDate.getDayOfWeek().getValue();
@@ -94,27 +104,64 @@ public class DoctorScheduleBalanceUtil {
                 });
 
         //Удалить после тестов
-        System.out.println(doctorNonWorkingMap);
+        System.out.println("Мапа с нерабочими неделями доктора " + doctorNonWorkingMap);
 
         //Получение все смен докторов за месяц
         //Создаем Map <ID доктора, List<Неделя>>
+//        doctorScheduleService.getAll()
+//                .stream()
+//                .filter(week -> week.getWeekNumber() >= startWeek)
+//                .forEach(doc -> {
+//                    if (doctorScheduleMap.get(doc.getDoctor().getId()) == null) {
+//                        List<Integer> tmpList = new ArrayList<>();
+//                        tmpList.add(doc.getWeekNumber());
+//                        doctorScheduleMap.put(doc.getDoctor().getId(), tmpList);
+//                    } else {
+//                        List<Integer> tmpList = doctorScheduleMap.get(doc.getDoctor().getId());
+//                        tmpList.add(doc.getWeekNumber());
+//                        doctorScheduleMap.put(doc.getDoctor().getId(), tmpList);
+//                    }
+//                });
         doctorScheduleService.getAll()
                 .stream()
-                .filter(week -> week.getWeekNumber() >= startWeek)
+                .filter(week -> week.getWeekNumber() >= startDate.minusWeeks(1).get(WeekFields.of(Locale.getDefault()).weekOfYear()))
                 .forEach(doc -> {
                     if (doctorScheduleMap.get(doc.getDoctor().getId()) == null) {
-                        List<Integer> tmpList = new ArrayList<>();
-                        tmpList.add(doc.getWeekNumber());
+                        Map<Integer, String> tmpMap = new HashMap<>();
+                        List<Map<Integer, String>> tmpList = new ArrayList<>();
+                        tmpMap.put(doc.getWeekNumber(), doc.getWorkShift().toString());
+                        tmpList.add(tmpMap);
                         doctorScheduleMap.put(doc.getDoctor().getId(), tmpList);
                     } else {
-                        List<Integer> tmpList = doctorScheduleMap.get(doc.getDoctor().getId());
-                        tmpList.add(doc.getWeekNumber());
+                        List<Map<Integer, String>> tmpList = doctorScheduleMap.get(doc.getDoctor().getId());
+                        Map<Integer, String> tmpMap = new HashMap<>();
+                        tmpMap.put(doc.getWeekNumber(), doc.getWorkShift().toString());
+                        tmpList.add(tmpMap);
                         doctorScheduleMap.put(doc.getDoctor().getId(), tmpList);
                     }
                 });
 
         //Удалить после тестов
-        System.out.println(doctorScheduleMap);
+        System.out.println("Мапа с докторами и сменами " + doctorScheduleMap);
+    }
+
+    public void calculateFirstSecondShiftForWeek(int week) {
+        countWorkWeekFirstShift = 0;
+        countWorkWeekSecondShift = 0;
+
+        for (Map.Entry<Long, List<Map<Integer, String>>> mapEntites : doctorScheduleMap.entrySet()) {
+            for (Map<Integer, String> mapWeekShift : mapEntites.getValue()) {
+                for (Map.Entry<Integer, String> result : mapWeekShift.entrySet()) {
+                    if (result.getKey() == week) {
+                        if (result.getValue().equals("FIRST_SHIFT")) {
+                            countWorkWeekFirstShift++;
+                        } else {
+                            countWorkWeekSecondShift++;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public int getStartWeek() {
@@ -124,5 +171,17 @@ public class DoctorScheduleBalanceUtil {
 
     public int getEndWeek() {
         return endWeek;
+    }
+
+    public LocalDate getLocalDate() {
+        return localDate;
+    }
+
+    public int getCountWorkWeekFirstShift() {
+        return countWorkWeekFirstShift;
+    }
+
+    public int getCountWorkWeekSecondShift() {
+        return countWorkWeekSecondShift;
     }
 }
