@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +34,8 @@ public class AdminDoctorScheduleBalancerController {
     private final DoctorScheduleService doctorScheduleService;
     //Выходной лист смен докторов для записи в БД
     private List<DoctorSchedule> resultDoctorSchedule = new ArrayList<>();
+    private int localFirstShiftCount;
+    private int localSecondShiftCount;
 
     @Autowired
     public AdminDoctorScheduleBalancerController(DoctorService doctorService,
@@ -53,49 +54,79 @@ public class AdminDoctorScheduleBalancerController {
         //Получение всех докторов
         List<Doctor> doctorList = doctorService.getAll();
 
+        //Начало итераций цикла по неделям текущего месяца
         for (int currentWeek = doctorScheduleBalanceUtil.getStartWeek(); currentWeek <= doctorScheduleBalanceUtil.getEndWeek(); currentWeek++) {
+            //for (int currentWeek = doctorScheduleBalanceUtil.getStartWeek() - 1; currentWeek < doctorScheduleBalanceUtil.getStartWeek(); currentWeek++) {
+            localFirstShiftCount = 0;
+            localSecondShiftCount = 0;
+            //
             doctorScheduleBalanceUtil.calculateFirstSecondShiftForWeek(currentWeek);
+
+            //Загружаем докторов работающих в текущей неделе, за минусом неработающих
             int finalCurrentWeek = currentWeek;
             List<Doctor> doctorCurrentWeek = doctorList.stream()
                     .filter(doc -> !doctorScheduleBalanceUtil.doctorNonWorkingByIdAndWeek(doc.getId(), finalCurrentWeek))
                     .collect(Collectors.toList());
 
+            //Проверка если первое число месяца, заполняем базу полностью на месяц, исключая неработающих
             if (doctorScheduleBalanceUtil.getLocalDate().getDayOfMonth() == 1) {
-                //доработать проверку количества работающих в первую, вторую смену в текущей неделе
-                for (int i = 0; i < doctorCurrentWeek.size() / 2; i++) {
-                    resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.FIRST_SHIFT, currentWeek));
+                for (int i = 0; i < doctorCurrentWeek.size(); i++) {
+                    if (doctorCurrentWeek.get(i).getId() == 71) continue;
+
+                    if (doctorScheduleBalanceUtil.getShiftByWeek(doctorCurrentWeek.get(i).getId(), currentWeek - 1).equals("SECOND_SHIFT")) {
+                        resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.FIRST_SHIFT, currentWeek));
+                        localFirstShiftCount++;
+                    } else if (doctorScheduleBalanceUtil.getShiftByWeek(doctorCurrentWeek.get(i).getId(), currentWeek - 1).equals("FIRST_SHIFT")) {
+                        resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.SECOND_SHIFT, currentWeek));
+                        localSecondShiftCount++;
+                    } else {
+                        if (localFirstShiftCount < localSecondShiftCount) {
+                            resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.FIRST_SHIFT, currentWeek));
+                            localFirstShiftCount++;
+                        } else {
+                            resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.SECOND_SHIFT, currentWeek));
+                            localSecondShiftCount++;
+                        }
+                    }
                 }
 
-                for (int i = doctorCurrentWeek.size() / 2; i < doctorCurrentWeek.size(); i++) {
-                    resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.SECOND_SHIFT, currentWeek));
-                }
+                //Если не первое число, значит база у нас заполнена, проверяем на вновь прибывших докторов, в зависимости
+                //от того где докторов меньше в смене, добавляем ему эту смену - РАБОТАЕТ
             } else {
-                //проверка для доктора, если он новый, то добавляем смены только ему
                 for (int i = 0; i < doctorCurrentWeek.size(); i++) {
                     if (doctorScheduleBalanceUtil.doctorScheduleExistsByIdAndWeek(doctorCurrentWeek.get(i).getId(), currentWeek) == false) {
                         System.out.println("В текущей неделе " + currentWeek + " работающих в FIRST_SHIFT " + doctorScheduleBalanceUtil.getCountWorkWeekFirstShift());
                         System.out.println("В текущей неделе " + currentWeek + " работающих в SECOND_SHIFT " + doctorScheduleBalanceUtil.getCountWorkWeekSecondShift());
                         if (doctorScheduleBalanceUtil.getCountWorkWeekFirstShift() < doctorScheduleBalanceUtil.getCountWorkWeekSecondShift()) {
                             resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.FIRST_SHIFT, currentWeek));
+                            doctorScheduleBalanceUtil.setCountWorkWeekFirstShift(doctorScheduleBalanceUtil.getCountWorkWeekFirstShift() + 1);
                         } else {
                             resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.SECOND_SHIFT, currentWeek));
+                            doctorScheduleBalanceUtil.setCountWorkWeekSecondShift(doctorScheduleBalanceUtil.getCountWorkWeekSecondShift() + 1);
                         }
                     }
                 }
+                //Удалить
+                System.out.println("Стало текущей неделе " + currentWeek + " работающих в FIRST_SHIFT " + doctorScheduleBalanceUtil.getCountWorkWeekFirstShift());
+                System.out.println("Стало текущей неделе " + currentWeek + " работающих в SECOND_SHIFT " + doctorScheduleBalanceUtil.getCountWorkWeekSecondShift());
             }
+
+            System.out.println("/nНеделя " + currentWeek);
+            System.out.println("Локальный счетчик FIRST - " + localFirstShiftCount);
+            System.out.println("Локальный счетчик SECOND - " + localSecondShiftCount + "/n");
+
+            doctorScheduleService.persistAll(resultDoctorSchedule);
+            doctorScheduleBalanceUtil.loadingDoctorScheduleFromDBToMap();
+            resultDoctorSchedule.clear();
         }
 
-        for (int i = 0; i < resultDoctorSchedule.size(); i++) {
-            DoctorSchedule doctorSchedule = resultDoctorSchedule.get(i);
-            System.out.println(doctorSchedule.getDoctor().getId() + " " + doctorSchedule.getDoctor().getFirstname() + " " + doctorSchedule.getWorkShift() + " " + doctorSchedule.getWeekNumber());
-        }
+//        for (int i = 0; i < resultDoctorSchedule.size(); i++) {
+//            DoctorSchedule doctorSchedule = resultDoctorSchedule.get(i);
+//            System.out.println(doctorSchedule.getDoctor().getId() + " " + doctorSchedule.getDoctor().getFirstname() + " " + doctorSchedule.getWorkShift() + " " + doctorSchedule.getWeekNumber());
+//        }
 
-        //doctorScheduleService.persistAll(resultDoctorSchedule);
         log.info("BreakPoint");
         return ResponseEntity.ok().build();
-    }
-
-    private void balancer(int week, Doctor doctor) {
     }
 }
 /*
