@@ -3,6 +3,7 @@ package com.vet24.web.controllers.user;
 import com.vet24.models.enums.WorkShift;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.user.Doctor;
+import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.user.DoctorService;
 import com.vet24.web.util.DoctorScheduleBalanceUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "api/admin/doctor/schedule")
@@ -30,13 +32,16 @@ public class AdminDoctorScheduleBalancerController {
 
     private final DoctorService doctorService;
     private final DoctorScheduleBalanceUtil doctorScheduleBalanceUtil;
+    private final DoctorScheduleService doctorScheduleService;
     //Выходной лист смен докторов для записи в БД
     private List<DoctorSchedule> resultDoctorSchedule = new ArrayList<>();
 
     @Autowired
     public AdminDoctorScheduleBalancerController(DoctorService doctorService,
+                                                 DoctorScheduleService doctorScheduleService,
                                                  DoctorScheduleBalanceUtil doctorScheduleBalanceUtil) {
         this.doctorService = doctorService;
+        this.doctorScheduleService = doctorScheduleService;
         this.doctorScheduleBalanceUtil = doctorScheduleBalanceUtil;
     }
 
@@ -49,21 +54,33 @@ public class AdminDoctorScheduleBalancerController {
         List<Doctor> doctorList = doctorService.getAll();
 
         for (int currentWeek = doctorScheduleBalanceUtil.getStartWeek(); currentWeek <= doctorScheduleBalanceUtil.getEndWeek(); currentWeek++) {
-            for (Doctor doctor : doctorList) {
-                //if (LocalDate.now().getDayOfMonth() == 1) {
-                if (LocalDate.of(2022, 1, 1).getDayOfMonth() == 1) {
-                    //проверка доктора, не болен ли он на этой неделе, в отпуске или отгуле
-                    if (doctorScheduleBalanceUtil.doctorNonWorkingByIdAndWeek(doctor.getId(), currentWeek)) {
-                        continue;
+            doctorScheduleBalanceUtil.calculateFirstSecondShiftForWeek(currentWeek);
+            int finalCurrentWeek = currentWeek;
+            List<Doctor> doctorCurrentWeek = doctorList.stream()
+                    .filter(doc -> !doctorScheduleBalanceUtil.doctorNonWorkingByIdAndWeek(doc.getId(), finalCurrentWeek))
+                    .collect(Collectors.toList());
+
+            if (doctorScheduleBalanceUtil.getLocalDate().getDayOfMonth() == 1) {
+                //доработать проверку количества работающих в первую, вторую смену в текущей неделе
+                for (int i = 0; i < doctorCurrentWeek.size() / 2; i++) {
+                    resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.FIRST_SHIFT, currentWeek));
+                }
+
+                for (int i = doctorCurrentWeek.size() / 2; i < doctorCurrentWeek.size(); i++) {
+                    resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.SECOND_SHIFT, currentWeek));
+                }
+            } else {
+                //проверка для доктора, если он новый, то добавляем смены только ему
+                for (int i = 0; i < doctorCurrentWeek.size(); i++) {
+                    if (doctorScheduleBalanceUtil.doctorScheduleExistsByIdAndWeek(doctorCurrentWeek.get(i).getId(), currentWeek) == false) {
+                        System.out.println("В текущей неделе " + currentWeek + " работающих в FIRST_SHIFT " + doctorScheduleBalanceUtil.getCountWorkWeekFirstShift());
+                        System.out.println("В текущей неделе " + currentWeek + " работающих в SECOND_SHIFT " + doctorScheduleBalanceUtil.getCountWorkWeekSecondShift());
+                        if (doctorScheduleBalanceUtil.getCountWorkWeekFirstShift() < doctorScheduleBalanceUtil.getCountWorkWeekSecondShift()) {
+                            resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.FIRST_SHIFT, currentWeek));
+                        } else {
+                            resultDoctorSchedule.add(new DoctorSchedule(doctorCurrentWeek.get(i), WorkShift.SECOND_SHIFT, currentWeek));
+                        }
                     }
-                    balancer(currentWeek, doctor);
-                } else {
-                    //проверка для доктора, если он новый, то добавляем смены только ему
-                    if (doctorScheduleBalanceUtil.doctorScheduleExistsByIdAndWeek(doctor.getId(), currentWeek)
-                            || doctorScheduleBalanceUtil.doctorNonWorkingByIdAndWeek(doctor.getId(), currentWeek)) {
-                        continue;
-                    }
-                    balancer(currentWeek, doctor);
                 }
             }
         }
@@ -73,25 +90,12 @@ public class AdminDoctorScheduleBalancerController {
             System.out.println(doctorSchedule.getDoctor().getId() + " " + doctorSchedule.getDoctor().getFirstname() + " " + doctorSchedule.getWorkShift() + " " + doctorSchedule.getWeekNumber());
         }
 
-        //doctorScheduleService.updateAll(resultDoctorSchedule);
+        //doctorScheduleService.persistAll(resultDoctorSchedule);
         log.info("BreakPoint");
         return ResponseEntity.ok().build();
     }
 
     private void balancer(int week, Doctor doctor) {
-        if (week % 2 == 0) {
-            if (doctor.getId() % 2 == 0) {
-                resultDoctorSchedule.add(new DoctorSchedule(doctor, WorkShift.FIRST_SHIFT, week));
-            } else {
-                resultDoctorSchedule.add(new DoctorSchedule(doctor, WorkShift.SECOND_SHIFT, week));
-            }
-        } else {
-            if (doctor.getId() % 2 != 0) {
-                resultDoctorSchedule.add(new DoctorSchedule(doctor, WorkShift.FIRST_SHIFT, week));
-            } else {
-                resultDoctorSchedule.add(new DoctorSchedule(doctor, WorkShift.SECOND_SHIFT, week));
-            }
-        }
     }
 }
 /*
