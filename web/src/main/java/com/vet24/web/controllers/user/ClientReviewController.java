@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 @RestController
 @Slf4j
 @RequestMapping("/api/client/doctor")
-@Tag(name = "сlient review сontroller", description = "operations with comments")
+@Tag(name = "client review controller", description = "operations with comments")
 public class ClientReviewController {
 
     private final DoctorService doctorService;
@@ -58,7 +58,6 @@ public class ClientReviewController {
         } else {
             Comment comment = null;
             DoctorReview doctorReview = null;
-            DoctorReviewDto doctorReviewDto = null;
             User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Long userId = currentUser.getId();
             if (doctorReviewService.getByDoctorAndClientId(doctorId, userId) == null) {
@@ -70,14 +69,11 @@ public class ClientReviewController {
                 log.info("The comment {} was added to Doctor with id {}", text, doctorId);
                 commentService.persist(comment);
                 doctorReviewService.persist(doctorReview);
-                doctorReviewDto = doctorReviewMapper.toDto(doctorReview);
-                doctorReviewDto.setDoctorId(doctorId);
-                doctorReviewDto.setReview(commentMapper.toDto(doctorReview.getComment()));
             } else {
                 log.info("The comment is not correct");
                 throw new RepeatedCommentException("You can add only one comment to Doctor. So you have to update or delete old one.");
             }
-            return ResponseEntity.ok().body(doctorReviewDto);
+            return ResponseEntity.ok().body(doctorReviewMapper.toDto(doctorReview));
         }
     }
 
@@ -99,11 +95,8 @@ public class ClientReviewController {
         }
         doctorReview.getComment().setContent(text);
         doctorReviewService.update(doctorReview);
-        DoctorReviewDto doctorReviewDto = doctorReviewMapper.toDto(doctorReview);
-        doctorReviewDto.setDoctorId(doctorId);
-        doctorReviewDto.setReview(commentMapper.toDto(doctorReview.getComment()));
         log.info("We updated comment with this id {}", doctorReview.getComment().getId());
-        return ResponseEntity.ok().body(doctorReviewDto);
+        return ResponseEntity.ok().body(doctorReviewMapper.toDto(doctorReview));
     }
 
     @Operation(summary = "delete a comment")
@@ -140,9 +133,7 @@ public class ClientReviewController {
         if (doctorReview == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        DoctorReviewDto doctorReviewDto = doctorReviewMapper.toDto(doctorReview);
-        doctorReviewDto.setDoctorId(doctorId);
-        doctorReviewDto.setReview(commentMapper.toDto(doctorReview.getComment()));
-        return ResponseEntity.ok().body(doctorReviewDto);
+        return ResponseEntity.ok().body(doctorReviewMapper.toDto(doctorReview));
+
     }
 }
