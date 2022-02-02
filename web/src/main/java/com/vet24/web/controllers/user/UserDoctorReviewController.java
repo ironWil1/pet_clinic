@@ -38,9 +38,6 @@ public class UserDoctorReviewController {
     @GetMapping(value = "/{doctorId}/review")
     public ResponseEntity<List<DoctorReviewDto>> getAllReviewByDoctorId(@PathVariable("doctorId") Long doctorId) {
         List<DoctorReviewDto> doctorReviewDto = doctorReviewMapper.toDto(doctorReviewService.getAllReviewByDoctorId(doctorId));
-        if (doctorReviewDto.isEmpty()) {
-            throw new NotFoundException("database is empty");
-        }
         return new ResponseEntity<>(doctorReviewDto, HttpStatus.OK);
     }
 }
