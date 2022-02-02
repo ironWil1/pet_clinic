@@ -26,6 +26,7 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     final String URI = "/api/user/comment/{commentId}";
     private String token;
     private static CommentDto commentDtoUpdateNotYour;
+    private static CommentDto commentDtoUpdate;
 
     @Autowired
     private CommentDao commentDao;
@@ -37,12 +38,20 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     public static void createTopicDto() {
         UserInfoDto userInfoDto = new UserInfoDto(0L, "string", "string", "String");
         commentDtoUpdateNotYour = new CommentDto();
-        commentDtoUpdateNotYour.setId(101L);
+        commentDtoUpdateNotYour.setId(104L);
         commentDtoUpdateNotYour.setContent("Текст которого не должно быть в content");
         commentDtoUpdateNotYour.setDateTime(LocalDateTime.of(2022, 1, 8, 14, 20, 0));
         commentDtoUpdateNotYour.setUserInfoDto(userInfoDto);
         commentDtoUpdateNotYour.setLikes(0);
         commentDtoUpdateNotYour.setDislike(0);
+
+        commentDtoUpdate = new CommentDto();
+        commentDtoUpdate.setId(101L);
+        commentDtoUpdate.setContent("Новый комментарий");
+        commentDtoUpdate.setDateTime(LocalDateTime.of(2022, 2, 2, 12, 20, 0));
+        commentDtoUpdate.setUserInfoDto(userInfoDto);
+        commentDtoUpdate.setLikes(0);
+        commentDtoUpdate.setDislike(0);
     }
 
     @Before
@@ -72,23 +81,11 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     public void updateComment() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI, 101)
                         .header("Authorization", "Bearer " + token)
-                        .content("{\n" +
-                                "  \"id\": 0,\n" +
-                                "  \"content\": \"aaassdd\",\n" +
-                                "  \"dateTime\": \"2021-09-28T15:04:12.327Z\",\n" +
-                                "  \"likes\": 0,\n" +
-                                "  \"dislike\": 0,\n" +
-                                "  \"userInfoDto\": {\n" +
-                                "    \"id\": 0,\n" +
-                                "    \"email\": \"string\",\n" +
-                                "    \"firstname\": \"string\",\n" +
-                                "    \"lastname\": \"string\"\n" +
-                                "  }\n" +
-                                "}")
+                        .content(objectMapper.writeValueAsString(commentDtoUpdate))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         Comment after = commentDao.getByKey(101L);
-        Assert.assertEquals("aaassdd", after.getContent());
+        Assert.assertEquals("Новый комментарий", after.getContent());
         Assert.assertEquals(Long.valueOf(3L), after.getUser().getId());
     }
 
@@ -98,7 +95,7 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
         Comment afterComment = entityManager.find(Comment.class, 104L);
         mockMvc.perform(MockMvcRequestBuilders.put(URI, 104)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(commentDtoUpdateNotYour).toString())
+                        .content(objectMapper.writeValueAsString(commentDtoUpdateNotYour))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
         Assert.assertNotEquals("Текст которого не должно быть в content", afterComment.getContent());
@@ -108,7 +105,6 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/comments.yml"})
     public void removeComment() throws Exception {
-        assertTrue(commentDao.isExistByKey(101L));
         mockMvc.perform(MockMvcRequestBuilders.delete(URI, 101)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk());
