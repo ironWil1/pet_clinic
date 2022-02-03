@@ -62,14 +62,10 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
     }
 
     public T getByField(String fieldName, Object fieldValue) {
-        try {
-            return (T) manager.createQuery("SELECT e FROM " + type.getName()
-                            +" e WHERE e." + fieldName + " = :fieldName")
-                    .setParameter("fieldName", fieldValue)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
+        return (T) manager.createQuery("SELECT e FROM " + type.getName()
+                        +" e WHERE e." + fieldName + " = :fieldName")
+                .setParameter("fieldName", fieldValue)
+                .getSingleResult();
     }
 
 }
