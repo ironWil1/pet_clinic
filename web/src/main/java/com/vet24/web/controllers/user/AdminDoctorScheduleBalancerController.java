@@ -43,11 +43,6 @@ public class AdminDoctorScheduleBalancerController {
     public ResponseEntity<Void> balanceDoctorSchedule() {
         resultDoctorSchedule = doctorScheduleBalanceUtil.getDoctorScheduleList();
 
-//        Collections.sort(resultDoctorSchedule, (i1, i2) -> (int)(i1.getDoctor().getId() - i2.getDoctor().getId()));
-//
-//        for (DoctorSchedule ds : resultDoctorSchedule) {
-//            log.info(ds.getDoctor().getId() + " " + ds.getDoctor().getEmail() + " " + ds.getWeekNumber() + " " + ds.getWorkShift().toString());
-//        }
         if (!resultDoctorSchedule.isEmpty()) {
             doctorScheduleService.persistAll(resultDoctorSchedule);
         }

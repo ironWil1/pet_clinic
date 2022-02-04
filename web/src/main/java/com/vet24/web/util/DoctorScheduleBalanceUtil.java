@@ -31,7 +31,7 @@ public class DoctorScheduleBalanceUtil {
     private final DoctorNonWorkingService doctorNonWorkingService;
     private final DoctorService doctorService;
 
-    private final LocalDate localDate = LocalDate.of(2021, 11, 1);
+    private final LocalDate localDate = LocalDate.now();
     private List<DoctorSchedule> doctorScheduleList;
     private Map<Long, List<Integer>> doctorNonWorkingMap;
     private Map<Long, Set<Map<Integer, String>>> doctorScheduleMap;
@@ -99,8 +99,9 @@ public class DoctorScheduleBalanceUtil {
 
         int currentDayOfWeek = startDate.getDayOfWeek().getValue();
 
-        //Вычисляем начало недели, с котрой заполняем рабочие смены
-        //если текущий день не является первым днем недели, тогда дополняем днями до будущей недели,
+        //Вычисляем начало недели, с которой заполняем рабочие смены
+        //если первый день месяца не является первым днем недели, тогда дополняем днями до будущей недели,
+        //конечная неделя расчитывается с переходом на новый месяц
         //новая неделя месяца может начинаться не с 1 числа месяца
         if (currentDayOfWeek != 1) {
             startWeek = startDate.plusDays(8 - currentDayOfWeek).get(WeekFields.of(Locale.getDefault()).weekOfYear());
@@ -132,7 +133,7 @@ public class DoctorScheduleBalanceUtil {
         //Заполняем doctorScheduleMap -  Map <ID доктора, List<Map<№ недели, смена>>
         doctorScheduleService.getAll()
                 .stream()
-                .filter(week -> week.getWeekNumber() >= localDate.minusWeeks(4).get(WeekFields.of(Locale.getDefault()).weekOfYear()))
+                //.filter(week -> week.getWeekNumber() >= localDate.minusWeeks(4).get(WeekFields.of(Locale.getDefault()).weekOfYear()))
                 .forEach(doc -> addDoctorScheduleToMap(doc.getDoctor().getId(), doc.getWorkShift().toString(), doc.getWeekNumber()));
     }
 
@@ -202,11 +203,16 @@ public class DoctorScheduleBalanceUtil {
                         doctorsListNonWorkingMinusOneWeek.add(doctorsCurrentWeekList.get(i));
                     }
                 }
-                //Если не первое число, значит база у нас заполнена, проверяем на вновь прибывших докторов, в зависимости
-                //от того где докторов меньше в смене, добавляем ему эту смену - РАБОТАЕТ
+                //Если не первое число и БД не пуста, значит база у нас заполнена, проверяем на вновь прибывших докторов, в зависимости
+                //от того где докторов меньше в смене, добавляем ему эту смену
             } else {
                 calculateFirstSecondShiftForWeek(currentWeek);
                 for (int i = 0; i < doctorsCurrentWeekList.size(); i++) {
+                    //Если у доктора есть уже смена на текущей неделе, пропускаем цикл
+                    if (doctorScheduleExistsByIdAndWeek(doctorsCurrentWeekList.get(i).getId(), currentWeek)) {
+                        continue;
+                    }
+
                     if (!doctorScheduleExistsByIdAndWeek(doctorsCurrentWeekList.get(i).getId(), currentWeek)) { ///////////////////////////////////////
                         addNewAndNonWorkingDoctor(doctorsCurrentWeekList.get(i), currentWeek);
                     }
@@ -221,12 +227,17 @@ public class DoctorScheduleBalanceUtil {
             doctorsListNonWorkingMinusOneWeek.clear();
         }
 
-        System.out.println("Мапа с докторами и сменами " + doctorScheduleMap);
+        doctorsList.clear();
+        doctorsListNonWorkingMinusOneWeek.clear();
+        doctorScheduleMap.clear();
+        doctorNonWorkingMap.clear();
+
         return doctorScheduleList;
     }
 
     /**
-     * Дублируем добавление доктора в Map с текущей неделей, для проверки чередования смен на будущей неделе
+     * Дублируем добавление доктора в Map  одновременно с doctorScheduleList с текущей неделей,
+     * для проверки чередования смен на будущей неделе
      */
     private void addDoctorScheduleToMap(Long doctorId, String workShift, int weekNumber) {
         if (doctorScheduleMap.get(doctorId) == null) {
@@ -245,10 +256,11 @@ public class DoctorScheduleBalanceUtil {
     }
 
     /**
-     * Балансировка смен за счет вновь принятых докторов, или вышедших с нерабочей недели
+     * Балансировка смен за счет вновь принятых докторов, или вышедших с нерабочих дней
      */
     private void addNewAndNonWorkingDoctor(Doctor doctor, int week) {
-        if (countWorkWeekFirstShift < countWorkWeekSecondShift) {
+        if ((countWorkWeekFirstShift < countWorkWeekSecondShift) &&
+                (!getShiftByWeek(doctor.getId(), week - 1).equals("FIRST_SHIFT") && !getShiftByWeek(doctor.getId(), week - 2).equals("FIRST_SHIFT"))) {
             doctorScheduleList.add(new DoctorSchedule(doctor, WorkShift.FIRST_SHIFT, week));
             addDoctorScheduleToMap(doctor.getId(), "FIRST_SHIFT", week);
             countWorkWeekFirstShift++;
