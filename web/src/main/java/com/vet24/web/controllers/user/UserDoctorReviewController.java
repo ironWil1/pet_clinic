@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
-
 import java.util.List;
 
 @RestController
@@ -33,11 +32,15 @@ public class UserDoctorReviewController {
     @Operation(summary = "find all reviews")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Reviews found"),
-            @ApiResponse(responseCode = "404", description = "Reviews not found"),
+            @ApiResponse(responseCode = "404", description = "Doctor not found"),
     })
+
     @GetMapping(value = "/{doctorId}/review")
     public ResponseEntity<List<DoctorReviewDto>> getAllReviewByDoctorId(@PathVariable("doctorId") Long doctorId) {
         List<DoctorReviewDto> doctorReviewDto = doctorReviewMapper.toDto(doctorReviewService.getAllReviewByDoctorId(doctorId));
+        if (doctorReviewService.isExistByKey(doctorId)) {
+            throw new NotFoundException("Doctor not found");
+        }
         return new ResponseEntity<>(doctorReviewDto, HttpStatus.OK);
     }
 }
