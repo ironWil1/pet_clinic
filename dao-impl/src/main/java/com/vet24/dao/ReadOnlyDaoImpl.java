@@ -57,15 +57,26 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
     @SuppressWarnings("unchecked")
     public List<T> getAll() {
         return manager
-                .createQuery("FROM " + type.getName())
+                .createQuery("FROM " + type.getName(), type)
                 .getResultList();
     }
 
     public T getByField(String fieldName, Object fieldValue) {
-        return (T) manager.createQuery("SELECT e FROM " + type.getName()
-                        +" e WHERE e." + fieldName + " = :fieldName")
-                .setParameter("fieldName", fieldValue)
-                .getSingleResult();
+        try {
+            Field[] allFields = type.getDeclaredFields();
+            for (Field field : allFields)
+                if (field.getName().equals(fieldName))
+                    return manager.createQuery("SELECT e FROM " + type.getName()
+                                    +" e WHERE e." + fieldName + " = :fieldName", type)
+                            .setParameter("fieldName", fieldValue)
+                            .getSingleResult();
+
+        }
+        catch (NoResultException noResultException)
+        {
+            System.err.println("noResultException raised");
+        }
+        throw new NoResultException();
     }
 
 }
