@@ -70,11 +70,9 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
                                     +" e WHERE e." + fieldName + " = :fieldName", type)
                             .setParameter("fieldName", fieldValue)
                             .getSingleResult();
-
         }
-        catch (NoResultException noResultException)
-        {
-            System.err.println("noResultException raised");
+        catch (NoResultException noResultException) {
+            throw new NoResultException();
         }
         throw new NoResultException();
     }
