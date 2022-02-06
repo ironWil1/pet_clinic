@@ -72,9 +72,9 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
                             .getSingleResult();
         }
         catch (NoResultException noResultException) {
-            throw new NoResultException();
+            return null;
         }
-        throw new NoResultException();
+        return null;
     }
 
 }
