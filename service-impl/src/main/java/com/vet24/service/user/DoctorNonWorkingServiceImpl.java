@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class DoctorNonWorkingServiceImpl extends ReadWriteServiceImpl<Long, DoctorNonWorking> implements DoctorNonWorkingService {
@@ -22,5 +23,9 @@ public class DoctorNonWorkingServiceImpl extends ReadWriteServiceImpl<Long, Doct
 
     public boolean isExistByDoctorIdAndDate(Doctor doctor, LocalDate date) {
         return doctorNonWorkingDao.isExistByDoctorIdAndDate(doctor, date);
+    }
+
+    public List<DoctorNonWorking> getDoctorNonWorkingAfterDate(LocalDate date) {
+        return doctorNonWorkingDao.getDoctorNonWorkingAfterDate(date);
     }
 }
