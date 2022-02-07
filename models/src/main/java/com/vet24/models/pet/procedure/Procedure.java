@@ -2,7 +2,6 @@ package com.vet24.models.pet.procedure;
 
 import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.medicine.Medicine;
-import com.vet24.models.notification.Notification;
 import com.vet24.models.pet.Pet;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,9 +20,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -63,9 +60,6 @@ public abstract class Procedure implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private Pet pet;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "notification_id")
-    private Notification notification;
 
     protected Procedure(LocalDate date, ProcedureType type, String medicineBatchNumber,
                         Boolean isPeriodical, Integer periodDays, Medicine medicine, Pet pet) {

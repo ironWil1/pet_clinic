@@ -183,11 +183,6 @@
             <appender-ref ref="medicine"/>
         </logger>
 
-        <logger name ="com.vet24.web.controllers.notification.NotificationController" level ="debug">
-
-            <appender-ref ref="notification"/>
-        </logger>
-
         <logger name ="com.vet24.web.controllers.pet.procedure.ProcedureController" level ="debug">
 
             <appender-ref ref="procedure"/>
