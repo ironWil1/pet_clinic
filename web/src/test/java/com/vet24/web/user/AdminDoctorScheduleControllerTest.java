@@ -128,6 +128,6 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(createDoctorSuccess).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 }

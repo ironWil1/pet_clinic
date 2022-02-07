@@ -1,6 +1,5 @@
 package com.vet24.models.dto.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.enums.DayOffType;
 import com.vet24.models.util.View;

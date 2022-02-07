@@ -43,9 +43,8 @@ public class AdminDoctorScheduleController {
 
     @Operation(summary = "Create schedule")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Schedule is create",
+            @ApiResponse(responseCode = "201", description = "Schedule is create",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = DoctorScheduleDto.class))),
-            @ApiResponse(responseCode = "400", description = "Doctor's id, work shift or week number content can't null"),
             @ApiResponse(responseCode = "404", description = "Doctor not found"),
             @ApiResponse(responseCode = "422", description = "Doctor already has a work shift")
     })
@@ -67,14 +66,13 @@ public class AdminDoctorScheduleController {
         doctorSchedule.setDoctor(doctorService.getByKey(doctorScheduleDto.getDoctorId()));
         doctorScheduleService.persist(doctorSchedule);
         log.info("Schedule with id {} created", doctorSchedule.getId());
-        return ResponseEntity.ok(doctorScheduleMapper.toDto(doctorSchedule));
+        return ResponseEntity.status(201).body(doctorScheduleMapper.toDto(doctorSchedule));
     }
 
     @Operation(summary = "Update schedule")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Schedule is update",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = DoctorScheduleDto.class))),
-            @ApiResponse(responseCode = "400", description = "Work shift or schedule's id content can't null"),
             @ApiResponse(responseCode = "404", description = "Schedule not found")
     })
 
@@ -83,7 +81,7 @@ public class AdminDoctorScheduleController {
                                                                   @JsonView(View.Put.class)
                                                                   @Validated(OnUpdate.class)
                                                                           DoctorScheduleDto doctorScheduleDto,
-                                                                            @PathVariable ("id") Long id) {
+                                                                  @PathVariable ("id") Long id) {
         DoctorSchedule doctorSchedule = doctorScheduleService.getByKey(id);
         if (doctorSchedule != null) {
             doctorSchedule.setWorkShift(doctorScheduleDto.getWorkShift());

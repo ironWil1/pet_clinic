@@ -87,9 +87,9 @@ public class DoctorController {
     @Operation(summary = "add treatment for diagnose")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully added treatment ",
-            content = @Content(schema = @Schema(implementation = TreatmentDto.class))),
+                    content = @Content(schema = @Schema(implementation = TreatmentDto.class))),
             @ApiResponse(responseCode = "404", description = "Unknown medicine"),
-            @ApiResponse(responseCode = "404", description = "unknown diagnoses")
+            @ApiResponse(responseCode = "404", description = "Unknown diagnoses")
     })
 
     @PostMapping("/diagnosis/{diagnoseId}/addTreatment")

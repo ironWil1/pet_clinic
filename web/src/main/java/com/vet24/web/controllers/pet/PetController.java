@@ -89,7 +89,7 @@ public class PetController {
 
     @Operation(summary = "add a new Pet")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully added a new Pet",
+            @ApiResponse(responseCode = "201", description = "Successfully added a new Pet",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AbstractNewPetDto.class))),
             @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)
     })
@@ -102,7 +102,7 @@ public class PetController {
             pet.setClient(client);
             petService.persist(pet);
             log.info("We added new pet {}", petDto.getName());
-            return ResponseEntity.ok(petDto);
+            return ResponseEntity.status(201).body(petDto);
         }
         return ResponseEntity.notFound().build();
     }
@@ -140,7 +140,7 @@ public class PetController {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
         if (pet == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new NotFoundException("Pet is not found");
         }
         if (!(pet.getPetType().equals(petDto.getPetType()))) {
             if (!(pet.getPetType().equals(petDto.getPetType()))) {

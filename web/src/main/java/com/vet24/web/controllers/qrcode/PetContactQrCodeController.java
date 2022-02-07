@@ -93,12 +93,13 @@ public class PetContactQrCodeController {
             return new ResponseEntity<>(PetContactQrCodeGenerator.generatePetContactQrCodeImage(sb),
                     HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        log.info(" The pet with this id {} does not exist",id);
+        throw new NotFoundException("Pet is not found");
     }
 
     @Operation(summary = "Create and update PetContact for qr code")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully update the PetContact",
+            @ApiResponse(responseCode = "200", description = "Successfully update the PetContact",
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "201", description = "Successfully create the PetContact",
                     content = @Content(mediaType = "application/json")),
@@ -126,7 +127,7 @@ public class PetContactQrCodeController {
             petContactOld.setPhone(petContactNew.getPhone());
             petContactService.update(petContactOld);
             log.info("The pet contact for pet with id {} was updated",id);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else if (petService.isExistByKey(id)) {
             if (petContactDto.getOwnerName() == null || petContactDto.getOwnerName().equals("")) {
                 throw new BadRequestException("name can't is null or is empty for create Contact");
