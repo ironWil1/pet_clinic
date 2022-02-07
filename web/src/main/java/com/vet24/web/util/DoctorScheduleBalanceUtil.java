@@ -30,8 +30,7 @@ public class DoctorScheduleBalanceUtil {
     private final DoctorNonWorkingService doctorNonWorkingService;
     private final DoctorService doctorService;
 
-    //private final LocalDate localDate = LocalDate.now();
-    private final LocalDate localDate = LocalDate.of(2022, 2, 1);
+    private final LocalDate localDate = LocalDate.now();
     private List<DoctorSchedule> doctorScheduleList;
     private Map<Long, List<Integer>> doctorNonWorkingMap;
     private Map<Long, Set<Map<Integer, String>>> doctorScheduleMap;
