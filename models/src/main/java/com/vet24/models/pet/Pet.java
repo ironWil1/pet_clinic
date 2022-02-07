@@ -4,7 +4,6 @@ import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.medicine.Diagnosis;
-import com.vet24.models.notification.Notification;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.pet.reproduction.Reproduction;
@@ -110,13 +109,6 @@ public abstract class Pet {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Notification> notifications = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "pet",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
     private List<PetFound> petFounds = new ArrayList<>();
 
     @OneToMany(
@@ -176,13 +168,4 @@ public abstract class Pet {
         clinicalExamination.setPet(null);
     }
 
-    public void addNotification(Notification notification) {
-        notifications.add(notification);
-        notification.setPet(this);
-    }
-
-    public void removeNotification(Notification notification) {
-        notifications.remove(notification);
-        notification.setPet(null);
-    }
 }

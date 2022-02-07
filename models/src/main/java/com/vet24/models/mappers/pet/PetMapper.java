@@ -44,10 +44,7 @@ public abstract class PetMapper implements
     public abstract PetDto toDto(Pet pet);
 
     protected int petToNotificationCountInt(Pet pet) {
-        return (int) pet.getNotifications().stream()
-                .filter(item -> item.getStartDate().getTime() <
-                        Timestamp.valueOf(LocalDateTime.of(LocalDate.now().plusDays(7L), LocalTime.MIDNIGHT)).getTime())
-                .count();
+        return 4;
     }
 
     @Override
