@@ -62,20 +62,21 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
     }
 
     public T getByField(String fieldName, Object fieldValue) {
-        try {
-            Field[] allFields = type.getDeclaredFields();
-            for (Field field : allFields) {
-                if (field.getName().equals(fieldName)) {
-                    return manager.createQuery("SELECT e FROM " + type.getName()
-                                    +" e WHERE e." + fieldName + " = :fieldName", type)
-                            .setParameter("fieldName", fieldValue)
-                            .getSingleResult();
-                }
+        Field[] allFields = type.getDeclaredFields();
+        boolean instanceFlag = false;
+        for (Field field : allFields) {
+            if (field.getName().equals(fieldName)) {
+                instanceFlag = true;
+                break;
             }
-        } catch (RuntimeException runtimeException) {
-            throw new RuntimeException(runtimeException);
         }
-        return null;
+        if (!instanceFlag) {
+            throw new RuntimeException("runtimeException");
+        }
+        return manager.createQuery("SELECT e FROM " + type.getName()
+                        +" e WHERE e." + fieldName + " = :fieldName", type)
+                .setParameter("fieldName", fieldValue)
+                .getSingleResult();
     }
 
 }
