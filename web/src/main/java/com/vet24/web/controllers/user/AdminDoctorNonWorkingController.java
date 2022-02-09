@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
@@ -41,7 +42,7 @@ public class AdminDoctorNonWorkingController {
 
     @Operation(summary = "create doctorNonWorking")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully created new DoctorNonWorking"),
+            @ApiResponse(responseCode = "201", description = "Successfully created new DoctorNonWorking"),
             @ApiResponse(responseCode = "404", description = "Doctor in DoctorNonWorking not found"),
             @ApiResponse(responseCode = "422", description = "Doctor already has an event on the day")
     })
@@ -64,7 +65,7 @@ public class AdminDoctorNonWorkingController {
 
         doctorNonWorkingService.persist(doctorNonWorking);
         log.info("DoctorNonWorking create");
-        return ResponseEntity.ok(doctorNonWorkingMapper.toDto(doctorNonWorking));
+        return ResponseEntity.status(201).body(doctorNonWorkingMapper.toDto(doctorNonWorking));
     }
 
     @Operation(summary = "edit doctorNonWorking")

@@ -66,7 +66,7 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(petContactDto1).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(petContactDao.getAll().size());
     }
 
