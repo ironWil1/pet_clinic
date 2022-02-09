@@ -37,10 +37,10 @@ public class UserDoctorReviewController {
 
     @GetMapping(value = "/{doctorId}/review")
     public ResponseEntity<List<DoctorReviewDto>> getAllReviewByDoctorId(@PathVariable("doctorId") Long doctorId) {
-        List<DoctorReviewDto> doctorReviewDto = doctorReviewMapper.toDto(doctorReviewService.getAllReviewByDoctorId(doctorId));
         if (doctorReviewService.isExistByKey(doctorId)) {
             throw new NotFoundException("Doctor not found");
         }
+        List<DoctorReviewDto> doctorReviewDto = doctorReviewMapper.toDto(doctorReviewService.getAllReviewByDoctorId(doctorId));
         return new ResponseEntity<>(doctorReviewDto, HttpStatus.OK);
     }
 }
