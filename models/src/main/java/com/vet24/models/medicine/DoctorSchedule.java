@@ -1,8 +1,11 @@
 package com.vet24.models.medicine;
 
 import com.vet24.models.user.Doctor;
+import com.vet24.models.validation.FirstDayOfWeek;
 import lombok.*;
 import com.vet24.models.enums.WorkShift;
+import org.hibernate.validator.internal.util.stereotypes.Immutable;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -32,6 +35,9 @@ public class DoctorSchedule {
 
     @Column
     @NotNull
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @Immutable
+    @FirstDayOfWeek
     private LocalDate startWeek;
     //private Integer weekNumber;
 
