@@ -63,14 +63,14 @@ public abstract class ReadOnlyDaoImpl<K extends Serializable, T> {
 
     public T getByField(String fieldName, Object fieldValue) {
         Field[] allFields = type.getDeclaredFields();
-        boolean instanceFlag = false;
+        boolean fieldExist = false;
         for (Field field : allFields) {
             if (field.getName().equals(fieldName)) {
-                instanceFlag = true;
+                fieldExist = true;
                 break;
             }
         }
-        if (!instanceFlag) {
+        if (!fieldExist) {
             throw new RuntimeException("runtimeException");
         }
         return manager.createQuery("SELECT e FROM " + type.getName()
