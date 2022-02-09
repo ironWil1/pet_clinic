@@ -10,4 +10,7 @@ public interface ReadOnlyDao<K extends Serializable, T> {
     boolean isExistByKey (K key);
 
     List<T> getAll ();
+
+    T getByField(String fieldName, Object fieldValue);
+    
 }
