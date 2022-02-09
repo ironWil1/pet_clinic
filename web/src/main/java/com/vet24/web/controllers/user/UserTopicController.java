@@ -57,13 +57,13 @@ public class UserTopicController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful receipt of topics from base",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = TopicDto.class))),
-            @ApiResponse(responseCode = "404", description = "database is empty")
+            @ApiResponse(responseCode = "404", description = "Topics not found")
     })
     @GetMapping("/allTopics")
     public ResponseEntity<List<TopicDto>> getAllTopics() {
         List<TopicDto> topicDtoList = topicMapper.toDto(topicService.getAll());
         if (topicDtoList.isEmpty()) {
-            throw new NullPointerException("database is empty");
+            throw new NotFoundException("Topics not found");
         }
         return new ResponseEntity<>(topicDtoList, HttpStatus.OK);
     }
@@ -77,9 +77,10 @@ public class UserTopicController {
     @GetMapping("/yourTopics")
     public ResponseEntity<List<TopicDto>> getAllClientTopic() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new ResponseEntity<>(
-                topicMapper.toDto(topicService.getTopicByClientId(user.getId())), HttpStatus.OK
-        );
+        if (topicMapper.toDto(topicService.getTopicByClientId(user.getId())).isEmpty()) {
+            throw new NotFoundException("Topics are not found");
+        }
+        return new ResponseEntity<>(topicMapper.toDto(topicService.getTopicByClientId(user.getId())), HttpStatus.OK);
     }
 
     @Operation(summary = "get topic by Id")
@@ -98,11 +99,10 @@ public class UserTopicController {
 
     @Operation(summary = "create topic")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "topic is create",
+            @ApiResponse(responseCode = "201", description = "topic is create",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = TopicDto.class))),
             @ApiResponse(responseCode = "400", description = "title or content can't null")
     })
-
     @PostMapping()
     public ResponseEntity<Void> createTopic(@JsonView(View.Post.class)
                                             @RequestBody(required = false) TopicDto topicDto) {
@@ -121,8 +121,7 @@ public class UserTopicController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic is update",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = TopicDto.class))),
-            @ApiResponse(responseCode = "403", description = "it's not you topic"),
-            @ApiResponse(responseCode = "404", description = "topic not found")
+            @ApiResponse(responseCode = "404", description = "topic not found or is not your topic")
     })
     @PutMapping("/{topicId}")
     public ResponseEntity<TopicDto> updateTopic(@PathVariable("topicId") Long topicId, @JsonView(View.Put.class)
@@ -150,8 +149,7 @@ public class UserTopicController {
     @Operation(summary = "delete topic by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic is delete"),
-            @ApiResponse(responseCode = "404", description = "it's not you topic"),
-            @ApiResponse(responseCode = "404", description = "topic is not found")
+            @ApiResponse(responseCode = "404", description = "topic not found or is not your topic")
     })
     @DeleteMapping("/{topicId}")
     public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") Long topicId) {
@@ -181,7 +179,7 @@ public class UserTopicController {
                                                           @RequestBody String content) {
         Topic topic = topicService.getByKey(topicId);
         if (topic == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new NotFoundException("topic is not found");
         }
         if (topic.isClosed()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

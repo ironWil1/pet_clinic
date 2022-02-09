@@ -1,6 +1,7 @@
 package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.user.DoctorReviewDto;
+import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.exception.RepeatedCommentException;
 import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.mappers.user.DoctorReviewMapper;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
 
@@ -51,10 +53,14 @@ public class ClientReviewController {
 
     @Operation(summary = "add comment by Client for Doctor")
     @PostMapping(value = "/{doctorId}/review")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Comment created"),
+            @ApiResponse(responseCode = "404", description = "Doctor not found")
+    })
     public ResponseEntity<DoctorReviewDto> persistComment(@PathVariable("doctorId") Long doctorId, String text) {
         Doctor doctor = doctorService.getByKey(doctorId);
         if (doctor == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new NotFoundException("Doctor not found");
         } else {
             Comment comment = null;
             DoctorReview doctorReview = null;
@@ -73,7 +79,7 @@ public class ClientReviewController {
                 log.info("The comment is not correct");
                 throw new RepeatedCommentException("You can add only one comment to Doctor. So you have to update or delete old one.");
             }
-            return ResponseEntity.ok().body(doctorReviewMapper.toDto(doctorReview));
+            return ResponseEntity.status(201).body(doctorReviewMapper.toDto(doctorReview));
         }
     }
 
@@ -88,10 +94,12 @@ public class ClientReviewController {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
         if (doctorReview == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            log.info("Doctor have bad doctorId");
+            throw new NotFoundException("Comment not found");
         }
         if (!(doctorReview.getComment().getUser().getId().equals(client.getId()))) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.info("Another client's comment with id {}", doctorReview.getComment().getId());
+            throw new BadRequestException("Another client's comment");
         }
         doctorReview.getComment().setContent(text);
         doctorReviewService.update(doctorReview);
@@ -110,10 +118,12 @@ public class ClientReviewController {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
         if (doctorReview == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            log.info("Comment not found");
+            throw new NotFoundException("Comment not found");
         }
         if (!(doctorReview.getComment().getUser().getId().equals(client.getId()))) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.info("Another client's comment with id {}", doctorReview.getComment().getId());
+            throw new BadRequestException("Another client's comment");
         }
         doctorReviewService.delete(doctorReview);
         log.info("We deleted comment with this id {}", doctorReview.getComment().getId());
@@ -131,7 +141,8 @@ public class ClientReviewController {
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId,client.getId());
         if (doctorReview == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            log.info("Comment not found");
+            throw new NotFoundException("Comment not found");
         }
         return ResponseEntity.ok().body(doctorReviewMapper.toDto(doctorReview));
 

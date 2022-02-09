@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -54,8 +55,8 @@ public class MedicineController {
     public ResponseEntity<MedicineDto> getById(@PathVariable("id") Long id) {
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
-            log.info(" The medicine with this id {}  not found",id);
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            log.info("The medicine with this id {}  not found",id);
+            throw new NotFoundException("The medicine not found");
         } else {
             MedicineDto medicineDto = medicineMapper.toDto(medicine);
             log.info(" The medicine with this id {} we have",id);
@@ -67,7 +68,8 @@ public class MedicineController {
     public  ResponseEntity<Void> deleteById(@PathVariable(name = "id") Long id) {
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.info("The medicine with this id {}  not found",id);
+            throw new NotFoundException("The medicine not found");
         } else {
             log.info(" The medicine with this id {} was deleted",id);
             medicineService.delete(medicine);
@@ -83,7 +85,8 @@ public class MedicineController {
 
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.info("The medicine with this id {}  not found",id);
+            throw new NotFoundException("The medicine not found");
         } else {
             medicine = medicineMapper.toEntity(medicineDto);
             medicine.setId(id);
@@ -95,7 +98,7 @@ public class MedicineController {
 
     @PostMapping(value = "")
     public ResponseEntity<MedicineDto> save(@Valid
-                                        @RequestBody MedicineDto medicineDto) {
+                                            @RequestBody MedicineDto medicineDto) {
 
         Medicine medicine = medicineMapper.toEntity(medicineDto);
         medicine.setId(null);
@@ -113,7 +116,8 @@ public class MedicineController {
     public ResponseEntity<byte[]> getPic(@PathVariable("id") Long id) {
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.info("The medicine with this id {}  not found",id);
+            throw new NotFoundException("The medicine not found");
         } else {
             String url = medicine.getIcon();
             log.info(" The medicine have icon on this url {} ",url);
@@ -130,7 +134,8 @@ public class MedicineController {
             , @RequestParam("file") MultipartFile file) throws IOException {
         Medicine medicine = medicineService.getByKey(id);
         if (medicine == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.info("The medicine with this id {}  not found",id);
+            throw new NotFoundException("The medicine not found");
         } else {
             UploadedFileDto uploadedFileDto = uploadService.store(file);
             medicine.setIcon(uploadedFileDto.getUrl());

@@ -52,7 +52,7 @@ public class UserCommentController {
 
         Comment comment = commentService.getByKey(commentId);
         if (comment == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new NotFoundException("Comment is not found");
         }
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -62,7 +62,7 @@ public class UserCommentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//TODO Добавить проверку на обновляемый коммент, что юзер является его автором
+    //TODO Добавить проверку на обновляемый коммент, что юзер является его автором
     @Operation(summary = "Update and return comment, changing only content")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Comment updated",

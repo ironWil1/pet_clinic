@@ -84,7 +84,7 @@ public class AdminDoctorNonWorkingControllerTest extends ControllerAbstractInteg
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(doctorNonWorkingDto))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++count).isEqualTo(doctorNonWorkingService.getAll().size());
     }
 

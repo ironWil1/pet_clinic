@@ -58,7 +58,7 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(abstractNewPetDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isCreated());
         assertThat(++sizeBefore).isEqualTo(petDao.getAll().size());
     }
 

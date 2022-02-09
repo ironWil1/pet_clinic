@@ -52,7 +52,7 @@ public class AdminTopicController {
 
     @Operation(summary = "Closing an open topic")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = " the topic is close"),
+            @ApiResponse(responseCode = "200", description = "the topic is close"),
             @ApiResponse(responseCode = "404", description = "topic not found")
     })
     @PutMapping("{topicId}/close")
@@ -93,7 +93,7 @@ public class AdminTopicController {
     })
     @PutMapping("/{topicId}")
     public ResponseEntity<TopicDto> updateTopic(@PathVariable("topicId") Long topicId, @JsonView(View.Put.class)
-                                                @Validated(OnUpdate.class) @RequestBody(required = false) TopicDto topicDto) {
+    @Validated(OnUpdate.class) @RequestBody(required = false) TopicDto topicDto) {
         if (!topicService.isExistByKey(topicId)) throw new NotFoundException("topic not found");
         Topic topic = topicService.getByKey(topicId);
         topic.setTitle(topicDto.getTitle());
