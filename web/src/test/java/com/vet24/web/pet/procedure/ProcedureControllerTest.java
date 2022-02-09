@@ -210,19 +210,6 @@ public class ProcedureControllerTest extends ControllerAbstractIntegrationTest {
         assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
     }
 
-    // +mock, UPDATE  procedure - 400 ERROR "procedureId in path and in body not equals"
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})
-    public void testUpdateProcedureErrorIdDosentMatch() throws Exception {
-        int beforeCount = procedureDao.getAll().size();
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}/procedure/{id}", 102, 102)
-                        .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(procedureDto1).toString())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        assertThat(beforeCount).isEqualTo(procedureDao.getAll().size());
-    }
-
     // +mock, DELETE procedure - 200 SUCCESS
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/procedure.yml", "datasets/reproduction.yml"})

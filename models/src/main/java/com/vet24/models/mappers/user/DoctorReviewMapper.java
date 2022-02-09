@@ -7,17 +7,17 @@ import com.vet24.models.user.DoctorReview;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {CommentMapper.class})
 public interface DoctorReviewMapper extends DtoMapper<DoctorReview, DoctorReviewDto>,
         EntityMapper<DoctorReviewDto, DoctorReview> {
 
     @Override
     @Mapping(source = "doctorId", target = "doctor.id")
     @Mapping(source = "review", target = "comment")
-    DoctorReview toEntity(DoctorReviewDto doctorReviewDto);
+    DoctorReview toEntity(DoctorReviewDto dto);
 
     @Override
     @Mapping(source = "doctor.id", target = "doctorId")
     @Mapping(source = "comment", target = "review")
-    DoctorReviewDto toDto(DoctorReview doctorReview);
+    DoctorReviewDto toDto(DoctorReview entity);
 }

@@ -71,6 +71,7 @@ Quick and easy way to document your APIs.
 5. For more information check [official Database Rider documentation](https://database-rider.github.io/database-rider/1.23.0/documentation.html)
 
 # Database Diagram
+
 To change login via google-account petclinic.vet24@gmail.com
 
 Last update 20.05.2021 12:50
@@ -111,6 +112,7 @@ https://dbdiagram.io/d/60a62c9db29a09603d15bc72
 13. Готово, всё работает.
 
 # Flyway Guide
+
 Flyway - это инструмент для миграции скриптов в формате sql,
 расположенных в pet_clinic\web\src\main\resources\db\migration
 В данном случае с их помощью создаются таблицы по всем сущностям базы данных,

@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.pet.procedure;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.exception.ExceptionDto;
@@ -12,6 +13,7 @@ import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
+import com.vet24.models.util.View;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.ProcedureService;
@@ -147,7 +149,8 @@ public class ProcedureController {
     })
     @PutMapping("/{procedureId}")
     public ResponseEntity<ProcedureDto> update(@PathVariable Long petId, @PathVariable Long procedureId,
-                                         @Validated(OnUpdate.class )@RequestBody ProcedureDto procedureDto) {
+                                               @JsonView(View.Put.class)
+                                                @Validated(OnUpdate.class)@RequestBody ProcedureDto procedureDto) {
 
         Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pet pet = petService.getByKey(petId);
@@ -165,11 +168,9 @@ public class ProcedureController {
         if (!procedure.getPet().getId().equals(pet.getId())) {
             throw new BadRequestException(NOT_ASSIGNED);
         }
-        if (!procedureDto.getId().equals(procedureId)) {
-            throw new BadRequestException("procedureId in path and in body not equals");
-        }
         procedure = procedureMapper.toEntity(procedureDto);
         Medicine medicine = medicineService.getByKey(procedureDto.getMedicineId());
+        procedure.setId(procedureId);
         procedure.setMedicine(medicine);
         procedure.setPet(pet);
         procedureService.update(procedure);

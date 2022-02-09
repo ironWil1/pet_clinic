@@ -71,7 +71,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/medicine.yml"})
     public void shouldBeUpdateMedicineById() throws Exception {
         int beforeCount = medicineDao.getAll().size();
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 101)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 102)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(medicineDto3).toString())
                         .contentType(MediaType.APPLICATION_JSON))
