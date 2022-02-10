@@ -11,7 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-//расписание работы докторов - указывается смена, в какю работает доктор в конкретную неделю
+//расписание работы докторов - указывается смена, в какую работает доктор в конкретную неделю
 @Entity
 @Table(name = "doctor_schedule", uniqueConstraints =
         {@UniqueConstraint(columnNames = {"doctor_id", "startWeek"})})
@@ -35,11 +35,10 @@ public class DoctorSchedule {
 
     @Column
     @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Immutable
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @FirstDayOfWeek
     private LocalDate startWeek;
-    //private Integer weekNumber;
 
     public DoctorSchedule(Doctor doctor, WorkShift workShift, LocalDate startWeek) {
         this.doctor = doctor;
@@ -47,14 +46,3 @@ public class DoctorSchedule {
         this.startWeek = startWeek;
     }
 }
-/*
-Заменить в DoctorSchedule поле  int weekNumber на поле LocalDate startWeek, при чем:
-startWeek - всегда понедельник
-поле неизменяемое
-Не null
-
-Необходимо:
-поправить сущность
-добавить валидацию при сохранении или изменении сущности.
-Поправить контроллеры и тесты.
- */

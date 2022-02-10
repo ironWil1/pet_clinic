@@ -34,7 +34,7 @@ public class DoctorScheduleDto {
 
     @NotNull(groups = OnCreate.class)
     @Null(groups = OnUpdate.class)
-    @FirstDayOfWeek(groups = OnCreate.class)
+    @FirstDayOfWeek(groups = {OnCreate.class})
     @JsonView({View.Get.class, View.Post.class})
     private LocalDate startWeek;
 }
