@@ -1,19 +1,16 @@
 package com.vet24.models.notification;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Notification {
 
     @Id
@@ -26,5 +23,17 @@ public class Notification {
 
     private boolean isImportant;
 
+    @OneToMany(
+            mappedBy = "notification",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<UserNotification> userNotifications = new ArrayList<>();
 
+
+    public Notification(String content, Timestamp eventDate, boolean isImportant) {
+        this.content = content;
+        this.eventDate = eventDate;
+        this.isImportant = isImportant;
+    }
 }

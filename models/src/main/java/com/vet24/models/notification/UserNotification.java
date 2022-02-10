@@ -9,7 +9,6 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserNotification {
 
@@ -17,7 +16,7 @@ public class UserNotification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notification_id")
     private Notification notification;
 
@@ -26,4 +25,10 @@ public class UserNotification {
     private User user;
 
     private boolean isShow;
+
+    public UserNotification(Notification notification, User user, boolean isShow) {
+        this.notification = notification;
+        this.user = user;
+        this.isShow = isShow;
+    }
 }

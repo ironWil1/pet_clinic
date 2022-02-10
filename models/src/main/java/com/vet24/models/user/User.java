@@ -1,5 +1,6 @@
 package com.vet24.models.user;
 
+import com.vet24.models.notification.UserNotification;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -85,12 +86,18 @@ public class User implements UserDetails {
     )
     private List<CommentReaction> commentReactions = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<UserNotification> userNotifications = new ArrayList<>();
+
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_name"))
     private Role role;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

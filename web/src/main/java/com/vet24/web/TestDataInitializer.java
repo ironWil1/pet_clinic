@@ -8,6 +8,8 @@ import com.vet24.models.medicine.Appointment;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.medicine.Medicine;
+import com.vet24.models.notification.Notification;
+import com.vet24.models.notification.UserNotification;
 import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
@@ -17,20 +19,13 @@ import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.user.Admin;
-import com.vet24.models.user.Client;
-import com.vet24.models.user.Comment;
-import com.vet24.models.user.CommentReaction;
-import com.vet24.models.user.Doctor;
-import com.vet24.models.user.DoctorNonWorking;
-import com.vet24.models.user.DoctorReview;
-import com.vet24.models.user.Manager;
-import com.vet24.models.user.Role;
-import com.vet24.models.user.Topic;
+import com.vet24.models.user.*;
 import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.medicine.MedicineService;
+import com.vet24.service.notification.NotificationService;
+import com.vet24.service.notification.UserNotificationService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
@@ -57,6 +52,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -91,6 +87,8 @@ public class TestDataInitializer implements ApplicationRunner {
     private final DoctorNonWorkingService doctorNonWorkingService;
     private final AppointmentService appointmentService;
     private final DoctorScheduleService doctorScheduleService;
+    private final NotificationService notificationService;
+    private final UserNotificationService userNotificationService;
 
     private final Role client = new Role(RoleNameEnum.CLIENT);
     private final Role doctor = new Role(RoleNameEnum.DOCTOR);
@@ -121,7 +119,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
-                               DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService) {
+                               DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService, NotificationService notificationService, UserNotificationService userNotificationService) {
         this.adminService = adminService;
         this.roleService = roleService;
         this.userService = userService;
@@ -145,6 +143,8 @@ public class TestDataInitializer implements ApplicationRunner {
         this.managerService = managerService;
         this.doctorNonWorkingService = doctorNonWorkingService;
         this.appointmentService = appointmentService;
+        this.notificationService = notificationService;
+        this.userNotificationService = userNotificationService;
     }
 
     public void roleInitialize() {
@@ -359,6 +359,28 @@ public class TestDataInitializer implements ApplicationRunner {
         appointmentService.persistAll(appointmentList);
     }
 
+    public void notificationAndUserNotificationInit() {
+        Notification clientNotification = new Notification("Тестовое уведомление CLIENT", Timestamp.valueOf(LocalDateTime.now().plusDays(7)), true);
+        Notification doctorNotification = new Notification("Тестовое уведомление DOCTOR", Timestamp.valueOf(LocalDateTime.now().plusDays(7)), true);
+        Notification adminNotification = new Notification("Тестовое уведомление ADMIN", Timestamp.valueOf(LocalDateTime.now().plusDays(7)), true);
+        Notification managerNotification = new Notification("Тестовое уведомление MANAGER", Timestamp.valueOf(LocalDateTime.now().plusDays(7)), true);
+
+        List<Notification> notificationList = new ArrayList<>();
+        notificationList.add(clientNotification);
+        notificationList.add(doctorNotification);
+        notificationList.add(adminNotification);
+        notificationList.add(managerNotification);
+
+        List<UserNotification> userNotificationList = new ArrayList<>();
+        userNotificationList.add(new UserNotification(clientNotification, userService.getByKey(1L),true));
+        userNotificationList.add(new UserNotification(doctorNotification, userService.getByKey(31L),true));
+        userNotificationList.add(new UserNotification(adminNotification, userService.getByKey(61L),true));
+        userNotificationList.add(new UserNotification(managerNotification, userService.getByKey(66L),true));
+
+        notificationService.persistAll(notificationList);
+        userNotificationService.persistAll(userNotificationList);
+    }
+
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
@@ -381,6 +403,7 @@ public class TestDataInitializer implements ApplicationRunner {
             doctorScheduleInit();
             doctorNonWorkingInit();
             appointmentInit();
+            notificationAndUserNotificationInit();
         }
     }
 }
