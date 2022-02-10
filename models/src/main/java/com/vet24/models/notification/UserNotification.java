@@ -1,7 +1,6 @@
 package com.vet24.models.notification;
 
 import com.vet24.models.user.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

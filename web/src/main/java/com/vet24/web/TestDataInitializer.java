@@ -52,7 +52,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -360,10 +359,10 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void notificationAndUserNotificationInit() {
-        Notification clientNotification = new Notification("Тестовое уведомление CLIENT", Timestamp.valueOf(LocalDateTime.now().plusDays(7)), true);
-        Notification doctorNotification = new Notification("Тестовое уведомление DOCTOR", Timestamp.valueOf(LocalDateTime.now().plusDays(7)), true);
-        Notification adminNotification = new Notification("Тестовое уведомление ADMIN", Timestamp.valueOf(LocalDateTime.now().plusDays(7)), true);
-        Notification managerNotification = new Notification("Тестовое уведомление MANAGER", Timestamp.valueOf(LocalDateTime.now().plusDays(7)), true);
+        Notification clientNotification = new Notification("Тестовое уведомление CLIENT", LocalDate.now().plusDays(7), true);
+        Notification doctorNotification = new Notification("Тестовое уведомление DOCTOR", LocalDate.now().plusDays(7), true);
+        Notification adminNotification = new Notification("Тестовое уведомление ADMIN", LocalDate.now().plusDays(7), true);
+        Notification managerNotification = new Notification("Тестовое уведомление MANAGER", LocalDate.now().plusDays(7), true);
 
         List<Notification> notificationList = new ArrayList<>();
         notificationList.add(clientNotification);

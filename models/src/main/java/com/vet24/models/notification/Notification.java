@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class Notification {
 
     private String content;
 
-    private Timestamp eventDate;
+    private LocalDate eventDate;
 
     private boolean isImportant;
 
@@ -31,7 +31,7 @@ public class Notification {
     private List<UserNotification> userNotifications = new ArrayList<>();
 
 
-    public Notification(String content, Timestamp eventDate, boolean isImportant) {
+    public Notification(String content, LocalDate eventDate, boolean isImportant) {
         this.content = content;
         this.eventDate = eventDate;
         this.isImportant = isImportant;
