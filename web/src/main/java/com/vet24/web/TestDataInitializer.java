@@ -372,10 +372,10 @@ public class TestDataInitializer implements ApplicationRunner {
         notificationList.add(managerNotification);
 
         List<UserNotification> userNotificationList = new ArrayList<>();
-        userNotificationList.add(new UserNotification(clientNotification, userService.getByKey(1L),true));
-        userNotificationList.add(new UserNotification(doctorNotification, userService.getByKey(31L),true));
-        userNotificationList.add(new UserNotification(adminNotification, userService.getByKey(61L),true));
-        userNotificationList.add(new UserNotification(managerNotification, userService.getByKey(66L),true));
+        userNotificationList.add(new UserNotification(clientNotification, userService.getByKey(1L),false));
+        userNotificationList.add(new UserNotification(doctorNotification, userService.getByKey(31L),false));
+        userNotificationList.add(new UserNotification(adminNotification, userService.getByKey(61L),false));
+        userNotificationList.add(new UserNotification(managerNotification, userService.getByKey(66L),false));
 
         notificationService.persistAll(notificationList);
         userNotificationService.persistAll(userNotificationList);
