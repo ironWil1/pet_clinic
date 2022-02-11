@@ -58,8 +58,8 @@ public class AdminDoctorScheduleController {
             throw new NotFoundException("doctor not found");
         }
         if (doctorScheduleService
-                .isExistByDoctorIdAndWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getWeekNumber())) {
-            log.error("Doctor already has a work shift at week {}", doctorScheduleDto.getWeekNumber());
+                .isExistByDoctorIdAndWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getStartWeek())) {
+            log.error("Doctor already has a work shift at week {}", doctorScheduleDto.getStartWeek());
             throw new UnprocessableEntityException("Doctor already has a work shift");
         }
         DoctorSchedule doctorSchedule = doctorScheduleMapper.toEntity(doctorScheduleDto);

@@ -14,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDate;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -42,17 +44,17 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
         createDoctorNotFoundSchedule = new DoctorScheduleDto();
         createDoctorNotFoundSchedule.setDoctorId(100500L);
         createDoctorNotFoundSchedule.setWorkShift(WorkShift.SECOND_SHIFT);
-        createDoctorNotFoundSchedule.setWeekNumber(15);
+        createDoctorNotFoundSchedule.setStartWeek(LocalDate.of(2022, 4, 11));
 
         createDoctorIsBusySchedule = new DoctorScheduleDto();
         createDoctorIsBusySchedule.setDoctorId(103L);
         createDoctorIsBusySchedule.setWorkShift(WorkShift.SECOND_SHIFT);
-        createDoctorIsBusySchedule.setWeekNumber(30);
+        createDoctorIsBusySchedule.setStartWeek(LocalDate.of(2022, 7, 25));
 
         createDoctorSuccess = new DoctorScheduleDto();
         createDoctorSuccess.setDoctorId(103L);
         createDoctorSuccess.setWorkShift(WorkShift.SECOND_SHIFT);
-        createDoctorSuccess.setWeekNumber(1);
+        createDoctorSuccess.setStartWeek(LocalDate.of(2022, 1, 3));
     }
 
     @Before

@@ -1,14 +1,20 @@
 package com.vet24.models.medicine;
 
 import com.vet24.models.user.Doctor;
+import com.vet24.models.validation.FirstDayOfWeek;
 import lombok.*;
 import com.vet24.models.enums.WorkShift;
+import org.hibernate.validator.internal.util.stereotypes.Immutable;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-//расписание работы докторов - указывается смена, в какю работает доктор в конкретную неделю
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+
+//расписание работы докторов - указывается смена, в какую работает доктор в конкретную неделю
 @Entity
 @Table(name = "doctor_schedule", uniqueConstraints =
-        {@UniqueConstraint(columnNames = {"doctor_id", "weekNumber"})})
+        {@UniqueConstraint(columnNames = {"doctor_id", "startWeek"})})
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -28,11 +34,15 @@ public class DoctorSchedule {
     private WorkShift workShift;
 
     @Column
-    private Integer weekNumber;
+    @NotNull
+    @Immutable
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @FirstDayOfWeek
+    private LocalDate startWeek;
 
-    public DoctorSchedule(Doctor doctor, WorkShift workShift, Integer weekNumber) {
+    public DoctorSchedule(Doctor doctor, WorkShift workShift, LocalDate startWeek) {
         this.doctor = doctor;
         this.workShift = workShift;
-        this.weekNumber = weekNumber;
+        this.startWeek = startWeek;
     }
 }
