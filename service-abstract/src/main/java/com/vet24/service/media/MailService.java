@@ -13,4 +13,6 @@ public interface MailService {
     void sendEmailFromTemplate(String toEmail, String subject, String templateName, Map<String, Object> model);
 
     void sendMultipartHtmlMessage(String toMail, String subject, String content);
+
+    void sendNotificationMassage(String email, String content);
 }

@@ -70,6 +70,27 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
+    public void sendNotificationMassage(String email, String content) {
+        var message = emailSender.createMimeMessage();
+        log.info("Message {} is created", message);
+        try {
+            var helper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
+            helper.setFrom(mailFrom, mailSign);
+            helper.setTo(email);
+            helper.setText(content);
+
+            var resource = new ClassPathResource("/template-cover-cat-transparent-80.png");
+            helper.addInline("logoImage", resource);
+
+            emailSender.send(message);
+            log.info("Message has been sent");
+        } catch (MailException | UnsupportedEncodingException | MessagingException e) {
+            log.warn("{}", e.getMessage());
+            e.getStackTrace();
+        }
+    }
+
+    @Override
     public void sendWelcomeMessage(String emailTo, String userName, String tokenUrl) {
         var model = new HashMap<String, Object>();
         model.put("tokenUrl", tokenUrl);
