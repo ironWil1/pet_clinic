@@ -24,7 +24,7 @@ public class DoctorReview {
     private Long id;
 
 
-    @OneToOne(targetEntity = Comment.class, cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
+    @OneToOne(targetEntity = Comment.class, cascade = {CascadeType.REMOVE, CascadeType.MERGE})
     private Comment comment;
     @OneToOne(targetEntity = Doctor.class)
     private Doctor doctor;

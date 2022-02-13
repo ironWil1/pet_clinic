@@ -303,9 +303,11 @@ public class TestDataInitializer implements ApplicationRunner {
         List<DoctorReview> doctorReviews = new ArrayList<>();
         Comment doctorReviewComment;
         for (int i = 1; i <= 30; i++) {
-            doctorReviewComment = new Comment(userService.getByKey((long) i + 30), "lorem " + (i + 30), LocalDateTime.now());
-            commentService.persist(doctorReviewComment);
-            doctorReviews.add(new DoctorReview(doctorReviewComment, doctorService.getByKey((long) i + 30)));
+            for (int j = 1; j <= 30; j++) {
+                doctorReviewComment = new Comment(userService.getByKey((long) j), "lorem " + j + " to " + (i + 30), LocalDateTime.now());
+                commentService.persist(doctorReviewComment);
+                doctorReviews.add(new DoctorReview(doctorReviewComment, doctorService.getByKey((long) i + 30)));
+            }
         }
         doctorReviewService.persistAll(doctorReviews);
     }
