@@ -1,5 +1,6 @@
 package com.vet24.service.media;
 
+import com.vet24.models.dto.notification.NotificationDto;
 import com.vet24.models.pet.PetContact;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -70,20 +72,22 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendNotificationMassage(String email, String content) {
+    public void sendNotificationMassage(List<NotificationDto> notificationDtoList) {
         var message = emailSender.createMimeMessage();
         log.info("Message {} is created", message);
         try {
-            var helper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
-            helper.setFrom(mailFrom, mailSign);
-            helper.setTo(email);
-            helper.setText(content);
+            for (NotificationDto n : notificationDtoList) {
+                var helper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
+                helper.setFrom(mailFrom, mailSign);
+                helper.setTo(n.getEmail());
+                helper.setText(n.getContent());
 
-            var resource = new ClassPathResource("/template-cover-cat-transparent-80.png");
-            helper.addInline("logoImage", resource);
+                var resource = new ClassPathResource("/template-cover-cat-transparent-80.png");
+                helper.addInline("logoImage", resource);
 
-            emailSender.send(message);
-            log.info("Message has been sent");
+                emailSender.send(message);
+                log.info("Message has been sent");
+            }
         } catch (MailException | UnsupportedEncodingException | MessagingException e) {
             log.warn("{}", e.getMessage());
             e.getStackTrace();
