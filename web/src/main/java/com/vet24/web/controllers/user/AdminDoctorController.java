@@ -5,6 +5,7 @@ import com.vet24.models.mappers.user.DoctorMapper;
 import com.vet24.models.user.Doctor;
 import com.vet24.service.user.DoctorServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class AdminDoctorController {
         }
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     public ResponseEntity<List<DoctorDto>> getAllDoctors() {
         List<Doctor> doctorList = doctorServiceImpl.getAll();
         return ResponseEntity.ok(doctorMapper.toDto(doctorList));
