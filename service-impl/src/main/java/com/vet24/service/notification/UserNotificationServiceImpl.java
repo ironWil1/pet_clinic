@@ -2,7 +2,6 @@ package com.vet24.service.notification;
 
 import com.vet24.dao.ReadWriteDao;
 import com.vet24.dao.notification.UserNotificationDao;
-import com.vet24.models.dto.notification.NotificationDto;
 import com.vet24.models.notification.UserNotification;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.stereotype.Service;
@@ -21,12 +20,7 @@ public class UserNotificationServiceImpl extends ReadWriteServiceImpl<Long, User
     }
 
     @Override
-    public List<NotificationDto> getEmailsAndContentsForNotifications() {
-        return userNotificationDao.getEmailsAndContentsForNotifications();
-    }
-
-    @Override
-    public void changeFlagToTrue(List<NotificationDto> notificationDto) {
-        userNotificationDao.changeFlagToTrue(notificationDto);
+    public void changeFlagToTrue(List<Long> idList) {
+        userNotificationDao.changeFlagToTrue(idList);
     }
 }
