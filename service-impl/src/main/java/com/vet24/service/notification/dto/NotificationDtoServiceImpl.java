@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class NotificationDtoServiceImpl implements NotificationDtoService{
@@ -25,8 +24,4 @@ public class NotificationDtoServiceImpl implements NotificationDtoService{
         return notificationDtoDao.getEmailsAndContentsForNotifications(eventDate);
     }
 
-    @Override
-    public List<Long> getIdFromNotificationDtoList(List<NotificationDto> notificationDtoList) {
-        return notificationDtoList.stream().map(NotificationDto::getId).collect(Collectors.toList());
-    }
 }

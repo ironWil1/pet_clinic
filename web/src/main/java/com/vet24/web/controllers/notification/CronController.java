@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -27,7 +28,7 @@ public class CronController {
     public void checkNotifications() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         List<NotificationDto> notificationDtoList = notificationDtoService.getEmailsAndContentsForNotifications(tomorrow);
-        userNotificationService.changeFlagToTrue(notificationDtoService.getIdFromNotificationDtoList(notificationDtoList));
+        userNotificationService.changeFlagToTrue(notificationDtoList.stream().map(NotificationDto::getId).collect(Collectors.toList()));
         mailService.sendNotificationMassage(notificationDtoList);
     }
 }

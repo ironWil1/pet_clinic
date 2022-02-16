@@ -9,5 +9,4 @@ public interface NotificationDtoService {
 
     List<NotificationDto> getEmailsAndContentsForNotifications(LocalDate eventDate);
 
-    List<Long> getIdFromNotificationDtoList (List<NotificationDto> notificationDtoList);
 }
