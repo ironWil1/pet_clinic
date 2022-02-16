@@ -304,8 +304,7 @@ public class TestDataInitializer implements ApplicationRunner {
         Comment doctorReviewComment;
         for (int i = 1; i <= 30; i++) {
             for (int j = 1; j <= 30; j++) {
-                doctorReviewComment = new Comment(userService.getByKey((long) j), "lorem " + j + " to " + (i + 30), LocalDateTime.now());
-                commentService.persist(doctorReviewComment);
+                doctorReviewComment = new Comment(userService.getByKey((long) j), "комментарий пользователя " + j + " доктору " + (i + 30), LocalDateTime.now());
                 doctorReviews.add(new DoctorReview(doctorReviewComment, doctorService.getByKey((long) i + 30)));
             }
         }
