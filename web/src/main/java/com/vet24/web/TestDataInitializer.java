@@ -359,10 +359,10 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void notificationAndUserNotificationInit() {
-        Notification clientNotification = new Notification("Тестовое уведомление CLIENT", LocalDate.now().plusDays(7), true);
-        Notification doctorNotification = new Notification("Тестовое уведомление DOCTOR", LocalDate.now().plusDays(7), true);
+        Notification clientNotification = new Notification("Тестовое уведомление CLIENT", LocalDate.now().plusDays(1), true);
+        Notification doctorNotification = new Notification("Тестовое уведомление DOCTOR", LocalDate.now().plusDays(5), true);
         Notification adminNotification = new Notification("Тестовое уведомление ADMIN", LocalDate.now().plusDays(7), true);
-        Notification managerNotification = new Notification("Тестовое уведомление MANAGER", LocalDate.now().plusDays(7), true);
+        Notification managerNotification = new Notification("Тестовое уведомление MANAGER", LocalDate.now().plusDays(4), true);
 
         List<Notification> notificationList = new ArrayList<>();
         notificationList.add(clientNotification);
