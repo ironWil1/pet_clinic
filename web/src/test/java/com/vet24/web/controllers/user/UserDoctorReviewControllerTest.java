@@ -27,7 +27,6 @@ public class UserDoctorReviewControllerTest extends ControllerAbstractIntegratio
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{doctorId}/review", 33)
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON))
-                        .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -38,7 +37,6 @@ public class UserDoctorReviewControllerTest extends ControllerAbstractIntegratio
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{doctorId}/review", 1)
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON))
-                        .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 }
