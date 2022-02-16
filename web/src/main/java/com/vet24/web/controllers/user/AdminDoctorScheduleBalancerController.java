@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "api/admin/doctor/schedule")
+@RequestMapping(value = "api/admin/cron")
 @Tag(name = "admin doctor schedule balance controller", description = "adminDoctorScheduleBalanceController operations")
 @Slf4j
 public class AdminDoctorScheduleBalancerController {
@@ -27,9 +27,9 @@ public class AdminDoctorScheduleBalancerController {
     @Operation(summary = "Balancer doctor schedule")
     @ApiResponse(responseCode = "200", description = "The load balancer has successfully worked")
 
-    @GetMapping("/balance")
+    @GetMapping("/schedule")
     public ResponseEntity<Void> balanceDoctorSchedule() {
-        doctorScheduleBalanceUtil.getBalancer();
+        doctorScheduleBalanceUtil.balancer();
 
         return ResponseEntity.ok().build();
     }
