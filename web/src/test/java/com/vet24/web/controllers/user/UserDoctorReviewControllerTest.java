@@ -21,8 +21,10 @@ public class UserDoctorReviewControllerTest extends ControllerAbstractIntegratio
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml",
-            "/datasets/doctor-review.yml", "/datasets/doctors.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/userDoctorReviewControllerTest/doctors.yml",
+            "/datasets/controllers/user/userDoctorReviewControllerTest/doctor-review.yml",
+            "/datasets/controllers/user/userDoctorReviewControllerTest/clients.yml",
+            "/datasets/controllers/user/userDoctorReviewControllerTest/comments.yml"})
     public void shouldBeFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{doctorId}/review", 33)
                         .header("Authorization", "Bearer " + token)
@@ -31,8 +33,10 @@ public class UserDoctorReviewControllerTest extends ControllerAbstractIntegratio
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/clients.yml", "/datasets/comments.yml",
-            "/datasets/doctor-review.yml", "/datasets/doctors.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/userDoctorReviewControllerTest/doctors.yml",
+            "/datasets/controllers/user/userDoctorReviewControllerTest/doctor-review.yml",
+            "/datasets/controllers/user/userDoctorReviewControllerTest/clients.yml",
+            "/datasets/controllers/user/userDoctorReviewControllerTest/comments.yml"})
     public void shouldBeNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{doctorId}/review", 1)
                         .header("Authorization", "Bearer " + token)
