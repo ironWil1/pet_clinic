@@ -55,4 +55,9 @@ public abstract class PetMapper implements
             throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petDto);
         }
     }
+
+    @Override
+    public void updateEntity(PetDto dto, Pet entity) {
+
+    }
 }
