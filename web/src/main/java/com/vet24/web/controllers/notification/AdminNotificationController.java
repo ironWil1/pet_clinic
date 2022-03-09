@@ -57,7 +57,7 @@ public class AdminNotificationController {
         return new ResponseEntity<>(notificationMapper.toDto(notification), HttpStatus.OK);
     }
 
-    @Operation(summary = "PUT the notification by ID")
+    @Operation(summary = "Update the notification by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success update the notification by ID"),
             @ApiResponse(responseCode = "404", description = "notification not changed")
@@ -65,7 +65,7 @@ public class AdminNotificationController {
     @PutMapping(value = {"/{id}"})
     public ResponseEntity<NotificationDto> updateNotificationById(
             @PathVariable("id") Long notificationId,
-            @RequestBody
+            @RequestBody(required = false)
             @Valid NotificationDto notificationDto) {
         Notification notification = notificationService.getByKey(notificationId);
         notificationMapper.updateEntity(notificationDto, notification);
@@ -74,7 +74,7 @@ public class AdminNotificationController {
     }
 
 
-    @Operation(summary = "Create notification")
+    @Operation(summary = "Create new notification")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Notification is create",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotificationDto.class))),
@@ -90,7 +90,7 @@ public class AdminNotificationController {
     }
 
 
-    @Operation(summary = "Delete notification")
+    @Operation(summary = "Delete the notification by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Notification deleted"),
             @ApiResponse(responseCode = "404", description = "Notification not founded")
