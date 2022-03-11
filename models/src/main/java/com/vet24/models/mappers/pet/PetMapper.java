@@ -56,8 +56,4 @@ public abstract class PetMapper implements
         }
     }
 
-    @Override
-    public void updateEntity(PetDto dto, Pet entity) {
-
-    }
 }
