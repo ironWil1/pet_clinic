@@ -79,6 +79,7 @@ public class MailServiceImpl implements MailService {
             for (NotificationDto n : notificationDtoList) {
                 var helper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
                 helper.setFrom(mailFrom, mailSign);
+//                TODO: необходимо переделать метод
 //                helper.setTo(n.getEmail());
                 helper.setText(n.getContent());
 
