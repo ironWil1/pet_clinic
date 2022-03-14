@@ -88,7 +88,7 @@ public class MedicineController {
             log.info("The medicine with this id {}  not found",id);
             throw new NotFoundException("The medicine not found");
         } else {
-            medicine = medicineMapper.toEntity(medicineDto);
+            medicineMapper.updateEntity(medicineDto, medicine);
             medicine.setId(id);
             medicineService.update(medicine);
             log.info(" The medicine with this id {} was updated",id);
