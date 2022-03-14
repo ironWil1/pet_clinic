@@ -154,7 +154,7 @@ public class ReproductionController {
             throw new BadRequestException(NOT_ASSIGNED);
         }
 
-        reproduction = reproductionMapper.toEntity(reproductionDto);
+        reproductionMapper.updateEntity(reproductionDto, reproduction);
         reproduction.setPet(pet);
         reproduction.setId(reproductionId);
         reproductionService.update(reproduction);

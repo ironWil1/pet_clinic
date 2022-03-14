@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class DoctorScheduleServiceImpl extends ReadWriteServiceImpl<Long, DoctorSchedule> implements DoctorScheduleService {
@@ -21,6 +22,11 @@ public class DoctorScheduleServiceImpl extends ReadWriteServiceImpl<Long, Doctor
     @Override
     public boolean isExistByDoctorIdAndWeekNumber(Long doctorId, LocalDate startWeek) {
         return doctorScheduleDao.isExistByDoctorIdAndWeekNumber(doctorId, startWeek);
+    }
+
+    @Override
+    public List<DoctorSchedule> getDoctorScheduleAfterDate(LocalDate date) {
+        return doctorScheduleDao.getDoctorScheduleAfterDate(date);
     }
 }
 
