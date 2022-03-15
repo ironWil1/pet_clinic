@@ -52,7 +52,7 @@ public class AdminNotificationController {
     })
     @GetMapping(value = {"/{id}"})
     public ResponseEntity<NotificationDto> getNotificationById(@PathVariable("id") Long notificationId) {
-        if(notificationService.isExistByKey(notificationId)) {
+        if (notificationService.isExistByKey(notificationId)) {
             Notification notification = notificationService.getByKey(notificationId);
             return new ResponseEntity<>(notificationMapper.toDto(notification), HttpStatus.OK);
         } else {
@@ -71,7 +71,7 @@ public class AdminNotificationController {
             @PathVariable("id") Long notificationId,
             @RequestBody NotificationDto notificationDto
     ) {
-        if(notificationService.isExistByKey(notificationId)) {
+        if (notificationService.isExistByKey(notificationId)) {
             Notification notification = notificationService.getByKey(notificationId);
             notificationMapper.updateEntity(notificationDto, notification);
             notificationService.update(notification);
@@ -105,7 +105,7 @@ public class AdminNotificationController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNotification(@PathVariable("id") Long notificationId) {
-        if(notificationService.isExistByKey(notificationId)) {
+        if (notificationService.isExistByKey(notificationId)) {
             Notification notification = notificationService.getByKey(notificationId);
             notificationService.delete(notification);
             return ResponseEntity.ok().build();
