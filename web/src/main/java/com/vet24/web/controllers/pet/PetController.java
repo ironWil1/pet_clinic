@@ -5,6 +5,7 @@ import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.PetDto;
 import com.vet24.models.exception.BadRequestException;
+import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.mappers.pet.AbstractNewPetMapper;
 import com.vet24.models.mappers.pet.PetMapper;
 import com.vet24.models.pet.Pet;
