@@ -69,7 +69,8 @@ public class AdminNotificationController {
     @PutMapping(value = {"/{id}"})
     public ResponseEntity<NotificationDto> updateNotificationById(
             @PathVariable("id") Long notificationId,
-            @RequestBody NotificationDto notificationDto) {
+            @RequestBody NotificationDto notificationDto
+    ) {
         if(notificationService.isExistByKey(notificationId)) {
             Notification notification = notificationService.getByKey(notificationId);
             notificationMapper.updateEntity(notificationDto, notification);
