@@ -51,8 +51,7 @@ public class AdminNotificationController {
             @ApiResponse(responseCode = "404", description = "notification with this ID not found")
     })
     @GetMapping(value = {"/{id}"})
-    public ResponseEntity<NotificationDto> getNotificationById(
-            @PathVariable("id") Long notificationId) {
+    public ResponseEntity<NotificationDto> getNotificationById(@PathVariable("id") Long notificationId) {
         if(notificationService.isExistByKey(notificationId)) {
             Notification notification = notificationService.getByKey(notificationId);
             return new ResponseEntity<>(notificationMapper.toDto(notification), HttpStatus.OK);
@@ -86,7 +85,8 @@ public class AdminNotificationController {
     @Operation(summary = "Create new notification")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Notification is create",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotificationDto.class))),
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = NotificationDto.class))),
             @ApiResponse(responseCode = "404", description = "Notification not found"),
     })
     @PostMapping
