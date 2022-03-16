@@ -28,10 +28,10 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
         notificationDto.setEventDate(LocalDate.now().plusDays(7));
         notificationDto.setImportant(true);
     }
+
     @Before
     public void setToken() throws Exception {
-        token = getAccessToken("admin1@email.com","admin");
-//        token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjFAZW1haWwuY29tIiwiaWF0IjoxNjQ3MDEwMDA1LCJleHAiOjE2NDkwMTAwMDV9.q5a7nD013KmaF41Gk0qyX29tC6tuBKyo2pcmJQTN93b-R7_F0G1DAy4CSWBP8Ywl4MmTwo2SYBdAJlpE1L-TFw";
+        token = getAccessToken("admin1@email.com", "admin");
     }
 
     @Test
@@ -123,7 +123,5 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
-
-
 
 }
