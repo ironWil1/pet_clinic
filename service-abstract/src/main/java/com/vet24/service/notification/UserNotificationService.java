@@ -8,4 +8,7 @@ import java.util.List;
 public interface UserNotificationService extends ReadWriteService<Long, UserNotification> {
 
     void changeFlagToTrue(List<Long> idList);
+
+    List<UserNotification> getAllUserNotificationFromUser (Long userId);
+
 }

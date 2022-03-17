@@ -23,4 +23,9 @@ public class UserNotificationServiceImpl extends ReadWriteServiceImpl<Long, User
     public void changeFlagToTrue(List<Long> idList) {
         userNotificationDao.changeFlagToTrue(idList);
     }
+
+    @Override
+    public List<UserNotification> getAllUserNotificationFromUser(Long userId) {
+        return userNotificationDao.getAllUserNotificationFromUser(userId);
+    }
 }

@@ -40,7 +40,8 @@ public class UserNotificationController {
     @GetMapping("")
     public ResponseEntity<List<UserNotificationDto>> getAllNotifications() {
 
-        List<UserNotification> userNotificationList = userNotificationService.getAll();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<UserNotification> userNotificationList = userNotificationService.getAllUserNotificationFromUser(user.getId());
 
         return new ResponseEntity<>(userNotificationMapper.toDto(userNotificationList), HttpStatus.OK);
     }
@@ -56,7 +57,8 @@ public class UserNotificationController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserNotification userNotification = userNotificationService.getByKey(notificationId);
 
-        if (user.equals(userNotification.getUser())) {
+
+        if (userNotification.getUser().getId() == user.getId()) {
             return new ResponseEntity<>(userNotificationMapper.toDto(userNotification), HttpStatus.OK);
         } else {
             log.info("Notification is not found");
