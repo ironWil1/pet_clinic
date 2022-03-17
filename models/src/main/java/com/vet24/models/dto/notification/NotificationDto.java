@@ -12,8 +12,8 @@ import java.time.LocalDate;
 public class NotificationDto {
 
     private Long id;
-    private String email;
     private String content;
-    private LocalDate event_date;
+    private LocalDate eventDate;
+    private boolean isImportant;
 
 }
