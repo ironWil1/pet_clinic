@@ -9,6 +9,6 @@ public interface UserNotificationService extends ReadWriteService<Long, UserNoti
 
     void changeFlagToTrue(List<Long> idList);
 
-    List<UserNotification> getAllUserNotificationFromUser (Long userId);
+    List<UserNotification> getAllUserNotificationByUserId(Long userId);
 
 }

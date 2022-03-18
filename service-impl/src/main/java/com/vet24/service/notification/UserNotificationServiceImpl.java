@@ -25,7 +25,7 @@ public class UserNotificationServiceImpl extends ReadWriteServiceImpl<Long, User
     }
 
     @Override
-    public List<UserNotification> getAllUserNotificationFromUser(Long userId) {
-        return userNotificationDao.getAllUserNotificationFromUser(userId);
+    public List<UserNotification> getAllUserNotificationByUserId(Long userId) {
+        return userNotificationDao.getAllUserNotificationByUserId(userId);
     }
 }

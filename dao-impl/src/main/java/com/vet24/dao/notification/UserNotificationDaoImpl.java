@@ -19,12 +19,12 @@ public class UserNotificationDaoImpl extends ReadWriteDaoImpl<Long, UserNotifica
     }
 
     @Override
-    public List<UserNotification> getAllUserNotificationFromUser(Long userId) {
-            return manager
-                    .createQuery("FROM UserNotification un " +
-                            "WHERE un.user.id = :userId", UserNotification.class)
-                    .setParameter("userId", userId)
-                    .getResultList();
+    public List<UserNotification> getAllUserNotificationByUserId(Long userId) {
+        return manager
+                .createQuery("FROM UserNotification un " +
+                        "WHERE un.user.id = :userId", UserNotification.class)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 
 }

@@ -40,7 +40,7 @@ public class UserNotificationController {
     public ResponseEntity<List<UserNotificationDto>> getAllNotifications() {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<UserNotification> userNotificationList = userNotificationService.getAllUserNotificationFromUser(user.getId());
+        List<UserNotification> userNotificationList = userNotificationService.getAllUserNotificationByUserId(user.getId());
 
         return new ResponseEntity<>(userNotificationMapper.toDto(userNotificationList), HttpStatus.OK);
     }
@@ -64,6 +64,7 @@ public class UserNotificationController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @PutMapping("/{notificationId}")
     public void notificationsStatus(@PathVariable("notificationId") Long notificationId) {
 

@@ -10,6 +10,6 @@ public interface UserNotificationDao extends ReadWriteDao<Long, UserNotification
 
     void changeFlagToTrue(List<Long> idList);
 
-    List<UserNotification> getAllUserNotificationFromUser (Long userId);
+    List<UserNotification> getAllUserNotificationByUserId(Long userId);
 
 }
