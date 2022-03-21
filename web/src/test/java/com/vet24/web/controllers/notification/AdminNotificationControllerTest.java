@@ -27,14 +27,14 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     EntityManager entityManager;
 
     Notification adminNotification = new Notification(
-            "Тестовое уведомление ADMIN", LocalDate.of(2022,3,26), true);
+            "Тестовое уведомление ADMIN", LocalDate.of(2022, 3, 26), true);
 
     @Before
     public void createNotificationDto() {
         notificationDto = new NotificationDto();
         notificationDto.setId(103L);
         notificationDto.setContent("testContent");
-        notificationDto.setEventDate(LocalDate.of(2022,3,26));
+        notificationDto.setEventDate(LocalDate.of(2022, 3, 26));
         notificationDto.setImportant(true);
     }
 
@@ -57,7 +57,7 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
                         "{\"id\":102,\"content\":\"right notification\",\"eventDate\":\"2022-03-04\",\"important\":true}," +
                         "{\"id\":103,\"content\":\"right notification\",\"eventDate\":\"2022-03-06\",\"important\":true}," +
                         "{\"id\":104,\"content\":\"wrong notification\",\"eventDate\":\"2022-03-06\",\"important\":true}]"
-                        ));
+                ));
         Notification notification = entityManager
                 .createQuery("SELECT n from Notification n WHERE n.id = 103", Notification.class)
                 .getSingleResult();
