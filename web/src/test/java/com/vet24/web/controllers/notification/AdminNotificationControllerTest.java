@@ -48,9 +48,6 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/notification/notifications.yml"})
     public void getAllNotifications() throws Exception {
-        List<Notification> notificationList = entityManager
-                .createQuery("SELECT n from Notification n", Notification.class)
-                .getResultList();
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(notificationDto).toString())
