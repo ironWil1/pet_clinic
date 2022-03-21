@@ -3,7 +3,6 @@ package com.vet24.web.controllers.notification;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.models.dto.notification.NotificationDto;
 import com.vet24.models.notification.Notification;
-import com.vet24.service.notification.NotificationService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,10 +11,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 
 public class AdminNotificationControllerTest extends ControllerAbstractIntegrationTest {
@@ -24,16 +25,17 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     private String token;
     private NotificationDto notificationDto;
     @Autowired
-    private NotificationService notificationService;
+    EntityManager entityManager;
 
-    Notification adminNotification = new Notification("Тестовое уведомление ADMIN", LocalDate.now().plusDays(7), true);
+    Notification adminNotification = new Notification(
+            "Тестовое уведомление ADMIN", LocalDate.of(2022,3,26), true);
 
     @Before
     public void createNotificationDto() {
         notificationDto = new NotificationDto();
         notificationDto.setId(103L);
         notificationDto.setContent("testContent");
-        notificationDto.setEventDate(LocalDate.now().plusDays(7));
+        notificationDto.setEventDate(LocalDate.of(2022,3,26));
         notificationDto.setImportant(true);
     }
 
@@ -42,29 +44,44 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
         token = getAccessToken("admin1@email.com", "admin");
     }
 
+
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/notification/notifications.yml"})
     public void getAllNotifications() throws Exception {
+        List<Notification> notificationList = entityManager
+                .createQuery("SELECT n from Notification n", Notification.class)
+                .getResultList();
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(notificationDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        assertEquals(4, notificationService.getAll().size());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().string("[" +
+                        "{\"id\":101,\"content\":\"right get notification by ID\",\"eventDate\":\"2022-03-03\",\"important\":true}," +
+                        "{\"id\":102,\"content\":\"right notification\",\"eventDate\":\"2022-03-04\",\"important\":true}," +
+                        "{\"id\":103,\"content\":\"right notification\",\"eventDate\":\"2022-03-06\",\"important\":true}," +
+                        "{\"id\":104,\"content\":\"wrong notification\",\"eventDate\":\"2022-03-06\",\"important\":true}]"
+                        ));
+        Notification notification = entityManager
+                .createQuery("SELECT n from Notification n WHERE n.id = 103", Notification.class)
+                .getSingleResult();
+        assertEquals("right notification", notification.getContent());
     }
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/notification/notifications.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void noNotifications() throws Exception {
-        List<Notification> notificationList = notificationService.getAll();
-        notificationService.deleteAll(notificationList);
-
+        List<Notification> notificationList = entityManager
+                .createQuery("SELECT n from Notification n", Notification.class)
+                .getResultList();
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(notificationDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        assertTrue(notificationService.getAll().isEmpty());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().string("[]"));
+        assertEquals("[]", entityManager.createQuery("SELECT n from Notification n").getResultList().toString());
+
     }
 
     @Test
@@ -74,19 +91,27 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(notificationDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        assertEquals("right get notification by ID", notificationService.getByKey(101L).getContent());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().string(
+                        "{\"id\":101,\"content\":\"right get notification by ID\"," +
+                                "\"eventDate\":\"2022-03-03\",\"important\":true}"));
+        Notification notification = entityManager
+                .createQuery("SELECT n from Notification n WHERE n.id = 101", Notification.class)
+                .getSingleResult();
+        assertEquals("right get notification by ID", notification.getContent());
     }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/notification/notifications.yml"})
     public void notificationNotFoundById() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{id}", 1000)
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{id}", 10)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(notificationDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-        assertFalse(notificationService.isExistByKey(1000L));
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(content().string("{\"message\":\"Notification not found\"}"));
+        assertEquals("[]",
+                entityManager.createQuery("SELECT n from Notification n WHERE n.id = 10").getResultList().toString());
     }
 
     @Test
@@ -96,19 +121,27 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(notificationDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        assertEquals("testContent", notificationService.getByKey(103L).getContent());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().string(
+                        "{\"id\":103,\"content\":\"testContent\",\"eventDate\":\"2022-03-26\",\"important\":true}"
+                ));
+        Notification notification = entityManager
+                .createQuery("SELECT n from Notification n WHERE n.id = 103", Notification.class)
+                .getSingleResult();
+        assertEquals("testContent", notification.getContent());
     }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/notification/notifications.yml"})
     public void notificationUpdateWrongId() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 1001)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 11)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(notificationDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-        assertFalse(notificationService.isExistByKey(1001L));
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(content().string("{\"message\":\"Notification not found\"}"));
+        assertEquals("[]",
+                entityManager.createQuery("SELECT n from Notification n WHERE n.id = 11").getResultList().toString());
     }
 
     @Test
@@ -118,19 +151,23 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(notificationDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        assertFalse(notificationService.isExistByKey(104L));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().string(""));
+        assertEquals("[]",
+                entityManager.createQuery("SELECT n from Notification n WHERE n.id = 104").getResultList().toString());
     }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/notification/notifications.yml"})
     public void notificationDeleteWrongId() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 1002)
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 12)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(notificationDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-        assertFalse(notificationService.isExistByKey(1002L));
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(content().string("{\"message\":\"Notification not found\"}"));
+        assertEquals("[]",
+                entityManager.createQuery("SELECT n from Notification n WHERE n.id = 12").getResultList().toString());
     }
 
     @Test
@@ -140,8 +177,14 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(adminNotification))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        assertEquals("Тестовое уведомление ADMIN", notificationService.getByKey(1L).getContent());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().string(
+                        "{\"id\":1,\"content\":\"Тестовое уведомление ADMIN\"," +
+                                "\"eventDate\":\"2022-03-26\",\"important\":true}"));
+        Notification notification = entityManager
+                .createQuery("SELECT n from Notification n WHERE n.id = 1", Notification.class)
+                .getSingleResult();
+        assertEquals("Тестовое уведомление ADMIN", notification.getContent());
     }
 
 }
