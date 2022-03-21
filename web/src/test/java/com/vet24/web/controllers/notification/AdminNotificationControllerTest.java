@@ -50,7 +50,7 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     public void getAllNotifications() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(notificationDto).toString())
+                        .content(objectMapper.writeValueAsString(notificationDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string("[" +
@@ -70,7 +70,7 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     public void noNotifications() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(notificationDto).toString())
+                        .content(objectMapper.writeValueAsString(notificationDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string("[]"));
@@ -83,7 +83,7 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     public void getNotificationById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{id}", 101)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(notificationDto).toString())
+                        .content(objectMapper.writeValueAsString(notificationDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(
@@ -100,7 +100,7 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     public void notificationNotFoundById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{id}", 10)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(notificationDto).toString())
+                        .content(objectMapper.writeValueAsString(notificationDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(content().string("{\"message\":\"Notification not found\"}"));
@@ -113,7 +113,7 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     public void notificationUpdateById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 103)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(notificationDto).toString())
+                        .content(objectMapper.writeValueAsString(notificationDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(
@@ -130,7 +130,7 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     public void notificationUpdateWrongId() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}", 11)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(notificationDto).toString())
+                        .content(objectMapper.writeValueAsString(notificationDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(content().string("{\"message\":\"Notification not found\"}"));
@@ -143,7 +143,7 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     public void notificationDeleteById() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 104)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(notificationDto).toString())
+                        .content(objectMapper.writeValueAsString(notificationDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(""));
@@ -156,7 +156,7 @@ public class AdminNotificationControllerTest extends ControllerAbstractIntegrati
     public void notificationDeleteWrongId() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 12)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(notificationDto).toString())
+                        .content(objectMapper.writeValueAsString(notificationDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(content().string("{\"message\":\"Notification not found\"}"));
