@@ -2,15 +2,12 @@ package com.vet24.models.notification;
 
 import com.vet24.models.user.User;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class UserNotification {
 
