@@ -1,0 +1,17 @@
+NOTIFICATION:
+  - ID : 101
+    CONTENT : "right get notification by ID"
+    EVENT_DATE : 2022-03-03 18:00:00
+    IS_IMPORTANT : true
+  - ID: 102
+    CONTENT: "right notification"
+    EVENT_DATE: 2022-03-04 18:00:00
+    IS_IMPORTANT: true
+  - ID: 103
+    CONTENT: "right notification"
+    EVENT_DATE: 2022-03-06 18:00:00
+    IS_IMPORTANT: true
+  - ID: 104
+    CONTENT: "wrong notification"
+    EVENT_DATE: 2022-03-06 18:00:00
+    IS_IMPORTANT: true
