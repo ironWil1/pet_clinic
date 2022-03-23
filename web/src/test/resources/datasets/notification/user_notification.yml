@@ -1,13 +1,9 @@
 USER_NOTIFICATION:
   - ID: 5
     IS_SHOW: true
-    NOTIFICATION_ID: 3
+    NOTIFICATION_ID: 1
     USER_ID: 100
   - ID: 7
     IS_SHOW: true
     NOTIFICATION_ID: 2
-    USER_ID: 3
-  - ID: 9
-    IS_SHOW: true
-    NOTIFICATION_ID: 1
-    USER_ID: 102
+    USER_ID: 101
