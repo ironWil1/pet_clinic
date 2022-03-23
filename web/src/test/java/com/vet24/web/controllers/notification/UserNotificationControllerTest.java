@@ -52,7 +52,7 @@ public class UserNotificationControllerTest extends ControllerAbstractIntegratio
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string("{\"id\":1,\"content\":\"User Notification Test 1\",\"important\":true}"));
         assertThat(entityManager.createQuery("FROM UserNotification un " +
-                "WHERE un.id=5", UserNotification.class).getResultList())
+                "WHERE un.user.id=100", UserNotification.class).getResultList())
                 .isEqualTo("UserNotification Test 1");
     }
 
