@@ -16,7 +16,7 @@ sonarqube-check:
   script:
     - mvn compile -P testprod sonar:sonar -e -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
   tags:
-    - clinic_docker_runner
+    - docker_runner
   allow_failure: false
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -53,7 +53,7 @@ test_maven:
   script:
     - mvn clean test -P testprod
   tags:
-    - clinic_docker_runner
+    - docker_runner
   artifacts:
     reports:
       junit:
