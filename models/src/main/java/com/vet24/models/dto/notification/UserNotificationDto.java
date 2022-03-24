@@ -1,5 +1,6 @@
 package com.vet24.models.dto.notification;
 
+import com.vet24.models.dto.user.UserInfoDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class UserNotificationDto {
 
     private Long id;
-    private String content;
-    private boolean isImportant;
+    private UserInfoDto user;
+    private NotificationDto notification;
+    private boolean isShow;
 }
