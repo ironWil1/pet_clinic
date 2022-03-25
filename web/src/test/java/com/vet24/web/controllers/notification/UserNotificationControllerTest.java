@@ -9,12 +9,9 @@ import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import javax.persistence.EntityManager;
 
 import java.time.LocalDate;
 
@@ -26,9 +23,6 @@ public class UserNotificationControllerTest extends ControllerAbstractIntegratio
     private final String URI = "/api/user/notification";
     private String token;
     private UserNotificationDto userNotificationDto;
-
-    @Autowired
-    EntityManager entityManager;
 
     @Before
     public void setToken() throws Exception {
