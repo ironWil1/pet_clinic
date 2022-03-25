@@ -1,0 +1,9 @@
+NOTIFICATION:
+  - ID: 1
+    CONTENT: "User Notification Test 1"
+    EVENT_DATE: 2022-03-18 18:00:00
+    IS_IMPORTANT: true
+  - ID: 2
+    CONTENT: "User Notification Test 2"
+    EVENT_DATE: 2022-03-19 18:00:00
+    IS_IMPORTANT: true
