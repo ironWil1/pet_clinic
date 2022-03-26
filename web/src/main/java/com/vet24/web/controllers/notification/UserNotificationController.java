@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 
@@ -58,15 +59,22 @@ public class UserNotificationController {
             return new ResponseEntity<>(userNotificationDtoMapper.toDto(userNotification), HttpStatus.OK);
         } else {
             log.info("UserNotification not found");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new NotFoundException("UserNotification not found");
         }
     }
 
     @PutMapping("/{notificationId}")
     public void notificationsStatus(@PathVariable("notificationId") Long notificationId) {
 
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserNotification userNotification = userNotificationService.getByKey(notificationId);
-        userNotification.setShow(false);
-        userNotificationService.update(userNotification);
+
+        if (userNotification.getUser().getId() == user.getId()) {
+            userNotification.setShow(false);
+            userNotificationService.update(userNotification);
+        } else {
+            log.info("UserNotification not found");
+            throw new NotFoundException("UserNotification not found");
+        }
     }
 }
