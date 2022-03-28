@@ -126,8 +126,6 @@ public class UserNotificationControllerTest extends ControllerAbstractIntegratio
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(jsonPath("$.message", Is.is("UserNotification not found")));
-        assertEquals(Long.valueOf(2),
-                entityManager.createQuery("SELECT COUNT(un) FROM UserNotification un", Long.class).getSingleResult());
     }
 }
 
