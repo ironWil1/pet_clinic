@@ -9,12 +9,9 @@ import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import javax.persistence.EntityManager;
 
 import java.time.LocalDate;
 
@@ -26,9 +23,6 @@ public class UserNotificationControllerTest extends ControllerAbstractIntegratio
     private final String URI = "/api/user/notification";
     private String token;
     private UserNotificationDto userNotificationDto;
-
-    @Autowired
-    EntityManager entityManager;
 
     @Before
     public void setToken() throws Exception {
@@ -96,6 +90,19 @@ public class UserNotificationControllerTest extends ControllerAbstractIntegratio
     @DataSet(value = {"/datasets/controllers/userNotification_controller/user-entities.yml",
             "/datasets/controllers/userNotification_controller/user_notification.yml",
             "/datasets/controllers/userNotification_controller/notification.yml"}, cleanBefore = true)
+    public void UserNotificationNotFoundById() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{notificationId}", 7)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(userNotificationDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(jsonPath("$.message", Is.is("UserNotification not found")));
+    }
+
+    @Test
+    @DataSet(value = {"/datasets/controllers/userNotification_controller/user-entities.yml",
+            "/datasets/controllers/userNotification_controller/user_notification.yml",
+            "/datasets/controllers/userNotification_controller/notification.yml"}, cleanBefore = true)
     public void testNotificationsStatus() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{notificationId}", 5)
                         .header("Authorization", "Bearer " + token)
@@ -103,9 +110,22 @@ public class UserNotificationControllerTest extends ControllerAbstractIntegratio
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         UserNotification userNotification = entityManager
-                .createQuery("SELECT un from UserNotification un WHERE un.id = 5", UserNotification.class)
+                .createQuery("SELECT un FROM UserNotification un WHERE un.id = 5", UserNotification.class)
                 .getSingleResult();
         assertEquals(false, userNotification.isShow());
+    }
+
+    @Test
+    @DataSet(value = {"/datasets/controllers/userNotification_controller/user-entities.yml",
+            "/datasets/controllers/userNotification_controller/user_notification.yml",
+            "/datasets/controllers/userNotification_controller/notification.yml"}, cleanBefore = true)
+    public void testNotificationsStatusNotCorrectId() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{notificationId}", 7)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(userNotificationDto))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(jsonPath("$.message", Is.is("UserNotification not found")));
     }
 }
 
