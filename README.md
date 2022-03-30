@@ -5,7 +5,7 @@
 # Docker Guide
 ### Start Postgres
 
-To create and start the database enter the following command in the terminal in the root folder of the project
+To create and start the database enter the following command in the terminal in the docker-for-local folder of the project
 
 ```docker-compose up -d```
 
