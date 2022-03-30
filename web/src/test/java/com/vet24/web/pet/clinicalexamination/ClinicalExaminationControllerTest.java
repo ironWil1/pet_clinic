@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class ClinicalExaminationControllerTest extends ControllerAbstractIntegrationTest {
@@ -89,9 +88,8 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
                 .andExpect(jsonPath("$.petId", Is.is(100)))
                 .andExpect(jsonPath("$.weight", Is.is(10.0)))
                 .andExpect(jsonPath("$.isCanMove", Is.is(true)))
-                .andExpect(jsonPath("$.text", Is.is("textNew")))
-                .andExpect(content().string(
-                        "{\"id\":31,\"petId\":100,\"weight\":10.0,\"isCanMove\":true,\"text\":\"textNew\"}"));
+                .andExpect(jsonPath("$.text", Is.is("textNew")));
+
         assertTrue("Проверка наличия новой информации о диспансеризации в БД",
                 entityManager.createQuery("SELECT COUNT(id) > 0 FROM ClinicalExamination WHERE " +
                                 "weight = :weight AND isCanMove = :isCanMove AND text = :text", Boolean.class)
