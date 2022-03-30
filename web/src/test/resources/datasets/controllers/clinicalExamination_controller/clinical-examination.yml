@@ -14,3 +14,4 @@ CLINICAL_EXAMINATION:
     DATE: "2020-03-01"
     IS_CAN_MOVE: true
     WEIGHT: 102.0
+    TEXT: "text3"

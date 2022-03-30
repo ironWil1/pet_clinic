@@ -2,20 +2,9 @@ package com.vet24.models.pet.clinicalexamination;
 
 import com.vet24.models.pet.Pet;
 import com.vet24.models.user.Doctor;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -32,17 +21,21 @@ public class ClinicalExamination implements Serializable {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @NonNull
     @Column(name = "date")
     private LocalDate date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NonNull
+    @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Pet pet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NonNull
+    @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Doctor doctor;
 
+    @NonNull
     @Column
-    private Double weight; //вес, при том последний вес аписывается в таблицу животного
+    private Double weight; //вес, при том последний вес описывается в таблицу животного
 
     @Column
     private Boolean isCanMove; // животное здорово и выдержит перевозку до места назначения? true/false
