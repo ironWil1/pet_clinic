@@ -136,7 +136,7 @@ public class ClinicalExaminationController {
 
         clinicalExamination.setDoctor(doctor);
         clinicalExamination.setDate(LocalDate.now());
-        pet.setWeight(clinicalExaminationDto.getWeight());
+        clinicalExamination.setWeight(clinicalExaminationDto.getWeight());
         clinicalExamination.setDate(LocalDate.now());
         clinicalExamination.setPet(pet);
         clinicalExamination.setId(examinationId);
