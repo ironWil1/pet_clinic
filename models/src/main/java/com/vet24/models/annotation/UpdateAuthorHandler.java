@@ -5,19 +5,17 @@ import com.vet24.models.user.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
-
-
-import javax.persistence.PreUpdate;
+import javax.persistence.PostUpdate;
 
 import java.lang.reflect.Field;
 
 
-public class UpdateAuthorHandler{
+public class UpdateAuthorHandler {
 
-    User activeUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    @PreUpdate
+    @PostUpdate
     public void methodCaller(Object obj) {
+        User activeUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         for (Field fields : obj.getClass().getDeclaredFields()) {
             if (fields.isAnnotationPresent(UpdateAuthor.class)) {
                 try {
