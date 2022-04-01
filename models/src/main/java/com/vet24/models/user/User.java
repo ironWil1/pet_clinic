@@ -50,6 +50,7 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Include
     private Long id;
 
+
     @NonNull
     @Column(nullable = false)
     private String firstname;

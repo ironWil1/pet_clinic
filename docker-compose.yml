@@ -10,7 +10,7 @@ services:
       - POSTGRES_DB=pets
       - PGDATA=${PGDATA}pets
     ports:
-      - 5433:5432
+      - "5433:5432"
     volumes:
       - pg_data:${PGDATA}pets
 
@@ -23,13 +23,13 @@ services:
       - POSTGRES_DB=test_pets
       - PGDATA=${PGDATA}test_pets
     ports:
-      - 5434:5432
+      - "5434:5432"
 
   petclinic:
      container_name: petclinic_run
      build: .
      ports:
-       - 8080:8080
+       - "8080:8080"
      depends_on:
        - pets_db
      environment:

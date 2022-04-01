@@ -1,5 +1,7 @@
 package com.vet24.models.user;
 
+//import com.vet24.models.annotation.CreateAuthor;
+import com.vet24.models.annotation.CreateAuthor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,8 +40,14 @@ public class Comment implements Serializable {
     @EqualsAndHashCode.Include
     private Long id;
 
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     private User user;
+
+    @CreateAuthor
+    @ManyToOne
+    @JoinColumn(name = "active_user_id")
+    private User activeUser;
 
     @Column(nullable = false)
     private String content;
