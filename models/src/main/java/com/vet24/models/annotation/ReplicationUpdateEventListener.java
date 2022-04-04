@@ -9,7 +9,6 @@ import org.hibernate.event.spi.PreUpdateEventListener;
 
 
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 
@@ -21,7 +20,6 @@ public class ReplicationUpdateEventListener implements PreUpdateEventListener {
 
 
     @Override
-    @Transactional
     public boolean onPreUpdate(PreUpdateEvent preUpdateEvent) {
 
         final Object entity = preUpdateEvent.getEntity();
