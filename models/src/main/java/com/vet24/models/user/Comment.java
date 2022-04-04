@@ -1,7 +1,6 @@
 package com.vet24.models.user;
 
 import com.vet24.models.annotation.UpdateAuthor;
-import com.vet24.models.annotation.UpdateAuthorHandler;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,13 +22,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@EntityListeners(UpdateAuthorHandler.class)
 @Entity
 public class Comment implements Serializable {
 
 
     @UpdateAuthor
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL)
     User userid;
 
 
