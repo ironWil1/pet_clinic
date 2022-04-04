@@ -35,7 +35,7 @@ public class ReplicationUpdateEventListener implements PreUpdateEventListener {
                 }
             }
         }
-        return true;
+        return false;
     }
 
 }
