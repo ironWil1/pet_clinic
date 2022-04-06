@@ -4,13 +4,8 @@ import java.lang.annotation.*;
 
 
 @Documented
-@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CreateAuthor {
 
 }
-
-
-
-
-
