@@ -2,21 +2,17 @@ package com.vet24.models.annotation;
 
 
 import com.vet24.models.user.User;
-
-
 import org.hibernate.event.spi.PreUpdateEvent;
 import org.hibernate.event.spi.PreUpdateEventListener;
-
-
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.reflect.Field;
 
 
-public class ReplicationUpdateEventListener implements PreUpdateEventListener {
+public class PreUpdateEventListenerImpl implements PreUpdateEventListener {
 
-    public static final ReplicationUpdateEventListener INSTANCE =
-            new ReplicationUpdateEventListener();
+    public static final PreUpdateEventListenerImpl INSTANCE =
+            new PreUpdateEventListenerImpl();
 
 
     @Override

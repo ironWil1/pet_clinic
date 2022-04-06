@@ -7,16 +7,16 @@ import org.hibernate.event.spi.EventType;
 import org.hibernate.integrator.spi.Integrator;
 import org.hibernate.service.spi.SessionFactoryServiceRegistry;
 
-public class ReplicationEventListenerIntegrator implements Integrator {
+public class EventListenerIntegrator implements Integrator {
 
-    public static final ReplicationEventListenerIntegrator INSTANCE = new ReplicationEventListenerIntegrator();
+    public static final EventListenerIntegrator INSTANCE = new EventListenerIntegrator();
 
     @Override
     public void integrate(Metadata metadata, SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
         final EventListenerRegistry eventListenerRegistry = serviceRegistry.getService(EventListenerRegistry.class);
         eventListenerRegistry.appendListeners(
                 EventType.PRE_UPDATE,
-                ReplicationUpdateEventListener.INSTANCE
+                PreUpdateEventListenerImpl.INSTANCE
         );
     }
 
