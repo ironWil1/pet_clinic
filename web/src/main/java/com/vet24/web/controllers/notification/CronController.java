@@ -1,5 +1,5 @@
 package com.vet24.web.controllers.notification;
-import com.vet24.models.dto.notification.NotificationDto;
+import com.vet24.models.dto.notification.MailNotification;
 import com.vet24.service.media.MailService;
 import com.vet24.service.notification.UserNotificationService;
 import com.vet24.service.notification.dto.NotificationDtoService;
@@ -27,8 +27,8 @@ public class CronController {
     @GetMapping(value = {"/api/admin/cron/notification"})
     public void checkNotifications() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
-        List<NotificationDto> notificationDtoList = notificationDtoService.getEmailsAndContentsForNotifications(tomorrow);
-        userNotificationService.changeFlagToTrue(notificationDtoList.stream().map(NotificationDto::getId).collect(Collectors.toList()));
-        mailService.sendNotificationMassage(notificationDtoList);
+        List<MailNotification> mailNotifications = notificationDtoService.getEmailsAndContentsForNotifications(tomorrow);
+        userNotificationService.changeFlagToTrue(mailNotifications.stream().map(MailNotification::getId).collect(Collectors.toList()));
+        mailService.sendNotificationMassage(mailNotifications);
     }
 }

@@ -1,6 +1,6 @@
 package com.vet24.service.media;
 
-import com.vet24.models.dto.notification.NotificationDto;
+import com.vet24.models.dto.notification.MailNotification;
 import com.vet24.models.pet.PetContact;
 
 import java.util.List;
@@ -16,5 +16,5 @@ public interface MailService {
 
     void sendMultipartHtmlMessage(String toMail, String subject, String content);
 
-    void sendNotificationMassage(List<NotificationDto> notificationDtoList);
+    void sendNotificationMassage(List<MailNotification> mailNotifications);
 }
