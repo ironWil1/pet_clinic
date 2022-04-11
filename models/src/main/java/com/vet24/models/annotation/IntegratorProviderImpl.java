@@ -8,7 +8,7 @@ import java.util.List;
 
 public class IntegratorProviderImpl implements IntegratorProvider {
 
-    ReplicationEventListenerIntegrator replicationEventListenerIntegrator = new ReplicationEventListenerIntegrator();
+    EventListenerIntegrator replicationEventListenerIntegrator = new EventListenerIntegrator();
     List<Integrator> setFields = new ArrayList<>();
 
 
