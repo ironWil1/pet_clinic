@@ -21,10 +21,6 @@ public class EventListenerIntegrator implements Integrator {
                 EventType.PRE_INSERT,
                 InsertEventListener.INSTANCE
         );
-//        eventListenerRegistry.appendListeners(
-//                EventType.PRE_UPDATE,
-//                PreUpdateEventListenerImpl.INSTANCE
-//        );
     }
 
     @Override
