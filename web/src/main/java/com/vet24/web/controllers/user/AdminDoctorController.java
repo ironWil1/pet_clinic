@@ -3,7 +3,7 @@ package com.vet24.web.controllers.user;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.user.DoctorDto;
 import com.vet24.models.dto.user.DoctorDtoPost;
-import com.vet24.models.mappers.user.AdminDoctorMapper;
+import com.vet24.models.mappers.user.DoctorPostMapper;
 import com.vet24.models.mappers.user.DoctorMapper;
 import com.vet24.models.user.Doctor;
 import com.vet24.models.util.View;
@@ -31,13 +31,13 @@ public class AdminDoctorController {
 
     private final DoctorServiceImpl doctorServiceImpl;
     private final DoctorMapper doctorMapper;
-    private final AdminDoctorMapper adminDoctorMapper;
+    private final DoctorPostMapper doctorPostMapper;
 
 
-    public AdminDoctorController(DoctorServiceImpl doctorServiceImpl, DoctorMapper doctorMapper, AdminDoctorMapper adminDoctorMapper) {
+    public AdminDoctorController(DoctorServiceImpl doctorServiceImpl, DoctorMapper doctorMapper, DoctorPostMapper doctorPostMapper) {
         this.doctorServiceImpl = doctorServiceImpl;
         this.doctorMapper = doctorMapper;
-        this.adminDoctorMapper = adminDoctorMapper;
+        this.doctorPostMapper = doctorPostMapper;
     }
 
     @GetMapping("{id}")
@@ -68,9 +68,9 @@ public class AdminDoctorController {
     })
     @PostMapping
     public ResponseEntity<DoctorDto> doctorDtoPost(@JsonView(View.Post.class) @Valid @RequestBody DoctorDtoPost doctorDtoPost) {
-        Doctor doctor = adminDoctorMapper.toEntity(doctorDtoPost);
+        Doctor doctor = doctorPostMapper.toEntity(doctorDtoPost);
         doctorServiceImpl.persist(doctor);
-        return ResponseEntity.status(200).body(adminDoctorMapper.toDto(doctor));
+        return ResponseEntity.status(200).body(doctorPostMapper.toDto(doctor));
     }
 
     @Operation(summary = "Update doctor")

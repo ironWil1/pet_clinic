@@ -10,5 +10,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Mapper(componentModel = "spring")
-public interface AdminDoctorMapper extends DtoMapper<Doctor, DoctorDtoPost>, EntityMapper<DoctorDto, Doctor> {
+public interface DoctorPostMapper extends DtoMapper<Doctor, DoctorDtoPost>, EntityMapper<DoctorDto, Doctor> {
 }
