@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class MailNotificationDtoDaoImpl implements MailNotificationDtoDao {
+public class NotificationDtoDaoImpl implements MailNotificationDtoDao {
 
     @PersistenceContext
     private EntityManager manager;
