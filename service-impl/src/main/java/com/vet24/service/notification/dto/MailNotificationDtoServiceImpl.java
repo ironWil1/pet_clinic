@@ -1,6 +1,6 @@
 package com.vet24.service.notification.dto;
 
-import com.vet24.dao.notification.dto.NotificationDtoDao;
+import com.vet24.dao.notification.dto.MailNotificationDtoDao;
 import com.vet24.models.dto.notification.MailNotification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,13 +9,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class NotificationDtoServiceImpl implements NotificationDtoService{
+public class MailNotificationDtoServiceImpl implements MailNotificationDtoService {
 
     @Autowired
-    private final NotificationDtoDao notificationDtoDao;
+    private final MailNotificationDtoDao notificationDtoDao;
 
-    public NotificationDtoServiceImpl(NotificationDtoDao notificationDtoDao) {
-        this.notificationDtoDao = notificationDtoDao;
+    public MailNotificationDtoServiceImpl(MailNotificationDtoDao mailNotificationDtoDao) {
+        this.notificationDtoDao = mailNotificationDtoDao;
     }
 
 
