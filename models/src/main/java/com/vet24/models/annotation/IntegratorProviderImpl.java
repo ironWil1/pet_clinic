@@ -9,12 +9,12 @@ import java.util.List;
 public class IntegratorProviderImpl implements IntegratorProvider {
 
     EventListenerIntegrator replicationEventListenerIntegrator = new EventListenerIntegrator();
-    List<Integrator> setFields = new ArrayList<>();
+    List<Integrator> reli = new ArrayList<>();
 
 
     @Override
     public List<Integrator> getIntegrators() {
-        setFields.add(replicationEventListenerIntegrator);
-        return setFields;
+        reli.add(replicationEventListenerIntegrator);
+        return reli;
     }
 }
