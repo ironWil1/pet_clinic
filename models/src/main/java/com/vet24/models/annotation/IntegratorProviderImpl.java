@@ -8,13 +8,13 @@ import java.util.List;
 
 public class IntegratorProviderImpl implements IntegratorProvider {
 
-    EventListenerIntegrator replicationEventListenerIntegrator = new EventListenerIntegrator();
+    EventListenerIntegrator EventListenerIntegrator = new EventListenerIntegrator();
     List<Integrator> reli = new ArrayList<>();
 
 
     @Override
     public List<Integrator> getIntegrators() {
-        reli.add(replicationEventListenerIntegrator);
+        reli.add(EventListenerIntegrator);
         return reli;
     }
 }
