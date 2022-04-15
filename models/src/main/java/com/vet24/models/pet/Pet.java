@@ -3,6 +3,7 @@ package com.vet24.models.pet;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
+import com.vet24.models.medicine.Appointment;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Procedure;
@@ -12,22 +13,24 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
+
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.FetchType;
+import javax.persistence.CascadeType;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,6 +120,20 @@ public abstract class Pet {
             orphanRemoval = true
     )
     private List<ClinicalExamination> clinicalExaminations = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Appointment> appointments = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "pet",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<PetContact> petContacts = new ArrayList<>();
 
     protected Pet() {
     }

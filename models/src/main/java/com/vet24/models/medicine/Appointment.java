@@ -19,10 +19,10 @@ public class Appointment implements Serializable {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Doctor doctor;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     private Pet pet;
 
     @Column(nullable = false)
