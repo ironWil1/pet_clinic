@@ -12,7 +12,6 @@ public class NotificationServiceImpl extends ReadWriteServiceImpl<Long, Notifica
 
     private final NotificationDao notificationDao;
 
-
     @Autowired
     public NotificationServiceImpl(ReadWriteDao<Long, Notification> readWriteDao, NotificationDao notificationDao) {
         super(readWriteDao);

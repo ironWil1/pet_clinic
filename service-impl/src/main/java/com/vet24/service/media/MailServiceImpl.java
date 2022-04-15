@@ -78,7 +78,7 @@ public class MailServiceImpl implements MailService {
         log.info("Message {} is created", message);
         try {
             for (MailNotification n : mailNotifications) {
-                var helper = new MimeMessageHelper(message,true, StandardCharsets.UTF_8.name());
+                var helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
                 helper.setFrom(mailFrom, mailSign);
                 helper.setTo(n.getEmail());
                 helper.setText(n.getContent());
