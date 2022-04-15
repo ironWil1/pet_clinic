@@ -11,7 +11,6 @@ import java.util.List;
 @Service
 public class MailNotificationDtoServiceImpl implements MailNotificationDtoService {
 
-    @Autowired
     private final MailNotificationDtoDao notificationDtoDao;
 
     public MailNotificationDtoServiceImpl(MailNotificationDtoDao mailNotificationDtoDao) {
