@@ -31,7 +31,6 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
-//TODO: Убрать NPE в getAllTopics
 @RestController
 @RequestMapping(value = "/api/user/topic")
 @Tag(name = "Topic controller", description = "operation with topic")
@@ -62,9 +61,6 @@ public class UserTopicController {
     @GetMapping("/allTopics")
     public ResponseEntity<List<TopicDto>> getAllTopics() {
         List<TopicDto> topicDtoList = topicMapper.toDto(topicService.getAll());
-        if (topicDtoList.isEmpty()) {
-            throw new NotFoundException("Topics not found");
-        }
         return new ResponseEntity<>(topicDtoList, HttpStatus.OK);
     }
 
@@ -77,9 +73,6 @@ public class UserTopicController {
     @GetMapping("/yourTopics")
     public ResponseEntity<List<TopicDto>> getAllClientTopic() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (topicMapper.toDto(topicService.getTopicByClientId(user.getId())).isEmpty()) {
-            throw new NotFoundException("Topics are not found");
-        }
         return new ResponseEntity<>(topicMapper.toDto(topicService.getTopicByClientId(user.getId())), HttpStatus.OK);
     }
 
