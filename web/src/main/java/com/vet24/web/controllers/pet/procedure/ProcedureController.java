@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
+
+import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
 
 @RestController
 @Slf4j
@@ -78,7 +79,8 @@ public class ProcedureController {
     })
     @GetMapping("/{procedureId}")
     public ResponseEntity<ProcedureDto> getById(@PathVariable Long petId, @PathVariable Long procedureId) {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getPrincipalOrNull();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = procedureService.getByKey(procedureId);
 
@@ -116,7 +118,8 @@ public class ProcedureController {
     public ResponseEntity<ProcedureDto> save(@PathVariable Long petId, @Validated(OnCreate.class)
     @RequestBody AbstractNewProcedureDto newProcedureDto) {
 
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getPrincipalOrNull();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = newProcedureMapper.toEntity(newProcedureDto);
 
@@ -152,7 +155,8 @@ public class ProcedureController {
                                                @JsonView(View.Put.class)
                                                @Validated(OnUpdate.class)@RequestBody ProcedureDto procedureDto) {
 
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getPrincipalOrNull();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = procedureService.getByKey(procedureId);
 
@@ -189,7 +193,8 @@ public class ProcedureController {
     })
     @DeleteMapping("/{procedureId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long petId, @PathVariable Long procedureId) {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getPrincipalOrNull();
         Procedure procedure = procedureService.getByKey(procedureId);
         Pet pet = petService.getByKey(petId);
 

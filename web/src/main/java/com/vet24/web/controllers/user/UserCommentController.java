@@ -20,11 +20,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
+
+import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
 
 @RestController
 @RequestMapping("api/user/comment/")
@@ -55,7 +56,8 @@ public class UserCommentController {
             throw new NotFoundException("Comment is not found");
         }
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) getPrincipalOrNull();
         CommentReaction commentLike = new CommentReaction(comment, user, positive);
         commentReactionService.update(commentLike);
         log.info("The reaction on the comment was added as positive {}", commentLike.getPositive());
@@ -78,7 +80,8 @@ public class UserCommentController {
             throw new NotFoundException("Comment not found");
         }
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) getPrincipalOrNull();
         Comment comment = commentService.getByKey(commentId);
 
         if (!comment.getUser().equals(user)) {
@@ -99,7 +102,8 @@ public class UserCommentController {
     })
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> removeComment(@PathVariable("commentId") Long commentId) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) getPrincipalOrNull();
         Comment comment = commentService.getByKey(commentId);
         if (comment != null) {
             if (comment.getUser().equals(user)) {

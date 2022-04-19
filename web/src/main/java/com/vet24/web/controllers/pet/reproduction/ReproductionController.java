@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
+
+import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
 
 @RestController
 @Slf4j
@@ -66,7 +67,8 @@ public class ReproductionController {
     public ResponseEntity<ReproductionDto> getById(@PathVariable Long petId,
                                                    @PathVariable Long reproductionId) {
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getPrincipalOrNull();
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
@@ -104,7 +106,8 @@ public class ReproductionController {
 
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.toEntity(reproductionDto);
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getPrincipalOrNull();
 
         if (pet == null) {
             throw new NotFoundException(PET_NOT_FOUND);
@@ -139,7 +142,8 @@ public class ReproductionController {
 
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getPrincipalOrNull();
 
         if (pet == null) {
             throw new NotFoundException(PET_NOT_FOUND);
@@ -175,7 +179,8 @@ public class ReproductionController {
     public ResponseEntity<Void> deleteById(@PathVariable Long petId, @PathVariable Long reproductionId) {
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getPrincipalOrNull();
 
         if (pet == null) {
             throw new NotFoundException(PET_NOT_FOUND);
