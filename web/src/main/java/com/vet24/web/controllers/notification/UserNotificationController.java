@@ -10,13 +10,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 import org.webjars.NotFoundException;
 
 import java.util.List;
 
-import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
+//import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
 
 @RestController
 @Slf4j
@@ -39,8 +40,8 @@ public class UserNotificationController {
     @GetMapping("")
     public ResponseEntity<List<UserNotificationDto>> getAllNotifications() {
 
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getPrincipalOrNull();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User) getPrincipalOrNull();
         List<UserNotification> userNotificationList = userNotificationService.getAllUserNotificationByUserId(user.getId());
 
         return new ResponseEntity<>(userNotificationDtoMapper.toDto(userNotificationList), HttpStatus.OK);
@@ -54,8 +55,8 @@ public class UserNotificationController {
     @GetMapping("/{notificationId}")
     public ResponseEntity<UserNotificationDto> getUserNotificationById(@PathVariable("notificationId") Long notificationId) {
 
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getPrincipalOrNull();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User) getPrincipalOrNull();
         UserNotification userNotification = userNotificationService.getByKey(notificationId);
 
         if (userNotification.getUser().getId() == user.getId()) {
@@ -69,8 +70,8 @@ public class UserNotificationController {
     @PutMapping("/{notificationId}")
     public void notificationsStatus(@PathVariable("notificationId") Long notificationId) {
 
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getPrincipalOrNull();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User) getPrincipalOrNull();
         UserNotification userNotification = userNotificationService.getByKey(notificationId);
 
         if (userNotification.getUser().getId() == user.getId()) {

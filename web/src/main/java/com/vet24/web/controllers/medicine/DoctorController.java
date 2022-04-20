@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +34,7 @@ import org.webjars.NotFoundException;
 
 import java.util.List;
 
-import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
+//import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
 
 @RestController
 @Slf4j
@@ -77,8 +78,8 @@ public class DoctorController {
             log.info("No such pet found with Id {}",petId);
             throw new NotFoundException("No such pet found");
         }
-//        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Doctor doctor = (Doctor) getPrincipalOrNull();
+        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Doctor doctor = (Doctor) getPrincipalOrNull();
         Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
         diagnosisService.persist(diagnosis);
         log.info("Added new diagnosis {}",text);

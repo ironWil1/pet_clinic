@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
@@ -30,7 +31,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
+//import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
 
 //TODO: Убрать NPE в getAllTopics
 @RestController
@@ -77,8 +78,8 @@ public class UserTopicController {
     })
     @GetMapping("/yourTopics")
     public ResponseEntity<List<TopicDto>> getAllClientTopic() {
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getPrincipalOrNull();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User) getPrincipalOrNull();
         if (topicMapper.toDto(topicService.getTopicByClientId(user.getId())).isEmpty()) {
             throw new NotFoundException("Topics are not found");
         }
@@ -112,8 +113,8 @@ public class UserTopicController {
             throw new BadRequestException("title or content can't null");
         }
         Topic topic = topicMapper.toEntity(topicDto);
-//        topic.setTopicStarter((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        topic.setTopicStarter((User) getPrincipalOrNull());
+        topic.setTopicStarter((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+//        topic.setTopicStarter((User) getPrincipalOrNull());
         topic.setCreationDate(LocalDateTime.now());
         topic.setLastUpdateDate(LocalDateTime.now());
         topicService.persist(topic);
@@ -132,8 +133,8 @@ public class UserTopicController {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic not found");
         }
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getPrincipalOrNull();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User) getPrincipalOrNull();
         Topic topic = topicService.getByKey(topicId);
 
         if (!topic.getTopicStarter().equals(user)) {
@@ -160,8 +161,8 @@ public class UserTopicController {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic is not found");
         }
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getPrincipalOrNull();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User) getPrincipalOrNull();
         Topic topic = topicService.getByKey(topicId);
         if (!topic.getTopicStarter().equals(user)) {
             throw new NotFoundException("it's not you topic");

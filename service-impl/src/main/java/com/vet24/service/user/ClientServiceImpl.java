@@ -3,13 +3,14 @@ package com.vet24.service.user;
 import com.vet24.dao.user.ClientDao;
 import com.vet24.models.user.Client;
 import com.vet24.service.ReadWriteServiceImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
+//import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
 
 @Service
 public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implements ClientService {
@@ -26,8 +27,8 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     @Override
     @Transactional
     public Client getCurentClientEasy() {
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Client client = (Client) getPrincipalOrNull();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) getPrincipalOrNull();
         return clientDao.getClientByEmail(client.getUsername());
     }
 
@@ -41,16 +42,16 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     @Override
     @Transactional(readOnly = true)
     public Client getCurrentClientWithPets() {
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Client client = (Client) getPrincipalOrNull();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) getPrincipalOrNull();
         return clientDao.getClientWithPetsByEmail(client.getUsername());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Client getCurrentClientWithReactions() {
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Client client = (Client) getPrincipalOrNull();
+        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) getPrincipalOrNull();
         return clientDao.getClientWithReactionsByEmail(client.getUsername());
     }
 
