@@ -31,6 +31,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
 import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 
@@ -77,7 +78,8 @@ public class UserTopicController {
     @GetMapping("/yourTopics")
     public ResponseEntity<List<TopicDto>> getAllClientTopic() {
 //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getSecurityUserOrNull();
+//        User user = (User) getSecurityUserOrNull();
+        User user = (User) getPrincipalOrNull();
         if (topicMapper.toDto(topicService.getTopicByClientId(user.getId())).isEmpty()) {
             throw new NotFoundException("Topics are not found");
         }
@@ -112,7 +114,9 @@ public class UserTopicController {
         }
         Topic topic = topicMapper.toEntity(topicDto);
 //        topic.setTopicStarter((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        topic.setTopicStarter((User) getSecurityUserOrNull());
+//        topic.setTopicStarter((User) getSecurityUserOrNull());
+        topic.setTopicStarter((User) getPrincipalOrNull());
+
         topic.setCreationDate(LocalDateTime.now());
         topic.setLastUpdateDate(LocalDateTime.now());
         topicService.persist(topic);
@@ -132,7 +136,8 @@ public class UserTopicController {
             throw new NotFoundException("topic not found");
         }
 //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getSecurityUserOrNull();;
+//        User user = (User) getSecurityUserOrNull();
+        User user = (User) getPrincipalOrNull();
         Topic topic = topicService.getByKey(topicId);
 
         if (!topic.getTopicStarter().equals(user)) {
@@ -160,7 +165,8 @@ public class UserTopicController {
             throw new NotFoundException("topic is not found");
         }
 //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getSecurityUserOrNull();
+//        User user = (User) getSecurityUserOrNull();
+        User user = (User) getPrincipalOrNull();
         Topic topic = topicService.getByKey(topicId);
         if (!topic.getTopicStarter().equals(user)) {
             throw new NotFoundException("it's not you topic");
