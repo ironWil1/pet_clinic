@@ -7,6 +7,7 @@ import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.clinicalexamination.ClinicalExaminationMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
+import com.vet24.models.user.Client;
 import com.vet24.models.user.Doctor;
 import com.vet24.models.util.View;
 import com.vet24.service.pet.PetService;
@@ -29,7 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 import java.time.LocalDate;
 
-//import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
 
 @RestController
 @RequestMapping("/api/doctor/exam")
@@ -89,8 +91,9 @@ public class ClinicalExaminationController {
             throw new NotFoundException("pet not found");
         }
         clinicalExamination.setId(null);
-        clinicalExamination.setDoctor((Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-//        clinicalExamination.setDoctor((Doctor) getPrincipalOrNull());
+//        clinicalExamination.setDoctor((Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        clinicalExamination.setDoctor((Doctor) getSecurityUserOrNull());
+
         clinicalExamination.setDate(LocalDate.now());
 
         clinicalExaminationService.persist(clinicalExamination);
@@ -124,8 +127,8 @@ public class ClinicalExaminationController {
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
-        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Doctor doctor = (Doctor) getPrincipalOrNull();
+//        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Doctor doctor = (Doctor)   getSecurityUserOrNull();
         if (doctor == null) {
             throw new NotFoundException("there is no doctor assigned to this pet");
         }

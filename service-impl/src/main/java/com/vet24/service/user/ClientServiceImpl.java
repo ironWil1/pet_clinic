@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 
 @Service
@@ -28,7 +28,8 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     @Override
     @Transactional
     public Client getCurentClientEasy() {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
 
         return clientDao.getClientByEmail(client.getUsername());
     }
@@ -43,7 +44,9 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     @Override
     @Transactional(readOnly = true)
     public Client getCurrentClientWithPets() {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
+
 
         return clientDao.getClientWithPetsByEmail(client.getUsername());
     }
@@ -51,7 +54,8 @@ public class ClientServiceImpl extends ReadWriteServiceImpl<Long, Client> implem
     @Override
     @Transactional(readOnly = true)
     public Client getCurrentClientWithReactions() {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
 
         return clientDao.getClientWithReactionsByEmail(client.getUsername());
     }

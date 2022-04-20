@@ -68,7 +68,7 @@ public class ClientReviewController {
             Comment comment = null;
             DoctorReview doctorReview = null;
 //            User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            User currentUser = (User) getSecurityUserOrNull();
+            User currentUser = getSecurityUserOrNull();
             Long userId = currentUser.getId();
             if (doctorReviewService.getByDoctorAndClientId(doctorId, userId) == null) {
                 comment = new Comment(
@@ -95,7 +95,8 @@ public class ClientReviewController {
     })
     @PutMapping(value = "/{doctorId}/review")
     public ResponseEntity<DoctorReviewDto> updateComment(@PathVariable("doctorId") Long doctorId, @RequestBody String text) {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
 
         DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
         if (doctorReview == null) {
@@ -120,7 +121,8 @@ public class ClientReviewController {
     })
     @DeleteMapping(value = "/{doctorId}/review")
     public ResponseEntity<Void> deleteComment(@PathVariable("doctorId") Long doctorId) {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
 
         DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
         if (doctorReview == null) {
@@ -144,7 +146,8 @@ public class ClientReviewController {
     })
     @GetMapping(value = "/{doctorId}/review")
     public ResponseEntity<DoctorReviewDto> getComment (@PathVariable("doctorId") Long doctorId) {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
 
         DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId,client.getId());
         if (doctorReview == null) {

@@ -59,7 +59,7 @@ public class UserCommentController {
         }
 
 //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getSecurityUserOrNull();
+        User user = getSecurityUserOrNull();
         CommentReaction commentLike = new CommentReaction(comment, user, positive);
         commentReactionService.update(commentLike);
         log.info("The reaction on the comment was added as positive {}", commentLike.getPositive());
@@ -83,7 +83,7 @@ public class UserCommentController {
         }
 
 //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getSecurityUserOrNull();
+        User user = getSecurityUserOrNull();
         Comment comment = commentService.getByKey(commentId);
 
         if (!comment.getUser().equals(user)) {
@@ -105,7 +105,7 @@ public class UserCommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> removeComment(@PathVariable("commentId") Long commentId) {
 //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getSecurityUserOrNull();
+        User user = getSecurityUserOrNull();
         Comment comment = commentService.getByKey(commentId);
         if (comment != null) {
             if (comment.getUser().equals(user)) {

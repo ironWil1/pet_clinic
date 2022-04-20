@@ -3,30 +3,22 @@ package com.vet24.models.secutity;
 import com.vet24.models.user.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.security.Principal;
 
 public class SecurityUtil {
     public static User getSecurityUserOrNull() {
 
-        User user = null;
-        try {
-            user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+//        User user = null;
+//        try {
+//            user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        } catch (NullPointerException e) {
+//            e.printStackTrace();
+//        }
+//        return user;
+
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            return null;
         }
-        return user;
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
     }
-
-    public static Principal getPrincipalOrNull() {
-
-        Principal principal = null;
-        try {
-            principal = (Principal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        return principal;
-    }
-
 }
-

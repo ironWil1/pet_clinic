@@ -32,7 +32,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
-//import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
+
 
 @RestController
 @Slf4j
@@ -68,8 +70,8 @@ public class ReproductionController {
     public ResponseEntity<ReproductionDto> getById(@PathVariable Long petId,
                                                    @PathVariable Long reproductionId) {
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Client client = (Client) getPrincipalOrNull();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
@@ -107,8 +109,8 @@ public class ReproductionController {
 
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.toEntity(reproductionDto);
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Client client = (Client) getPrincipalOrNull();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
 
         if (pet == null) {
             throw new NotFoundException(PET_NOT_FOUND);
@@ -143,8 +145,8 @@ public class ReproductionController {
 
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Client client = (Client) getPrincipalOrNull();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
 
         if (pet == null) {
             throw new NotFoundException(PET_NOT_FOUND);
@@ -180,8 +182,8 @@ public class ReproductionController {
     public ResponseEntity<Void> deleteById(@PathVariable Long petId, @PathVariable Long reproductionId) {
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Client client = (Client) getPrincipalOrNull();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
 
         if (pet == null) {
             throw new NotFoundException(PET_NOT_FOUND);

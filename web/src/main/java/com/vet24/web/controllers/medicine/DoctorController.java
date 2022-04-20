@@ -10,6 +10,7 @@ import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.Treatment;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Procedure;
+import com.vet24.models.user.Client;
 import com.vet24.models.user.Doctor;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.TreatmentService;
@@ -34,7 +35,8 @@ import org.webjars.NotFoundException;
 
 import java.util.List;
 
-//import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
 
 @RestController
 @Slf4j
@@ -78,8 +80,8 @@ public class DoctorController {
             log.info("No such pet found with Id {}",petId);
             throw new NotFoundException("No such pet found");
         }
-        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Doctor doctor = (Doctor) getPrincipalOrNull();
+//        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Doctor doctor = (Doctor) getSecurityUserOrNull();
         Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
         diagnosisService.persist(diagnosis);
         log.info("Added new diagnosis {}",text);

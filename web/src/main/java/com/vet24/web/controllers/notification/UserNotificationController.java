@@ -42,7 +42,7 @@ public class UserNotificationController {
     public ResponseEntity<List<UserNotificationDto>> getAllNotifications() {
 
 //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getSecurityUserOrNull();
+        User user = getSecurityUserOrNull();
         List<UserNotification> userNotificationList = userNotificationService.getAllUserNotificationByUserId(user.getId());
 
         return new ResponseEntity<>(userNotificationDtoMapper.toDto(userNotificationList), HttpStatus.OK);
@@ -57,7 +57,7 @@ public class UserNotificationController {
     public ResponseEntity<UserNotificationDto> getUserNotificationById(@PathVariable("notificationId") Long notificationId) {
 
 //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getSecurityUserOrNull();
+        User user = getSecurityUserOrNull();
         UserNotification userNotification = userNotificationService.getByKey(notificationId);
 
         if (userNotification.getUser().getId() == user.getId()) {
@@ -72,7 +72,7 @@ public class UserNotificationController {
     public void notificationsStatus(@PathVariable("notificationId") Long notificationId) {
 
 //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) getSecurityUserOrNull();
+        User user = getSecurityUserOrNull();
         UserNotification userNotification = userNotificationService.getByKey(notificationId);
 
         if (userNotification.getUser().getId() == user.getId()) {

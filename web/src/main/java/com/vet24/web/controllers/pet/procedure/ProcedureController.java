@@ -39,7 +39,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
-//import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
 
 @RestController
 @Slf4j
@@ -80,8 +81,8 @@ public class ProcedureController {
     })
     @GetMapping("/{procedureId}")
     public ResponseEntity<ProcedureDto> getById(@PathVariable Long petId, @PathVariable Long procedureId) {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Client client = (Client) getPrincipalOrNull();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = procedureService.getByKey(procedureId);
 
@@ -119,8 +120,8 @@ public class ProcedureController {
     public ResponseEntity<ProcedureDto> save(@PathVariable Long petId, @Validated(OnCreate.class)
     @RequestBody AbstractNewProcedureDto newProcedureDto) {
 
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Client client = (Client) getPrincipalOrNull();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = newProcedureMapper.toEntity(newProcedureDto);
 
@@ -156,8 +157,8 @@ public class ProcedureController {
                                                @JsonView(View.Put.class)
                                                @Validated(OnUpdate.class)@RequestBody ProcedureDto procedureDto) {
 
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Client client = (Client) getPrincipalOrNull();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
         Procedure procedure = procedureService.getByKey(procedureId);
 
@@ -194,8 +195,8 @@ public class ProcedureController {
     })
     @DeleteMapping("/{procedureId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long petId, @PathVariable Long procedureId) {
-        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        Client client = (Client) getPrincipalOrNull();
+//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = (Client) getSecurityUserOrNull();
         Procedure procedure = procedureService.getByKey(procedureId);
         Pet pet = petService.getByKey(petId);
 
