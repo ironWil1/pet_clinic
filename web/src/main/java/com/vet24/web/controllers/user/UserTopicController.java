@@ -65,9 +65,6 @@ public class UserTopicController {
     @GetMapping("/allTopics")
     public ResponseEntity<List<TopicDto>> getAllTopics() {
         List<TopicDto> topicDtoList = topicMapper.toDto(topicService.getAll());
-        if (topicDtoList.isEmpty()) {
-            throw new NotFoundException("Topics not found");
-        }
         return new ResponseEntity<>(topicDtoList, HttpStatus.OK);
     }
 

@@ -1,8 +1,9 @@
 package com.vet24.web.controllers.notification;
-import com.vet24.models.dto.notification.NotificationDto;
+
+import com.vet24.models.dto.notification.MailNotification;
 import com.vet24.service.media.MailService;
 import com.vet24.service.notification.UserNotificationService;
-import com.vet24.service.notification.dto.NotificationDtoService;
+import com.vet24.service.notification.dto.MailNotificationDtoService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,9 +17,9 @@ public class CronController {
 
     private final UserNotificationService userNotificationService;
     private final MailService mailService;
-    private final NotificationDtoService notificationDtoService;
+    private final MailNotificationDtoService notificationDtoService;
 
-    public CronController(UserNotificationService userNotificationService, MailService mailService, NotificationDtoService notificationDtoService) {
+    public CronController(UserNotificationService userNotificationService, MailService mailService, MailNotificationDtoService notificationDtoService) {
         this.userNotificationService = userNotificationService;
         this.mailService = mailService;
         this.notificationDtoService = notificationDtoService;
@@ -27,8 +28,8 @@ public class CronController {
     @GetMapping(value = {"/api/admin/cron/notification"})
     public void checkNotifications() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
-        List<NotificationDto> notificationDtoList = notificationDtoService.getEmailsAndContentsForNotifications(tomorrow);
-        userNotificationService.changeFlagToTrue(notificationDtoList.stream().map(NotificationDto::getId).collect(Collectors.toList()));
-        mailService.sendNotificationMassage(notificationDtoList);
+        List<MailNotification> mailNotifications = notificationDtoService.getEmailsAndContentsForNotifications(tomorrow);
+        userNotificationService.changeFlagToTrue(mailNotifications.stream().map(MailNotification::getId).collect(Collectors.toList()));
+        mailService.sendNotificationMassage(mailNotifications);
     }
 }

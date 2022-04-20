@@ -1,6 +1,6 @@
 package com.vet24.service.media;
 
-import com.vet24.models.dto.notification.NotificationDto;
+import com.vet24.models.dto.notification.MailNotification;
 import com.vet24.models.pet.PetContact;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,13 +73,14 @@ public class MailServiceImpl implements MailService {
 
     // TODO: необходимо переделать метод получения email из NotificationDTO
     @Override
-    public void sendNotificationMassage(List<NotificationDto> notificationDtoList) {
+    public void sendNotificationMassage(List<MailNotification> mailNotifications) {
         var message = emailSender.createMimeMessage();
         log.info("Message {} is created", message);
         try {
-            for (NotificationDto n : notificationDtoList) {
-                var helper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
+            for (MailNotification n : mailNotifications) {
+                var helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
                 helper.setFrom(mailFrom, mailSign);
+                helper.setTo(n.getEmail());
                 helper.setText(n.getContent());
 
                 var resource = new ClassPathResource("/template-cover-cat-transparent-80.png");
