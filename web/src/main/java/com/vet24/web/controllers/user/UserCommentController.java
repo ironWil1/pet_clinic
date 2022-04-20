@@ -26,7 +26,8 @@ import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
 
-//import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
 
 @RestController
 @RequestMapping("api/user/comment/")
@@ -57,8 +58,8 @@ public class UserCommentController {
             throw new NotFoundException("Comment is not found");
         }
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        User user = (User) getPrincipalOrNull();
+//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) getSecurityUserOrNull();
         CommentReaction commentLike = new CommentReaction(comment, user, positive);
         commentReactionService.update(commentLike);
         log.info("The reaction on the comment was added as positive {}", commentLike.getPositive());
@@ -81,8 +82,8 @@ public class UserCommentController {
             throw new NotFoundException("Comment not found");
         }
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        User user = (User) getPrincipalOrNull();
+//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) getSecurityUserOrNull();
         Comment comment = commentService.getByKey(commentId);
 
         if (!comment.getUser().equals(user)) {
@@ -103,8 +104,8 @@ public class UserCommentController {
     })
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> removeComment(@PathVariable("commentId") Long commentId) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        User user = (User) getPrincipalOrNull();
+//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) getSecurityUserOrNull();
         Comment comment = commentService.getByKey(commentId);
         if (comment != null) {
             if (comment.getUser().equals(user)) {
