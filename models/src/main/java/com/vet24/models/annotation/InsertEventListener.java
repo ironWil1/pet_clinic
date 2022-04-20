@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.reflect.Field;
 
+import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
 import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 public class InsertEventListener implements PreInsertEventListener {
@@ -27,7 +28,8 @@ public class InsertEventListener implements PreInsertEventListener {
                 }
                 try {
 
-                    User activeUser = (User) getSecurityUserOrNull();
+//                    User activeUser = getSecurityUserOrNull();
+                    User activeUser = (User) getPrincipalOrNull();
 
 
                     fields.setAccessible(true);

@@ -7,6 +7,7 @@ import org.hibernate.event.spi.PreUpdateEventListener;
 
 import java.lang.reflect.Field;
 
+import static com.vet24.models.secutity.SecurityUtil.getPrincipalOrNull;
 import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 public class PreUpdateEventListenerImpl implements PreUpdateEventListener {
@@ -23,7 +24,8 @@ public class PreUpdateEventListenerImpl implements PreUpdateEventListener {
         for (Field fields : entity.getClass().getDeclaredFields()) {
             if (fields.isAnnotationPresent(UpdateAuthor.class)) {
                 try {
-                    User activeUser = (User) getSecurityUserOrNull();
+//                    User activeUser = (User) getSecurityUserOrNull();
+                    User activeUser = (User) getPrincipalOrNull();
                     fields.setAccessible(true);
                     fields.set(entity, activeUser);
                 } catch (IllegalAccessException e) {
