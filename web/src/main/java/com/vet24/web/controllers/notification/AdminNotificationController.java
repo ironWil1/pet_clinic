@@ -3,7 +3,11 @@ package com.vet24.web.controllers.notification;
 import com.vet24.models.dto.notification.NotificationDto;
 import com.vet24.models.mappers.notification.NotificationMapper;
 import com.vet24.models.notification.Notification;
+import com.vet24.models.notification.UserNotification;
+import com.vet24.models.user.User;
 import com.vet24.service.notification.NotificationService;
+import com.vet24.service.notification.UserNotificationService;
+import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,7 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -26,10 +33,14 @@ public class AdminNotificationController {
 
     private final NotificationService notificationService;
     private final NotificationMapper notificationMapper;
+    private final UserNotificationService userNotificationService;
+    private final UserService userService;
 
-    public AdminNotificationController(NotificationService notificationService, NotificationMapper notificationMapper) {
+    public AdminNotificationController(NotificationService notificationService, NotificationMapper notificationMapper, UserNotificationService userNotificationService, UserService userService) {
         this.notificationService = notificationService;
         this.notificationMapper = notificationMapper;
+        this.userNotificationService = userNotificationService;
+        this.userService = userService;
     }
 
 
@@ -115,4 +126,19 @@ public class AdminNotificationController {
         }
     }
 
+    @PostMapping("/api/admin/notification/{id}/addToUser")
+    public ResponseEntity<Map<Long, String>> addToUser(@RequestBody List<Long> listId, @PathVariable Long id) {
+        UserNotification notification = userNotificationService.getByKey(id);
+        Map<Long, String> response = new HashMap<>();
+        for (Long userId : listId) {
+            User user = userService.getByKey(userId);
+            if (user != null) {
+                user.getUserNotifications().add(notification);
+                userService.update(user);
+            } else {
+                response.put(userId, "User with id = " + userId + " not found");
+            }
+        }
+        return ResponseEntity.ok().body(response);
+    }
 }

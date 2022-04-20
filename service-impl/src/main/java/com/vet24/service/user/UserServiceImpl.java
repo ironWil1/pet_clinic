@@ -16,11 +16,12 @@ import java.util.List;
 public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements UserService {
 
     private final UserDao userDao;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
         super(userDao);
         this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
