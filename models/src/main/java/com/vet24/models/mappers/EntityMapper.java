@@ -10,6 +10,4 @@ public interface EntityMapper<D, E>{
     D toDto (E entity);
     List<D> toDto (List<E> entities);
     void updateEntity(D dto, @MappingTarget E entity);
-
-    Notification toEntity(UserNotification userNotification);
 }

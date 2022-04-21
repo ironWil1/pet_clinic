@@ -32,21 +32,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userDetailsService;
     private final AuthTokenFilter authTokenFilter;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SecurityConfig(UserService userDetailsService, AuthTokenFilter authTokenFilter, PasswordEncoder passwordEncoder) {
+    public SecurityConfig(UserService userDetailsService, AuthTokenFilter authTokenFilter) {
         this.userDetailsService = userDetailsService;
         this.authTokenFilter = authTokenFilter;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
     public DaoAuthenticationProvider daoAuthProvider() {
         DaoAuthenticationProvider daoAuthProvider = new DaoAuthenticationProvider();
         daoAuthProvider.setUserDetailsService(userDetailsService);
-        daoAuthProvider.setPasswordEncoder(passwordEncoder);
+        daoAuthProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthProvider;
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return DefaultPasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Override

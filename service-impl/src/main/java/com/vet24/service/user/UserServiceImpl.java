@@ -16,12 +16,11 @@ import java.util.List;
 public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements UserService {
 
     private final UserDao userDao;
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDao userDao) {
         super(userDao);
         this.userDao = userDao;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -48,7 +47,7 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
     @Transactional
     public User update(User user) {
         String newPassword = user.getPassword();
-        if(passwordEncoder.upgradeEncoding(newPassword)) {
+        if (passwordEncoder.upgradeEncoding(newPassword)) {
             String password = passwordEncoder.encode(newPassword);
             user.setPassword(password);
         }
@@ -70,7 +69,7 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
     public List<User> updateAll(List<User> users) {
         for (User user : users) {
             String newPassword = user.getPassword();
-            if(passwordEncoder.upgradeEncoding(newPassword)) {
+            if (passwordEncoder.upgradeEncoding(newPassword)) {
                 String password = passwordEncoder.encode(newPassword);
                 user.setPassword(password);
             }
