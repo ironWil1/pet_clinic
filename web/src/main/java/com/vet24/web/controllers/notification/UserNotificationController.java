@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 import org.webjars.NotFoundException;
@@ -41,7 +40,6 @@ public class UserNotificationController {
     @GetMapping("")
     public ResponseEntity<List<UserNotificationDto>> getAllNotifications() {
 
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = getSecurityUserOrNull();
         List<UserNotification> userNotificationList = userNotificationService.getAllUserNotificationByUserId(user.getId());
 
@@ -56,7 +54,6 @@ public class UserNotificationController {
     @GetMapping("/{notificationId}")
     public ResponseEntity<UserNotificationDto> getUserNotificationById(@PathVariable("notificationId") Long notificationId) {
 
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = getSecurityUserOrNull();
         UserNotification userNotification = userNotificationService.getByKey(notificationId);
 
@@ -71,7 +68,6 @@ public class UserNotificationController {
     @PutMapping("/{notificationId}")
     public void notificationsStatus(@PathVariable("notificationId") Long notificationId) {
 
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = getSecurityUserOrNull();
         UserNotification userNotification = userNotificationService.getByKey(notificationId);
 

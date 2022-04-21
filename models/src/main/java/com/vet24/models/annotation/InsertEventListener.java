@@ -26,9 +26,7 @@ public class InsertEventListener implements PreInsertEventListener {
                     continue;
                 }
                 try {
-
                     User activeUser = getSecurityUserOrNull();
-
                     fields.setAccessible(true);
                     fields.set(entity, activeUser);
                 } catch (IllegalAccessException e) {

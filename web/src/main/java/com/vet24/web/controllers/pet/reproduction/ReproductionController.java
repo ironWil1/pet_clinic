@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,24 +69,23 @@ public class ReproductionController {
     public ResponseEntity<ReproductionDto> getById(@PathVariable Long petId,
                                                    @PathVariable Long reproductionId) {
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Client client = (Client) getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
-            log.info("The pet with this id {} was not found",petId);
+            log.info("The pet with this id {} was not found", petId);
             throw new NotFoundException(PET_NOT_FOUND);
         }
         if (reproduction == null) {
-            log.info("The reproduction with this id {} was not found",reproductionId);
+            log.info("The reproduction with this id {} was not found", reproductionId);
             throw new NotFoundException(REPRODUCTION_NOT_FOUND);
         }
         if (!pet.getClient().getId().equals(client.getId())) {
-            log.info("The pet with this id {} is not yours",petId);
+            log.info("The pet with this id {} is not yours", petId);
             throw new BadRequestException(NOT_YOURS);
         }
         if (!reproduction.getPet().getId().equals(pet.getId())) {
-            log.info("The reproduction with this id {}  not assigned to this pet {}",reproduction.getPet().getId(),petId);
+            log.info("The reproduction with this id {}  not assigned to this pet {}", reproduction.getPet().getId(), petId);
             throw new BadRequestException(NOT_ASSIGNED);
         }
         ReproductionDto reproductionDto = reproductionMapper.toDto(reproduction);
@@ -109,7 +107,6 @@ public class ReproductionController {
 
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.toEntity(reproductionDto);
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Client client = (Client) getSecurityUserOrNull();
 
         if (pet == null) {
@@ -124,7 +121,7 @@ public class ReproductionController {
 
         pet.addReproduction(reproduction);
         petService.update(pet);
-        log.info("Added reproduction {} to a pet with this id{}",reproductionDto.toString(),petId);
+        log.info("Added reproduction {} to a pet with this id{}", reproductionDto.toString(), petId);
         return new ResponseEntity<>(reproductionMapper.toDto(reproduction), HttpStatus.CREATED);
     }
 
@@ -145,7 +142,6 @@ public class ReproductionController {
 
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Client client = (Client) getSecurityUserOrNull();
 
         if (pet == null) {
@@ -165,7 +161,7 @@ public class ReproductionController {
         reproduction.setPet(pet);
         reproduction.setId(reproductionId);
         reproductionService.update(reproduction);
-        log.info("Updated reproduction with id {} for a pet with this id{}",reproductionId,petId);
+        log.info("Updated reproduction with id {} for a pet with this id{}", reproductionId, petId);
 
         return new ResponseEntity<>(reproductionMapper.toDto(reproduction), HttpStatus.OK);
 
@@ -182,7 +178,6 @@ public class ReproductionController {
     public ResponseEntity<Void> deleteById(@PathVariable Long petId, @PathVariable Long reproductionId) {
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Client client = (Client) getSecurityUserOrNull();
 
         if (pet == null) {
@@ -199,7 +194,7 @@ public class ReproductionController {
         }
         pet.removeReproduction(reproduction);
         petService.update(pet);
-        log.info("Deleted reproduction with id{} for a pet with this id {}",reproductionId,petId);
+        log.info("Deleted reproduction with id{} for a pet with this id {}", reproductionId, petId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

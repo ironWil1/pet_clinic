@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
@@ -67,7 +66,6 @@ public class ClientReviewController {
         } else {
             Comment comment = null;
             DoctorReview doctorReview = null;
-//            User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             User currentUser = getSecurityUserOrNull();
             Long userId = currentUser.getId();
             if (doctorReviewService.getByDoctorAndClientId(doctorId, userId) == null) {
@@ -95,7 +93,6 @@ public class ClientReviewController {
     })
     @PutMapping(value = "/{doctorId}/review")
     public ResponseEntity<DoctorReviewDto> updateComment(@PathVariable("doctorId") Long doctorId, @RequestBody String text) {
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Client client = (Client) getSecurityUserOrNull();
 
         DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
@@ -121,7 +118,6 @@ public class ClientReviewController {
     })
     @DeleteMapping(value = "/{doctorId}/review")
     public ResponseEntity<Void> deleteComment(@PathVariable("doctorId") Long doctorId) {
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Client client = (Client) getSecurityUserOrNull();
 
         DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
@@ -145,11 +141,10 @@ public class ClientReviewController {
             @ApiResponse(responseCode = "404", description = "Comment not found")
     })
     @GetMapping(value = "/{doctorId}/review")
-    public ResponseEntity<DoctorReviewDto> getComment (@PathVariable("doctorId") Long doctorId) {
-//        Client client = (Client) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<DoctorReviewDto> getComment(@PathVariable("doctorId") Long doctorId) {
         Client client = (Client) getSecurityUserOrNull();
 
-        DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId,client.getId());
+        DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
         if (doctorReview == null) {
             log.info("Comment not found");
             throw new NotFoundException("Comment not found");

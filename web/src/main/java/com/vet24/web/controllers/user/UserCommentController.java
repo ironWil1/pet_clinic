@@ -20,7 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
@@ -58,7 +57,6 @@ public class UserCommentController {
             throw new NotFoundException("Comment is not found");
         }
 
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = getSecurityUserOrNull();
         CommentReaction commentLike = new CommentReaction(comment, user, positive);
         commentReactionService.update(commentLike);
@@ -82,7 +80,6 @@ public class UserCommentController {
             throw new NotFoundException("Comment not found");
         }
 
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = getSecurityUserOrNull();
         Comment comment = commentService.getByKey(commentId);
 
@@ -104,7 +101,6 @@ public class UserCommentController {
     })
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> removeComment(@PathVariable("commentId") Long commentId) {
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = getSecurityUserOrNull();
         Comment comment = commentService.getByKey(commentId);
         if (comment != null) {

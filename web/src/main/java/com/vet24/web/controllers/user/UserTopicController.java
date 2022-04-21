@@ -75,9 +75,8 @@ public class UserTopicController {
     })
     @GetMapping("/yourTopics")
     public ResponseEntity<List<TopicDto>> getAllClientTopic() {
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = getSecurityUserOrNull();
 
+        User user = getSecurityUserOrNull();
         if (topicMapper.toDto(topicService.getTopicByClientId(user.getId())).isEmpty()) {
             throw new NotFoundException("Topics are not found");
         }
@@ -111,9 +110,7 @@ public class UserTopicController {
             throw new BadRequestException("title or content can't null");
         }
         Topic topic = topicMapper.toEntity(topicDto);
-//        topic.setTopicStarter((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         topic.setTopicStarter(getSecurityUserOrNull());
-
         topic.setCreationDate(LocalDateTime.now());
         topic.setLastUpdateDate(LocalDateTime.now());
         topicService.persist(topic);
@@ -132,11 +129,9 @@ public class UserTopicController {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic not found");
         }
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         User user = getSecurityUserOrNull();
-
         Topic topic = topicService.getByKey(topicId);
-
         if (!topic.getTopicStarter().equals(user)) {
             throw new NotFoundException("it's not your topic");
         }
@@ -161,7 +156,7 @@ public class UserTopicController {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic is not found");
         }
-//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         User user = getSecurityUserOrNull();
 
         Topic topic = topicService.getByKey(topicId);

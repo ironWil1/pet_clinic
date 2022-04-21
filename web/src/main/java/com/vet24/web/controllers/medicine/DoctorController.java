@@ -10,7 +10,6 @@ import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.Treatment;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Procedure;
-import com.vet24.models.user.Client;
 import com.vet24.models.user.Doctor;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.TreatmentService;
@@ -25,7 +24,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,7 +78,7 @@ public class DoctorController {
             log.info("No such pet found with Id {}",petId);
             throw new NotFoundException("No such pet found");
         }
-//        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         Doctor doctor = (Doctor) getSecurityUserOrNull();
         Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
         diagnosisService.persist(diagnosis);
