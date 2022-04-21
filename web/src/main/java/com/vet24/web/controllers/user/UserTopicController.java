@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
@@ -31,6 +30,10 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
+
+//TODO: Убрать NPE в getAllTopics
 @RestController
 @RequestMapping(value = "/api/user/topic")
 @Tag(name = "Topic controller", description = "operation with topic")
@@ -72,7 +75,11 @@ public class UserTopicController {
     })
     @GetMapping("/yourTopics")
     public ResponseEntity<List<TopicDto>> getAllClientTopic() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = getSecurityUserOrNull();
+        if (topicMapper.toDto(topicService.getTopicByClientId(user.getId())).isEmpty()) {
+            throw new NotFoundException("Topics are not found");
+        }
         return new ResponseEntity<>(topicMapper.toDto(topicService.getTopicByClientId(user.getId())), HttpStatus.OK);
     }
 
@@ -103,7 +110,7 @@ public class UserTopicController {
             throw new BadRequestException("title or content can't null");
         }
         Topic topic = topicMapper.toEntity(topicDto);
-        topic.setTopicStarter((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        topic.setTopicStarter(getSecurityUserOrNull());
         topic.setCreationDate(LocalDateTime.now());
         topic.setLastUpdateDate(LocalDateTime.now());
         topicService.persist(topic);
@@ -122,9 +129,9 @@ public class UserTopicController {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic not found");
         }
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Topic topic = topicService.getByKey(topicId);
 
+        User user = getSecurityUserOrNull();
+        Topic topic = topicService.getByKey(topicId);
         if (!topic.getTopicStarter().equals(user)) {
             throw new NotFoundException("it's not your topic");
         }
@@ -149,7 +156,9 @@ public class UserTopicController {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic is not found");
         }
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        User user = getSecurityUserOrNull();
+
         Topic topic = topicService.getByKey(topicId);
         if (!topic.getTopicStarter().equals(user)) {
             throw new NotFoundException("it's not you topic");

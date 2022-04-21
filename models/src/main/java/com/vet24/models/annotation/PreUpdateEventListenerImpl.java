@@ -4,10 +4,10 @@ package com.vet24.models.annotation;
 import com.vet24.models.user.User;
 import org.hibernate.event.spi.PreUpdateEvent;
 import org.hibernate.event.spi.PreUpdateEventListener;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.reflect.Field;
 
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 public class PreUpdateEventListenerImpl implements PreUpdateEventListener {
 
@@ -23,7 +23,8 @@ public class PreUpdateEventListenerImpl implements PreUpdateEventListener {
         for (Field fields : entity.getClass().getDeclaredFields()) {
             if (fields.isAnnotationPresent(UpdateAuthor.class)) {
                 try {
-                    User activeUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                    User activeUser = getSecurityUserOrNull();
+
                     fields.setAccessible(true);
                     fields.set(entity, activeUser);
                 } catch (IllegalAccessException e) {

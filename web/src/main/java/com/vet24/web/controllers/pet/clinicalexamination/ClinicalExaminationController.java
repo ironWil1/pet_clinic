@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 import java.time.LocalDate;
+
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
 
 @RestController
 @RequestMapping("/api/doctor/exam")
@@ -87,7 +89,8 @@ public class ClinicalExaminationController {
             throw new NotFoundException("pet not found");
         }
         clinicalExamination.setId(null);
-        clinicalExamination.setDoctor((Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        clinicalExamination.setDoctor((Doctor) getSecurityUserOrNull());
+
         clinicalExamination.setDate(LocalDate.now());
 
         clinicalExaminationService.persist(clinicalExamination);
@@ -121,7 +124,8 @@ public class ClinicalExaminationController {
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
-        Doctor doctor = (Doctor) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Doctor doctor = (Doctor) getSecurityUserOrNull();
         if (doctor == null) {
             throw new NotFoundException("there is no doctor assigned to this pet");
         }
