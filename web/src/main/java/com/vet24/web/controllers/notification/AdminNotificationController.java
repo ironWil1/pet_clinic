@@ -136,7 +136,8 @@ public class AdminNotificationController {
                 UserNotification userNotification = new UserNotification(notification, user, true);
                 userNotificationService.persist(userNotification);
             } else {
-                response.put(userId, "User with id = " + userId + " not found");
+                log.info("Notification with id {} not found");
+                throw new NotFoundException("Notification not found");
             }
         }
         return ResponseEntity.ok().body(response);
