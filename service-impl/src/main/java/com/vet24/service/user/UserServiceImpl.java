@@ -47,8 +47,10 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
     @Transactional
     public User update(User user) {
         String newPassword = user.getPassword();
+        if(passwordEncoder.upgradeEncoding(newPassword)) {
             String password = passwordEncoder.encode(newPassword);
             user.setPassword(password);
+        }
         return userDao.update(user);
     }
 
@@ -67,7 +69,7 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
     public List<User> updateAll(List<User> users) {
         for (User user : users) {
             String newPassword = user.getPassword();
-            if (passwordEncoder.upgradeEncoding(newPassword)) {
+            if(passwordEncoder.upgradeEncoding(newPassword)) {
                 String password = passwordEncoder.encode(newPassword);
                 user.setPassword(password);
             }
