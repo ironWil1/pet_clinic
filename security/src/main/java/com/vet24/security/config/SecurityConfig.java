@@ -47,11 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return daoAuthProvider;
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return DefaultPasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthProvider());
@@ -72,8 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/v3/api-docs/swagger-config/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                .antMatchers("/api/auth/submit", "/api/registration/**", "/api/auth").permitAll()
+                .antMatchers("/v3/api-docs/swagger-config/**","/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                .antMatchers("/api/auth/submit", "/api/registration/**","/api/auth").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/client/**").hasRole("CLIENT")
                 .antMatchers("/api/doctor/**").hasRole("DOCTOR")
@@ -89,13 +84,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();
         http.cors();
     }
-
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
+    @Bean
+    PasswordEncoder passwordEncoder(){
+        return DefaultPasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
