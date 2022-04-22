@@ -130,14 +130,15 @@ public class AdminNotificationController {
     public ResponseEntity<Map<Long, String>> addToUser(@RequestBody List<Long> listId, @PathVariable Long id) {
         Notification notification = notificationService.getByKey(id);
         Map<Long, String> response = new HashMap<>();
-        for (Long userId : listId) {
-            User user = userService.getByKey(userId);
-            if (user != null) {
-                UserNotification userNotification = new UserNotification(notification, user, true);
-                userNotificationService.persist(userNotification);
-            } else {
-                log.info("Notification with id {} not found");
-                throw new NotFoundException("Notification not found");
+        if (notification != null) {
+            for (Long userId : listId) {
+                User user = userService.getByKey(userId);
+                if (user != null) {
+                    UserNotification userNotification = new UserNotification(notification, user, true);
+                    userNotificationService.persist(userNotification);
+                } else {
+                    response.put(userId, "User with id = " + userId + " not found");
+                }
             }
         }
         return ResponseEntity.ok().body(response);
