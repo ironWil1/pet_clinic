@@ -1,6 +1,8 @@
 package com.vet24.models.track;
 
 
+import com.vet24.models.annotation.CreateAuthor;
+import com.vet24.models.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,6 +19,9 @@ public abstract class ChangeTrackedEntity {
     private LocalDateTime creationDateTime;
     @UpdateTimestamp
     private LocalDateTime lastUpdateDateTime;
+    @CreateAuthor
+    private User createAuthor;
+
 }
 
 
