@@ -1,6 +1,7 @@
 package com.vet24.models.medicine;
 
 
+import com.vet24.models.track.ChangeTrackedEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
-public class Medicine {
+public class Medicine extends ChangeTrackedEntity {
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
