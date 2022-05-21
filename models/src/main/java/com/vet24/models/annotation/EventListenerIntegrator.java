@@ -18,12 +18,12 @@ public class EventListenerIntegrator implements Integrator {
         final EventListenerRegistry eventListenerRegistry = serviceRegistry.getService(EventListenerRegistry.class);
 
         eventListenerRegistry.appendListeners(
-                EventType.PRE_INSERT,
-                InsertEventListener.INSTANCE
+                EventType.MERGE,
+                MergeEventListenerImpl.INSTANCE
         );
         eventListenerRegistry.appendListeners(
-                EventType.PRE_UPDATE,
-                PreUpdateEventListenerImpl.INSTANCE
+                EventType.PERSIST,
+                PersistEventListenerImpl.INSTANCE
         );
     }
 
