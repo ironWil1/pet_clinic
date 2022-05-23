@@ -1,25 +1,21 @@
 package com.vet24.models.annotation;
 
-
 import com.vet24.models.user.User;
-import org.hibernate.event.spi.PreUpdateEvent;
-import org.hibernate.event.spi.PreUpdateEventListener;
+import org.hibernate.HibernateException;
+import org.hibernate.event.spi.MergeEvent;
+import org.hibernate.event.spi.MergeEventListener;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 
 import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
-public class PreUpdateEventListenerImpl implements PreUpdateEventListener {
-
-    public static final PreUpdateEventListenerImpl INSTANCE =
-            new PreUpdateEventListenerImpl();
-
+public class MergeEventListenerImpl implements MergeEventListener {
+    public static final MergeEventListenerImpl INSTANCE = new MergeEventListenerImpl();
 
     @Override
-    public boolean onPreUpdate(PreUpdateEvent preUpdateEvent) {
-
-        final Object entity = preUpdateEvent.getEntity();
-
+    public void onMerge(MergeEvent mergeEvent) throws HibernateException {
+        final Object entity = mergeEvent.getEntity();
         for (Field fields : entity.getClass().getDeclaredFields()) {
             if (fields.isAnnotationPresent(UpdateAuthor.class)) {
                 try {
@@ -32,7 +28,15 @@ public class PreUpdateEventListenerImpl implements PreUpdateEventListener {
                 }
             }
         }
-        return false;
     }
 
+    @Override
+    public void onMerge(MergeEvent mergeEvent, Map map) throws HibernateException {
+
+    }
 }
+
+
+
+
+
