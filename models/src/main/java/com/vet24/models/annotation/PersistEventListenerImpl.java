@@ -18,22 +18,25 @@ public class PersistEventListenerImpl implements PersistEventListener {
     public void onPersist(PersistEvent persistEvent) throws HibernateException {
 
         final Object entity = persistEvent.getObject();
+        Class superClass = entity.getClass().getSuperclass();
+        if (superClass.getSimpleName().equals("ChangeTrackedEntity")) {
+            for (Field fields : superClass.getDeclaredFields()) {
+                if (fields.isAnnotationPresent(CreateAuthor.class)) {
 
-        for (Field fields : entity.getClass().getDeclaredFields()) {
-            if (fields.isAnnotationPresent(CreateAuthor.class)) {
-
-                if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                    continue;
-                }
-                try {
-                    User activeUser = getSecurityUserOrNull();
-                    fields.setAccessible(true);
-                    fields.set(entity, activeUser);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                        continue;
+                    }
+                    try {
+                        User activeUser = getSecurityUserOrNull();
+                        fields.setAccessible(true);
+                        fields.set(entity, activeUser);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
+
     }
 
 
