@@ -22,7 +22,21 @@ public class PersistEventListenerImpl implements PersistEventListener {
         if (superClass.getSimpleName().equals("ChangeTrackedEntity")) {
             for (Field fields : superClass.getDeclaredFields()) {
                 if (fields.isAnnotationPresent(CreateAuthor.class)) {
-
+                    if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                        continue;
+                    }
+                    try {
+                        User activeUser = getSecurityUserOrNull();
+                        fields.setAccessible(true);
+                        fields.set(entity, activeUser);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } else {
+            for (Field fields : entity.getClass().getDeclaredFields()) {
+                if (fields.isAnnotationPresent(CreateAuthor.class)) {
                     if (SecurityContextHolder.getContext().getAuthentication() == null) {
                         continue;
                     }
@@ -36,7 +50,6 @@ public class PersistEventListenerImpl implements PersistEventListener {
                 }
             }
         }
-
     }
 
 

@@ -31,6 +31,19 @@ public class MergeEventListenerImpl implements MergeEventListener {
                     }
                 }
             }
+        } else {
+            for (Field fields : entity.getClass().getDeclaredFields()) {
+                if (fields.isAnnotationPresent(UpdateAuthor.class)) {
+                    try {
+                        User activeUser = getSecurityUserOrNull();
+
+                        fields.setAccessible(true);
+                        fields.set(entity, activeUser);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     }
 
