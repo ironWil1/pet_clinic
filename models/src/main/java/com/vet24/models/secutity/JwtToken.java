@@ -12,10 +12,6 @@ import javax.persistence.Id;
 @Data
 public class JwtToken {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-
     @Id
     private String token;
 

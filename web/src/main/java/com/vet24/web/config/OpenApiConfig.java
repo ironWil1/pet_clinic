@@ -31,7 +31,6 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI(@Value("${application-description}") String appDescription,
                                  @Value("${application-version}") String appVersion) {
 
-        jwtTokenService.deleteAll(jwtTokenService.getAll());
         final String securitySchemeName = "bearerAuth";
 
         String clientJwt = jwtUtils.generateJwtToken("client1@email.com");
