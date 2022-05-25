@@ -1,6 +1,7 @@
 package com.vet24.web.config;
 
 import com.vet24.security.config.JwtUtils;
+import com.vet24.service.security.JwtTokenService;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -8,22 +9,29 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 @Configuration
 public class OpenApiConfig {
 
     JwtUtils jwtUtils;
 
+    @Autowired
+    JwtTokenService jwtTokenService;
+
     public OpenApiConfig(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
     }
+
     @Bean
     public OpenAPI customOpenAPI(@Value("${application-description}") String appDescription,
                                  @Value("${application-version}") String appVersion) {
 
+        jwtTokenService.deleteAll(jwtTokenService.getAll());
         final String securitySchemeName = "bearerAuth";
 
         String clientJwt = jwtUtils.generateJwtToken("client1@email.com");
