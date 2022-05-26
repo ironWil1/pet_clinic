@@ -4,6 +4,8 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.models.dto.user.CommentDto;
 import com.vet24.models.dto.user.RegisterDto;
 import com.vet24.models.dto.user.UserInfoDto;
+import com.vet24.security.config.JwtUtils;
+import com.vet24.service.security.JwtTokenService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +16,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.test.util.AssertionErrors.assertTrue;
+
 public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     AuthController authController;
+
+    @Autowired
+    JwtUtils jwtUtils;
+
+    @Autowired
+    JwtTokenService jwtTokenService;
 
     final String URI = "/api/auth";
 
@@ -76,5 +86,17 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.valueToTree(authRequest).toString()))
                 .andExpect(MockMvcResultMatchers.status().is(403));
+    }
+
+    @Test
+    public void generateJwtTokenTest(){
+        int expected = jwtTokenService.getAll().size();
+        jwtUtils.generateJwtToken("test");
+        assert(++expected==jwtTokenService.getAll().size());
+    }
+
+    @Test
+    public void JwtTokenExistTest(){
+        assert(jwtUtils.JwtTokenExist(jwtUtils.generateJwtToken("test")));
     }
 }
