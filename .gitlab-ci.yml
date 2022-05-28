@@ -46,7 +46,7 @@ integration_test_job:
       POSTGRES_PASSWORD: psw
   stage: test
   script:
-    - mvn test -Ptestprod
+    - mvn clean test -P application-testprod
   tags:
       - docker_runner
   rules:
