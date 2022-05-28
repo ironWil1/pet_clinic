@@ -36,19 +36,18 @@ building:
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
 
-
-
 integration_test_job:
+
+stage: test
 
 services:
   - postgres:latest
 
-variables:
-  POSTGRES_DB: pets_test
-  POSTGRES_USER: jm
-  POSTGRES_PASSWORD: psw
+  variables:
+    POSTGRES_DB: pets_test
+    POSTGRES_USER: jm
+    POSTGRES_PASSWORD: psw
 
-stage: test
   script:
     - mvn test
 
