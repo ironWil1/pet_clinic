@@ -36,6 +36,10 @@ building:
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
 
+
+
+integration_test_job:
+
 services:
   - postgres:latest
 
@@ -44,15 +48,14 @@ variables:
   POSTGRES_USER: jm
   POSTGRES_PASSWORD: psw
 
-testing:
-  stage: test
+stage: test
   script:
     - mvn test
 
   tags:
     - docker_runner
   rules:
-    - if: $CI_MERGE_REQUEST_IID
+    - if: CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
 
 
 rebuilding:
