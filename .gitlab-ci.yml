@@ -46,7 +46,7 @@ integration_test_job:
       POSTGRES_PASSWORD: psw
   stage: test
   script:
-    - mvn clean test -P application-testprod
+    - mvn test -Dspring.profiles.active=testprod
   tags:
       - docker_runner
   rules:
