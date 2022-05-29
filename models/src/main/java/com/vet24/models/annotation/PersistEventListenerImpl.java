@@ -12,9 +12,8 @@ public class PersistEventListenerImpl implements PersistEventListener {
 
     @Override
     public void onPersist(PersistEvent persistEvent) throws HibernateException {
-
         final Object entity = persistEvent.getObject();
-        reflectionUtil.searchAnnotationCreateAuthor(entity.getClass(), entity);
+        reflectionUtil.searchAnnotationAuthor(entity.getClass(), entity, CreateAuthor.class);
     }
 
 
