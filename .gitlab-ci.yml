@@ -85,4 +85,6 @@ rebuilding:
     - docker image prune -f
   tags:
     - clinic_shell
-  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+      when: manual
