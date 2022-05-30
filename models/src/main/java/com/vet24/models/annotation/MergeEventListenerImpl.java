@@ -16,12 +16,21 @@ import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 public class MergeEventListenerImpl implements MergeEventListener {
     public static final MergeEventListenerImpl INSTANCE = new MergeEventListenerImpl();
-    private final ReflectionUtil reflectionUtil = new ReflectionUtil();
+
 
     @Override
     public void onMerge(MergeEvent mergeEvent) throws HibernateException {
         final Object entity = mergeEvent.getEntity();
-        reflectionUtil.searchAnnotationAuthor(entity.getClass(), entity, UpdateAuthor.class);
+        Field fields = ReflectionUtil.searchFieldWithAnnotation(entity.getClass(), UpdateAuthor.class);
+        if (fields != null) {
+            try {
+                User activeUser = getSecurityUserOrNull();
+                fields.setAccessible(true);
+                fields.set(entity, activeUser);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
