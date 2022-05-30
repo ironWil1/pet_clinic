@@ -3,7 +3,6 @@ package com.vet24.web.controllers.user;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.models.secutity.JwtToken;
 import com.vet24.web.ControllerAbstractIntegrationTest;
-import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
