@@ -17,12 +17,12 @@ public class PersistEventListenerImpl implements PersistEventListener {
     @Override
     public void onPersist(PersistEvent persistEvent) throws HibernateException {
         final Object entity = persistEvent.getObject();
-        Field fields = ReflectionUtil.searchFieldWithAnnotation(entity.getClass(), CreateAuthor.class);
-        if (fields != null) {
+        Field field = ReflectionUtil.searchFieldWithAnnotation(entity.getClass(), CreateAuthor.class);
+        if (field != null & getSecurityUserOrNull() != null) {
             try {
                 User activeUser = getSecurityUserOrNull();
-                fields.setAccessible(true);
-                fields.set(entity, activeUser);
+                field.setAccessible(true);
+                field.set(entity, activeUser);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

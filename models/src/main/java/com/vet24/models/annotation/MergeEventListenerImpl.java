@@ -21,12 +21,12 @@ public class MergeEventListenerImpl implements MergeEventListener {
     @Override
     public void onMerge(MergeEvent mergeEvent) throws HibernateException {
         final Object entity = mergeEvent.getEntity();
-        Field fields = ReflectionUtil.searchFieldWithAnnotation(entity.getClass(), UpdateAuthor.class);
-        if (fields != null) {
+        Field field = ReflectionUtil.searchFieldWithAnnotation(entity.getClass(), UpdateAuthor.class);
+        if (field != null & getSecurityUserOrNull() != null) {
             try {
                 User activeUser = getSecurityUserOrNull();
-                fields.setAccessible(true);
-                fields.set(entity, activeUser);
+                field.setAccessible(true);
+                field.set(entity, activeUser);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
