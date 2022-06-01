@@ -1,10 +1,10 @@
 package com.vet24.models.annotation;
 
 import com.vet24.models.user.User;
+import com.vet24.models.util.ReflectionUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.event.spi.PersistEvent;
 import org.hibernate.event.spi.PersistEventListener;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -16,19 +16,15 @@ public class PersistEventListenerImpl implements PersistEventListener {
 
     @Override
     public void onPersist(PersistEvent persistEvent) throws HibernateException {
-
-        final Object entity = persistEvent.getObject();
-
-        for (Field fields : entity.getClass().getDeclaredFields()) {
-            if (fields.isAnnotationPresent(CreateAuthor.class)) {
-
-                if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                    continue;
-                }
+        User activeUser = getSecurityUserOrNull();
+        if (activeUser != null) {
+            final Object entity = persistEvent.getObject();
+            Field field = ReflectionUtil.searchFieldWithAnnotation(entity.getClass(), CreateAuthor.class);
+            if (field != null) {
                 try {
-                    User activeUser = getSecurityUserOrNull();
-                    fields.setAccessible(true);
-                    fields.set(entity, activeUser);
+
+                    field.setAccessible(true);
+                    field.set(entity, activeUser);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
