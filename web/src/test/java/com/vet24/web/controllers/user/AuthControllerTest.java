@@ -1,5 +1,7 @@
 package com.vet24.web.controllers.user;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.type.TypeBase;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.models.secutity.JwtToken;
 import com.vet24.web.ControllerAbstractIntegrationTest;
@@ -10,6 +12,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AuthControllerTest extends ControllerAbstractIntegrationTest {
@@ -88,21 +91,20 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.valueToTree(authRequestTest).toString()))
                 .andReturn();
-        assert (entityManager
+        assertThat(entityManager
                 .createQuery("SELECT a FROM JwtToken a", JwtToken.class)
-                .getResultList().size() == 1 && mvcResult.getResponse().getStatus() == 403);
+                .getResultList().size()).isEqualTo(1);
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(403);
     }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void jwtTokenSaveDataBaseTest() throws Exception {
         AuthRequest authRequest = new AuthRequest("admin1@email.com", "admin");
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(URI)
+        AuthResponse authResponse = objectMapper.readValue(mockMvc.perform(MockMvcRequestBuilders.post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.valueToTree(authRequest).toString()))
-                .andReturn();
-        assert (mvcResult.getResponse().getContentAsString().contains(entityManager
-                .createQuery("SELECT a FROM JwtToken a", JwtToken.class)
-                .getResultList().get(0).getToken()));
+                .andReturn().getResponse().getContentAsString(), AuthResponse.class);
+        assertThat(entityManager.find(JwtToken.class, authResponse.jwtToken)).isNotNull();
     }
 }
