@@ -1,6 +1,10 @@
 package com.vet24.web;
 
-import com.vet24.models.enums.*;
+import com.vet24.models.enums.Gender;
+import com.vet24.models.enums.NewsType;
+import com.vet24.models.enums.WorkShift;
+import com.vet24.models.enums.RoleNameEnum;
+import com.vet24.models.enums.DayOffType;
 import com.vet24.models.medicine.Appointment;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.DoctorSchedule;
@@ -20,7 +24,16 @@ import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.user.*;
+import com.vet24.models.user.Client;
+import com.vet24.models.user.Role;
+import com.vet24.models.user.Doctor;
+import com.vet24.models.user.Admin;
+import com.vet24.models.user.Manager;
+import com.vet24.models.user.DoctorReview;
+import com.vet24.models.user.DoctorNonWorking;
+import com.vet24.models.user.Topic;
+import com.vet24.models.user.Comment;
+import com.vet24.models.user.CommentReaction;
 import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.DoctorScheduleService;
@@ -58,7 +71,10 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Component
