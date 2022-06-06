@@ -1,16 +1,13 @@
 package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.vet24.models.secutity.JwtToken;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -86,15 +83,13 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authRequestAdmin)));
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(URI)
+        mockMvc.perform(MockMvcRequestBuilders.post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequestTest)))
+                .andExpect(status().is(403))
                 .andReturn();
-
-        assertTrue(String.valueOf(entityManager
-                .createQuery("SELECT CASE when COUNT(*) = 1 THEN true ELSE false END FROM JwtToken ")
-                .getSingleResult()), true);
-        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(403);
+        assertTrue("JwtToken сохранён, тест не пройден", entityManager
+                .createQuery("SELECT CASE when COUNT(*) = 1 THEN true ELSE false END FROM JwtToken ", Boolean.class).getSingleResult());
     }
 
     @Test
@@ -105,6 +100,8 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andReturn().getResponse().getContentAsString(), AuthResponse.class);
-        assertTrue(entityManager.find(JwtToken.class, authResponse.jwtToken).getToken(), true);
+        assertTrue("JwtToken не сохранён, тест не пройден",
+                entityManager.createQuery("SELECT case when COUNT(c) = 1 then true else false end FROM JwtToken c WHERE c.token = ?1"
+                        , Boolean.class).setParameter(1,authResponse.jwtToken).getSingleResult());
     }
 }
