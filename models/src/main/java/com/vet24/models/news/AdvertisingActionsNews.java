@@ -15,7 +15,7 @@ public class AdvertisingActionsNews extends News {
         super();
     }
 
-    public AdvertisingActionsNews(long id, NewsType type, String content, boolean isImportant, LocalDateTime endTime) {
-        super(id, NewsType.ADVERTISING_ACTIONS, content, isImportant, endTime);
+    public AdvertisingActionsNews(String content, boolean isImportant, LocalDateTime endTime) {
+        super(NewsType.ADVERTISING_ACTIONS, content, isImportant, endTime);
     }
 }

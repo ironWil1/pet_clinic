@@ -15,7 +15,7 @@ public class PromotionNews extends News {
         super();
     }
 
-    public PromotionNews(long id, NewsType type, String content, boolean isImportant, LocalDateTime endTime) {
-        super(id, NewsType.PROMOTION, content, isImportant, endTime);
+    public PromotionNews(String content, boolean isImportant, LocalDateTime endTime) {
+        super(NewsType.PROMOTION, content, isImportant, endTime);
     }
 }

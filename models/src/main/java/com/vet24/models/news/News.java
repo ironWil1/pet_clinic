@@ -5,9 +5,7 @@ import com.vet24.models.enums.NewsType;
 import lombok.Setter;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
-
 import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,14 +17,12 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.GenerationType;
 import javax.persistence.InheritanceType;
 import javax.persistence.EnumType;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -49,7 +45,11 @@ public abstract class News {
 
     @Column
     private LocalDateTime endTime;
-    News (long id, NewsType type, String content, boolean isImportant, LocalDateTime endTime) {
+
+    protected News (NewsType type, String content, boolean isImportant, LocalDateTime endTime) {
+    }
+
+    protected News() {
     }
 }
 

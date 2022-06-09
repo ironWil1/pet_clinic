@@ -1,7 +1,6 @@
 package com.vet24.web;
 
 import com.vet24.models.enums.Gender;
-import com.vet24.models.enums.NewsType;
 import com.vet24.models.enums.WorkShift;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.enums.DayOffType;
@@ -419,24 +418,24 @@ public class TestDataInitializer implements ApplicationRunner {
 
             if (i <= 7) {
                 updatingNewsList
-                        .add(new UpdatingNews( i, NewsType.UPDATING, "Content of Updating" + i,
+                        .add(new UpdatingNews("Content of Updating" + i,
                                 true, LocalDateTime.now().plusDays(i)));
 
             }
 
             if (i > 7 && i <= 14) {
                 advertisingActionsNewsList
-                        .add(new AdvertisingActionsNews(i, NewsType.ADVERTISING_ACTIONS, "Content of Advertising Actions" + i,
+                        .add(new AdvertisingActionsNews("Content of Advertising Actions" + i,
                                 false, LocalDateTime.now().plusWeeks(i)));
             }
 
             if (i > 14 && i <= 21) {
                 discountsNewsList
-                        .add(new DiscountsNews(i, NewsType.DISCOUNTS, "Content of Discounts News" + i,
+                        .add(new DiscountsNews("Content of Discounts News" + i,
                                 true, LocalDateTime.now().plusDays(i)));
             }
             if (i > 21) {
-                promotionNewsList.add(new PromotionNews(i, NewsType.PROMOTION, "Content of Promotion News" +i,
+                promotionNewsList.add(new PromotionNews("Content of Promotion News" +i,
                         false, LocalDateTime.now().plusWeeks(i)));
             }
 
