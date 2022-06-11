@@ -1,19 +1,24 @@
 package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.vet24.models.secutity.JwtToken;
+import com.vet24.service.security.JwtTokenService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     AuthController authController;
+    @Autowired
+    JwtTokenService jwtTokenService;
 
     final String URI = "/api/auth";
 
@@ -21,7 +26,7 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void authAdmin() throws Exception {
         AuthRequest authRequest = new AuthRequest("admin1@email.com", "admin");
-        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+        mockMvc.perform(post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.valueToTree(authRequest).toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("jwtToken").isNotEmpty())
@@ -33,7 +38,7 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void authManager() throws Exception {
         AuthRequest authRequest = new AuthRequest("manager1@email.com", "manager");
-        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+        mockMvc.perform(post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.valueToTree(authRequest).toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("jwtToken").isNotEmpty())
@@ -45,7 +50,7 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void authDoctor() throws Exception {
         AuthRequest authRequest = new AuthRequest("doctor103@email.com", "doctor");
-        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+        mockMvc.perform(post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.valueToTree(authRequest).toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("jwtToken").isNotEmpty())
@@ -57,7 +62,7 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void authClient() throws Exception {
         AuthRequest authRequest = new AuthRequest("client1@email.com", "client");
-        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+        mockMvc.perform(post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.valueToTree(authRequest).toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("jwtToken").isNotEmpty())
@@ -69,7 +74,7 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void authBadLogin() throws Exception {
         AuthRequest authRequest = new AuthRequest("test@email.com", "test");
-        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+        mockMvc.perform(post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.valueToTree(authRequest).toString()))
                 .andExpect(status().is(403));
@@ -80,10 +85,10 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     public void jwtTokenNotSaveDataBaseTest() throws Exception {
         AuthRequest authRequestAdmin = new AuthRequest("admin1@email.com", "admin");
         AuthRequest authRequestTest = new AuthRequest("TestNoToken@email.com", "TestNoToken");
-        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+        mockMvc.perform(post(URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authRequestAdmin)));
-        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+        mockMvc.perform(post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequestTest)))
                 .andExpect(status().is(403))
@@ -96,12 +101,32 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void jwtTokenSaveDataBaseTest() throws Exception {
         AuthRequest authRequest = new AuthRequest("admin1@email.com", "admin");
-        AuthResponse authResponse = objectMapper.readValue(mockMvc.perform(MockMvcRequestBuilders.post(URI)
+        AuthResponse authResponse = objectMapper.readValue(mockMvc.perform(post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andReturn().getResponse().getContentAsString(), AuthResponse.class);
         assertTrue("JwtToken не сохранён, тест не пройден",
                 entityManager.createQuery("SELECT case when COUNT(c) = 1 then true else false end FROM JwtToken c WHERE c.token = ?1"
-                        , Boolean.class).setParameter(1,authResponse.jwtToken).getSingleResult());
+                        , Boolean.class).setParameter(1, authResponse.jwtToken).getSingleResult());
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
+    public void jwtTokenDeleteDataBaseTest() throws Exception {
+        AuthRequest authRequest = new AuthRequest("admin1@email.com", "admin");
+
+        AuthResponse authResponse = objectMapper.readValue(mockMvc.perform(post(URI)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authRequest)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString(), AuthResponse.class);
+
+        mockMvc.perform(post(URI + "/logout")
+                        .header("Authorization", "Bearer " + authResponse.getJwtToken()))
+                .andExpect(status().isOk());
+
+        assertFalse("Токен не удален из базы данных, тест не пройден", entityManager.createQuery("SELECT case when COUNT(c) = 1 then true else false end FROM JwtToken c WHERE c.token = ?1", Boolean.class)
+                .setParameter(1, authResponse.getJwtToken())
+                .getSingleResult());
     }
 }
