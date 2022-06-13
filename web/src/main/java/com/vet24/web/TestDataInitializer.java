@@ -8,10 +8,11 @@ import com.vet24.models.medicine.Appointment;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.medicine.Medicine;
-import com.vet24.models.news.AdvertisingActionsNews;
-import com.vet24.models.news.PromotionNews;
+import com.vet24.models.news.News;
 import com.vet24.models.news.UpdatingNews;
+import com.vet24.models.news.AdvertisingActionsNews;
 import com.vet24.models.news.DiscountsNews;
+import com.vet24.models.news.PromotionNews;
 import com.vet24.models.notification.Notification;
 import com.vet24.models.notification.UserNotification;
 import com.vet24.models.pet.Cat;
@@ -37,6 +38,7 @@ import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.medicine.MedicineService;
+import com.vet24.service.news.NewsService;
 import com.vet24.service.notification.NotificationService;
 import com.vet24.service.notification.UserNotificationService;
 import com.vet24.service.pet.PetContactService;
@@ -57,10 +59,6 @@ import com.vet24.service.user.ManagerService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.TopicService;
 import com.vet24.service.user.UserService;
-import com.vet24.service.news.AdvertisingActionsNewsService;
-import com.vet24.service.news.DiscountsNewsService;
-import com.vet24.service.news.PromotionNewsService;
-import com.vet24.service.news.UpdatingNewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -104,11 +102,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final DoctorScheduleService doctorScheduleService;
     private final NotificationService notificationService;
     private final UserNotificationService userNotificationService;
-    private final UpdatingNewsService updatingNewsService;
-    private final AdvertisingActionsNewsService advertisingActionsNewsService;
-    private final DiscountsNewsService discountsNewsService;
-    private final PromotionNewsService promotionNewsService;
-
+    private final NewsService newsService;
     private final Role client = new Role(RoleNameEnum.CLIENT);
     private final Role doctor = new Role(RoleNameEnum.DOCTOR);
     private final Role admin = new Role(RoleNameEnum.ADMIN);
@@ -139,8 +133,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
                                DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService, NotificationService notificationService,
-                               UserNotificationService userNotificationService, UpdatingNewsService updatingNewsService, AdvertisingActionsNewsService advertisingActionsNewsService,
-                               DiscountsNewsService discountsNewsService, PromotionNewsService promotionNewsService) {
+                               UserNotificationService userNotificationService, NewsService newsService) {
         this.adminService = adminService;
         this.roleService = roleService;
         this.userService = userService;
@@ -166,10 +159,8 @@ public class TestDataInitializer implements ApplicationRunner {
         this.appointmentService = appointmentService;
         this.notificationService = notificationService;
         this.userNotificationService = userNotificationService;
-        this.updatingNewsService = updatingNewsService;
-        this.advertisingActionsNewsService = advertisingActionsNewsService;
-        this.discountsNewsService = discountsNewsService;
-        this.promotionNewsService = promotionNewsService;
+        this.newsService = newsService;
+
     }
 
     public void roleInitialize() {
@@ -408,44 +399,35 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void newsInit() {
-
-        List<UpdatingNews> updatingNewsList = new ArrayList<>();
-        List<AdvertisingActionsNews> advertisingActionsNewsList = new ArrayList<>();
-        List<DiscountsNews> discountsNewsList = new ArrayList<>();
-        List<PromotionNews> promotionNewsList = new ArrayList<>();
-
+        List<News> newsList = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
 
             if (i <= 7) {
-                updatingNewsList
+                newsList
                         .add(new UpdatingNews("Content of Updating" + i,
                                 true, LocalDateTime.now().plusDays(i)));
 
             }
 
             if (i > 7 && i <= 14) {
-                advertisingActionsNewsList
+                newsList
                         .add(new AdvertisingActionsNews("Content of Advertising Actions" + i,
                                 false, LocalDateTime.now().plusWeeks(i)));
             }
 
             if (i > 14 && i <= 21) {
-                discountsNewsList
+                newsList
                         .add(new DiscountsNews("Content of Discounts News" + i,
                                 true, LocalDateTime.now().plusDays(i)));
             }
             if (i > 21) {
-                promotionNewsList.add(new PromotionNews("Content of Promotion News" +i,
+                newsList.add(new PromotionNews("Content of Promotion News" + i,
                         false, LocalDateTime.now().plusWeeks(i)));
             }
-
-            updatingNewsService.persistAll(updatingNewsList);
-            advertisingActionsNewsService.persistAll(advertisingActionsNewsList);
-            discountsNewsService.persistAll(discountsNewsList);
-            promotionNewsService.persistAll(promotionNewsList);
-
         }
-    }
+           newsService.persistAll(newsList);
+        }
+
 
     @Override
     @Transactional

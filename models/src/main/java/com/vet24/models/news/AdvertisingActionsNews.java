@@ -11,11 +11,15 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class AdvertisingActionsNews extends News {
 
+    private final NewsType type;
     public AdvertisingActionsNews() {
         super();
+        this.type = NewsType.ADVERTISING_ACTIONS;
+
     }
 
     public AdvertisingActionsNews(String content, boolean isImportant, LocalDateTime endTime) {
-        super(NewsType.ADVERTISING_ACTIONS, content, isImportant, endTime);
+        super(content, isImportant, endTime);
+        this.type = NewsType.ADVERTISING_ACTIONS;
     }
 }

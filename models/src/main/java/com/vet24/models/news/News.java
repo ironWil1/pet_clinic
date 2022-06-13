@@ -46,7 +46,10 @@ public abstract class News {
     @Column
     private LocalDateTime endTime;
 
-    protected News (NewsType type, String content, boolean isImportant, LocalDateTime endTime) {
+    protected News (String content, boolean isImportant, LocalDateTime endTime) {
+        this.content = content;
+        this.isImportant = isImportant;
+        this.endTime =endTime;
     }
 
     protected News() {

@@ -10,12 +10,13 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("PROMOTION")
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class PromotionNews extends News {
-
+    private NewsType type;
     public PromotionNews() {
         super();
+        this.type = NewsType.PROMOTION;
     }
-
     public PromotionNews(String content, boolean isImportant, LocalDateTime endTime) {
-        super(NewsType.PROMOTION, content, isImportant, endTime);
+        super( content, isImportant, endTime);
+        this.type = NewsType.PROMOTION;
     }
 }
