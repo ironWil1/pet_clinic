@@ -89,7 +89,7 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
                 .andExpect(status().is(403))
                 .andReturn();
         assertTrue("JwtToken сохранён, тест не пройден", entityManager
-                .createQuery("SELECT CASE when COUNT(*) = 1 THEN true ELSE false END FROM JwtToken ", Boolean.class).getSingleResult());
+                .createQuery("SELECT CASE when COUNT (*) = 1 THEN true ELSE false END FROM JwtToken ", Boolean.class).getSingleResult());
     }
 
     @Test
