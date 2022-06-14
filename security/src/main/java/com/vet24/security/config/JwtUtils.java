@@ -49,17 +49,15 @@ public class JwtUtils {
     }
 
     public boolean validateJwtToken(String authToken) {
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            return true;
-        } catch (JwtException e) {
-            log.info("token for authorization is not found");
+        if (jwtTokenService.isExistByKey(authToken)) {
+            try {
+                Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+                return true;
+            } catch (JwtException e) {
+                log.info("token for authorization is not found");
+            }
         }
         return false;
-    }
-
-    public boolean JwtTokenExist(String token) {
-        return jwtTokenService.isExistByKey(token);
     }
 
     public String parseJwt(HttpServletRequest request) {

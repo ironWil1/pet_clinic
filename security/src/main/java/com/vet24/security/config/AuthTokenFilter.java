@@ -34,7 +34,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         try {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                if (jwtUtils.JwtTokenExist(jwt)) {
                     String username = jwtUtils.getUserNameFromJwtToken(jwt);
 
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -46,7 +45,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 } else {
                     throw new ServletException("the token is not valid");
                 }
-            }
         } catch (JwtException e) {
             log.info("Not successful parsing");
         }
