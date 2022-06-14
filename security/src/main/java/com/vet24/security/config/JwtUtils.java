@@ -37,7 +37,7 @@ public class JwtUtils {
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
-        if(!jwtTokenService.isExistByKey(token)) {
+        if (!jwtTokenService.isExistByKey(token)) {
             jwtTokenService.persist(new JwtToken(token));
         }
         return token;
@@ -64,7 +64,7 @@ public class JwtUtils {
         String headerAuth = request.getHeader("Authorization");
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            String str="Bearer ";
+            String str = "Bearer ";
             return headerAuth.substring(str.length());
         }
 
