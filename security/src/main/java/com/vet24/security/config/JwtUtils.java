@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Component
 @Slf4j
@@ -57,5 +60,16 @@ public class JwtUtils {
 
     public boolean JwtTokenExist(String token) {
         return jwtTokenService.isExistByKey(token);
+    }
+
+    public String parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            String str="Bearer ";
+            return headerAuth.substring(str.length());
+        }
+
+        return null;
     }
 }
