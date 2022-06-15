@@ -1,11 +1,8 @@
 package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.vet24.models.dto.user.JwtTokenDto;
-import com.vet24.security.config.JwtUtils;
-import com.vet24.service.security.JwtTokenService;
+import com.vet24.models.secutity.JwtToken;
 import com.vet24.web.ControllerAbstractIntegrationTest;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,16 +20,7 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
      AuthController authController;
 
     final String URI = "/api/auth";
-    final String urlToken = "/api/auth/token";
 
-    static JwtTokenDto jwtTokenDto;
-    static JwtTokenDto badJwtTokenDto;
-
-    @BeforeClass
-    public static void creatTokenDto(){
-        jwtTokenDto=new JwtTokenDto("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTY1NTI4MzY0NywiZXhwIjoxNjU3MjgzNjQ3fQ.5n8o-LWqJoXM5qeY3fit9jyniCE-65dD3wIsHRCNTzCbrym-ZVEKX_Phq3Fw90D9Ai1tZcZF5ZFouxw7b0MpKA");
-        badJwtTokenDto=new JwtTokenDto("badJwtToken.ddsNJSD");
-    }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
@@ -145,9 +133,11 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/jwt-token.yml"})
     public void jwtTokenIsValidTest() throws Exception {
+        JwtToken jwtToken=new JwtToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTY1NTI4MzY0NywiZXhwIjoxNjU3MjgzNjQ3fQ.5n8o-LWqJoXM5qeY3fit9jyniCE-65dD3wIsHRCNTzCbrym-ZVEKX_Phq3Fw90D9Ai1tZcZF5ZFouxw7b0MpKA");
+
         mockMvc.perform(post(URI+"/token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jwtTokenDto.getToken()))
+                        .content(jwtToken.getToken()))
                 .andExpect(content().string("true"))
                 .andExpect(status().isOk());
     }
@@ -155,9 +145,10 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/jwt-token.yml"})
     public void jwtTokenIsNoTValidTest() throws Exception {
+        JwtToken badJwtToken=new JwtToken("badJwtToken.ddsNJSD");
         Boolean result = objectMapper.readValue(mockMvc.perform(post(URI+"/token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(badJwtTokenDto.getToken()))
+                        .content(badJwtToken.getToken()))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(), Boolean.class);
 
