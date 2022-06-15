@@ -26,10 +26,12 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     final String urlToken = "/api/auth/token";
 
     static JwtTokenDto jwtTokenDto;
+    static JwtTokenDto badJwtTokenDto;
 
     @BeforeClass
     public static void creatTokenDto(){
         jwtTokenDto=new JwtTokenDto("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTY1NTI4MzY0NywiZXhwIjoxNjU3MjgzNjQ3fQ.5n8o-LWqJoXM5qeY3fit9jyniCE-65dD3wIsHRCNTzCbrym-ZVEKX_Phq3Fw90D9Ai1tZcZF5ZFouxw7b0MpKA");
+        badJwtTokenDto=new JwtTokenDto("badJwtToken.ddsNJSD");
     }
 
     @Test
@@ -143,10 +145,22 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/jwt-token.yml"})
     public void jwtTokenIsValidTest() throws Exception {
-        mockMvc.perform(post(urlToken)
+        mockMvc.perform(post(URI+"/token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jwtTokenDto.getToken()))
                 .andExpect(content().string("true"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/jwt-token.yml"})
+    public void jwtTokenIsNoTValidTest() throws Exception {
+        Boolean result = objectMapper.readValue(mockMvc.perform(post(URI+"/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(badJwtTokenDto.getToken()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString(), Boolean.class);
+
+        assertFalse("Тест не пройден", result);
     }
 }
