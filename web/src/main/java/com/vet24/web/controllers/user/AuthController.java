@@ -73,7 +73,7 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping("api/auth/token")
-    public ResponseEntity<Boolean> validToken(@RequestParam("token") String token) {
+    public ResponseEntity<Boolean> validToken(@RequestBody String token) {
         if (token == null) {
             return new ResponseEntity<>(false, HttpStatus.NOT_ACCEPTABLE);
         }
