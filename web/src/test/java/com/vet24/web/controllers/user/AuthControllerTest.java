@@ -1,9 +1,11 @@
 package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.vet24.models.secutity.JwtToken;
+import com.vet24.models.dto.user.JwtTokenDto;
+import com.vet24.security.config.JwtUtils;
 import com.vet24.service.security.JwtTokenService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -12,15 +14,23 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
-    AuthController authController;
-    @Autowired
-    JwtTokenService jwtTokenService;
+     AuthController authController;
 
     final String URI = "/api/auth";
+    final String urlToken = "/api/auth/token";
+
+    static JwtTokenDto jwtTokenDto;
+
+    @BeforeClass
+    public static void creatTokenDto(){
+        jwtTokenDto=new JwtTokenDto("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTY1NTI4MzY0NywiZXhwIjoxNjU3MjgzNjQ3fQ.5n8o-LWqJoXM5qeY3fit9jyniCE-65dD3wIsHRCNTzCbrym-ZVEKX_Phq3Fw90D9Ai1tZcZF5ZFouxw7b0MpKA");
+    }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
@@ -128,5 +138,15 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
         assertFalse("Токен не удален из базы данных, тест не пройден", entityManager.createQuery("SELECT case when COUNT(c) = 1 then true else false end FROM JwtToken c WHERE c.token = ?1", Boolean.class)
                 .setParameter(1, authResponse.getJwtToken())
                 .getSingleResult());
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/jwt-token.yml"})
+    public void jwtTokenIsValidTest() throws Exception {
+        mockMvc.perform(post(urlToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jwtTokenDto.getToken()))
+                .andExpect(content().string("true"))
+                .andExpect(status().isOk());
     }
 }
