@@ -1,9 +1,5 @@
 package com.vet24.security.config;
 
-import java.sql.SQLException;
-import java.util.Date;
-
-
 import com.vet24.models.secutity.JwtToken;
 import com.vet24.service.security.JwtTokenService;
 import io.jsonwebtoken.JwtException;
@@ -16,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 @Component
 @Slf4j
@@ -37,7 +34,7 @@ public class JwtUtils {
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
-        if(!jwtTokenService.isExistByKey(token)) {
+        if (!jwtTokenService.isExistByKey(token)) {
             jwtTokenService.persist(new JwtToken(token));
         }
         return token;
@@ -49,24 +46,22 @@ public class JwtUtils {
     }
 
     public boolean validateJwtToken(String authToken) {
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            return true;
-        } catch (JwtException e) {
-            log.info("token for authorization is not found");
+        if (jwtTokenService.isExistByKey(authToken)) { //TODO уровень логирования debug + добавить более точные описании ситуаций (кривой токен, отсутствует в бд)
+            try {
+                Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+                return true;
+            } catch (JwtException e) {
+                log.info("token for authorization is not found");
+            }
         }
         return false;
-    }
-
-    public boolean JwtTokenExist(String token) {
-        return jwtTokenService.isExistByKey(token);
     }
 
     public String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            String str="Bearer ";
+            String str = "Bearer ";
             return headerAuth.substring(str.length());
         }
 

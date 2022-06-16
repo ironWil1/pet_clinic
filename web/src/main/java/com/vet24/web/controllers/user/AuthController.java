@@ -20,10 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 
 
 @RestController
@@ -41,7 +39,7 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.userService = userService;
-        this.jwtTokenService=jwtTokenService;
+        this.jwtTokenService = jwtTokenService;
     }
 
     @ApiResponses(value = {
@@ -57,14 +55,15 @@ public class AuthController {
 
         return new ResponseEntity<>(new AuthResponse(token, user.getRole().getName()), HttpStatus.OK);
     }
+
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Token removed successfully"),
             @ApiResponse(responseCode = "400", description = "Something went wrong")
     })
     @PostMapping("api/auth/logout")
     public ResponseEntity<Void> deleteToken(HttpServletRequest request) {
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        if(authentication==null){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
             throw new BadRequestException("Пользователь не авторизован");
         }
         String jwt = jwtUtils.parseJwt(request);
@@ -72,4 +71,11 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("api/auth/token")
+    public ResponseEntity<Boolean> validToken(@RequestBody String token) {
+        if (token == null) { //TODO валидация через аннотации в контроллере
+            return new ResponseEntity<>(false, HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity<>(jwtUtils.validateJwtToken(token), HttpStatus.OK);
+    }
 }
