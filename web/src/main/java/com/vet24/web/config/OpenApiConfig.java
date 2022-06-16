@@ -1,7 +1,6 @@
 package com.vet24.web.config;
 
 import com.vet24.security.config.JwtUtils;
-import com.vet24.service.security.JwtTokenService;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -19,11 +18,9 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class OpenApiConfig {
 
-    JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
 
     @Autowired
-    JwtTokenService jwtTokenService;
-
     public OpenApiConfig(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
     }
