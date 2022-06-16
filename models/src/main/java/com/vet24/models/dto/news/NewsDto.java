@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 public class NewsDto {
 
-    @JsonView(View.Get.class)
+    @JsonView({View.Get.class, View.Put.class})
     private Long id;
 
     @JsonView({View.Put.class, View.Post.class, View.Get.class})
