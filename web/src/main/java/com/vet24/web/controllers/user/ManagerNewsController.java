@@ -3,10 +3,7 @@ package com.vet24.web.controllers.user;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
-import com.vet24.models.dto.exception.ExceptionDto;
-import com.vet24.models.dto.news.AbstractNewNewsDto;
 import com.vet24.models.dto.news.NewsDto;
-import com.vet24.models.mappers.news.AbstractNewNewsMapper;
 import com.vet24.models.mappers.news.NewsMapper;
 import com.vet24.models.news.News;
 import com.vet24.models.util.View;
@@ -22,14 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 import java.util.List;
 
@@ -42,15 +39,14 @@ public class ManagerNewsController {
 
     private final NewsService newsService;
     private final NewsMapper newsMapper;
-    private final AbstractNewNewsMapper newNewsMapper;
     private static final String NEWS_NOT_FOUND = "news not found";
 
 
     @Autowired
-    public ManagerNewsController(NewsService newsService, NewsMapper newsMapper, AbstractNewNewsMapper newNewsMapper) {
+    public ManagerNewsController(NewsService newsService, NewsMapper newsMapper) {
         this.newsService = newsService;
         this.newsMapper = newsMapper;
-        this.newNewsMapper = newNewsMapper;
+
     }
 
 
@@ -101,20 +97,18 @@ public class ManagerNewsController {
                     description = "Successfully persisted the new News",
                     content = @Content(schema = @Schema(implementation = NewsDto.class))),
             @ApiResponse(responseCode = "400",
-                    description = "news are not persisted",
-                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+                    description = "news are not persisted")
     })
     @PostMapping("")
-    public ResponseEntity<NewsDto> persistNews(@JsonView(View.Post.class)
-                                                   @Validated(OnCreate.class)
-                                                   @RequestBody AbstractNewNewsDto newNewsDto) {
+    public ResponseEntity<NewsDto> persistNews(@Validated(OnCreate.class)
+                                                   @JsonView(View.Post.class)
+                                                   @RequestBody NewsDto newsDto) {
 
-        News news = newNewsMapper.toEntity(newNewsDto);
+        News news = newsMapper.toEntity(newsDto);
         newsService.persist(news);
-        log.info("We persisted new news {}", newNewsDto.getType());
-        return new ResponseEntity<>(newsMapper.toDto(news), HttpStatus.CREATED);
+        log.info("The news with this type {} was added", newsDto.getType());
+        return ResponseEntity.ok(newsMapper.toDto(news));
     }
-
 
     @Operation(summary = "update news")
     @ApiResponses(value = {
@@ -138,7 +132,7 @@ public class ManagerNewsController {
         newsMapper.updateEntity(newsDto, news);
         news.setId(newsId);
         newsService.update(news);
-        log.info("We updated news with this id {}",news.getId());
+        log.info("We updated news with this id {}", news.getId());
         return ResponseEntity.ok(newsMapper.toDto(news));
     }
 

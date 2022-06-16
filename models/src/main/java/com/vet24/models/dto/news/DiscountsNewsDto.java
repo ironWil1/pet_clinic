@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class DiscountsNewsDto extends AbstractNewNewsDto {
 
     @JsonCreator
-    public DiscountsNewsDto(NewsType type, String content, boolean isImportant, LocalDateTime endTime) {
+    public DiscountsNewsDto(String content, boolean isImportant, LocalDateTime endTime) {
         super(NewsType.DISCOUNTS, content, isImportant, endTime);
     }
 }
