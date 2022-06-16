@@ -18,9 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -75,7 +73,7 @@ public class AuthController {
 
     @PostMapping("api/auth/token")
     public ResponseEntity<Boolean> validToken(@RequestBody String token) {
-        if (token == null) {
+        if (token == null) { //TODO валидация через аннотации в контроллере
             return new ResponseEntity<>(false, HttpStatus.NOT_ACCEPTABLE);
         }
         return new ResponseEntity<>(jwtUtils.validateJwtToken(token), HttpStatus.OK);

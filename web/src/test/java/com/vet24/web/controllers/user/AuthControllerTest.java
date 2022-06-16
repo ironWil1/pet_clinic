@@ -4,7 +4,6 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.models.secutity.JwtToken;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -16,8 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 public class AuthControllerTest extends ControllerAbstractIntegrationTest {
-    @Autowired
-     AuthController authController;
 
     final String URI = "/api/auth";
 
@@ -133,9 +130,9 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/jwt-token.yml"})
     public void jwtTokenIsValidTest() throws Exception {
-        JwtToken jwtToken=new JwtToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTY1NTI4MzY0NywiZXhwIjoxNjU3MjgzNjQ3fQ.5n8o-LWqJoXM5qeY3fit9jyniCE-65dD3wIsHRCNTzCbrym-ZVEKX_Phq3Fw90D9Ai1tZcZF5ZFouxw7b0MpKA");
+        JwtToken jwtToken = new JwtToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTY1NTI4MzY0NywiZXhwIjoxNjU3MjgzNjQ3fQ.5n8o-LWqJoXM5qeY3fit9jyniCE-65dD3wIsHRCNTzCbrym-ZVEKX_Phq3Fw90D9Ai1tZcZF5ZFouxw7b0MpKA");
 
-        mockMvc.perform(post(URI+"/token")
+        mockMvc.perform(post(URI + "/token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jwtToken.getToken()))
                 .andExpect(content().string("true"))
@@ -145,8 +142,8 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/jwt-token.yml"})
     public void jwtTokenIsNoTValidTest() throws Exception {
-        JwtToken badJwtToken=new JwtToken("badJwtToken.ddsNJSD");
-        Boolean result = objectMapper.readValue(mockMvc.perform(post(URI+"/token")
+        JwtToken badJwtToken = new JwtToken("badJwtToken.ddsNJSD");
+        Boolean result = objectMapper.readValue(mockMvc.perform(post(URI + "/token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(badJwtToken.getToken()))
                 .andExpect(status().isOk())

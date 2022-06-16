@@ -1,9 +1,5 @@
 package com.vet24.security.config;
 
-import java.sql.SQLException;
-import java.util.Date;
-
-
 import com.vet24.models.secutity.JwtToken;
 import com.vet24.service.security.JwtTokenService;
 import io.jsonwebtoken.JwtException;
@@ -16,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 @Component
 @Slf4j
@@ -49,7 +46,7 @@ public class JwtUtils {
     }
 
     public boolean validateJwtToken(String authToken) {
-        if (jwtTokenService.isExistByKey(authToken)) {
+        if (jwtTokenService.isExistByKey(authToken)) { //TODO уровень логирования debug + добавить более точные описании ситуаций (кривой токен, отсутствует в бд)
             try {
                 Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
                 return true;
