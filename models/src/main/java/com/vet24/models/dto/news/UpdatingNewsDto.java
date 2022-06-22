@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
-public class UpdatingNewsDto extends AbstractNewNewsDto {
+public class UpdatingNewsDto extends NewsDto {
 
     @JsonCreator
-    public UpdatingNewsDto(String content, boolean isImportant, LocalDateTime endTime) {
-        super(NewsType.UPDATING, content, isImportant, endTime);
+    public UpdatingNewsDto(long id, String content, boolean isImportant, LocalDateTime endTime) {
+        super(id, NewsType.UPDATING, content, isImportant, endTime);
     }
 }

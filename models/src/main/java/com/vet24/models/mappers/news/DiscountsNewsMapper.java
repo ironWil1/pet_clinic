@@ -1,6 +1,5 @@
 package com.vet24.models.mappers.news;
 
-import com.vet24.models.dto.news.AbstractNewNewsDto;
 import com.vet24.models.dto.news.DiscountsNewsDto;
 import com.vet24.models.dto.news.NewsDto;
 import com.vet24.models.enums.NewsType;
@@ -21,10 +20,6 @@ public interface DiscountsNewsMapper extends AbstractNewsMapper,
         return NewsType.DISCOUNTS;
     }
 
-    @Override
-    default News abstractNewNewsDtoToNews(AbstractNewNewsDto newsDto) {
-        return toEntity((DiscountsNewsDto) newsDto);
-    }
 
     @Override
     default News abstractNewsDtoToNews(NewsDto newsDto) {

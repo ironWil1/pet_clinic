@@ -1,6 +1,6 @@
 package com.vet24.models.mappers.news;
 
-import com.vet24.models.dto.news.AbstractNewNewsDto;
+
 import com.vet24.models.dto.news.NewsDto;
 import com.vet24.models.dto.news.UpdatingNewsDto;
 import com.vet24.models.enums.NewsType;
@@ -18,11 +18,6 @@ public interface UpdatingNewsMapper extends AbstractNewsMapper,
     @Override
     default NewsType getNewsType() {
         return NewsType.UPDATING;
-    }
-
-    @Override
-    default News abstractNewNewsDtoToNews(AbstractNewNewsDto newsDto) {
-        return toEntity((UpdatingNewsDto) newsDto);
     }
 
     @Override
