@@ -1,36 +1,34 @@
 package com.vet24.models.news;
 
 import com.vet24.models.enums.NewsType;
-
-import lombok.Setter;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-
-import javax.persistence.Id;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.GeneratedValue;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
-import javax.persistence.GenerationType;
-import javax.persistence.InheritanceType;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
-
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@AllArgsConstructor
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class News {
+public abstract class News implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,8 +47,14 @@ public abstract class News {
 
     @Column
     private LocalDateTime endTime;
-    News (long id, NewsType type, String content, boolean isImportant, LocalDateTime endTime) {
+
+    protected News(NewsType type, String content, boolean isImportant, LocalDateTime endTime) {
+        this.type = type;
+        this.content = content;
+        this.isImportant = isImportant;
+        this.endTime = endTime;
     }
 }
+
 
 
