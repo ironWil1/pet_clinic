@@ -22,7 +22,7 @@ Stop and remove containers
 ```docker-compose down```
 
 - Our database is available on the local computer under port 5433 and container port 5432
-- **Port for test database is 5434.**
+
 
 
 # Dao and Service Guide
@@ -69,6 +69,7 @@ Quick and easy way to document your APIs.
 3. Test method should use @DataSet for generation database content.  
 4. @DataSet could be with [possible values](https://database-rider.github.io/getting-started/#configuration). 
 5. For more information check [official Database Rider documentation](https://database-rider.github.io/database-rider/1.23.0/documentation.html)
+6. Тестирование у нас производится с использованием библиотеки testcontainers для поднятия контейнера с базой под тесты
 
 # Database Diagram
 
@@ -140,13 +141,18 @@ https://dbdiagram.io/d/60a62c9db29a09603d15bc72
 
 [//]: # (13. Готово, всё работает.)
 
-# Flyway Guide
+[//]: # (# Flyway Guide)
 
-Flyway - это инструмент для миграции скриптов в формате sql,
-расположенных в pet_clinic\web\src\main\resources\db\migration
-В данном случае с их помощью создаются таблицы по всем сущностям базы данных,
-что позволит легко создать ту же самую структуру БД при переносе на другой сервер.
-Правила написания миграций: https://flywaydb.org/documentation/concepts/migrations
+[//]: # ()
+[//]: # (Flyway - это инструмент для миграции скриптов в формате sql,)
+
+[//]: # (расположенных в pet_clinic\web\src\main\resources\db\migration)
+
+[//]: # (В данном случае с их помощью создаются таблицы по всем сущностям базы данных,)
+
+[//]: # (что позволит легко создать ту же самую структуру БД при переносе на другой сервер.)
+
+[//]: # (Правила написания миграций: https://flywaydb.org/documentation/concepts/migrations)
 
 # Профили
 
