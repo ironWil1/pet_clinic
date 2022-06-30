@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
+import java.util.TimeZone;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -43,6 +44,7 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @Nullable
     protected String getAccessToken(String email, String password) throws Exception{
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
         ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
         String requestJson = objectWriter.writeValueAsString(new AuthRequest(email, password));
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth")
