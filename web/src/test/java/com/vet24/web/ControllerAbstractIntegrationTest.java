@@ -44,7 +44,6 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @Nullable
     protected String getAccessToken(String email, String password) throws Exception{
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
         ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
         String requestJson = objectWriter.writeValueAsString(new AuthRequest(email, password));
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth")
