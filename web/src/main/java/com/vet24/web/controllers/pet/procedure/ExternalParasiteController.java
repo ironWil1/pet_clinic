@@ -1,22 +1,22 @@
 package com.vet24.web.controllers.pet.procedure;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.exception.ExceptionDto;
-import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
+import com.vet24.models.dto.pet.procedure.ExternalParasiteDto;
 import com.vet24.models.dto.pet.procedure.ProcedureDto;
+import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.exception.BadRequestException;
-import com.vet24.models.mappers.pet.procedure.AbstractNewProcedureMapper;
-import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
+import com.vet24.models.mappers.pet.procedure.ExternalParasiteMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
+import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.user.Client;
 import com.vet24.models.util.View;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
-import com.vet24.service.pet.procedure.ProcedureService;
+import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,14 +35,13 @@ import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 @RestController
 @Slf4j
-@RequestMapping("api/client/pet/{petId}/procedure/externalParasite")
+@RequestMapping("api/client/procedure/external")
 @Tag(name = "external parasite-controller", description = "operations with external parasite procedure")
 public class ExternalParasiteController {
     private final PetService petService;
-    private final ProcedureService procedureService;
-    private final ProcedureMapper procedureMapper;
-    private final AbstractNewProcedureMapper newProcedureMapper;
+    private final ExternalParasiteProcedureService externalParasiteProcedureService;
     private final MedicineService medicineService;
+    private final ExternalParasiteMapper externalParasiteMapper;
 
     private static final String PET_NOT_FOUND = "pet not found";
     private static final String PROCEDURE_NOT_FOUND = "procedure not found";
@@ -50,68 +49,98 @@ public class ExternalParasiteController {
     private static final String NOT_ASSIGNED = "pet not assigned to this procedure";
 
     @Autowired
-    public ExternalParasiteController(PetService petService, ProcedureService procedureService,
-                               ProcedureMapper procedureMapper, AbstractNewProcedureMapper newProcedureMapper,
-                               MedicineService medicineService) {
+    public ExternalParasiteController(PetService petService, MedicineService medicineService,
+                                      ExternalParasiteMapper externalParasiteMapper,
+                                      ExternalParasiteProcedureService externalParasiteProcedureService) {
         this.petService = petService;
-        this.procedureService = procedureService;
-        this.procedureMapper = procedureMapper;
-        this.newProcedureMapper = newProcedureMapper;
+        this.externalParasiteProcedureService = externalParasiteProcedureService;
         this.medicineService = medicineService;
+        this.externalParasiteMapper = externalParasiteMapper;
     }
 
-    @Operation(summary = "get a external parasite procedure")
+    @Operation(summary = "get an external parasite procedure")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a external parasite procedure",
-                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
-            @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
+                    content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
+            @ApiResponse(responseCode = "404", description = "Procedure not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet not assigned with external parasite Procedure OR pet not yours",
+            @ApiResponse(responseCode = "400", description = "Pet not assigned with external parasite procedure",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    @GetMapping("/{procedureId}")
-    public ResponseEntity<ProcedureDto> getById(@PathVariable Long petId, @PathVariable Long procedureId) {
+    @GetMapping
+    public ResponseEntity<ExternalParasiteDto> get(@RequestParam Long petId) {
         Client client = (Client) getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
-        Procedure procedure = procedureService.getByKey(procedureId);
 
         if (pet == null) {
-            log.info("The pet with this id {} was not found",petId);
+            log.info("The pet with this id {} was not found", petId);
             throw new NotFoundException(PET_NOT_FOUND);
         }
-        if (procedure == null) {
-            log.info("The procedure with this id {} was not found",procedureId);
-            throw new NotFoundException(PROCEDURE_NOT_FOUND);
-        }
         if (!pet.getClient().getId().equals(client.getId())) {
-            log.info("The pet with this id {} is not yours",petId);
+            log.info("The pet with this id {} is not yours", petId);
             throw new BadRequestException(NOT_YOURS);
         }
-        if (!procedure.getPet().getId().equals(pet.getId())) {
-            log.info("The pet with this id {}  not assigned to this procedure {}",petId,procedure.getPet().getId());
+
+        ExternalParasiteProcedure externalParasiteProcedure = (ExternalParasiteProcedure) pet.getProcedures()
+                .stream()
+                .filter(p -> (p instanceof ExternalParasiteProcedure))
+                .findFirst()
+                .orElse(null);
+
+        if (externalParasiteProcedure == null) {
+            log.info("The external parasite procedure was not found");
+            throw new NotFoundException(PROCEDURE_NOT_FOUND);
+        }
+        if (!externalParasiteProcedure.getPet().getId().equals(pet.getId())) {
+            log.info("The pet with this id {}  not assigned to this procedure {}", petId,
+                    externalParasiteProcedure.getPet().getId());
             throw new BadRequestException(NOT_ASSIGNED);
         }
-        ProcedureDto procedureDto = procedureMapper.toDto(procedure);
-        log.info("We have this procedure {}",procedureId);
-        return new ResponseEntity<>(procedureDto, HttpStatus.OK);
+
+        ExternalParasiteDto externalParasiteDto = externalParasiteMapper.toDto(externalParasiteProcedure);
+        log.info("We have this procedure {}", externalParasiteProcedure.getId());
+        return new ResponseEntity<>(externalParasiteDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "get an external parasite procedure")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully get a external parasite procedure",
+                    content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
+            @ApiResponse(responseCode = "404", description = "Procedure not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "Pet not assigned with external parasite procedure",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<ExternalParasiteDto> getById(@PathVariable Long id) {
+        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureService.getByKey(id);
+
+        if (externalParasiteProcedure == null) {
+            log.info("The procedure with this id {} was not found",id);
+            throw new NotFoundException(PROCEDURE_NOT_FOUND);
+        }
+
+        ExternalParasiteDto externalParasiteDto = externalParasiteMapper.toDto(externalParasiteProcedure);
+        log.info("We have this procedure {}", id);
+        return new ResponseEntity<>(externalParasiteDto, HttpStatus.OK);
     }
 
     @Operation(summary = "add a new external parasite procedure")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully added a new external parasite procedure",
-                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+                    content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
             @ApiResponse(responseCode = "404", description = "Pet is not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Pet not yours",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("")
-    public ResponseEntity<ProcedureDto> save(@PathVariable Long petId, @Validated(OnCreate.class)
-    @RequestBody AbstractNewProcedureDto newProcedureDto) {
+    public ResponseEntity<ExternalParasiteDto> save(@RequestParam Long petId,
+                                                    @RequestBody ExternalParasiteDto externalParasiteDto) {
 
         Client client = (Client) getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
-        Procedure procedure = newProcedureMapper.toEntity(newProcedureDto);
+        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteMapper.toEntity(externalParasiteDto);
 
         if (pet == null) {
             throw new NotFoundException(PET_NOT_FOUND);
@@ -120,90 +149,67 @@ public class ExternalParasiteController {
             throw new BadRequestException(NOT_YOURS);
         }
 
-        Medicine medicine = medicineService.getByKey(newProcedureDto.getMedicineId());
-        procedure.setMedicine(medicine);
-        procedure.setPet(pet);
-        procedureService.persist(procedure);
+        Medicine medicine = medicineService.getByKey(externalParasiteDto.getMedicineId());
+        externalParasiteProcedure.setMedicine(medicine);
+        externalParasiteProcedure.setPet(pet);
+//        externalParasiteProcedure.setType(ProcedureType.EXTERNAL_PARASITE);
+        externalParasiteProcedureService.persist(externalParasiteProcedure);
 
-        pet.addProcedure(procedure);
+        pet.addProcedure(externalParasiteProcedure);
         petService.update(pet);
-        log.info("We added procedure with this id {}",newProcedureDto.getMedicineId());
-        return new ResponseEntity<>(procedureMapper.toDto(procedure), HttpStatus.CREATED);
+        log.info("We added procedure with this id {}", externalParasiteDto.getMedicineId());
+        return new ResponseEntity<>(externalParasiteMapper.toDto(externalParasiteProcedure), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "update a Procedure")
+    @Operation(summary = "update an external parasite procedure")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully updated a Procedure",
-                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
-            @ApiResponse(responseCode = "404", description = "Pet or Procedure is not found",
+            @ApiResponse(responseCode = "200", description = "Successfully updated a external parasite procedure",
+                    content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
+            @ApiResponse(responseCode = "404", description = "External parasite procedure is not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
+            @ApiResponse(responseCode = "400", description = "Pet not assigned with external parasite procedure",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    @PutMapping("/{procedureId}")
-    public ResponseEntity<ProcedureDto> update(@PathVariable Long petId, @PathVariable Long procedureId,
-                                               @JsonView(View.Put.class)
-                                               @Validated(OnUpdate.class)@RequestBody ProcedureDto procedureDto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ExternalParasiteDto> update(@PathVariable Long id,
+//                                                      @JsonView(View.Put.class)
+                                                      @Validated(OnUpdate.class)
+                                                      @RequestBody ExternalParasiteDto externalParasiteDto) {
 
-        Client client = (Client) getSecurityUserOrNull();
-        Pet pet = petService.getByKey(petId);
-        Procedure procedure = procedureService.getByKey(procedureId);
+        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureService.getByKey(id);
 
-        if (pet == null) {
-            throw new NotFoundException(PET_NOT_FOUND);
-        }
-        if (procedure == null) {
+        if (externalParasiteProcedure == null) {
             throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
-        if (!pet.getClient().getId().equals(client.getId())) {
-            throw new BadRequestException(NOT_YOURS);
-        }
-        if (!procedure.getPet().getId().equals(pet.getId())) {
-            throw new BadRequestException(NOT_ASSIGNED);
-        }
-        procedureMapper.updateEntity(procedureDto,procedure);
-        Medicine medicine = medicineService.getByKey(procedureDto.getMedicineId());
-        procedure.setId(procedureId);
-        procedure.setMedicine(medicine);
-        procedure.setPet(pet);
-        procedureService.update(procedure);
-        log.info("We updated procedure with this id {}",procedure.getId());
 
-        return new ResponseEntity<>(procedureMapper.toDto(procedure), HttpStatus.OK);
+        externalParasiteMapper.updateEntity(externalParasiteDto, externalParasiteProcedure);
+        Medicine medicine = medicineService.getByKey(externalParasiteDto.getMedicineId());
+        externalParasiteProcedure.setMedicine(medicine);
+        externalParasiteProcedureService.update(externalParasiteProcedure);
+        log.info("We updated procedure with this id {}", externalParasiteProcedure.getId());
+
+        return new ResponseEntity<>(externalParasiteMapper.toDto(externalParasiteProcedure), HttpStatus.OK);
     }
 
-    @Operation(summary = "delete a Procedure")
+    @Operation(summary = "delete an external parasite procedure")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully deleted a Procedure"),
-            @ApiResponse(responseCode = "404", description = "Pet or Procedure is not found",
+            @ApiResponse(responseCode = "200", description = "Successfully deleted a external parasite procedure"),
+            @ApiResponse(responseCode = "404", description = "External parasite procedure is not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
+            @ApiResponse(responseCode = "400", description = "Pet not assigned with external parasite procedure",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    @DeleteMapping("/{procedureId}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long petId, @PathVariable Long procedureId) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
 
-        Client client = (Client) getSecurityUserOrNull();
-        Procedure procedure = procedureService.getByKey(procedureId);
-        Pet pet = petService.getByKey(petId);
+        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureService.getByKey(id);
 
-        if (pet == null) {
-            throw new NotFoundException(PET_NOT_FOUND);
-        }
-        if (procedure == null) {
+        if (externalParasiteProcedure == null) {
             throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
-        if (!pet.getClient().getId().equals(client.getId())) {
-            throw new BadRequestException(NOT_YOURS);
-        }
-        if (!procedure.getPet().getId().equals(pet.getId())) {
-            throw new BadRequestException(NOT_ASSIGNED);
-        }
 
-        procedureService.delete(procedure);
-        pet.removeProcedure(procedure);
-        petService.update(pet);
-        log.info("We deleted procedure with this id {}",procedure.getId());
+        externalParasiteProcedureService.delete(externalParasiteProcedure);
+        log.info("We deleted procedure with this id {}", externalParasiteProcedure.getId());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
