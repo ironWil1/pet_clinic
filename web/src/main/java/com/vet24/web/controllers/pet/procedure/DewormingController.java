@@ -37,6 +37,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 @RestController
@@ -72,37 +75,35 @@ public class DewormingController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a deworming procedure",
                     content = @Content(schema = @Schema(implementation = EchinococcusDto.class))),
-            @ApiResponse(responseCode = "404", description = "Pet or deworming procedure not found",
+            @ApiResponse(responseCode = "404", description = "Pet not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Pet not yours",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @GetMapping("")
-    public ResponseEntity<EchinococcusDto> getByPetId(@RequestParam Long petId) {
-        Client client = (Client) getSecurityUserOrNull();
+    public ResponseEntity<List<EchinococcusDto>> getByPetId(@RequestParam Long petId) {
+
         Pet pet = petService.getByKey(petId);
 
-        if (pet == null) {
-            log.info("The pet with this id {} was not found", petId);
-            throw new NotFoundException(PET_NOT_FOUND);
-        }
-        if (!pet.getClient().getId().equals(client.getId())) {
-            log.info("The pet with this id {} is not yours", petId);
-            throw new BadRequestException(PET_NOT_YOURS);
-        }
+        petCheck(pet);
 
-        EchinococcusProcedure echinococcusProcedure = (EchinococcusProcedure) pet.getProcedures().stream()
+        List<EchinococcusProcedure> echinococcusProcedureList = pet.getProcedures().stream()
                 .filter(p -> p.type == ProcedureType.ECHINOCOCCUS)
-                .findFirst()
-                .orElse(null);
+                .map(p -> (EchinococcusProcedure) p)
+                .collect(Collectors.toList());
 
-        if (echinococcusProcedure == null) {
-            log.info("The deworming procedure with this pet id {} was not found", petId);
-            throw new NotFoundException(PROCEDURE_NOT_FOUND);
+        List<EchinococcusDto> echinococcusDtoList = echinococcusMapper.toDto(echinococcusProcedureList);
+
+        if (echinococcusProcedureList.isEmpty()) {
+            log.info("We don't have deworming procedures for petId {}", petId);
+        } else {
+            log.info("We have this deworming procedures {}", echinococcusProcedureList.stream()
+                    .map(p -> Long.toString(p.getId()))
+                    .collect(Collectors.joining(","))
+            );
         }
-        EchinococcusDto echinococcusDto = echinococcusMapper.toDto(echinococcusProcedure);
-        log.info("We have this deworming procedure {}", echinococcusProcedure.getId());
-        return new ResponseEntity<>(echinococcusDto, HttpStatus.OK);
+
+        return new ResponseEntity<>(echinococcusDtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "get a deworming procedure by id")
@@ -116,22 +117,14 @@ public class DewormingController {
     })
     @GetMapping("/{procedureId}")
     public ResponseEntity<EchinococcusDto> getById(@PathVariable Long procedureId) {
-        Client client = (Client) getSecurityUserOrNull();
+
         EchinococcusProcedure echinococcusProcedure = echinococcusProcedureService.getByKey(procedureId);
-        if (echinococcusProcedure == null) {
-            log.info("The deworming procedure with this id {} was not found", procedureId);
-            throw new NotFoundException(PROCEDURE_NOT_FOUND);
-        }
 
-        Pet pet = echinococcusProcedure.getPet();
-
-        if (!pet.getClient().getId().equals(client.getId())) {
-            log.info("The deworming procedure with this id {} is not yours", procedureId);
-            throw new BadRequestException(PROCEDURE_NOT_YOURS);
-        }
+        procedureCheck(echinococcusProcedure);
 
         EchinococcusDto echinococcusDto = echinococcusMapper.toDto(echinococcusProcedure);
         log.info("We have this deworming procedure {}", procedureId);
+
         return new ResponseEntity<>(echinococcusDto, HttpStatus.OK);
     }
 
@@ -149,26 +142,20 @@ public class DewormingController {
     public ResponseEntity<EchinococcusDto> save(@RequestParam Long petId, @Validated(OnCreate.class)
     @RequestBody EchinococcusDto echinococcusDto) {
 
-        Client client = (Client) getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
-        EchinococcusProcedure echinococcusProcedure = (EchinococcusProcedure) newProcedureMapper.toEntity(echinococcusDto);
+        petCheck(pet);
 
-        if (pet == null) {
-            throw new NotFoundException(PET_NOT_FOUND);
-        }
-        if (!pet.getClient().getId().equals(client.getId())) {
-            throw new BadRequestException(PET_NOT_YOURS);
-        }
+        EchinococcusProcedure echinococcusProcedure = (EchinococcusProcedure) newProcedureMapper.toEntity(echinococcusDto);
 
         Medicine medicine = medicineService.getByKey(echinococcusDto.getMedicineId());
         echinococcusProcedure.setMedicine(medicine);
         echinococcusProcedure.setPet(pet);
         echinococcusProcedureService.persist(echinococcusProcedure);
 
-
         pet.addProcedure(echinococcusProcedure);
         petService.update(pet);
         log.info("We added deworming procedure with this id {}", echinococcusProcedure.getId());
+
         return new ResponseEntity<>(echinococcusMapper.toDto(echinococcusProcedure), HttpStatus.CREATED);
     }
 
@@ -185,18 +172,9 @@ public class DewormingController {
     public ResponseEntity<EchinococcusDto> update(@PathVariable Long procedureId,
                                                   @Validated(OnUpdate.class) @RequestBody EchinococcusDto echinococcusDto) {
 
-        Client client = (Client) getSecurityUserOrNull();
         EchinococcusProcedure echinococcusProcedure = echinococcusProcedureService.getByKey(procedureId);
 
-        if (echinococcusProcedure == null) {
-            throw new NotFoundException(PROCEDURE_NOT_FOUND);
-        }
-
-        Pet pet = echinococcusProcedure.getPet();
-
-        if (!pet.getClient().getId().equals(client.getId())) {
-            throw new BadRequestException(PROCEDURE_NOT_YOURS);
-        }
+        procedureCheck(echinococcusProcedure);
 
         echinococcusMapper.updateEntity(echinococcusDto, echinococcusProcedure);
         Medicine medicine = medicineService.getByKey(echinococcusDto.getMedicineId());
@@ -218,9 +196,23 @@ public class DewormingController {
     @DeleteMapping("/{procedureId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long procedureId) {
 
-        Client client = (Client) getSecurityUserOrNull();
         EchinococcusProcedure echinococcusProcedure = echinococcusProcedureService.getByKey(procedureId);
 
+        procedureCheck(echinococcusProcedure);
+
+        echinococcusProcedureService.delete(echinococcusProcedure);
+
+        Pet pet = echinococcusProcedure.getPet();
+        pet.removeProcedure(echinococcusProcedure);
+        petService.update(pet);
+        log.info("We deleted deworming procedure with this id {}", echinococcusProcedure.getId());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //TODO add validationUtil
+    private void procedureCheck(EchinococcusProcedure echinococcusProcedure) {
+        Client client = (Client) getSecurityUserOrNull();
         if (echinococcusProcedure == null) {
             throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
@@ -230,12 +222,16 @@ public class DewormingController {
         if (!pet.getClient().getId().equals(client.getId())) {
             throw new BadRequestException(PROCEDURE_NOT_YOURS);
         }
+    }
 
-        echinococcusProcedureService.delete(echinococcusProcedure);
-        pet.removeProcedure(echinococcusProcedure);
-        petService.update(pet);
-        log.info("We deleted deworming procedure with this id {}", echinococcusProcedure.getId());
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    //TODO add validationUtil
+    private void petCheck(Pet pet) {
+        Client client = (Client) getSecurityUserOrNull();
+        if (pet == null) {
+            throw new NotFoundException(PET_NOT_FOUND);
+        }
+        if (!pet.getClient().getId().equals(client.getId())) {
+            throw new BadRequestException(PET_NOT_YOURS);
+        }
     }
 }
