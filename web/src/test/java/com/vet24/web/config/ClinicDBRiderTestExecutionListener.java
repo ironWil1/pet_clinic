@@ -9,7 +9,7 @@ public class ClinicDBRiderTestExecutionListener extends DBRiderTestExecutionList
 
     @Override
     public int getOrder() {
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         return Ordered.HIGHEST_PRECEDENCE;
     }
 }
