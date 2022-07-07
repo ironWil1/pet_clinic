@@ -35,7 +35,11 @@ building:
     - clinic_shell
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
-
+      changes:
+        - documentation/**/*
+        - .gitlab-ci.yml
+        when: never
+      when: always
 
 integration_test_job:
   services:
