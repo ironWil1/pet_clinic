@@ -17,13 +17,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = UpdatingNewsDto.class, name = "UPDATING"),
-        @JsonSubTypes.Type(value = AdvertisingActionsNewsDto.class, name = "ADVERTISING_ACTIONS"),
-        @JsonSubTypes.Type(value = DiscountsNewsDto.class, name = "DISCOUNTS"),
-        @JsonSubTypes.Type(value = PromotionNewsDto.class, name = "PROMOTION"),
-
-})
 public class NewsDto {
 
     @JsonView({View.Get.class})
