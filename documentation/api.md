@@ -12,7 +12,8 @@ class News {
   LocalDateTime endTime
   List<String> pictures //массив адресов картинок связанных с новостью
 }
-```
+```  
+1. рефактор модели
 
 ## Клиент
 ### 1 Контроллер получения новостей.   
@@ -26,6 +27,7 @@ GET /api/client/news -> List<ClientNewsResponseDto>
 ```
 class ClientNewsResponseDto {
   id,
+  title,
   type,
   content
 }
