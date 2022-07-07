@@ -8,7 +8,7 @@ class News {
   String content
   String title
   boolean isImportant
-  boolean published
+  boolean published //false по умолчанию
   LocalDateTime endTime
   List<String> pictures //массив адресов картинок связанных с новостью
 }
