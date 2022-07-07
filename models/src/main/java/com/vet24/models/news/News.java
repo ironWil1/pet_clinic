@@ -45,6 +45,9 @@ public class News implements Serializable {
     @Column
     private boolean isImportant;
 
+    @Column(columnDefinition = "boolean default false")
+    private boolean published;
+
     @Column
     private LocalDateTime endTime;
 
