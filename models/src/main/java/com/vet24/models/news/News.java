@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class News implements Serializable {
+public class News implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
