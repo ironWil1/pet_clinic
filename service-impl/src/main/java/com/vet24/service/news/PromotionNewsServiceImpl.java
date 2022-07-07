@@ -1,6 +1,5 @@
 package com.vet24.service.news;
 
-import com.vet24.dao.news.PromotionNewsDao;
 import com.vet24.models.news.PromotionNews;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.stereotype.Service;

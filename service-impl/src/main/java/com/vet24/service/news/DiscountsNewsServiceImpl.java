@@ -1,6 +1,5 @@
 package com.vet24.service.news;
 
-import com.vet24.dao.news.DiscountsNewsDao;
 import com.vet24.models.news.DiscountsNews;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
