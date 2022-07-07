@@ -9,9 +9,6 @@ import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.news.News;
-import com.vet24.models.news.AdvertisingActionsNews;
-import com.vet24.models.news.DiscountsNews;
-import com.vet24.models.news.PromotionNews;
 import com.vet24.models.notification.Notification;
 import com.vet24.models.notification.UserNotification;
 import com.vet24.models.pet.Cat;
@@ -397,36 +394,6 @@ public class TestDataInitializer implements ApplicationRunner {
         userNotificationService.persistAll(userNotificationList);
     }
 
-    public void newsInit() {
-        List<News> newsList = new ArrayList<>();
-        for (int i = 1; i <= 30; i++) {
-
-            if (i <= 7) {
-                newsList
-                        .add(new UpdatingNews("Content of Updating" + i,
-                                true, LocalDateTime.now().plusDays(i)));
-
-            }
-
-            if (i > 7 && i <= 14) {
-                newsList
-                        .add(new AdvertisingActionsNews("Content of Advertising Actions" + i,
-                                false, LocalDateTime.now().plusWeeks(i)));
-            }
-
-            if (i > 14 && i <= 21) {
-                newsList
-                        .add(new DiscountsNews("Content of Discounts News" + i,
-                                true, LocalDateTime.now().plusDays(i)));
-            }
-            if (i > 21) {
-                newsList.add(new PromotionNews("Content of Promotion News" + i,
-                        false, LocalDateTime.now().plusWeeks(i)));
-            }
-        }
-           newsService.persistAll(newsList);
-        }
-
 
     @Override
     @Transactional
@@ -451,7 +418,6 @@ public class TestDataInitializer implements ApplicationRunner {
             doctorNonWorkingInit();
             appointmentInit();
             notificationAndUserNotificationInit();
-            newsInit();
         }
     }
 }
