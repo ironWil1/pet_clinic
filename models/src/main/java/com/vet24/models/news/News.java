@@ -6,19 +6,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -43,6 +35,9 @@ public class News implements Serializable {
     private String content;
 
     @Column
+    private String title;
+
+    @Column
     private boolean isImportant;
 
     @Column(columnDefinition = "boolean default false")
@@ -51,12 +46,9 @@ public class News implements Serializable {
     @Column
     private LocalDateTime endTime;
 
-    protected News(NewsType type, String content, boolean isImportant, LocalDateTime endTime) {
-        this.type = type;
-        this.content = content;
-        this.isImportant = isImportant;
-        this.endTime = endTime;
-    }
+    @ElementCollection
+    @Column
+    List<String> pictures;
 }
 
 

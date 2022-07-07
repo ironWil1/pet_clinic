@@ -9,6 +9,7 @@ import com.vet24.models.news.News;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public abstract class NewsMapper implements
-        DtoMapper<News, NewsDto>, EntityMapper<NewsDto, News> {
+public abstract class NewsMapper implements DtoMapper<News, NewsDto>, EntityMapper<NewsDto, News> {
 
     private Map<NewsType, AbstractNewsMapper> mapperMap;
 
@@ -31,8 +31,8 @@ public abstract class NewsMapper implements
 
     private void setMapperMap(List<AbstractNewsMapper> mapperList) {
         mapperMap = mapperList
-                   .stream()
-                   .collect(Collectors.toMap(AbstractNewsMapper::getNewsType, Function.identity()));
+                .stream()
+                .collect(Collectors.toMap(AbstractNewsMapper::getNewsType, Function.identity()));
     }
 
     @Mapping(target = "type", source = "type")
@@ -41,7 +41,7 @@ public abstract class NewsMapper implements
 
 
     @Override
-    public News toEntity (NewsDto newsDto) {
+    public News toEntity(NewsDto newsDto) {
         if (mapperMap
                 .containsKey(newsDto.getType())) {
             return mapperMap
