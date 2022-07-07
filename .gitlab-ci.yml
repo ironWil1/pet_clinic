@@ -34,12 +34,12 @@ building:
   tags:
     - clinic_shell
   rules:
-    - if: $CI_COMMIT_BRANCH == 'master'
-      changes:
+      - changes:
         - documentation/**/*
         - .gitlab-ci.yml
         when: never
-      when: always
+      - if: $CI_COMMIT_BRANCH == 'master'
+        when: always
 
 integration_test_job:
   services:
