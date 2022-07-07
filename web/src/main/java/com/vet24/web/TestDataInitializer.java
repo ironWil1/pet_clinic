@@ -9,7 +9,6 @@ import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.news.News;
-import com.vet24.models.news.UpdatingNews;
 import com.vet24.models.news.AdvertisingActionsNews;
 import com.vet24.models.news.DiscountsNews;
 import com.vet24.models.news.PromotionNews;
