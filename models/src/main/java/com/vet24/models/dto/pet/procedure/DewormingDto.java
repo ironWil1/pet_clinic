@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-public class DewormingDto extends AbstractNewProcedureDto {
+public class DewormingDto {
     LocalDate date; //if null or blank set now
     @NotNull(message = "Поле medicineId не должно быть null")
     Long medicineId;
