@@ -22,7 +22,7 @@ Stop and remove containers
 ```docker-compose down```
 
 - Our database is available on the local computer under port 5433 and container port 5432
-- **Port for test database is 5434.**
+
 
 
 # Dao and Service Guide
@@ -69,6 +69,7 @@ Quick and easy way to document your APIs.
 3. Test method should use @DataSet for generation database content.  
 4. @DataSet could be with [possible values](https://database-rider.github.io/getting-started/#configuration). 
 5. For more information check [official Database Rider documentation](https://database-rider.github.io/database-rider/1.23.0/documentation.html)
+6. Тестирование у нас производится с использованием библиотеки testcontainers для поднятия контейнера с базой под тесты
 
 # Database Diagram
 
@@ -78,55 +79,89 @@ Last update 20.05.2021 12:50
 
 https://dbdiagram.io/d/60a62c9db29a09603d15bc72
 
-# Sonarqube Guide
+[//]: # ()
+[//]: # (# Sonarqube Guide)
 
-Для работы с Sonarqube в Idea нужно подключить плагин Sonarlint.
-1. Идём в настройки IDEA и в разделе Plugins находим плагин SonarLint и устанавливаем его.
-2. Открываем панель плагина, кликаем по иконке "Configure SonarLint".
-3. Далее "Configure the connection...", добавляем новый (SonarQube, не SonarCloud). URL: http://91.241.64.154:9000/
-4. Выбираем авторизацию по логину и паролю, вводим. Ok. Finish.
-5. Из выпадающего списка выбираем проект "pet_clinic". В Project key указываем pet_clinic. Ok.
-6. Если не получилось - гайд с картинками: https://habr.com/ru/company/krista/blog/469963/
+[//]: # ()
+[//]: # (Для работы с Sonarqube в Idea нужно подключить плагин Sonarlint.)
 
-# Sonarqube. Поднять контейнер на сервере с нуля.
+[//]: # (1. Идём в настройки IDEA и в разделе Plugins находим плагин SonarLint и устанавливаем его.)
 
-1. Открыть командную строку в ОС и ввести ssh john@91.241.64.154, после запроса пароля указать r43naj5QV2
-2. Ввести команду sudo su и указать пароль r43naj5QV2
-3. Проверить есть ли конфигурационный файл docker-compose.yml на сервере командой **cd /sonarqube** , далее **ll**.
-4. Если файла нет, то ввести команду **nano docker-compose.yml** и скопировать содержимое файла docker-compose.yml из директории devops/sonarqube проекта, после чего сохранить файл на сервере.
-5. Проверить наличие директорий для sonarqube и postgresql по аналогии с п.3:
-   /data/docker-volume/sonarqube1/data
-   /data/docker-volume/sonarqube1/extensions
-   /data/docker-volume/sonarqube1/logs
-   /data/docker-volume/postgres_sonar
-   Если их нет, то создать командой **mkdir /названия/нужных/директорий**
-   И скопировать плагины сюда /data/docker-volume/sonarqube1/extensions из директории /sonarqube/plugins командой **cp -r /sonarqube/plugins /data/docker-volume/sonarqube1/extensions/**
-7. Запустить контейнеры командой **docker-compose up -d**
-8. В браузере перейти по http://91.241.64.154:9000/ и залогиниться логин/пароль admin
-9. Сменить пароль админу на qwertyASDFGH123456 , также добавить пользователя:
-   login - petclinic.vet24@gmail.com
-   password - MFbeSVsb
-10. Создать проект с project key и display name ==> pet_clinic
-11. Сгенерировать токен по названию pet_clinic
-12. Открыть файл .gitlab-ci.yml (с браузером закончили, файл лежит в склонированном в вашу IntelliJ IDEA проекте) и указать в значении переменной SONAR_PROJECT_KEY токен.
-13. Готово, всё работает.
+[//]: # (2. Открываем панель плагина, кликаем по иконке "Configure SonarLint".)
 
-# Flyway Guide
+[//]: # (3. Далее "Configure the connection...", добавляем новый &#40;SonarQube, не SonarCloud&#41;. URL: http://91.241.64.154:9000/)
 
-Flyway - это инструмент для миграции скриптов в формате sql,
-расположенных в pet_clinic\web\src\main\resources\db\migration
-В данном случае с их помощью создаются таблицы по всем сущностям базы данных,
-что позволит легко создать ту же самую структуру БД при переносе на другой сервер.
-Правила написания миграций: https://flywaydb.org/documentation/concepts/migrations
+[//]: # (4. Выбираем авторизацию по логину и паролю, вводим. Ok. Finish.)
+
+[//]: # (5. Из выпадающего списка выбираем проект "pet_clinic". В Project key указываем pet_clinic. Ok.)
+
+[//]: # (6. Если не получилось - гайд с картинками: https://habr.com/ru/company/krista/blog/469963/)
+
+[//]: # ()
+[//]: # (# Sonarqube. Поднять контейнер на сервере с нуля.)
+
+[//]: # ()
+[//]: # (1. Открыть командную строку в ОС и ввести ssh john@91.241.64.154, после запроса пароля указать r43naj5QV2)
+
+[//]: # (2. Ввести команду sudo su и указать пароль r43naj5QV2)
+
+[//]: # (3. Проверить есть ли конфигурационный файл docker-compose.yml на сервере командой **cd /sonarqube** , далее **ll**.)
+
+[//]: # (4. Если файла нет, то ввести команду **nano docker-compose.yml** и скопировать содержимое файла docker-compose.yml из директории devops/sonarqube проекта, после чего сохранить файл на сервере.)
+
+[//]: # (5. Проверить наличие директорий для sonarqube и postgresql по аналогии с п.3:)
+
+[//]: # (   /data/docker-volume/sonarqube1/data)
+
+[//]: # (   /data/docker-volume/sonarqube1/extensions)
+
+[//]: # (   /data/docker-volume/sonarqube1/logs)
+
+[//]: # (   /data/docker-volume/postgres_sonar)
+
+[//]: # (   Если их нет, то создать командой **mkdir /названия/нужных/директорий**)
+
+[//]: # (   И скопировать плагины сюда /data/docker-volume/sonarqube1/extensions из директории /sonarqube/plugins командой **cp -r /sonarqube/plugins /data/docker-volume/sonarqube1/extensions/**)
+
+[//]: # (7. Запустить контейнеры командой **docker-compose up -d**)
+
+[//]: # (8. В браузере перейти по http://91.241.64.154:9000/ и залогиниться логин/пароль admin)
+
+[//]: # (9. Сменить пароль админу на qwertyASDFGH123456 , также добавить пользователя:)
+
+[//]: # (   login - petclinic.vet24@gmail.com)
+
+[//]: # (   password - MFbeSVsb)
+
+[//]: # (10. Создать проект с project key и display name ==> pet_clinic)
+
+[//]: # (11. Сгенерировать токен по названию pet_clinic)
+
+[//]: # (12. Открыть файл .gitlab-ci.yml &#40;с браузером закончили, файл лежит в склонированном в вашу IntelliJ IDEA проекте&#41; и указать в значении переменной SONAR_PROJECT_KEY токен.)
+
+[//]: # (13. Готово, всё работает.)
+
+[//]: # (# Flyway Guide)
+
+[//]: # ()
+[//]: # (Flyway - это инструмент для миграции скриптов в формате sql,)
+
+[//]: # (расположенных в pet_clinic\web\src\main\resources\db\migration)
+
+[//]: # (В данном случае с их помощью создаются таблицы по всем сущностям базы данных,)
+
+[//]: # (что позволит легко создать ту же самую структуру БД при переносе на другой сервер.)
+
+[//]: # (Правила написания миграций: https://flywaydb.org/documentation/concepts/migrations)
 
 # Профили
 
-1. Используется по умолчанию: local.
+1. Для локальной разработки профиль: local. 
 2. Для запущенного сервера: prod.
 3. Для тестирования в среде разработки: test.
 4. Для прогона тестов на сервере: testprod.
 
-Для изменения профиля "local" на профиль "test" необходимо выполнить следующие действия:
+Для указания профиля тестам необходимо:
 
 1. В боковом меню открываем дерево проекта, выбираем JUnit тест и правой кнопкой мыши вызываем выпадающее меню.
 2. В меню выбираем пункт "More Run/Debug" -> "Modify Run Configuration..."
@@ -136,11 +171,11 @@ Flyway - это инструмент для миграции скриптов в
    (Получится "-ea -Dspring.profiles.active=test")
 5. Нажимаем "Apply" и "OK". В результате профиль изменится и тест будет доступен для запуска в панели навигации.
 
-Для смены профиля при запуске сервера, выбираем в дереве проекта com.vet24.web.PetClinicApplication
+Для смены профиля при запуске приложения, выбираем в дереве проекта com.vet24.web.PetClinicApplication
 и правой кнопкой мыши вызываем выпадающее меню.
 
 1. В выпадающем меню выбираем пункт "Edit Configurations..."
-2. В поле "Active profiles" пишем имя профиля "testprod".
+2. В VM Options добавляем -Dspring.profiles.active=local либо в поле "Active profiles" пишем имя профиля "local".
 3. Нажимаем "Apply" и "OK".
 
 # JsonView
