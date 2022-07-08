@@ -6,16 +6,17 @@ import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.util.View;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class ExternalParasiteDto {
 
     @JsonView(View.Get.class)
@@ -41,9 +42,8 @@ public class ExternalParasiteDto {
     @JsonView({View.Put.class, View.Get.class})
     Integer periodDays;
 
-    public ExternalParasiteDto(Long id, LocalDate date, Long medicineId,
+    public ExternalParasiteDto(LocalDate date, Long medicineId,
                                String medicineBatchNumber, Boolean isPeriodical, Integer periodDays) {
-        this.id = id;
         this.date = date;
         this.medicineId = medicineId;
         this.medicineBatchNumber = medicineBatchNumber;
