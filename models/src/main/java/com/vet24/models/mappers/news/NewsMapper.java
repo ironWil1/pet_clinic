@@ -11,13 +11,14 @@ import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public abstract class NewsMapper implements DtoMapper<News, NewsDto>, EntityMapper<NewsDto, News> {
+public class NewsMapper implements DtoMapper<News, NewsDto>, EntityMapper<NewsDto, News> {
 
     private Map<NewsType, AbstractNewsMapper> mapperMap;
 
@@ -37,7 +38,42 @@ public abstract class NewsMapper implements DtoMapper<News, NewsDto>, EntityMapp
 
     @Mapping(target = "type", source = "type")
     @Override
-    public abstract NewsDto toDto(News news);
+    public NewsDto toDto(News news) {
+        NewsDto newsDto = new NewsDto();
+        if (news != null) {
+            newsDto.setId(news.getId());
+            newsDto.setType(news.getType());
+            newsDto.setContent(news.getContent());
+            newsDto.setImportant(news.isImportant());
+            newsDto.setEndTime(news.getEndTime());
+        }
+        return newsDto;
+    }
+
+    @Override
+    public List<NewsDto> toDto(List<News> entities) {
+        List<NewsDto> listNewsDto = new ArrayList<>();
+        if (entities != null) {
+            for (News news : entities) {
+                NewsDto newsDto = toDto(news);
+                listNewsDto.add(newsDto);
+            }
+        }
+        return listNewsDto;
+    }
+
+    @Override
+    public void updateEntity(NewsDto dto, News entity) {
+        if (dto != null) {
+            if (entity != null) {
+                entity.setId(dto.getId());
+                entity.setType(dto.getType());
+                entity.setContent(dto.getContent());
+                entity.setImportant(dto.isImportant());
+                entity.setEndTime(dto.getEndTime());
+            }
+        }
+    }
 
 
     @Override
@@ -50,6 +86,18 @@ public abstract class NewsMapper implements DtoMapper<News, NewsDto>, EntityMapp
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + newsDto);
         }
+    }
+
+    @Override
+    public List<News> toEntity(List<NewsDto> dto) {
+        List<News> listNews = new ArrayList<>();
+        if (dto != null) {
+            for (NewsDto newsDto : dto) {
+                News news = toEntity(newsDto);
+                listNews.add(news);
+            }
+        }
+        return listNews;
     }
 
 }
