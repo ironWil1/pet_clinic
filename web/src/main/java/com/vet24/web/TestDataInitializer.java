@@ -20,7 +20,7 @@ import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
-import com.vet24.models.pet.procedure.EchinococcusProcedure;
+import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
@@ -228,29 +228,42 @@ public class TestDataInitializer implements ApplicationRunner {
         medicineService.persistAll(medicines);
     }
 
-    public void procedureInitializer() {
-        List<VaccinationProcedure> vaccination = new ArrayList<>();
-        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
-        List<EchinococcusProcedure> echinococcus = new ArrayList<>();
-
+    public void dewormingInitializer(){
+        List<Deworming> dewormings = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            if (i <= 10) {
-                vaccination.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + i,
-                        false, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
-            if (i > 10 && i <= 20) {
-                externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
-                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
-            if (i > 20) {
-                echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
-                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
+            dewormings.add(new Deworming(LocalDate.now(),"DewormingMedicineBatchNumber" + i,
+                    true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"DewormingMedicineBatchNumber" + i,
+                    true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"DewormingMedicineBatchNumber" + i,
+                    false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
-        vaccinationProcedureService.persistAll(vaccination);
-        externalParasiteProcedureService.persistAll(externalParasite);
-        echinococcusProcedureService.persistAll(echinococcus);
+        echinococcusProcedureService.persistAll(dewormings);
     }
+
+//    public void procedureInitializer() {
+//        List<VaccinationProcedure> vaccination = new ArrayList<>();
+//        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
+//        List<Deworming> echinococcus = new ArrayList<>();
+//
+//        for (int i = 1; i <= 30; i++) {
+//            if (i <= 10) {
+//                vaccination.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + i,
+//                        false, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+//            }
+//            if (i > 10 && i <= 20) {
+//                externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
+//                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+//            }
+//            if (i > 20) {
+//                echinococcus.add(new Deworming(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
+//                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+//            }
+//        }
+//        vaccinationProcedureService.persistAll(vaccination);
+//        externalParasiteProcedureService.persistAll(externalParasite);
+//        echinococcusProcedureService.persistAll(echinococcus);
+//    }
 
     public void reproductionInitializer() {
         List<Reproduction> reproductions = new ArrayList<>();
@@ -438,7 +451,8 @@ public class TestDataInitializer implements ApplicationRunner {
             petInitialize();
             diagnosisInitilaizer();
             medicineInitialize();
-            procedureInitializer();
+//            procedureInitializer();
+            dewormingInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();
