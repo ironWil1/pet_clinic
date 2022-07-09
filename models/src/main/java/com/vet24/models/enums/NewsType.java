@@ -1,0 +1,3 @@
+public enum NewsType {
+    UPDATING, ADVERTISING_ACTIONS, DISCOUNTS, PROMOTION,
+}
