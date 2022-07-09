@@ -1,17 +1,57 @@
 package com.vet24.models.dto.pet.procedure;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.vet24.models.enums.ProcedureType;
-import lombok.NoArgsConstructor;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.vet24.models.dto.OnCreate;
+import com.vet24.models.dto.OnUpdate;
+import com.vet24.models.enums.ProcedureType;
+import com.vet24.models.util.View;
+import lombok.*;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
+@Data
 @NoArgsConstructor
-public class VaccinationDto extends AbstractNewProcedureDto {
+@EqualsAndHashCode
 
-    @JsonCreator
+public class VaccinationDto {
+
+    @JsonView(View.Get.class)
+    Long id;
+
+    @JsonView({View.Put.class, View.Get.class})
+    LocalDate date; //if null or blank set now
+
+    @JsonView({View.Put.class, View.Get.class})
+    ProcedureType type;
+
+    @NotNull(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineId не должно быть null")
+    @JsonView({View.Put.class, View.Get.class})
+    Long medicineId;
+
+    @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineBatchNumber не должно быть пустым")
+    @JsonView({View.Put.class, View.Get.class})
+    String medicineBatchNumber;
+
+    @JsonView({View.Put.class, View.Get.class})
+    Boolean isPeriodical;
+
+    @JsonView({View.Put.class, View.Get.class})
+    Integer periodDays;
+
+    public ProcedureType getType() {
+        return ProcedureType.VACCINATION;
+    }
+
     public VaccinationDto(LocalDate date, Long medicineId,
                           String medicineBatchNumber, Boolean isPeriodical, Integer periodDays) {
-        super(date, ProcedureType.VACCINATION, medicineId, medicineBatchNumber, isPeriodical, periodDays);
+        this.date = date;
+        this.type = ProcedureType.VACCINATION;
+        this.medicineId = medicineId;
+        this.medicineBatchNumber = medicineBatchNumber;
+        this.isPeriodical = isPeriodical;
+        this.periodDays = periodDays;
     }
 }

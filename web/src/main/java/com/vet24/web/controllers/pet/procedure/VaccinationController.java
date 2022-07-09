@@ -90,11 +90,7 @@ public class VaccinationController {
 
         checkPet(petId);
         checkOwnerPet(petId);
-        List<VaccinationProcedure> vaccinationProcedureList = petService.getByKey(petId).getProcedures()
-                .stream()
-                .filter(procedure -> procedure.getClass() == VaccinationProcedure.class)
-                .map(procedure -> (VaccinationProcedure) procedure)
-                .collect(Collectors.toList());
+        List<VaccinationProcedure> vaccinationProcedureList = petService.getByKey(petId).getVaccinationProcedures();
 
         List<VaccinationDto> vaccinationDtoList = vaccinationMapper.toDto(vaccinationProcedureList);
 
@@ -150,7 +146,7 @@ public class VaccinationController {
         vaccinationProcedure.setPeriodDays(vaccinationDto.getPeriodDays());
         vaccinationProcedureService.persist(vaccinationProcedure);
 
-        petService.getByKey(petId).addProcedure(vaccinationProcedure);
+        petService.getByKey(petId).addVaccinationProcedure(vaccinationProcedure);
         petService.update(petService.getByKey(petId));
 
         log.info("We added vaccination procedure with this id {}", vaccinationDto.getMedicineId());
@@ -189,7 +185,7 @@ public class VaccinationController {
         vaccinationProcedure.setPeriodDays(vaccinationDto.getPeriodDays());
         vaccinationProcedureService.update(vaccinationProcedure);
 
-        petService.getByKey(petId).addProcedure(vaccinationProcedure);
+        petService.getByKey(petId).addVaccinationProcedure(vaccinationProcedure);
         petService.update(pet);
 
 
@@ -215,7 +211,7 @@ public class VaccinationController {
         checkProcedure(vaccinationProcedure.getId());
         checkOwnerPet(vaccinationProcedure.getPet().getId());
         vaccinationProcedureService.delete(vaccinationProcedure);
-        pet.removeProcedure(vaccinationProcedure);
+        pet.removeVaccinationProcedure(vaccinationProcedure);
         petService.update(pet);
 
         log.info("We deleted procedure with this id {}", vaccinationProcedure.getId());
