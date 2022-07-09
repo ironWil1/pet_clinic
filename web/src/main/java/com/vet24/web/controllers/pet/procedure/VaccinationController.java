@@ -1,0 +1,225 @@
+package com.vet24.web.controllers.pet.procedure;
+
+import com.vet24.models.dto.exception.ExceptionDto;
+import com.vet24.models.dto.pet.procedure.ProcedureDto;
+import com.vet24.models.dto.pet.procedure.VaccinationDto;
+import com.vet24.models.exception.BadRequestException;
+import com.vet24.models.mappers.pet.procedure.VaccinationMapper;
+import com.vet24.models.medicine.Medicine;
+import com.vet24.models.pet.Pet;
+import com.vet24.models.pet.procedure.VaccinationProcedure;
+import com.vet24.service.medicine.MedicineService;
+import com.vet24.service.pet.PetService;
+import com.vet24.service.pet.procedure.VaccinationProcedureService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
+@RestController
+@Slf4j
+@RequestMapping("api/client/procedure/vaccination")
+@Tag(name = "vaccination-controller", description = "operations with vaccination procedure")
+public class VaccinationController {
+    private final PetService petService;
+    private final VaccinationProcedureService vaccinationProcedureService;
+    private final MedicineService medicineService;
+
+    private final VaccinationMapper vaccinationMapper;
+
+    private static final String PET_NOT_FOUND = "pet not found";
+    private static final String PROCEDURE_NOT_FOUND = "procedure not found";
+    private static final String NOT_YOURS = "pet not yours";
+
+    private void checkPet(Long petId) {
+        if (petService.getByKey(petId) == null) {
+            log.info("The pet with this id {} was not found", petId);
+            throw new NotFoundException(PET_NOT_FOUND);
+        }
+    }
+
+    private void checkProcedure(Long id) {
+        if (vaccinationProcedureService.getByKey(id) == null) {
+            log.info("The procedure with this id {} was not found", id);
+            throw new NotFoundException(PROCEDURE_NOT_FOUND);
+        }
+    }
+
+    private void checkOwnerPet(Long petId) {
+        if (!petService.getByKey(petId).getClient().getId().equals(Objects.requireNonNull(getSecurityUserOrNull()).getId())) {
+            log.info("The pet with this id {} is not yours", petId);
+            throw new BadRequestException(NOT_YOURS);
+        }
+    }
+
+    @Autowired
+    public VaccinationController(PetService petService, MedicineService medicineService,
+                                 VaccinationMapper vaccinationMapper,
+                                 VaccinationProcedureService vaccinationProcedureService) {
+        this.petService = petService;
+        this.vaccinationProcedureService = vaccinationProcedureService;
+        this.medicineService = medicineService;
+        this.vaccinationMapper = vaccinationMapper;
+    }
+
+    @Operation(summary = "get all vaccination procedure for your pet")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully get a Procedure",
+                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+            @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @GetMapping("/")
+    public ResponseEntity<List<VaccinationDto>> getByPetId(@RequestParam(name = "petId") Long petId) {
+
+        checkPet(petId);
+        checkOwnerPet(petId);
+        List<VaccinationProcedure> vaccinationProcedureList = petService.getByKey(petId).getProcedures()
+                .stream()
+                .filter(procedure -> procedure.getClass() == VaccinationProcedure.class)
+                .map(procedure -> (VaccinationProcedure) procedure)
+                .collect(Collectors.toList());
+
+        List<VaccinationDto> vaccinationDtoList = vaccinationMapper.toDto(vaccinationProcedureList);
+
+        vaccinationProcedureList.forEach(vaccinationProcedure ->
+                log.info("We have this procedure {}", vaccinationProcedure.getId()));
+
+        return new ResponseEntity<>(vaccinationDtoList, HttpStatus.OK);
+    }
+
+    @Operation(summary = "get vaccination procedure by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully get a Procedure",
+                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+            @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+
+    @GetMapping("/{id}")
+    public ResponseEntity<VaccinationDto> getByProcedureId(@PathVariable Long id) {
+        checkProcedure(id);
+        VaccinationProcedure vaccinationProcedure = vaccinationProcedureService.getByKey(id);
+        checkPet(vaccinationProcedure.getPet().getId());
+        checkOwnerPet(vaccinationProcedure.getPet().getId());
+        VaccinationDto vaccinationDto = vaccinationMapper.toDto(vaccinationProcedure);
+
+        return new ResponseEntity<>(vaccinationDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "add vaccination procedure for your pet")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully save a Procedure",
+                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+            @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @PostMapping("/")
+    public ResponseEntity<VaccinationDto> save(@RequestParam(name = "petId") Long petId,
+                                               @RequestBody VaccinationDto vaccinationDto) {
+        checkPet(petId);
+        checkOwnerPet(petId);
+
+        VaccinationProcedure vaccinationProcedure = vaccinationMapper.toEntity(vaccinationDto);
+
+        Medicine medicine = medicineService.getByKey(vaccinationDto.getMedicineId());
+        vaccinationProcedure.setPet(petService.getByKey(petId));
+        vaccinationProcedure.setMedicine(medicine);
+        vaccinationProcedure.setMedicineBatchNumber(vaccinationDto.getMedicineBatchNumber());
+        vaccinationProcedure.setIsPeriodical(vaccinationDto.getIsPeriodical());
+        vaccinationProcedure.setPeriodDays(vaccinationDto.getPeriodDays());
+        vaccinationProcedureService.persist(vaccinationProcedure);
+
+        petService.getByKey(petId).addProcedure(vaccinationProcedure);
+        petService.update(petService.getByKey(petId));
+
+        log.info("We added vaccination procedure with this id {}", vaccinationDto.getMedicineId());
+
+        return new ResponseEntity<>(vaccinationDto, HttpStatus.CREATED);
+
+    }
+
+    @Operation(summary = "update vaccination procedure for your pet")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully save a Procedure",
+                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+            @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<VaccinationDto> update(@PathVariable Long id,
+                                                 @RequestBody VaccinationDto vaccinationDto) {
+        checkProcedure(id);
+
+        VaccinationProcedure vaccinationProcedure = vaccinationProcedureService.getByKey(id);
+
+        checkProcedure(vaccinationProcedure.getId());
+        checkOwnerPet(vaccinationProcedure.getPet().getId());
+
+        Pet pet = vaccinationProcedure.getPet();
+        Long petId = vaccinationProcedure.getPet().getId();
+
+        Medicine medicine = medicineService.getByKey(vaccinationDto.getMedicineId());
+        vaccinationProcedure.setPet(petService.getByKey(petId));
+        vaccinationProcedure.setMedicine(medicine);
+        vaccinationProcedure.setMedicineBatchNumber(vaccinationDto.getMedicineBatchNumber());
+        vaccinationProcedure.setIsPeriodical(vaccinationDto.getIsPeriodical());
+        vaccinationProcedure.setPeriodDays(vaccinationDto.getPeriodDays());
+        vaccinationProcedureService.update(vaccinationProcedure);
+
+        petService.getByKey(petId).addProcedure(vaccinationProcedure);
+        petService.update(pet);
+
+
+        return new ResponseEntity<>(vaccinationDto, HttpStatus.OK);
+    }
+
+    @Operation(summary = "delete vaccination procedure for your pet")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully delete a Procedure",
+                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+            @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
+                    content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<VaccinationDto> delete(@PathVariable Long id) {
+        checkProcedure(id);
+        VaccinationProcedure vaccinationProcedure = vaccinationProcedureService.getByKey(id);
+        Pet pet = vaccinationProcedure.getPet();
+
+        checkProcedure(vaccinationProcedure.getId());
+        checkOwnerPet(vaccinationProcedure.getPet().getId());
+        vaccinationProcedureService.delete(vaccinationProcedure);
+        pet.removeProcedure(vaccinationProcedure);
+        petService.update(pet);
+
+        log.info("We deleted procedure with this id {}", vaccinationProcedure.getId());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+}
