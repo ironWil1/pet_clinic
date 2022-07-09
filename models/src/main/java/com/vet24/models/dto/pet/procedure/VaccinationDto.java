@@ -18,14 +18,10 @@ import java.time.LocalDate;
 
 public class VaccinationDto {
 
-    @JsonView(View.Get.class)
-    Long id;
 
     @JsonView({View.Put.class, View.Get.class})
     LocalDate date; //if null or blank set now
 
-    @JsonView({View.Put.class, View.Get.class})
-    ProcedureType type;
 
     @NotNull(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineId не должно быть null")
     @JsonView({View.Put.class, View.Get.class})
@@ -35,23 +31,26 @@ public class VaccinationDto {
     @JsonView({View.Put.class, View.Get.class})
     String medicineBatchNumber;
 
+    ProcedureType type;
+
     @JsonView({View.Put.class, View.Get.class})
     Boolean isPeriodical;
 
     @JsonView({View.Put.class, View.Get.class})
     Integer periodDays;
 
-    public ProcedureType getType() {
-        return ProcedureType.VACCINATION;
-    }
-
-    public VaccinationDto(LocalDate date, Long medicineId,
-                          String medicineBatchNumber, Boolean isPeriodical, Integer periodDays) {
+    public VaccinationDto(LocalDate date, Long medicineId, String medicineBatchNumber, Boolean isPeriodical, Integer periodDays) {
         this.date = date;
-        this.type = ProcedureType.VACCINATION;
         this.medicineId = medicineId;
         this.medicineBatchNumber = medicineBatchNumber;
         this.isPeriodical = isPeriodical;
         this.periodDays = periodDays;
+    }
+
+    public void setType(ProcedureType type) {
+        this.type = type;
+    }
+    public ProcedureType getType() {
+        return ProcedureType.VACCINATION;
     }
 }

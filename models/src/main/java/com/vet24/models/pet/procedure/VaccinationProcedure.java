@@ -7,12 +7,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Objects;
 
 import static com.vet24.models.enums.ProcedureType.VACCINATION;
 
@@ -20,8 +18,8 @@ import static com.vet24.models.enums.ProcedureType.VACCINATION;
 @Setter
 @NoArgsConstructor
 @Entity
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "procedure_vaccination")
 public class VaccinationProcedure implements Serializable {
 
     @Id
@@ -32,10 +30,7 @@ public class VaccinationProcedure implements Serializable {
     @Column
     private LocalDate date;
 
-//    @Column(name = "type", nullable = false, insertable = false, updatable = false)
-//    @Enumerated(EnumType.STRING)
-//    public final ProcedureType type = VACCINATION;
-
+    public ProcedureType type;
     @Column
     private String medicineBatchNumber;
 
@@ -62,20 +57,8 @@ public class VaccinationProcedure implements Serializable {
         this.pet = pet;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        VaccinationProcedure that = (VaccinationProcedure) o;
-        return id != null && Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
     public ProcedureType getType() {
         return VACCINATION;
     }
+
 }

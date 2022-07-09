@@ -26,7 +26,6 @@ import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
@@ -92,7 +91,13 @@ public class VaccinationController {
         checkOwnerPet(petId);
         List<VaccinationProcedure> vaccinationProcedureList = petService.getByKey(petId).getVaccinationProcedures();
 
+        if(vaccinationProcedureList.isEmpty()){
+            throw new NotFoundException(PROCEDURE_NOT_FOUND);
+        }
+
+
         List<VaccinationDto> vaccinationDtoList = vaccinationMapper.toDto(vaccinationProcedureList);
+
 
         vaccinationProcedureList.forEach(vaccinationProcedure ->
                 log.info("We have this procedure {}", vaccinationProcedure.getId()));
