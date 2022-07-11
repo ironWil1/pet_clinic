@@ -1,40 +1,50 @@
-package com.vet24.models.dto.news;
+package com.vet24.models.news;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.vet24.models.dto.OnCreate;
-import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.enums.NewsType;
-import com.vet24.models.util.View;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Data
+@Entity
 @NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
-public class NewsDto {
+public class News implements Serializable {
 
-    @JsonView({View.Get.class})
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    private long id;
 
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
+    @Column(name = "type", nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
     private NewsType type;
 
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
-    @NotBlank(groups = {OnCreate.class, OnUpdate.class},
-            message = "Поле content не должно быть пустым")
+    @Column
     private String content;
 
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
+    @Column
+    private String title;
+
+    @Column
     private boolean isImportant;
 
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
+    @Column(columnDefinition = "boolean default false")
+    private boolean published;
+
+    @Column
     private LocalDateTime endTime;
 
+    @ElementCollection
+    @Column
+    List<String> pictures;
 }
-
-
-
