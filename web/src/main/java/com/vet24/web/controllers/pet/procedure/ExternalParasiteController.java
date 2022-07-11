@@ -96,12 +96,8 @@ public class ExternalParasiteController {
         checkPet(petId);
         checkPetOwner(petId);
 
-        Pet pet = petService.getByKey(petId);
-        List<ExternalParasiteProcedure> externalParasiteProcedureList = pet.getProcedures()
-                .stream()
-                .filter(procedure -> procedure instanceof ExternalParasiteProcedure)
-                .map(procedure -> (ExternalParasiteProcedure) procedure)
-                .collect(Collectors.toList());
+        List<ExternalParasiteProcedure> externalParasiteProcedureList = petService.getByKey(petId)
+                .getExternalParasiteProcedures();
 
         if (externalParasiteProcedureList.isEmpty()) {
             log.info("The external parasite procedures was not found");
@@ -158,7 +154,7 @@ public class ExternalParasiteController {
         externalParasiteProcedure.setPet(pet);
         externalParasiteProcedureService.persist(externalParasiteProcedure);
 
-        pet.addProcedure(externalParasiteProcedure);
+        pet.addExternalParasiteProcedure(externalParasiteProcedure);
         petService.update(pet);
         log.info("We added procedure with this id {}", externalParasiteDto.getMedicineId());
         return new ResponseEntity<>(externalParasiteMapper.toDto(externalParasiteProcedure), HttpStatus.CREATED);
@@ -213,7 +209,7 @@ public class ExternalParasiteController {
         checkPetOwner(pet.getId());
 
         externalParasiteProcedureService.delete(externalParasiteProcedure);
-        pet.removeProcedure(externalParasiteProcedure);
+        pet.removeExternalParasiteProcedure(externalParasiteProcedure);
         petService.update(pet);
         log.info("We deleted procedure with this id {}", externalParasiteProcedure.getId());
 
