@@ -27,21 +27,21 @@
 В появившемся окне оставляем настройки по умолчанию , жмем **ОК**. 
 5. Переходим в проекте по пути **/docker-for-local** и открываем **docker-compose.yml.** Нажимаем **Synchronize with the Services tool window**
 
-![](pictures/Synchronize.png)
+![](pictures/start_tutorial/Synchronize.png)
 
 7. После этого во вкладке Services в Docker должна появиться новая конфигурация **Docker-compose: docker-for-local;** 
 
-![](pictures/docker-for-local services.png)
+![](pictures/start_tutorial/docker-for-local_services.png)
 
 Запускаем контейнер. Docker загрузит необходимые файлы и запустит нашу БД. 
 8. Если всё сделано правильно то после запуска контейнера в **Docker Desktop** должен отобразиться
 наш контейнер со статусом **Running** и можно будет подключиться к нашей БД из IDE. 
 
-![](pictures/db docker desktop.png)
+![](pictures/start_tutorial/db_docker_desktop.png)
 
 Для этого переходим во вкладку **Database** нажимаем **New -> Database -> PostgreSQL**
 
-![](pictures/DB 2.png)
+![](pictures/start_tutorial/DB_2.png)
 
 9. Идем по пути **/pet_clinic/web/src/main/resources/application-local.properties**, здесь берем настройки для подключения к БД. 
 
@@ -64,4 +64,4 @@
 3. Нажимаем **Apply** и **OK**
 4. Если все сделано правильно при старте тестов должен запуститься тестовый контейнер, это можно увидеть в Docker Desktop. После прохождения тестов контейнер удалится. 
 
-![](pictures/test-container.png)
+![](pictures/start_tutorial/test-container.png)
