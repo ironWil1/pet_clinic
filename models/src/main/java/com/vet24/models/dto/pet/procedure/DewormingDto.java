@@ -1,7 +1,9 @@
 package com.vet24.models.dto.pet.procedure;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.vet24.models.enums.ProcedureType;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.vet24.models.dto.OnCreate;
+import com.vet24.models.dto.OnUpdate;
+import com.vet24.models.util.View;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,15 +18,26 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class DewormingDto {
+    @JsonView(View.Get.class)
+    Long id;
+
+    @JsonView({View.Put.class, View.Get.class})
     LocalDate date; //if null or blank set now
-    @NotNull(message = "Поле medicineId не должно быть null")
+
+    @NotNull(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineId не должно быть null")
+    @JsonView({View.Put.class, View.Get.class})
     Long medicineId;
-    @NotBlank(message = "Поле medicineBatchNumber не должно быть пустым")
+
+    @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineBatchNumber не должно быть пустым")
+    @JsonView({View.Put.class, View.Get.class})
     String medicineBatchNumber;
+
+    @JsonView({View.Put.class, View.Get.class})
     Boolean isPeriodical;
+
+    @JsonView({View.Put.class, View.Get.class})
     Integer periodDays;
 
-    @JsonCreator
     public DewormingDto(LocalDate date, Long medicineId,
                         String medicineBatchNumber, Boolean isPeriodical, Integer periodDays) {
         this.date = date;

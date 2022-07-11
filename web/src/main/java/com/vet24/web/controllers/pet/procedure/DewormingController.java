@@ -1,76 +1,51 @@
-//package com.vet24.web.controllers.pet.procedure;
-//
-//import com.vet24.models.dto.OnCreate;
-//import com.vet24.models.dto.OnUpdate;
-//import com.vet24.models.dto.exception.ExceptionDto;
-//import com.vet24.models.dto.pet.procedure.DewormingDto;
-//import com.vet24.models.enums.ProcedureType;
-//import com.vet24.models.exception.BadRequestException;
-//import com.vet24.models.mappers.pet.procedure.AbstractNewProcedureMapper;
-//import com.vet24.models.mappers.pet.procedure.DewormingMapper;
-//import com.vet24.models.medicine.Medicine;
-//import com.vet24.models.pet.Pet;
-//import com.vet24.models.pet.procedure.Deworming;
-//import com.vet24.models.user.Client;
-//import com.vet24.service.medicine.MedicineService;
-//import com.vet24.service.pet.PetService;
-//import com.vet24.service.pet.procedure.EchinococcusProcedureService;
-//import io.swagger.v3.oas.annotations.Operation;
-//import io.swagger.v3.oas.annotations.media.Content;
-//import io.swagger.v3.oas.annotations.media.Schema;
-//import io.swagger.v3.oas.annotations.responses.ApiResponse;
-//import io.swagger.v3.oas.annotations.responses.ApiResponses;
-//import io.swagger.v3.oas.annotations.tags.Tag;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.validation.annotation.Validated;
-//import org.springframework.web.bind.annotation.DeleteMapping;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.PutMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.bind.annotation.RestController;
-//import org.webjars.NotFoundException;
-//
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
-//
-//@RestController
-//@Slf4j
-//@RequestMapping("api/client/procedure/deworming")
-//@Tag(name = "deworming-controller", description = "operations with Procedures")
-//public class DewormingController {
-//
-//    private final PetService petService;
-//    private final EchinococcusProcedureService echinococcusProcedureService;
-//    private final DewormingMapper dewormingMapper;
-//    private final AbstractNewProcedureMapper newProcedureMapper;
-//    private final MedicineService medicineService;
-//
-//    private static final String PET_NOT_FOUND = "pet not found";
-//    private static final String PROCEDURE_NOT_FOUND = "deworming procedure not found";
-//    private static final String PET_NOT_YOURS = "pet not yours";
-//    private static final String PROCEDURE_NOT_YOURS = "procedure not yours";
-//
-//    @Autowired
-//    public DewormingController(PetService petService, EchinococcusProcedureService echinococcusProcedureService,
-//                               AbstractNewProcedureMapper newProcedureMapper, DewormingMapper dewormingMapper,
-//                               MedicineService medicineService) {
-//        this.petService = petService;
-//        this.echinococcusProcedureService = echinococcusProcedureService;
-//
-//        this.dewormingMapper = dewormingMapper;
-//        this.newProcedureMapper = newProcedureMapper;
-//        this.medicineService = medicineService;
-//    }
-//
+package com.vet24.web.controllers.pet.procedure;
+
+import com.vet24.models.exception.BadRequestException;
+import com.vet24.models.mappers.pet.procedure.AbstractNewProcedureMapper;
+import com.vet24.models.mappers.pet.procedure.DewormingMapper;
+import com.vet24.models.pet.Pet;
+import com.vet24.models.pet.procedure.Deworming;
+import com.vet24.models.user.Client;
+import com.vet24.service.medicine.MedicineService;
+import com.vet24.service.pet.PetService;
+import com.vet24.service.pet.procedure.DewormingService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.webjars.NotFoundException;
+
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
+@RestController
+@Slf4j
+@RequestMapping("api/client/procedure/deworming")
+@Tag(name = "deworming-controller", description = "operations with Procedures")
+public class DewormingController {
+
+    private final PetService petService;
+    private final DewormingService dewormingService;
+    private final DewormingMapper dewormingMapper;
+    private final AbstractNewProcedureMapper newProcedureMapper;
+    private final MedicineService medicineService;
+
+    private static final String PET_NOT_FOUND = "pet not found";
+    private static final String PROCEDURE_NOT_FOUND = "deworming procedure not found";
+    private static final String PET_NOT_YOURS = "pet not yours";
+    private static final String PROCEDURE_NOT_YOURS = "procedure not yours";
+
+    @Autowired
+    public DewormingController(PetService petService, DewormingService dewormingService,
+                               AbstractNewProcedureMapper newProcedureMapper, DewormingMapper dewormingMapper,
+                               MedicineService medicineService) {
+        this.petService = petService;
+        this.dewormingService = dewormingService;
+        this.dewormingMapper = dewormingMapper;
+        this.newProcedureMapper = newProcedureMapper;
+        this.medicineService = medicineService;
+    }
+
 //    @Operation(summary = "get a deworming procedure by pet id")
 //    @ApiResponses(value = {
 //            @ApiResponse(responseCode = "200", description = "Successfully get a deworming procedure",
@@ -209,29 +184,29 @@
 //
 //        return new ResponseEntity<>(HttpStatus.OK);
 //    }
-//
-//    //TODO add validationUtil
-//    private void procedureCheck(Deworming deworming) {
-//        Client client = (Client) getSecurityUserOrNull();
-//        if (deworming == null) {
-//            throw new NotFoundException(PROCEDURE_NOT_FOUND);
-//        }
-//
-//        Pet pet = deworming.getPet();
-//
-//        if (!pet.getClient().getId().equals(client.getId())) {
-//            throw new BadRequestException(PROCEDURE_NOT_YOURS);
-//        }
-//    }
-//
-//    //TODO add validationUtil
-//    private void petCheck(Pet pet) {
-//        Client client = (Client) getSecurityUserOrNull();
-//        if (pet == null) {
-//            throw new NotFoundException(PET_NOT_FOUND);
-//        }
-//        if (!pet.getClient().getId().equals(client.getId())) {
-//            throw new BadRequestException(PET_NOT_YOURS);
-//        }
-//    }
-//}
+
+    //TODO add validationUtil
+    private void procedureCheck(Deworming deworming) {
+        Client client = (Client) getSecurityUserOrNull();
+        if (deworming == null) {
+            throw new NotFoundException(PROCEDURE_NOT_FOUND);
+        }
+
+        Pet pet = deworming.getPet();
+
+        if (!pet.getClient().getId().equals(client.getId())) {
+            throw new BadRequestException(PROCEDURE_NOT_YOURS);
+        }
+    }
+
+    //TODO add validationUtil
+    private void petCheck(Pet pet) {
+        Client client = (Client) getSecurityUserOrNull();
+        if (pet == null) {
+            throw new NotFoundException(PET_NOT_FOUND);
+        }
+        if (!pet.getClient().getId().equals(client.getId())) {
+            throw new BadRequestException(PET_NOT_YOURS);
+        }
+    }
+}

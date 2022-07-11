@@ -31,7 +31,6 @@ public class Deworming {
     @Column
     private LocalDate date;
 
-
     @Column
     private String medicineBatchNumber;
 

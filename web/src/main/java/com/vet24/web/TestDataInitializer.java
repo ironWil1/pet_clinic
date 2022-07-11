@@ -21,8 +21,6 @@ import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Deworming;
-import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
-import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
@@ -44,7 +42,7 @@ import com.vet24.service.notification.UserNotificationService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
-import com.vet24.service.pet.procedure.EchinococcusProcedureService;
+import com.vet24.service.pet.procedure.DewormingService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
@@ -86,7 +84,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final DoctorReviewService doctorReviewService;
     private final VaccinationProcedureService vaccinationProcedureService;
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
-    private final EchinococcusProcedureService echinococcusProcedureService;
+    private final DewormingService dewormingService;
     private final ReproductionService reproductionService;
     private final ClinicalExaminationService clinicalExaminationService;
     private final PetContactService petContactService;
@@ -126,7 +124,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                MedicineService medicineService,
                                VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
-                               EchinococcusProcedureService echinococcusProcedureService,
+                               DewormingService dewormingService,
                                ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
                                DoctorService doctorService,
                                PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
@@ -143,7 +141,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.doctorReviewService = doctorReviewService;
         this.vaccinationProcedureService = vaccinationProcedureService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
-        this.echinococcusProcedureService = echinococcusProcedureService;
+        this.dewormingService = dewormingService;
         this.reproductionService = reproductionService;
         this.clinicalExaminationService = clinicalExaminationService;
         this.petContactService = petContactService;
@@ -238,7 +236,7 @@ public class TestDataInitializer implements ApplicationRunner {
             dewormings.add(new Deworming(LocalDate.now().plusDays(6),"DewormingMedicineBatchNumber" + i,
                     false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
-        echinococcusProcedureService.persistAll(dewormings);
+        dewormingService.persistAll(dewormings);
     }
 
 //    public void procedureInitializer() {
