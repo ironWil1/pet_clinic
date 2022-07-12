@@ -45,14 +45,14 @@ public class VaccinationController {
     private static final String NOT_YOURS = "pet not yours";
 
     private void checkPet(Long petId) {
-        if (petService.getByKey(petId) == null) {
+        if (!petService.isExistByKey(petId)) {
             log.info("The pet with this id {} was not found", petId);
             throw new NotFoundException(PET_NOT_FOUND);
         }
     }
 
     private void checkProcedure(Long id) {
-        if (vaccinationProcedureService.getByKey(id) == null) {
+        if (!vaccinationProcedureService.isExistByKey(id)) {
             log.info("The procedure with this id {} was not found", id);
             throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
@@ -75,7 +75,7 @@ public class VaccinationController {
         this.vaccinationMapper = vaccinationMapper;
     }
 
-    @Operation(summary = "get all vaccination procedure for your pet")
+    @Operation(summary = "получить все процедуры вакцинации по id питомца")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a Procedure",
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
@@ -99,13 +99,10 @@ public class VaccinationController {
         List<VaccinationDto> vaccinationDtoList = vaccinationMapper.toDto(vaccinationProcedureList);
 
 
-        vaccinationProcedureList.forEach(vaccinationProcedure ->
-                log.info("We have this procedure {}", vaccinationProcedure.getId()));
-
         return new ResponseEntity<>(vaccinationDtoList, HttpStatus.OK);
     }
 
-    @Operation(summary = "get vaccination procedure by id")
+    @Operation(summary = "получить процедуру вакцинации по id процедуры")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a Procedure",
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
@@ -126,7 +123,7 @@ public class VaccinationController {
         return new ResponseEntity<>(vaccinationDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "add vaccination procedure for your pet")
+    @Operation(summary = "добавить процедуру вакцинации")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully save a Procedure",
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
@@ -160,7 +157,7 @@ public class VaccinationController {
 
     }
 
-    @Operation(summary = "update vaccination procedure for your pet")
+    @Operation(summary = "обновить процедуру вакцинации")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully save a Procedure",
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
@@ -197,7 +194,7 @@ public class VaccinationController {
         return new ResponseEntity<>(vaccinationDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "delete vaccination procedure for your pet")
+    @Operation(summary = "удалить процедуру вакцинации")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully delete a Procedure",
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),

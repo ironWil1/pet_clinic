@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -30,6 +31,8 @@ public class VaccinationProcedure implements Serializable {
     @Column
     private LocalDate date;
 
+    @Column
+    @Enumerated(EnumType.STRING)
     public ProcedureType type;
     @Column
     private String medicineBatchNumber;
@@ -55,8 +58,9 @@ public class VaccinationProcedure implements Serializable {
         this.periodDays = periodDays;
         this.medicine = medicine;
         this.pet = pet;
+        this.type = VACCINATION;
     }
-
+    public void setType(ProcedureType type) { this.type = VACCINATION; }
     public ProcedureType getType() {
         return VACCINATION;
     }
