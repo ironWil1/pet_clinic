@@ -229,29 +229,23 @@ public class TestDataInitializer implements ApplicationRunner {
         medicineService.persistAll(medicines);
     }
 
-//    public void procedureInitializer() {
-//        List<VaccinationProcedure> vaccination = new ArrayList<>();
-//        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
-//        List<EchinococcusProcedure> echinococcus = new ArrayList<>();
-//
-//        for (int i = 1; i <= 30; i++) {
-//            if (i <= 10) {
-//                vaccination.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + i,
-//                        false, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-//            }
-//            if (i > 10 && i <= 20) {
-//                externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
-//                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-//            }
-//            if (i > 20) {
-//                echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
-//                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-//            }
-//        }
-//        vaccinationProcedureService.persistAll(vaccination);
-//        externalParasiteProcedureService.persistAll(externalParasite);
-//        echinococcusProcedureService.persistAll(echinococcus);
-//    }
+    public void procedureInitializer() {
+        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
+        List<EchinococcusProcedure> echinococcus = new ArrayList<>();
+
+        for (int i = 1; i <= 30; i++) {
+            if (i > 10 && i <= 20) {
+                externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
+                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+            }
+            if (i > 20) {
+                echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
+                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+            }
+        }
+        externalParasiteProcedureService.persistAll(externalParasite);
+        echinococcusProcedureService.persistAll(echinococcus);
+    }
 
     public void vaccinationInitializer() {
         List<VaccinationProcedure> vaccinations = new ArrayList<>();
@@ -452,6 +446,7 @@ public class TestDataInitializer implements ApplicationRunner {
             diagnosisInitilaizer();
             medicineInitialize();
             vaccinationInitializer();
+            procedureInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();

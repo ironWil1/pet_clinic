@@ -4,4 +4,5 @@ import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.service.ReadWriteService;
 
 public interface VaccinationProcedureService extends ReadWriteService<Long, VaccinationProcedure> {
+    boolean isPetBelongToClientByPetId(Long petId);
 }

@@ -25,9 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.Objects;
-
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 @RestController
 @Slf4j
@@ -59,7 +56,7 @@ public class VaccinationController {
     }
 
     private void checkOwnerPet(Long petId) {
-        if (!petService.getByKey(petId).getClient().getId().equals(Objects.requireNonNull(getSecurityUserOrNull()).getId())) {
+            if (!vaccinationProcedureService.isPetBelongToClientByPetId(petId)) {
             log.info("The pet with this id {} is not yours", petId);
             throw new BadRequestException(NOT_YOURS);
         }
