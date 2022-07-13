@@ -1,4 +1,5 @@
 package com.vet24.models.pet;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
