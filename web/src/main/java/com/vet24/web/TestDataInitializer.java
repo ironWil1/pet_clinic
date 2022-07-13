@@ -21,6 +21,8 @@ import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Deworming;
+import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
+import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
@@ -226,23 +228,23 @@ public class TestDataInitializer implements ApplicationRunner {
         medicineService.persistAll(medicines);
     }
 
-    public void dewormingInitializer(){
-        List<Deworming> dewormings = new ArrayList<>();
+    public void externalParasiteInitializer(){
+        List<ExternalParasiteProcedure> externalParasiteProcedures = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            dewormings.add(new Deworming(LocalDate.now(),"DewormingMedicineBatchNumber" + i,
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
                     true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"DewormingMedicineBatchNumber" + i,
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
                     true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"DewormingMedicineBatchNumber" + i,
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
                     false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
-        dewormingService.persistAll(dewormings);
+        externalParasiteProcedureService.persistAll(externalParasiteProcedures);
     }
 
 //    public void procedureInitializer() {
 //        List<VaccinationProcedure> vaccination = new ArrayList<>();
 //        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
-//        List<Deworming> echinococcus = new ArrayList<>();
+//        List<EchinococcusProcedure> echinococcus = new ArrayList<>();
 //
 //        for (int i = 1; i <= 30; i++) {
 //            if (i <= 10) {
@@ -254,7 +256,7 @@ public class TestDataInitializer implements ApplicationRunner {
 //                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
 //            }
 //            if (i > 20) {
-//                echinococcus.add(new Deworming(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
+//                echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
 //                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
 //            }
 //        }
@@ -436,8 +438,8 @@ public class TestDataInitializer implements ApplicationRunner {
                         false, LocalDateTime.now().plusWeeks(i)));
             }
         }
-           newsService.persistAll(newsList);
-        }
+        newsService.persistAll(newsList);
+    }
 
 
     @Override
@@ -449,8 +451,7 @@ public class TestDataInitializer implements ApplicationRunner {
             petInitialize();
             diagnosisInitilaizer();
             medicineInitialize();
-//            procedureInitializer();
-            dewormingInitializer();
+            externalParasiteInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();
