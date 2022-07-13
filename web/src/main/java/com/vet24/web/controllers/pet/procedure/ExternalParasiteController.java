@@ -1,16 +1,14 @@
 package com.vet24.web.controllers.pet.procedure;
 
+import com.vet24.dao.pet.procedure.ExternalParasiteProcedureDaoImpl;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.procedure.ExternalParasiteDto;
-import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.procedure.ExternalParasiteMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
-import com.vet24.models.pet.procedure.Procedure;
-import com.vet24.models.user.Client;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
@@ -25,49 +23,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 @RestController
 @Slf4j
 @RequestMapping("api/client/procedure/external")
-@Tag(name = "external parasite-controller", description = "operations with external parasite procedure")
+@Tag(name = "Обработка от эктопаразитов - контроллер")
 public class ExternalParasiteController {
     private final PetService petService;
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
     private final MedicineService medicineService;
     private final ExternalParasiteMapper externalParasiteMapper;
+    private  final ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao;
 
-    private static final String PET_NOT_FOUND = "pet not found";
-    private static final String PROCEDURE_NOT_FOUND = "procedure not found";
-    private static final String NOT_YOURS = "pet not yours";
+    private static final String PET_NOT_FOUND = "Питомец не найден";
+    private static final String PROCEDURE_NOT_FOUND = "Процедура не найдена";
+    private static final String NOT_YOURS = "Данный питомец Вам не принадлежит";
 
-    //TODO add validationUtil
     private void checkPet(Long petId) {
-        if (petService.getByKey(petId) == null) {
-            log.info("The pet with this id {} was not found", petId);
+        if (!petService.isExistByKey(petId)) {
+            log.info("Питомец с id {} не найден", petId);
             throw new NotFoundException(PET_NOT_FOUND);
         }
     }
 
-    //TODO add validationUtil
     private void checkProcedure(Long id) {
-        if (externalParasiteProcedureService.getByKey(id) == null) {
-            log.info("The procedure with this id {} was not found", id);
+        if (!externalParasiteProcedureService.isExistByKey(id)) {
+            log.info("Процедура с id {} не найдена", id);
             throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
     }
 
-    //TODO add validationUtil
     private void checkPetOwner(Long petId) {
-        if (!petService.getByKey(petId).getClient().getId().equals(getSecurityUserOrNull().getId())) {
-            log.info("The pet with this id {} is not yours", petId);
+        if (!externalParasiteProcedureDao.isPetBelongToClientByPetId(petId)) {
+            log.info("Питомец с petId {} Вам не принадлежит", petId);
             throw new BadRequestException(NOT_YOURS);
         }
     }
@@ -75,32 +75,35 @@ public class ExternalParasiteController {
     @Autowired
     public ExternalParasiteController(PetService petService, MedicineService medicineService,
                                       ExternalParasiteMapper externalParasiteMapper,
-                                      ExternalParasiteProcedureService externalParasiteProcedureService) {
+                                      ExternalParasiteProcedureService externalParasiteProcedureService,
+                                      ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao) {
         this.petService = petService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
         this.medicineService = medicineService;
         this.externalParasiteMapper = externalParasiteMapper;
+        this.externalParasiteProcedureDao = externalParasiteProcedureDao;
     }
 
-    @Operation(summary = "get an external parasite procedures")
+    @Operation(summary = "Получить все записи питомца на обработку от эктопаразитов")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully get a external parasite procedures",
+            @ApiResponse(responseCode = "200", description = "Успешно получены все записи по обработку от эктопаразитов",
                     content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
-            @ApiResponse(responseCode = "404", description = "Procedures not found",
+            @ApiResponse(responseCode = "404", description = "Записи на обработку от эктопаразитов не найдены",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet not assigned with external parasite procedures",
+            @ApiResponse(responseCode = "400", description = "Питомец не записан на обработку от эктопаразитов",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @GetMapping
     public ResponseEntity<List<ExternalParasiteDto>> get(@RequestParam Long petId) {
+
         checkPet(petId);
         checkPetOwner(petId);
 
-        List<ExternalParasiteProcedure> externalParasiteProcedureList = petService.getByKey(petId)
-                .getExternalParasiteProcedures();
+        List<ExternalParasiteProcedure> externalParasiteProcedureList = externalParasiteProcedureDao
+                .getExternalParasiteListByPetId(petId);
 
         if (externalParasiteProcedureList.isEmpty()) {
-            log.info("The external parasite procedures was not found");
+            log.info("Данный питомец не записан на обработку от эктопаразитов");
             throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
 
@@ -111,33 +114,33 @@ public class ExternalParasiteController {
         return new ResponseEntity<>(externalParasiteDtoList, HttpStatus.OK);
     }
 
-    @Operation(summary = "get an external parasite procedure")
+    @Operation(summary = "Получить запись на обработку от эктопаразитов по id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully get a external parasite procedure",
+            @ApiResponse(responseCode = "200", description = "Успешно найдена запись на обработку от эктопаразитов",
                     content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
-            @ApiResponse(responseCode = "404", description = "External parasite procedure not found",
+            @ApiResponse(responseCode = "404", description = "Запись на обработку от эктопаразитов не найдена",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet not assigned with external parasite procedure",
+            @ApiResponse(responseCode = "400", description = "Питомец не записан на обработку от эктопаразитов",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @GetMapping("/{id}")
     public ResponseEntity<ExternalParasiteDto> getById(@PathVariable Long id) {
         checkProcedure(id);
 
-        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureService.getByKey(id);
+        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getExternalParasiteById(id);
 
         ExternalParasiteDto externalParasiteDto = externalParasiteMapper.toDto(externalParasiteProcedure);
         log.info("We have this procedure {}", id);
         return new ResponseEntity<>(externalParasiteDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "add a new external parasite procedure")
+    @Operation(summary = "Записать питомца на обработку от эктопаразитов")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully added a new external parasite procedure",
+            @ApiResponse(responseCode = "201", description = "Питомец успешно записан на обработку от эктопаразитов",
                     content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
-            @ApiResponse(responseCode = "404", description = "Pet is not found",
+            @ApiResponse(responseCode = "404", description = "Питомец не найден",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet not yours",
+            @ApiResponse(responseCode = "400", description = "Данный питомец Вам не принадлежит",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("")
@@ -156,17 +159,17 @@ public class ExternalParasiteController {
 
         pet.addExternalParasiteProcedure(externalParasiteProcedure);
         petService.update(pet);
-        log.info("We added procedure with this id {}", externalParasiteDto.getMedicineId());
+        log.info("Питомец успешно записан на обработку от эктопаразитов {}", externalParasiteDto.getMedicineId());
         return new ResponseEntity<>(externalParasiteMapper.toDto(externalParasiteProcedure), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "update an external parasite procedure")
+    @Operation(summary = "Обновить запись на обработку от эктопаразитов по id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully updated a external parasite procedure",
+            @ApiResponse(responseCode = "200", description = "Запись на обработку от эктопаразитов успешно обновлена",
                     content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
-            @ApiResponse(responseCode = "404", description = "External parasite procedure is not found",
+            @ApiResponse(responseCode = "404", description = "Запись на обработку от эктопаразитов не найдена",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet not assigned with external parasite procedure",
+            @ApiResponse(responseCode = "400", description = "Питомец не записан на обработку от эктопаразитов",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PutMapping("/{id}")
@@ -175,7 +178,7 @@ public class ExternalParasiteController {
                                                       @RequestBody ExternalParasiteDto externalParasiteDto) {
         checkProcedure(id);
 
-        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureService.getByKey(id);
+        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getExternalParasiteById(id);
         Pet pet = externalParasiteProcedure.getPet();
 
         checkPet(pet.getId());
@@ -185,17 +188,17 @@ public class ExternalParasiteController {
         Medicine medicine = medicineService.getByKey(externalParasiteDto.getMedicineId());
         externalParasiteProcedure.setMedicine(medicine);
         externalParasiteProcedureService.update(externalParasiteProcedure);
-        log.info("We updated procedure with this id {}", externalParasiteProcedure.getId());
+        log.info("Запись на обработку от эктопаразитов успешно обновлена {}", externalParasiteProcedure.getId());
 
         return new ResponseEntity<>(externalParasiteMapper.toDto(externalParasiteProcedure), HttpStatus.OK);
     }
 
-    @Operation(summary = "delete an external parasite procedure")
+    @Operation(summary = "Удалить запись на обработку от эктопаразитов")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully deleted a external parasite procedure"),
-            @ApiResponse(responseCode = "404", description = "External parasite procedure is not found",
+            @ApiResponse(responseCode = "200", description = "Запись на обработку от эктопаразитов успешно удалена"),
+            @ApiResponse(responseCode = "404", description = "Запись на обработку от эктопаразитов не найдена",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet not assigned with external parasite procedure",
+            @ApiResponse(responseCode = "400", description = "Питомец не записан на обработку от эктопаразитов",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @DeleteMapping("/{id}")
@@ -211,7 +214,7 @@ public class ExternalParasiteController {
         externalParasiteProcedureService.delete(externalParasiteProcedure);
         pet.removeExternalParasiteProcedure(externalParasiteProcedure);
         petService.update(pet);
-        log.info("We deleted procedure with this id {}", externalParasiteProcedure.getId());
+        log.info("Запись на обработку от эктопаразитов успешно удалена {}", externalParasiteProcedure.getId());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
