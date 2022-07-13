@@ -1,6 +1,7 @@
 package com.vet24.web;
 
 import com.vet24.models.enums.Gender;
+import com.vet24.models.enums.NewsType;
 import com.vet24.models.enums.WorkShift;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.enums.DayOffType;
