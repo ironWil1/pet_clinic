@@ -17,8 +17,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
 import javax.persistence.ManyToOne;
 import javax.persistence.FetchType;
-
-
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -57,7 +55,6 @@ public class VaccinationProcedure implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Pet pet;
-
 
     public VaccinationProcedure(LocalDate date, String medicineBatchNumber,
                                 Boolean isPeriodical, Integer periodDays, Medicine medicine, Pet pet) {

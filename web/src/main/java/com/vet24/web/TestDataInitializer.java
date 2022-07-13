@@ -241,6 +241,16 @@ public class TestDataInitializer implements ApplicationRunner {
         externalParasiteProcedureService.persistAll(externalParasiteProcedures);
     }
 
+    public void vaccinationInitializer() {
+        List<VaccinationProcedure> vaccinations = new ArrayList<>();
+        for (int petId = 1; petId <= 30; petId++) {
+            for(int procedureId = 1; procedureId<=3;procedureId++) {
+                vaccinations.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + procedureId,
+                        false, 0, medicineService.getByKey((long) petId), petService.getByKey((long) petId)));
+            }
+        }
+        vaccinationProcedureService.persistAll(vaccinations);
+    }
 //    public void procedureInitializer() {
 //        List<VaccinationProcedure> vaccination = new ArrayList<>();
 //        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
@@ -452,6 +462,7 @@ public class TestDataInitializer implements ApplicationRunner {
             diagnosisInitilaizer();
             medicineInitialize();
             externalParasiteInitializer();
+            vaccinationInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();

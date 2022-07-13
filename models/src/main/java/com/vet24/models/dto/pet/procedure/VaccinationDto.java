@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode
-
 public class VaccinationDto {
 
 
