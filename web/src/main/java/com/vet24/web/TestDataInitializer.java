@@ -394,6 +394,49 @@ public class TestDataInitializer implements ApplicationRunner {
         userNotificationService.persistAll(userNotificationList);
     }
 
+    public void newsInit() {
+        List<News> newsList = new ArrayList<>();
+        for (int i = 1; i <= 40; i++) {
+
+            if (i <= 10) {
+                News updatingNews = new News();
+                updatingNews.setContent("Content of Updating" + i);
+                updatingNews.setImportant(true);
+                updatingNews.setEndTime(LocalDateTime.now().plusDays(i));
+                updatingNews.setType(NewsType.UPDATING);
+                newsList.add(updatingNews);
+
+            }
+
+            if (i > 10 && i <= 20) {
+                News advertisingActionsNews = new News();
+                advertisingActionsNews.setContent("Content of Advertising Actions" + i);
+                advertisingActionsNews.setImportant(false);
+                advertisingActionsNews.setEndTime(LocalDateTime.now().plusWeeks(i));
+                advertisingActionsNews.setType(NewsType.ADVERTISING_ACTIONS);
+                newsList.add(advertisingActionsNews);
+            }
+
+            if (i > 20 && i <= 30) {
+                News discountsNews = new News();
+                discountsNews.setContent("Content of Discounts News" + i);
+                discountsNews.setImportant(true);
+                discountsNews.setEndTime(LocalDateTime.now().plusDays(i));
+                discountsNews.setType(NewsType.DISCOUNTS);
+                newsList.add(discountsNews);
+            }
+
+            if (i > 30) {
+                News promotionNews = new News();
+                promotionNews.setContent("Content of Promotion News" + i);
+                promotionNews.setImportant(false);
+                promotionNews.setEndTime(LocalDateTime.now().plusWeeks(i));
+                promotionNews.setType(NewsType.PROMOTION);
+                newsList.add(promotionNews);
+            }
+        }
+        newsService.persistAll(newsList);
+    }
 
     @Override
     @Transactional
@@ -418,6 +461,7 @@ public class TestDataInitializer implements ApplicationRunner {
             doctorNonWorkingInit();
             appointmentInit();
             notificationAndUserNotificationInit();
+            newsInit();
         }
     }
 }
