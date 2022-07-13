@@ -3,6 +3,7 @@ package com.vet24.service.user;
 import com.vet24.dao.ReadWriteDao;
 import com.vet24.dao.user.ProfileDao;
 import com.vet24.models.user.Profile;
+import com.vet24.models.user.User;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.stereotype.Service;
 

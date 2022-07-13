@@ -13,22 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -50,13 +35,9 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @NonNull
-    @Column(nullable = false)
-    private String firstname;
-
-    @NonNull
-    @Column(nullable = false)
-    private String lastname;
+    @OneToOne
+    @PrimaryKeyJoinColumn
+    private Profile profile;
 
     @NonNull
     @NaturalId
@@ -66,9 +47,6 @@ public class User implements UserDetails {
     @NonNull
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = true)
-    private String avatar;
 
     private Boolean enabled;
 
@@ -98,6 +76,11 @@ public class User implements UserDetails {
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_name"))
     private Role role;
+
+    public User(Long id, @NonNull String email) {
+        this.id = id;
+        this.email = email;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

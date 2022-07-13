@@ -73,7 +73,7 @@ public class PetContactQrCodeController {
             Client client = pet.getClient();
             PetContact petContact = new PetContact();
             petContact.setAddress("");
-            petContact.setOwnerName(pet.getClient().getFirstname());
+            petContact.setOwnerName(pet.getClient().getUsername());
             petContact.setPetCode("");
             petContact.setPhone(8L);
             petContact.setPet(pet);
@@ -85,7 +85,7 @@ public class PetContactQrCodeController {
 
             String urlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
             String sb = "Имя питомца - " + pet.getName() + ", " +
-                    "Владелец - " + client.getFirstname() + ", " +
+                    "Владелец - " + client.getUsername() + ", " +
                     "Адрес - " + (petContact.getAddress().equals("") ? "владелец еще не успел указать адрес" : petContact.getAddress()) + ", " +
                     "Телефон - " + (petContact.getPhone().toString().length() < 11 ? "владелец не успел указать номер телефона" : petContact.getPhone()) + ", " +
                     "Почта - " + client.getEmail() + ", " +

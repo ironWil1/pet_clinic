@@ -24,16 +24,7 @@ import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.user.Client;
-import com.vet24.models.user.Role;
-import com.vet24.models.user.Doctor;
-import com.vet24.models.user.Admin;
-import com.vet24.models.user.Manager;
-import com.vet24.models.user.DoctorReview;
-import com.vet24.models.user.DoctorNonWorking;
-import com.vet24.models.user.Topic;
-import com.vet24.models.user.Comment;
-import com.vet24.models.user.CommentReaction;
+import com.vet24.models.user.*;
 import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.DoctorScheduleService;
@@ -48,17 +39,7 @@ import com.vet24.service.pet.procedure.EchinococcusProcedureService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
-import com.vet24.service.user.AdminService;
-import com.vet24.service.user.ClientService;
-import com.vet24.service.user.CommentReactionService;
-import com.vet24.service.user.CommentService;
-import com.vet24.service.user.DoctorNonWorkingService;
-import com.vet24.service.user.DoctorReviewService;
-import com.vet24.service.user.DoctorService;
-import com.vet24.service.user.ManagerService;
-import com.vet24.service.user.RoleService;
-import com.vet24.service.user.TopicService;
-import com.vet24.service.user.UserService;
+import com.vet24.service.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -103,6 +84,8 @@ public class TestDataInitializer implements ApplicationRunner {
     private final NotificationService notificationService;
     private final UserNotificationService userNotificationService;
     private final NewsService newsService;
+
+    private final ProfileService profileService;
     private final Role client = new Role(RoleNameEnum.CLIENT);
     private final Role doctor = new Role(RoleNameEnum.DOCTOR);
     private final Role admin = new Role(RoleNameEnum.ADMIN);
@@ -133,7 +116,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
                                DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService, NotificationService notificationService,
-                               UserNotificationService userNotificationService, NewsService newsService) {
+                               UserNotificationService userNotificationService, NewsService newsService, ProfileService profileService) {
         this.adminService = adminService;
         this.roleService = roleService;
         this.userService = userService;
@@ -161,6 +144,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.userNotificationService = userNotificationService;
         this.newsService = newsService;
 
+        this.profileService = profileService;
     }
 
     public void roleInitialize() {
@@ -171,9 +155,7 @@ public class TestDataInitializer implements ApplicationRunner {
         List<Client> clients = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             clients.add(
-                    new Client("ClientFirstName" + i,
-                            "ClientLastName" + i,
-                            (i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + EMAIL,
+                    new Client((i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + EMAIL,
                             "client", client, petList));
         }
         clientService.persistAll(clients);
@@ -181,9 +163,7 @@ public class TestDataInitializer implements ApplicationRunner {
         List<Doctor> doctors = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             doctors.add(
-                    new Doctor("DoctorFirstName" + i,
-                            "DoctorLastName" + i,
-                            "doctor" + i + EMAIL,
+                    new Doctor("doctor" + i + EMAIL,
                             "doctor", doctor));
         }
         doctorService.persistAll(doctors);
@@ -192,9 +172,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void adminInit() {
         List<Admin> adminList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            adminList.add(new Admin("AdmFirstName " + i,
-                    "AdmLastName " + i,
-                    "admin" + i + EMAIL,
+            adminList.add(new Admin("admin" + i + EMAIL,
                     "admin", admin));
         }
         adminService.persistAll(adminList);
@@ -343,9 +321,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private void managerInit() {
         List<Manager> managerList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            managerList.add(new Manager("ManagerFirstName " + i,
-                    "ManagerLastName " + i,
-                    "manager" + i + EMAIL,
+            managerList.add(new Manager("manager" + i + EMAIL,
                     "manager", manager));
         }
         managerService.persistAll(managerList);
@@ -427,6 +403,20 @@ public class TestDataInitializer implements ApplicationRunner {
         }
            newsService.persistAll(newsList);
         }
+        public void profileInit(){
+            List<User> users = userService.getAll();
+            List<com.vet24.models.user.Profile> profileList = new ArrayList<>();
+            for (int i = 1; i <= users.size(); i++) {
+                profileList.add(new com.vet24.models.user.Profile(users.get(i-1) ,
+                        "avatarUrl"+ i,
+                        "firstName" +i,
+                        "lastName" +i,
+                        LocalDate.parse("1970-01-01"),
+                        "discordId" + i,
+                        "telegramId" + i ));
+            }
+            profileService.persistAll(profileList);
+        }
 
 
     @Override
@@ -453,6 +443,7 @@ public class TestDataInitializer implements ApplicationRunner {
             appointmentInit();
             notificationAndUserNotificationInit();
             newsInit();
+            profileInit();
         }
     }
 }
