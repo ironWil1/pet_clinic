@@ -1,13 +1,17 @@
 //package com.vet24.web.pet.procedure;
 //
 //import com.github.database.rider.core.api.dataset.DataSet;
+//import com.vet24.dao.pet.procedure.ExternalParasiteProcedureDao;
 //import com.vet24.dao.pet.procedure.ProcedureDao;
 //import com.vet24.models.dto.pet.procedure.AbstractNewProcedureDto;
+//import com.vet24.models.dto.pet.procedure.ExternalParasiteDto;
 //import com.vet24.models.dto.pet.procedure.ProcedureDto;
 //import com.vet24.models.dto.pet.procedure.VaccinationDto;
 //import com.vet24.models.enums.ProcedureType;
+//import com.vet24.models.mappers.pet.procedure.ExternalParasiteMapper;
 //import com.vet24.models.mappers.pet.procedure.ProcedureMapper;
 //import com.vet24.web.ControllerAbstractIntegrationTest;
+//import com.vet24.web.controllers.pet.procedure.ExternalParasiteController;
 //import com.vet24.web.controllers.pet.procedure.ProcedureController;
 //import org.junit.Before;
 //import org.junit.Test;
@@ -36,7 +40,7 @@
 //    final String URI = "/api/client/pet";
 //    final HttpHeaders HEADERS = new HttpHeaders();
 //    private String token;
-//    VaccinationDto newProcedureDto;
+//    AbstractNewProcedureDto newProcedureDto;
 //    ProcedureDto procedureDto1;
 //    ProcedureDto procedureDto3;
 //

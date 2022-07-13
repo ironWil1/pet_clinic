@@ -65,7 +65,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -229,35 +228,42 @@ public class TestDataInitializer implements ApplicationRunner {
         medicineService.persistAll(medicines);
     }
 
-    public void procedureInitializer() {
-        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
-        List<EchinococcusProcedure> echinococcus = new ArrayList<>();
-
+    public void externalParasiteInitializer(){
+        List<ExternalParasiteProcedure> externalParasiteProcedures = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            if (i > 10 && i <= 20) {
-                externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
-                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
-            if (i > 20) {
-                echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
-                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
+                    false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
-        externalParasiteProcedureService.persistAll(externalParasite);
-        echinococcusProcedureService.persistAll(echinococcus);
+        externalParasiteProcedureService.persistAll(externalParasiteProcedures);
     }
 
-    public void vaccinationInitializer() {
-        List<VaccinationProcedure> vaccinations = new ArrayList<>();
-        for (int petId = 1; petId <= 30; petId++) {
-            for(int procedureId = 1; procedureId<=3;procedureId++) {
-                vaccinations.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + procedureId,
-                        false, 0, medicineService.getByKey((long) petId), petService.getByKey((long) petId)));
-            }
-        }
-        vaccinationProcedureService.persistAll(vaccinations);
-    }
-
+//    public void procedureInitializer() {
+//        List<VaccinationProcedure> vaccination = new ArrayList<>();
+//        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
+//        List<EchinococcusProcedure> echinococcus = new ArrayList<>();
+//
+//        for (int i = 1; i <= 30; i++) {
+//            if (i <= 10) {
+//                vaccination.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + i,
+//                        false, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+//            }
+//            if (i > 10 && i <= 20) {
+//                externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
+//                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+//            }
+//            if (i > 20) {
+//                echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
+//                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+//            }
+//        }
+//        vaccinationProcedureService.persistAll(vaccination);
+//        externalParasiteProcedureService.persistAll(externalParasite);
+//        echinococcusProcedureService.persistAll(echinococcus);
+//    }
 
     public void reproductionInitializer() {
         List<Reproduction> reproductions = new ArrayList<>();
@@ -378,7 +384,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void appointmentInit() {
         List<Appointment> appointmentList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            appointmentList.add(new Appointment(doctorService.getByKey((long) i), petService.getByKey((long) i), LocalDateTime.now().plusDays(7), "description" + i));
+            appointmentList.add(new Appointment(doctorService.getByKey((long)i), petService.getByKey((long)i), LocalDateTime.now().plusDays(7), "description" + i ));
         }
         appointmentService.persistAll(appointmentList);
     }
@@ -396,10 +402,10 @@ public class TestDataInitializer implements ApplicationRunner {
         notificationList.add(managerNotification);
 
         List<UserNotification> userNotificationList = new ArrayList<>();
-        userNotificationList.add(new UserNotification(clientNotification, userService.getByKey(1L), false));
-        userNotificationList.add(new UserNotification(doctorNotification, userService.getByKey(31L), false));
-        userNotificationList.add(new UserNotification(adminNotification, userService.getByKey(61L), false));
-        userNotificationList.add(new UserNotification(managerNotification, userService.getByKey(66L), false));
+        userNotificationList.add(new UserNotification(clientNotification, userService.getByKey(1L),false));
+        userNotificationList.add(new UserNotification(doctorNotification, userService.getByKey(31L),false));
+        userNotificationList.add(new UserNotification(adminNotification, userService.getByKey(61L),false));
+        userNotificationList.add(new UserNotification(managerNotification, userService.getByKey(66L),false));
 
         notificationService.persistAll(notificationList);
         userNotificationService.persistAll(userNotificationList);
@@ -432,8 +438,8 @@ public class TestDataInitializer implements ApplicationRunner {
                         false, LocalDateTime.now().plusWeeks(i)));
             }
         }
-        newsService.persistAll(newsList);
-    }
+           newsService.persistAll(newsList);
+        }
 
 
     @Override
@@ -445,8 +451,7 @@ public class TestDataInitializer implements ApplicationRunner {
             petInitialize();
             diagnosisInitilaizer();
             medicineInitialize();
-            vaccinationInitializer();
-            procedureInitializer();
+            externalParasiteInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();
