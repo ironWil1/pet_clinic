@@ -9,7 +9,5 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public abstract class NewsMapper implements DtoMapper<News, NewsDto>, EntityMapper<NewsDto, News> {
-    @Mapping(target = "type", source = "type")
-    @Override
-    public abstract NewsDto toDto(News news);
+
 }
