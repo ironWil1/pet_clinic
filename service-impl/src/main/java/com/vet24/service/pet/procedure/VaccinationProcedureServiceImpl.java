@@ -16,7 +16,4 @@ public class VaccinationProcedureServiceImpl extends ReadWriteServiceImpl<Long, 
         super(vaccinationProcedureDao);
         this.vaccinationProcedureDao = vaccinationProcedureDao;
     }
-    public boolean isPetBelongToClientByPetId(Long petId){
-        return vaccinationProcedureDao.isPetBelongToClientByPetId(petId);
-    }
 }

@@ -4,5 +4,4 @@ import com.vet24.dao.ReadWriteDao;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 
 public interface VaccinationProcedureDao extends ReadWriteDao<Long, VaccinationProcedure> {
-    boolean isPetBelongToClientByPetId(Long petId);
 }

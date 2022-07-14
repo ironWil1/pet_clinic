@@ -14,4 +14,8 @@ public class PetServiceImpl extends ReadWriteServiceImpl<Long, Pet> implements P
         super(petDao);
         this.petDao = petDao;
     }
+
+    public boolean isPetBelongToClient(Long petId, Long clientId) {
+        return petDao.isPetBelongToClient(petId, clientId);
+    }
 }
