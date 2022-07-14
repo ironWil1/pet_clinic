@@ -1,6 +1,7 @@
 package com.vet24.web;
 
 import com.vet24.models.enums.Gender;
+import com.vet24.models.enums.NewsType;
 import com.vet24.models.enums.WorkShift;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.enums.DayOffType;
@@ -9,10 +10,6 @@ import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.news.News;
-import com.vet24.models.news.UpdatingNews;
-import com.vet24.models.news.AdvertisingActionsNews;
-import com.vet24.models.news.DiscountsNews;
-import com.vet24.models.news.PromotionNews;
 import com.vet24.models.notification.Notification;
 import com.vet24.models.notification.UserNotification;
 import com.vet24.models.pet.Cat;
@@ -423,34 +420,47 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void newsInit() {
         List<News> newsList = new ArrayList<>();
-        for (int i = 1; i <= 30; i++) {
+        for (int i = 1; i <= 40; i++) {
 
-            if (i <= 7) {
-                newsList
-                        .add(new UpdatingNews("Content of Updating" + i,
-                                true, LocalDateTime.now().plusDays(i)));
+            if (i <= 10) {
+                News updatingNews = new News();
+                updatingNews.setContent("Content of Updating" + i);
+                updatingNews.setImportant(true);
+                updatingNews.setEndTime(LocalDateTime.now().plusDays(i));
+                updatingNews.setType(NewsType.UPDATING);
+                newsList.add(updatingNews);
 
             }
 
-            if (i > 7 && i <= 14) {
-                newsList
-                        .add(new AdvertisingActionsNews("Content of Advertising Actions" + i,
-                                false, LocalDateTime.now().plusWeeks(i)));
+            if (i > 10 && i <= 20) {
+                News advertisingActionsNews = new News();
+                advertisingActionsNews.setContent("Content of Advertising Actions" + i);
+                advertisingActionsNews.setImportant(false);
+                advertisingActionsNews.setEndTime(LocalDateTime.now().plusWeeks(i));
+                advertisingActionsNews.setType(NewsType.ADVERTISING_ACTIONS);
+                newsList.add(advertisingActionsNews);
             }
 
-            if (i > 14 && i <= 21) {
-                newsList
-                        .add(new DiscountsNews("Content of Discounts News" + i,
-                                true, LocalDateTime.now().plusDays(i)));
+            if (i > 20 && i <= 30) {
+                News discountsNews = new News();
+                discountsNews.setContent("Content of Discounts News" + i);
+                discountsNews.setImportant(true);
+                discountsNews.setEndTime(LocalDateTime.now().plusDays(i));
+                discountsNews.setType(NewsType.DISCOUNTS);
+                newsList.add(discountsNews);
             }
-            if (i > 21) {
-                newsList.add(new PromotionNews("Content of Promotion News" + i,
-                        false, LocalDateTime.now().plusWeeks(i)));
+
+            if (i > 30) {
+                News promotionNews = new News();
+                promotionNews.setContent("Content of Promotion News" + i);
+                promotionNews.setImportant(false);
+                promotionNews.setEndTime(LocalDateTime.now().plusWeeks(i));
+                promotionNews.setType(NewsType.PROMOTION);
+                newsList.add(promotionNews);
             }
         }
-           newsService.persistAll(newsList);
-        }
-
+        newsService.persistAll(newsList);
+    }
 
     @Override
     @Transactional
