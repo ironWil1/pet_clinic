@@ -3,8 +3,10 @@ package com.vet24.web.controllers.user;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
-import com.vet24.models.dto.news.NewsDto;
-import com.vet24.models.mappers.news.NewsMapper;
+import com.vet24.models.dto.user.ManagerNewsRequestDto;
+import com.vet24.models.dto.user.ManagerNewsResponseDto;
+import com.vet24.models.mappers.user.ManagerNewsRequestMapper;
+import com.vet24.models.mappers.user.ManagerNewsResponseMapper;
 import com.vet24.models.news.News;
 import com.vet24.models.util.View;
 import com.vet24.service.news.NewsService;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
+
 import java.util.List;
 
 
@@ -38,15 +41,16 @@ import java.util.List;
 public class ManagerNewsController {
 
     private final NewsService newsService;
-    private final NewsMapper newsMapper;
+    private final ManagerNewsResponseMapper managerNewsResponseMapper;
+    private final ManagerNewsRequestMapper managerNewsRequestMapper;
     private static final String NEWS_NOT_FOUND = "news not found";
 
 
     @Autowired
-    public ManagerNewsController(NewsService newsService, NewsMapper newsMapper) {
+    public ManagerNewsController(NewsService newsService, ManagerNewsRequestMapper managerNewsRequestMapper, ManagerNewsResponseMapper managerNewsResponseMapper) {
         this.newsService = newsService;
-        this.newsMapper = newsMapper;
-
+        this.managerNewsRequestMapper = managerNewsRequestMapper;
+        this.managerNewsResponseMapper = managerNewsResponseMapper;
     }
 
 
@@ -55,19 +59,19 @@ public class ManagerNewsController {
             @ApiResponse(responseCode = "200",
                     description = "Successful receipt of all news from base",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = NewsDto.class)))
+                            schema = @Schema(implementation = ManagerNewsResponseDto.class)))
     })
     @GetMapping("")
-    public ResponseEntity<List<NewsDto>> getAllNews() {
-        List<NewsDto> newsDtoList = newsMapper.toDto(newsService.getAll());
+    public ResponseEntity<List<ManagerNewsResponseDto>> getAllNews() {
+        List<ManagerNewsResponseDto> newsResponseDtoList = managerNewsResponseMapper.toDto(newsService.getAll());
 
-        if (newsDtoList.isEmpty()) {
-            log.info("The list of news are empty {}", newsDtoList);
-            return new ResponseEntity<>(newsDtoList, HttpStatus.NOT_FOUND);
+        if (newsResponseDtoList.isEmpty()) {
+            log.info("The list of news are empty {}", newsResponseDtoList);
+            return new ResponseEntity<>(newsResponseDtoList, HttpStatus.NOT_FOUND);
         }
-            log.info("We have this list of news {}", newsDtoList);
-            return new ResponseEntity<>(newsDtoList, HttpStatus.OK);
-        }
+        log.info("We have this list of news {}", newsResponseDtoList);
+        return new ResponseEntity<>(newsResponseDtoList, HttpStatus.OK);
+    }
 
 
     @Operation(summary = "get news by id")
@@ -75,67 +79,66 @@ public class ManagerNewsController {
             @ApiResponse(responseCode = "200",
                     description = "Successful getting news by id",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = NewsDto.class))),
+                            schema = @Schema(implementation = ManagerNewsResponseDto.class))),
             @ApiResponse(responseCode = "404",
                     description = "News by id are not found")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<NewsDto> getNewsById(@PathVariable("id") Long newsId) {
+    public ResponseEntity<ManagerNewsResponseDto> getNewsById(@PathVariable("id") Long newsId) {
 
         if (!newsService.isExistByKey(newsId)) {
             log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
-        return new ResponseEntity<>(newsMapper.toDto(newsService
-                                                   .getByKey(newsId)),
-                                                    HttpStatus.OK);
+        return new ResponseEntity<>(managerNewsResponseMapper.toDto(newsService
+                .getByKey(newsId)),
+                HttpStatus.OK);
     }
 
     @Operation(summary = "persist the new News")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201",
                     description = "Successfully persisted the new News",
-                    content = @Content(schema = @Schema(implementation = NewsDto.class))),
+                    content = @Content(schema = @Schema(implementation = ManagerNewsResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     description = "news are not persisted")
     })
     @PostMapping("")
-    public ResponseEntity<NewsDto> persistNews(@Validated(OnCreate.class)
-                                                   @JsonView(View.Post.class)
-                                                   @RequestBody NewsDto newsDto) {
+    public ResponseEntity<ManagerNewsResponseDto> persistNews(@Validated(OnCreate.class)
+                                                              @JsonView(View.Post.class)
+                                                              @RequestBody ManagerNewsRequestDto newsDto) {
 
-        News news = newsMapper.toEntity(newsDto);
+        News news = managerNewsRequestMapper.toEntity(newsDto);
         newsService.persist(news);
         log.info("The news with this type {} was added", newsDto.getType());
-        return ResponseEntity.ok(newsMapper.toDto(news));
+        return ResponseEntity.ok(managerNewsResponseMapper.toDto(news));
     }
 
     @Operation(summary = "update news")
     @ApiResponses(value = {
-                  @ApiResponse(responseCode = "200",
-                               description = "news are update",
-                               content = @Content(mediaType = "application/json",
-                               schema = @Schema(implementation = NewsDto.class))),
-                  @ApiResponse(responseCode = "404",
-                               description = "news are not found")
+            @ApiResponse(responseCode = "200",
+                    description = "news are update",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ManagerNewsResponseDto.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "news are not found")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<NewsDto> updateNewsById(@PathVariable("id") Long newsId,
-                                                  @Validated(OnUpdate.class)
-                                                  @JsonView(View.Put.class)
-                                                  @RequestBody NewsDto newsDto) {
+    public ResponseEntity<ManagerNewsResponseDto> updateNewsById(@PathVariable("id") Long newsId,
+                                                                 @Validated(OnUpdate.class)
+                                                                 @JsonView(View.Put.class)
+                                                                 @RequestBody ManagerNewsRequestDto newsDto) {
         News news = newsService.getByKey(newsId);
         if (!newsService.isExistByKey(newsId)) {
             log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
-        newsMapper.updateEntity(newsDto, news);
+        managerNewsRequestMapper.updateEntity(newsDto, news);
         news.setId(newsId);
         newsService.update(news);
         log.info("We updated news with this id {}", news.getId());
-        return ResponseEntity.ok(newsMapper.toDto(news));
+        return ResponseEntity.ok(managerNewsResponseMapper.toDto(news));
     }
-
 
     @Operation(summary = "delete the news")
     @ApiResponses(value = {
