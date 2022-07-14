@@ -228,17 +228,17 @@ public class TestDataInitializer implements ApplicationRunner {
         medicineService.persistAll(medicines);
     }
 
-    public void externalParasiteInitializer(){
-        List<ExternalParasiteProcedure> externalParasiteProcedures = new ArrayList<>();
+    public void dewormingInitializer(){
+        List<Deworming> dewormings = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
+            dewormings.add(new Deworming(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
                     true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
+            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
                     true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
+            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
                     false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
-        externalParasiteProcedureService.persistAll(externalParasiteProcedures);
+        dewormingService.persistAll(dewormings);
     }
 
 //    public void procedureInitializer() {
@@ -451,7 +451,7 @@ public class TestDataInitializer implements ApplicationRunner {
             petInitialize();
             diagnosisInitilaizer();
             medicineInitialize();
-            externalParasiteInitializer();
+            dewormingInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();
