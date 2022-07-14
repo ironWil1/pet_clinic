@@ -165,6 +165,7 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userInitialize() {
+
         List<Client> clients = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             clients.add(
