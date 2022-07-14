@@ -5,4 +5,5 @@ import com.vet24.models.pet.Pet;
 
 
 public interface PetDao extends ReadWriteDao<Long, Pet> {
+    Boolean isPetBelongToClientByPetId(Long petId, Long clientId);
 }

@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.pet.procedure;
 
+import com.vet24.dao.pet.PetDaoImpl;
 import com.vet24.dao.pet.procedure.ExternalParasiteProcedureDaoImpl;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.exception.ExceptionDto;
@@ -36,6 +37,8 @@ import org.webjars.NotFoundException;
 
 import java.util.List;
 
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
 @RestController
 @Slf4j
 @RequestMapping("api/client/procedure/external")
@@ -45,7 +48,8 @@ public class ExternalParasiteController {
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
     private final MedicineService medicineService;
     private final ExternalParasiteMapper externalParasiteMapper;
-    private  final ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao;
+    private final ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao;
+    private  final PetDaoImpl petDao;
 
     private static final String PET_NOT_FOUND = "Питомец не найден";
     private static final String PROCEDURE_NOT_FOUND = "Процедура не найдена";
@@ -66,7 +70,7 @@ public class ExternalParasiteController {
     }
 
     private void checkPetOwner(Long petId) {
-        if (!externalParasiteProcedureDao.isPetBelongToClientByPetId(petId)) {
+        if (!petDao.isPetBelongToClientByPetId(petId, getSecurityUserOrNull().getId())) {
             log.info("Питомец с petId {} Вам не принадлежит", petId);
             throw new BadRequestException(NOT_YOURS);
         }
@@ -76,12 +80,13 @@ public class ExternalParasiteController {
     public ExternalParasiteController(PetService petService, MedicineService medicineService,
                                       ExternalParasiteMapper externalParasiteMapper,
                                       ExternalParasiteProcedureService externalParasiteProcedureService,
-                                      ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao) {
+                                      ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao, PetDaoImpl petDao) {
         this.petService = petService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
         this.medicineService = medicineService;
         this.externalParasiteMapper = externalParasiteMapper;
         this.externalParasiteProcedureDao = externalParasiteProcedureDao;
+        this.petDao = petDao;
     }
 
     @Operation(summary = "Получить все записи питомца на обработку от эктопаразитов")
@@ -99,8 +104,7 @@ public class ExternalParasiteController {
         checkPet(petId);
         checkPetOwner(petId);
 
-        List<ExternalParasiteProcedure> externalParasiteProcedureList = externalParasiteProcedureDao
-                .getExternalParasiteListByPetId(petId);
+        List<ExternalParasiteProcedure> externalParasiteProcedureList = externalParasiteProcedureDao.getAll();
 
         if (externalParasiteProcedureList.isEmpty()) {
             log.info("Данный питомец не записан на обработку от эктопаразитов");
@@ -127,7 +131,7 @@ public class ExternalParasiteController {
     public ResponseEntity<ExternalParasiteDto> getById(@PathVariable Long id) {
         checkProcedure(id);
 
-        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getExternalParasiteById(id);
+        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getByKey(id);
 
         ExternalParasiteDto externalParasiteDto = externalParasiteMapper.toDto(externalParasiteProcedure);
         log.info("We have this procedure {}", id);
@@ -178,7 +182,7 @@ public class ExternalParasiteController {
                                                       @RequestBody ExternalParasiteDto externalParasiteDto) {
         checkProcedure(id);
 
-        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getExternalParasiteById(id);
+        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getByKey(id);
         Pet pet = externalParasiteProcedure.getPet();
 
         checkPet(pet.getId());
