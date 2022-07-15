@@ -76,7 +76,7 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
                         .content(objectMapper.valueToTree(authRequest).toString()))
                 .andExpect(status().is(403));
     }
-
+/*
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
     public void jwtTokenNotSaveDataBaseTest() throws Exception {
@@ -150,5 +150,5 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString(), Boolean.class);
 
         assertFalse("Тест не пройден", result);
-    }
+    }*/
 }
