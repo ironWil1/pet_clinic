@@ -8,24 +8,18 @@ import org.webjars.NotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 @Repository
-@Slf4j
 public class PetDaoImpl extends ReadWriteDaoImpl<Long, Pet> implements PetDao {
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Override
     public Boolean isPetBelongToClientByPetId(Long petId, Long clientId) {
-        if (petId == null) {
-            log.info("Питомец с id {} не найден", petId);
-            throw new NotFoundException("Питомец не найден");
-        }
-
-        return entityManager.createQuery("FROM Pet where id =:petId", Pet.class)
+        String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
+                " FROM Pet pet where pet.id =:petId AND pet.client.id =: clientId";
+        return manager
+                .createQuery(query, Boolean.class)
                 .setParameter("petId", petId)
-                .getSingleResult()
-                .getClient().getId()
-                .equals(clientId);
+                .setParameter("clientId", clientId)
+                .getSingleResult();
     }
 }
