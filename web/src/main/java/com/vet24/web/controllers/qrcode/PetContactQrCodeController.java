@@ -60,7 +60,7 @@ public class PetContactQrCodeController {
         }
         if (petContactService.isExistByKey(id)) {
             PetContact petContact = petContactService.getByKey(id);
-            String urlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
+            String urlToAlertPetContact = "/api/petFound?code=" + petContact.getCode();
             String sb = "Имя питомца - " + petContact.getPet().getName() + ", " +
                     "Владелец - " + petContact.getOwnerName() + ", " +
                     "Адрес - " + petContact.getAddress() + ", " +
@@ -74,7 +74,7 @@ public class PetContactQrCodeController {
             PetContact petContact = new PetContact();
             petContact.setAddress("");
             petContact.setOwnerName(pet.getClient().getFirstname());
-            petContact.setPetCode("");
+            petContact.setCode("");
             petContact.setPhone(8L);
             petContact.setPet(pet);
             //
@@ -83,7 +83,7 @@ public class PetContactQrCodeController {
             //
             petContactService.persist(petContact);
 
-            String urlToAlertPetContact = "/api/petFound?petCode=" + petContact.getPetCode();
+            String urlToAlertPetContact = "/api/petFound?code=" + petContact.getCode();
             String sb = "Имя питомца - " + pet.getName() + ", " +
                     "Владелец - " + client.getFirstname() + ", " +
                     "Адрес - " + (petContact.getAddress().equals("") ? "владелец еще не успел указать адрес" : petContact.getAddress()) + ", " +
@@ -140,7 +140,7 @@ public class PetContactQrCodeController {
             }
             Pet pet = petService.getByKey(id);
             PetContact petContact = petContactMapper.toEntity(petContactDto);
-            petContact.setPetCode(petContactService.randomPetContactUniqueCode());
+            petContact.setCode(petContactService.randomPetContactUniqueCode());
             petContact.setPet(pet);
             petContactService.persist(petContact);
             log.info("The pet contact for pet with id {} was saved",id);

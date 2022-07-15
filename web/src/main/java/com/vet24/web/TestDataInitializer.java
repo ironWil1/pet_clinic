@@ -17,7 +17,7 @@ import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
-import com.vet24.models.pet.procedure.EchinococcusProcedure;
+import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
@@ -41,7 +41,7 @@ import com.vet24.service.notification.UserNotificationService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
-import com.vet24.service.pet.procedure.EchinococcusProcedureService;
+import com.vet24.service.pet.procedure.DewormingService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
@@ -83,7 +83,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final DoctorReviewService doctorReviewService;
     private final VaccinationProcedureService vaccinationProcedureService;
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
-    private final EchinococcusProcedureService echinococcusProcedureService;
+    private final DewormingService dewormingService;
     private final ReproductionService reproductionService;
     private final ClinicalExaminationService clinicalExaminationService;
     private final PetContactService petContactService;
@@ -123,7 +123,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                MedicineService medicineService,
                                VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
-                               EchinococcusProcedureService echinococcusProcedureService,
+                               DewormingService dewormingService,
                                ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
                                DoctorService doctorService,
                                PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
@@ -140,7 +140,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.doctorReviewService = doctorReviewService;
         this.vaccinationProcedureService = vaccinationProcedureService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
-        this.echinococcusProcedureService = echinococcusProcedureService;
+        this.dewormingService = dewormingService;
         this.reproductionService = reproductionService;
         this.clinicalExaminationService = clinicalExaminationService;
         this.petContactService = petContactService;
@@ -248,6 +248,19 @@ public class TestDataInitializer implements ApplicationRunner {
         }
         vaccinationProcedureService.persistAll(vaccinations);
     }
+    public void dewormingInitializer(){
+        List<Deworming> dewormings = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            dewormings.add(new Deworming(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
+                    false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+        }
+        dewormingService.persistAll(dewormings);
+    }
+
 //    public void procedureInitializer() {
 //        List<VaccinationProcedure> vaccination = new ArrayList<>();
 //        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
@@ -291,32 +304,32 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void petContactInitializer() {
         Pet pet1 = petService.getByKey(1L);
-        PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_18_00L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_18_00L, "description", petContactService.randomPetContactUniqueCode());
         petContact1.setPet(pet1);
         petContactService.persist(petContact1);
 
         Pet pet2 = petService.getByKey(2L);
-        PetContact petContact2 = new PetContact("Мария", "Парниковое 7", 8_748_585_55_55L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact2 = new PetContact("Мария", "Парниковое 7", 8_748_585_55_55L, "description", petContactService.randomPetContactUniqueCode());
         petContact2.setPet(pet2);
         petContactService.persist(petContact2);
 
         Pet pet3 = petService.getByKey(3L);
-        PetContact petContact3 = new PetContact("Олег", "Садовое 27", 8_696_777_42_42L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact3 = new PetContact("Олег", "Садовое 27", 8_696_777_42_42L, "description", petContactService.randomPetContactUniqueCode());
         petContact3.setPet(pet3);
         petContactService.persist(petContact3);
 
         Pet pet4 = petService.getByKey(4L);
-        PetContact petContact4 = new PetContact("Дмитрий", "Липовая 3", 8_962_478_02_02L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact4 = new PetContact("Дмитрий", "Липовая 3", 8_962_478_02_02L, "description", petContactService.randomPetContactUniqueCode());
         petContact4.setPet(pet4);
         petContactService.persist(petContact4);
 
         Pet pet5 = petService.getByKey(5L);
-        PetContact petContact5 = new PetContact("Кирилл", "Виноградная 20", 8_696_222_32_23L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact5 = new PetContact("Кирилл", "Виноградная 20", 8_696_222_32_23L, "description", petContactService.randomPetContactUniqueCode());
         petContact5.setPet(pet5);
         petContactService.persist(petContact5);
 
         Pet pet6 = petService.getByKey(6L);
-        PetContact petContact6 = new PetContact("Александр", "Стрелковая 70", 8_962_969_10_30L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact6 = new PetContact("Александр", "Стрелковая 70", 8_962_969_10_30L, "description", petContactService.randomPetContactUniqueCode());
         petContact6.setPet(pet6);
         petContactService.persist(petContact6);
     }
@@ -472,6 +485,7 @@ public class TestDataInitializer implements ApplicationRunner {
             diagnosisInitilaizer();
             medicineInitialize();
             externalParasiteInitializer();
+            dewormingInitializer();
             vaccinationInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
