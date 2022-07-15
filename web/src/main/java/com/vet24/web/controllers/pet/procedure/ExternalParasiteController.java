@@ -40,7 +40,6 @@ import java.util.List;
 import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 @RestController
-@Slf4j
 @RequestMapping("api/client/procedure/external")
 @Tag(name = "Обработка от эктопаразитов - контроллер")
 public class ExternalParasiteController {
@@ -57,21 +56,18 @@ public class ExternalParasiteController {
 
     private void checkPet(Long petId) {
         if (!petService.isExistByKey(petId)) {
-            log.info("Питомец с id {} не найден", petId);
             throw new NotFoundException(PET_NOT_FOUND);
         }
     }
 
     private void checkProcedure(Long id) {
         if (!externalParasiteProcedureService.isExistByKey(id)) {
-            log.info("Процедура с id {} не найдена", id);
             throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
     }
 
     private void checkPetOwner(Long petId) {
         if (!petDao.isPetBelongToClientByPetId(petId, getSecurityUserOrNull().getId())) {
-            log.info("Питомец с petId {} Вам не принадлежит", petId);
             throw new BadRequestException(NOT_YOURS);
         }
     }
@@ -107,13 +103,10 @@ public class ExternalParasiteController {
         List<ExternalParasiteProcedure> externalParasiteProcedureList = externalParasiteProcedureDao.getAll();
 
         if (externalParasiteProcedureList.isEmpty()) {
-            log.info("Данный питомец не записан на обработку от эктопаразитов");
             throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
 
         List<ExternalParasiteDto> externalParasiteDtoList = externalParasiteMapper.toDto(externalParasiteProcedureList);
-        externalParasiteProcedureList.forEach(externalParasiteProcedure ->
-                log.info("We have this procedure {}", externalParasiteProcedure.getId()));
 
         return new ResponseEntity<>(externalParasiteDtoList, HttpStatus.OK);
     }
@@ -132,9 +125,8 @@ public class ExternalParasiteController {
         checkProcedure(id);
 
         ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getByKey(id);
-
         ExternalParasiteDto externalParasiteDto = externalParasiteMapper.toDto(externalParasiteProcedure);
-        log.info("We have this procedure {}", id);
+
         return new ResponseEntity<>(externalParasiteDto, HttpStatus.OK);
     }
 
@@ -160,10 +152,9 @@ public class ExternalParasiteController {
         externalParasiteProcedure.setMedicine(medicine);
         externalParasiteProcedure.setPet(pet);
         externalParasiteProcedureService.persist(externalParasiteProcedure);
-
         pet.addExternalParasiteProcedure(externalParasiteProcedure);
         petService.update(pet);
-        log.info("Питомец успешно записан на обработку от эктопаразитов {}", externalParasiteDto.getMedicineId());
+
         return new ResponseEntity<>(externalParasiteMapper.toDto(externalParasiteProcedure), HttpStatus.CREATED);
     }
 
@@ -192,7 +183,6 @@ public class ExternalParasiteController {
         Medicine medicine = medicineService.getByKey(externalParasiteDto.getMedicineId());
         externalParasiteProcedure.setMedicine(medicine);
         externalParasiteProcedureService.update(externalParasiteProcedure);
-        log.info("Запись на обработку от эктопаразитов успешно обновлена {}", externalParasiteProcedure.getId());
 
         return new ResponseEntity<>(externalParasiteMapper.toDto(externalParasiteProcedure), HttpStatus.OK);
     }
@@ -218,7 +208,6 @@ public class ExternalParasiteController {
         externalParasiteProcedureService.delete(externalParasiteProcedure);
         pet.removeExternalParasiteProcedure(externalParasiteProcedure);
         petService.update(pet);
-        log.info("Запись на обработку от эктопаразитов успешно удалена {}", externalParasiteProcedure.getId());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
