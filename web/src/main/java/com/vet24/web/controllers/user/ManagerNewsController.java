@@ -64,11 +64,6 @@ public class ManagerNewsController {
     @GetMapping("")
     public ResponseEntity<List<ManagerNewsResponseDto>> getAllNews() {
         List<ManagerNewsResponseDto> newsResponseDtoList = managerNewsResponseMapper.toDto(newsService.getAll());
-
-        if (newsResponseDtoList.isEmpty()) {
-            log.info("The list of news are empty {}", newsResponseDtoList);
-            return new ResponseEntity<>(newsResponseDtoList, HttpStatus.NOT_FOUND);
-        }
         log.info("We have this list of news {}", newsResponseDtoList);
         return new ResponseEntity<>(newsResponseDtoList, HttpStatus.OK);
     }
