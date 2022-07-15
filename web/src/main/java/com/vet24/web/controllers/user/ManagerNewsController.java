@@ -64,7 +64,6 @@ public class ManagerNewsController {
     @GetMapping("")
     public ResponseEntity<List<ManagerNewsResponseDto>> getAllNews() {
         List<ManagerNewsResponseDto> newsResponseDtoList = managerNewsResponseMapper.toDto(newsService.getAll());
-        log.info("We have this list of news {}", newsResponseDtoList);
         return new ResponseEntity<>(newsResponseDtoList, HttpStatus.OK);
     }
 
@@ -82,7 +81,6 @@ public class ManagerNewsController {
     public ResponseEntity<ManagerNewsResponseDto> getNewsById(@PathVariable("id") Long newsId) {
 
         if (!newsService.isExistByKey(newsId)) {
-            log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
         return new ResponseEntity<>(managerNewsResponseMapper.toDto(newsService
@@ -105,7 +103,6 @@ public class ManagerNewsController {
 
         News news = managerNewsRequestMapper.toEntity(newsDto);
         newsService.persist(news);
-        log.info("The news with this type {} was added", newsDto.getType());
         return ResponseEntity.ok(managerNewsResponseMapper.toDto(news));
     }
 
@@ -125,12 +122,10 @@ public class ManagerNewsController {
                                                                  @RequestBody ManagerNewsRequestDto newsDto) {
         News news = newsService.getByKey(newsId);
         if (!newsService.isExistByKey(newsId)) {
-            log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
         managerNewsRequestMapper.updateEntity(newsDto, news);
         newsService.update(news);
-        log.info("We updated news with this id {}", news.getId());
         return ResponseEntity.ok(managerNewsResponseMapper.toDto(news));
     }
 
@@ -144,12 +139,10 @@ public class ManagerNewsController {
 
         News news = newsService.getByKey(newsId);
         if (!newsService.isExistByKey(newsId)) {
-            log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
 
         newsService.delete(news);
-        log.info("We deleted news with this id {}",news.getId());
         return ResponseEntity.ok().build();
     }
 }
