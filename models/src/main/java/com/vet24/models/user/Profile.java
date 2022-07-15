@@ -14,7 +14,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "profile")
+@Table(name = "profiles")
 public class Profile {
     @Id
     @Column(name = "id")
@@ -50,11 +50,6 @@ public class Profile {
     @Column(name = "telegram_id")
     private String telegramId;
 
-    public Profile(@NonNull User user, @NonNull String firstName, @NonNull String lastName) {
-        this.user = user;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
 
     @Override
     public boolean equals(Object o) {
