@@ -90,9 +90,10 @@ public class AdminDoctorController {
     public ResponseEntity<DoctorDto> doctorDtoPut(@JsonView(View.Put.class) @Valid @RequestBody DoctorDtoPost doctorDtoPost,
                                                   @PathVariable("id") long id) {
         Doctor doctor = doctorService.getByKey(id);
-
+        doctor.getProfile().setFirstName(doctorDtoPost.getFirstname());
+        doctor.getProfile().setLastName(doctorDtoPost.getLastname());
         doctor.setPassword(doctorDtoPost.getPassword());
-
+        doctor.getProfile().setAvatarUrl(doctorDtoPost.getAvatar());
         doctorService.update(doctor);
         return ResponseEntity.ok(doctorMapper.toDto(doctor));
     }

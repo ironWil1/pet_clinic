@@ -62,6 +62,7 @@ public class User implements UserDetails {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+
     private List<CommentReaction> commentReactions = new ArrayList<>();
 
     @OneToMany(

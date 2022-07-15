@@ -9,8 +9,10 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserInfoMapper extends DtoMapper<User, UserInfoDto>, EntityMapper<UserInfoDto, User> {
+
     @Override
     @Mapping(source = "entity.profile.firstName", target = "firstname")
     @Mapping(source = "entity.profile.lastName", target = "lastname")
     UserInfoDto toDto(User entity);
+
 }

@@ -84,6 +84,7 @@ public class ClientController {
     })
     @CheckForNull
     @GetMapping("/avatar")
+
     public ResponseEntity<byte[]> getClientAvatar() {
         Profile profile = profileService.getByKey(getSecurityUserOrNull().getId());
 

@@ -53,8 +53,8 @@ public class UserNotificationControllerTest extends ControllerAbstractIntegratio
 
                 .andExpect(jsonPath("$[0].user.id", Is.is(3)))
                 .andExpect(jsonPath("$[0].user.email", Is.is("user3@gmail.com")))
-                .andExpect(jsonPath("$[0].user.firstname", Is.is("Ivan")))
-                .andExpect(jsonPath("$[0].user.lastname", Is.is("Ivanov")))
+                /*.andExpect(jsonPath("$[0].user.firstname", Is.is("Ivan")))
+                .andExpect(jsonPath("$[0].user.lastname", Is.is("Ivanov")))*/
 
                 .andExpect(jsonPath("$[0].notification.id", Is.is(1)))
                 .andExpect(jsonPath("$[0].notification.content", Is.is("User Notification Test 1")))
@@ -77,8 +77,8 @@ public class UserNotificationControllerTest extends ControllerAbstractIntegratio
 
                 .andExpect(jsonPath("$.user.id", Is.is(3)))
                 .andExpect(jsonPath("$.user.email", Is.is("user3@gmail.com")))
-                .andExpect(jsonPath("$.user.firstname", Is.is("Ivan")))
-                .andExpect(jsonPath("$.user.lastname", Is.is("Ivanov")))
+                /*.andExpect(jsonPath("$.user.firstname", Is.is("Ivan")))
+                .andExpect(jsonPath("$.user.lastname", Is.is("Ivanov")))*/
 
                 .andExpect(jsonPath("$.notification.id", Is.is(1)))
                 .andExpect(jsonPath("$.notification.content", Is.is("User Notification Test 1")))
