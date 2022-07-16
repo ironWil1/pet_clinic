@@ -511,6 +511,7 @@ public class TestDataInitializer implements ApplicationRunner {
             appointmentInit();
             notificationAndUserNotificationInit();
             newsInit();
+            profileInit();
         }
     }
 }
