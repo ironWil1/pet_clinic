@@ -11,6 +11,7 @@
         <module>service-impl</module>
         <module>security</module>
         <module>web</module>
+        <module>discord</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
