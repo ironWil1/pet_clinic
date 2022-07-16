@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +30,6 @@ import org.webjars.NotFoundException;
 import java.util.List;
 
 
-@Slf4j
 @RestController
 @RequestMapping(value = "api/manager/news")
 @Tag(name = "manager news controller", description = "managerNewsController operations")
@@ -62,10 +60,8 @@ public class ManagerNewsController {
         List<NewsDto> newsDtoList = newsMapper.toDto(newsService.getAll());
 
         if (newsDtoList.isEmpty()) {
-            log.info("The list of news are empty {}", newsDtoList);
             return new ResponseEntity<>(newsDtoList, HttpStatus.NOT_FOUND);
         }
-            log.info("We have this list of news {}", newsDtoList);
             return new ResponseEntity<>(newsDtoList, HttpStatus.OK);
         }
 
@@ -83,7 +79,6 @@ public class ManagerNewsController {
     public ResponseEntity<NewsDto> getNewsById(@PathVariable("id") Long newsId) {
 
         if (!newsService.isExistByKey(newsId)) {
-            log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
         return new ResponseEntity<>(newsMapper.toDto(newsService
@@ -106,7 +101,6 @@ public class ManagerNewsController {
 
         News news = newsMapper.toEntity(newsDto);
         newsService.persist(news);
-        log.info("The news with this type {} was added", newsDto.getType());
         return ResponseEntity.ok(newsMapper.toDto(news));
     }
 
@@ -126,16 +120,31 @@ public class ManagerNewsController {
                                                   @RequestBody NewsDto newsDto) {
         News news = newsService.getByKey(newsId);
         if (!newsService.isExistByKey(newsId)) {
-            log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
         newsMapper.updateEntity(newsDto, news);
         news.setId(newsId);
         newsService.update(news);
-        log.info("We updated news with this id {}", news.getId());
         return ResponseEntity.ok(newsMapper.toDto(news));
     }
 
+    @Operation(summary = "add news picture")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "picture was successfully added",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "no picture could be added")
+    })
+    @PutMapping("/api/manager/news/{id}/pictures/")
+    public ResponseEntity<Void> addNewsPicture(@RequestBody List<String> listPictures, @PathVariable Long id) {
+        News news = newsService.getByKey(id);
+        if (news != null) {
+            news.setPictures(listPictures);
+            newsService.update(news);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
     @Operation(summary = "delete the news")
     @ApiResponses(value = {
@@ -147,12 +156,10 @@ public class ManagerNewsController {
 
         News news = newsService.getByKey(newsId);
         if (!newsService.isExistByKey(newsId)) {
-            log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
 
         newsService.delete(news);
-        log.info("We deleted news with this id {}",news.getId());
         return ResponseEntity.ok().build();
     }
 }
