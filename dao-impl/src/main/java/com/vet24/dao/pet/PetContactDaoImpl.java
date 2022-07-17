@@ -2,6 +2,7 @@ package com.vet24.dao.pet;
 
 
 import com.vet24.dao.ReadWriteDaoImpl;
+import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import org.springframework.stereotype.Repository;
 
@@ -46,5 +47,12 @@ public class PetContactDaoImpl extends ReadWriteDaoImpl<Long, PetContact> implem
     public int getCountId() {
         Query query = manager.createQuery("SELECT DISTINCT (petContact.id) FROM PetContact AS petContact");
         return query.getResultList().size();
+    }
+
+    @Override
+    public PetContact getByPet(Pet pet) {
+        return (PetContact) manager.createQuery("FROM PetContact WHERE pet = :pet")
+                .setParameter("pet", pet)
+                .getSingleResult();
     }
 }

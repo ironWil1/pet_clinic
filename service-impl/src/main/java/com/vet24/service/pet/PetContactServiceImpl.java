@@ -1,6 +1,7 @@
 package com.vet24.service.pet;
 
 import com.vet24.dao.pet.PetContactDao;
+import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.stereotype.Service;
@@ -41,5 +42,15 @@ public class PetContactServiceImpl extends ReadWriteServiceImpl<Long, PetContact
     @Override
     public String randomPetContactUniqueCode() {
         return UUID.randomUUID().toString();
+    }
+
+    @Override
+    public String unchangedCode(PetContact petContact) {
+        return petContact.getCode();
+    }
+
+    @Override
+    public PetContact getByPet(Pet pet) {
+        return petContactDao.getByPet(pet);
     }
 }
