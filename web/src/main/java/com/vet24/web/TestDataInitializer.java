@@ -24,7 +24,17 @@ import com.vet24.models.pet.procedure.EchinococcusProcedure;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.user.*;
+import com.vet24.models.user.Client;
+import com.vet24.models.user.Role;
+import com.vet24.models.user.Doctor;
+import com.vet24.models.user.Admin;
+import com.vet24.models.user.Manager;
+import com.vet24.models.user.DoctorReview;
+import com.vet24.models.user.DoctorNonWorking;
+import com.vet24.models.user.Topic;
+import com.vet24.models.user.Comment;
+import com.vet24.models.user.CommentReaction;
+import com.vet24.models.user.User;
 import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.DoctorScheduleService;
@@ -39,7 +49,18 @@ import com.vet24.service.pet.procedure.EchinococcusProcedureService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
-import com.vet24.service.user.*;
+import com.vet24.service.user.AdminService;
+import com.vet24.service.user.ClientService;
+import com.vet24.service.user.CommentReactionService;
+import com.vet24.service.user.CommentService;
+import com.vet24.service.user.DoctorNonWorkingService;
+import com.vet24.service.user.DoctorReviewService;
+import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.ManagerService;
+import com.vet24.service.user.ProfileService;
+import com.vet24.service.user.RoleService;
+import com.vet24.service.user.TopicService;
+import com.vet24.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -206,28 +227,30 @@ public class TestDataInitializer implements ApplicationRunner {
         medicineService.persistAll(medicines);
     }
 
-    public void procedureInitializer() {
-        List<VaccinationProcedure> vaccination = new ArrayList<>();
-        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
-        List<EchinococcusProcedure> echinococcus = new ArrayList<>();
-
+    public void externalParasiteInitializer(){
+        List<ExternalParasiteProcedure> externalParasiteProcedures = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            if (i <= 10) {
-                vaccination.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + i,
-                        false, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
-            if (i > 10 && i <= 20) {
-                externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
-                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
-            if (i > 20) {
-                echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
-                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
+                    false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
-        vaccinationProcedureService.persistAll(vaccination);
-        externalParasiteProcedureService.persistAll(externalParasite);
-        echinococcusProcedureService.persistAll(echinococcus);
+        externalParasiteProcedureService.persistAll(externalParasiteProcedures);
+    }
+
+    public void dewormingInitializer(){
+        List<Deworming> dewormings = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            dewormings.add(new Deworming(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
+                    false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+        }
+        dewormingService.persistAll(dewormings);
     }
 
     public void reproductionInitializer() {
@@ -249,32 +272,32 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void petContactInitializer() {
         Pet pet1 = petService.getByKey(1L);
-        PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_18_00L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_18_00L, "description", petContactService.randomPetContactUniqueCode());
         petContact1.setPet(pet1);
         petContactService.persist(petContact1);
 
         Pet pet2 = petService.getByKey(2L);
-        PetContact petContact2 = new PetContact("Мария", "Парниковое 7", 8_748_585_55_55L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact2 = new PetContact("Мария", "Парниковое 7", 8_748_585_55_55L, "description", petContactService.randomPetContactUniqueCode());
         petContact2.setPet(pet2);
         petContactService.persist(petContact2);
 
         Pet pet3 = petService.getByKey(3L);
-        PetContact petContact3 = new PetContact("Олег", "Садовое 27", 8_696_777_42_42L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact3 = new PetContact("Олег", "Садовое 27", 8_696_777_42_42L, "description", petContactService.randomPetContactUniqueCode());
         petContact3.setPet(pet3);
         petContactService.persist(petContact3);
 
         Pet pet4 = petService.getByKey(4L);
-        PetContact petContact4 = new PetContact("Дмитрий", "Липовая 3", 8_962_478_02_02L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact4 = new PetContact("Дмитрий", "Липовая 3", 8_962_478_02_02L, "description", petContactService.randomPetContactUniqueCode());
         petContact4.setPet(pet4);
         petContactService.persist(petContact4);
 
         Pet pet5 = petService.getByKey(5L);
-        PetContact petContact5 = new PetContact("Кирилл", "Виноградная 20", 8_696_222_32_23L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact5 = new PetContact("Кирилл", "Виноградная 20", 8_696_222_32_23L, "description", petContactService.randomPetContactUniqueCode());
         petContact5.setPet(pet5);
         petContactService.persist(petContact5);
 
         Pet pet6 = petService.getByKey(6L);
-        PetContact petContact6 = new PetContact("Александр", "Стрелковая 70", 8_962_969_10_30L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact6 = new PetContact("Александр", "Стрелковая 70", 8_962_969_10_30L, "description", petContactService.randomPetContactUniqueCode());
         petContact6.setPet(pet6);
         petContactService.persist(petContact6);
     }
@@ -376,48 +399,62 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void newsInit() {
         List<News> newsList = new ArrayList<>();
-        for (int i = 1; i <= 30; i++) {
+        for (int i = 1; i <= 40; i++) {
 
-            if (i <= 7) {
-                newsList
-                        .add(new UpdatingNews("Content of Updating" + i,
-                                true, LocalDateTime.now().plusDays(i)));
+            if (i <= 10) {
+                News updatingNews = new News();
+                updatingNews.setContent("Content of Updating" + i);
+                updatingNews.setImportant(true);
+                updatingNews.setEndTime(LocalDateTime.now().plusDays(i));
+                updatingNews.setType(NewsType.UPDATING);
+                newsList.add(updatingNews);
 
             }
 
-            if (i > 7 && i <= 14) {
-                newsList
-                        .add(new AdvertisingActionsNews("Content of Advertising Actions" + i,
-                                false, LocalDateTime.now().plusWeeks(i)));
+            if (i > 10 && i <= 20) {
+                News advertisingActionsNews = new News();
+                advertisingActionsNews.setContent("Content of Advertising Actions" + i);
+                advertisingActionsNews.setImportant(false);
+                advertisingActionsNews.setEndTime(LocalDateTime.now().plusWeeks(i));
+                advertisingActionsNews.setType(NewsType.ADVERTISING_ACTIONS);
+                newsList.add(advertisingActionsNews);
             }
 
-            if (i > 14 && i <= 21) {
-                newsList
-                        .add(new DiscountsNews("Content of Discounts News" + i,
-                                true, LocalDateTime.now().plusDays(i)));
+            if (i > 20 && i <= 30) {
+                News discountsNews = new News();
+                discountsNews.setContent("Content of Discounts News" + i);
+                discountsNews.setImportant(true);
+                discountsNews.setEndTime(LocalDateTime.now().plusDays(i));
+                discountsNews.setType(NewsType.DISCOUNTS);
+                newsList.add(discountsNews);
             }
-            if (i > 21) {
-                newsList.add(new PromotionNews("Content of Promotion News" + i,
-                        false, LocalDateTime.now().plusWeeks(i)));
+
+            if (i > 30) {
+                News promotionNews = new News();
+                promotionNews.setContent("Content of Promotion News" + i);
+                promotionNews.setImportant(false);
+                promotionNews.setEndTime(LocalDateTime.now().plusWeeks(i));
+                promotionNews.setType(NewsType.PROMOTION);
+                newsList.add(promotionNews);
             }
         }
-           newsService.persistAll(newsList);
+        newsService.persistAll(newsList);
+    }
+    public void profileInit(){
+        List<User> users = userService.getAll();
+        List<com.vet24.models.user.Profile> profileList = new ArrayList<>();
+        for (int i = 1; i <= users.size(); i++) {
+            profileList.add(new com.vet24.models.user.Profile(users.get(i-1) ,
+                    "avatarUrl"+ i,
+                    "firstName" +i,
+                    "lastName" +i,
+                    LocalDate.parse("1970-01-01"),
+                    "discordId" + i,
+                    "telegramId" + i ));
         }
-        public void profileInit(){
-            List<User> users = userService.getAll();
-            List<com.vet24.models.user.Profile> profileList = new ArrayList<>();
-            for (int i = 1; i <= users.size(); i++) {
-                profileList.add(new com.vet24.models.user.Profile(users.get(i-1) ,
-                        "avatarUrl"+ i,
-                        "firstName" +i,
-                        "lastName" +i,
-                        LocalDate.parse("1970-01-01"),
-                        "discordId" + i,
-                        "telegramId" + i ));
-            }
 
-            profileService.persistAll(profileList);
-        }
+        profileService.persistAll(profileList);
+    }
 
 
     @Override
@@ -429,7 +466,8 @@ public class TestDataInitializer implements ApplicationRunner {
             petInitialize();
             diagnosisInitilaizer();
             medicineInitialize();
-            procedureInitializer();
+            externalParasiteInitializer();
+            dewormingInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();
