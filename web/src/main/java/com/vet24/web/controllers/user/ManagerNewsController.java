@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +30,6 @@ import org.webjars.NotFoundException;
 import java.util.List;
 
 
-@Slf4j
 @RestController
 @RequestMapping(value = "api/manager/news")
 @Tag(name = "manager news controller", description = "managerNewsController operations")
@@ -39,7 +37,6 @@ public class ManagerNewsController {
 
     private final NewsService newsService;
     private final NewsMapper newsMapper;
-    private static final String NEWS_NOT_FOUND = "news not found";
 
 
     @Autowired
@@ -62,10 +59,8 @@ public class ManagerNewsController {
         List<NewsDto> newsDtoList = newsMapper.toDto(newsService.getAll());
 
         if (newsDtoList.isEmpty()) {
-            log.info("The list of news are empty {}", newsDtoList);
             return new ResponseEntity<>(newsDtoList, HttpStatus.NOT_FOUND);
         }
-            log.info("We have this list of news {}", newsDtoList);
             return new ResponseEntity<>(newsDtoList, HttpStatus.OK);
         }
 
@@ -83,7 +78,6 @@ public class ManagerNewsController {
     public ResponseEntity<NewsDto> getNewsById(@PathVariable("id") Long newsId) {
 
         if (!newsService.isExistByKey(newsId)) {
-            log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
         return new ResponseEntity<>(newsMapper.toDto(newsService
@@ -106,7 +100,6 @@ public class ManagerNewsController {
 
         News news = newsMapper.toEntity(newsDto);
         newsService.persist(news);
-        log.info("The news with this type {} was added", newsDto.getType());
         return ResponseEntity.ok(newsMapper.toDto(news));
     }
 
@@ -126,16 +119,25 @@ public class ManagerNewsController {
                                                   @RequestBody NewsDto newsDto) {
         News news = newsService.getByKey(newsId);
         if (!newsService.isExistByKey(newsId)) {
-            log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
         newsMapper.updateEntity(newsDto, news);
         news.setId(newsId);
         newsService.update(news);
-        log.info("We updated news with this id {}", news.getId());
         return ResponseEntity.ok(newsMapper.toDto(news));
     }
 
+    @Operation(summary = "unpublish news")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "news publication has been canceled",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "unpublish news not succeed")
+    })
+    @PutMapping("/api/manager/news/unpublish")
+    public ResponseEntity<Map<Long, String>> unpublishNews(@RequestBody List<Long> unpublishNewsId) {
+        return ResponseEntity.ok(newsService.unpublishNews(unpublishNewsId));
+    }
 
     @Operation(summary = "delete the news")
     @ApiResponses(value = {
@@ -147,12 +149,10 @@ public class ManagerNewsController {
 
         News news = newsService.getByKey(newsId);
         if (!newsService.isExistByKey(newsId)) {
-            log.info(NEWS_NOT_FOUND + newsId);
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
 
         newsService.delete(news);
-        log.info("We deleted news with this id {}",news.getId());
         return ResponseEntity.ok().build();
     }
 }
