@@ -10,18 +10,13 @@ import java.util.List;
 public class DewormingDaoImpl extends ReadWriteDaoImpl<Long, Deworming> implements DewormingDao {
     @Override
     public boolean isExistByDewormingIdAndClientId(Long dewormingId, Long clientId) {
-        boolean result = false;
-
-        if (dewormingId != null) {
-            String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
-                    " FROM Deworming d WHERE d.id = :dewormingId and d.pet.client.id = :clientId";
-            result = manager
-                    .createQuery(query, Boolean.class)
-                    .setParameter("dewormingId", dewormingId)
-                    .setParameter("clientId", clientId)
-                    .getSingleResult();
-        }
-        return result;
+        String query = "SELECT CASE WHEN (count(*)>0) then true else false end" +
+                " FROM Deworming d WHERE d.id = :dewormingId and d.pet.client.id = :clientId";
+        return manager
+                .createQuery(query, Boolean.class)
+                .setParameter("dewormingId", dewormingId)
+                .setParameter("clientId", clientId)
+                .getSingleResult();
     }
 
     @Override
