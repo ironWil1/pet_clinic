@@ -18,4 +18,9 @@ public class PetServiceImpl extends ReadWriteServiceImpl<Long, Pet> implements P
     public boolean isPetBelongToClient(Long petId, Long clientId) {
         return petDao.isPetBelongToClient(petId, clientId);
     }
+
+    @Override
+    public boolean isExistByPetIdAndClientId(Long petId, Long clientId) {
+        return petDao.isExistByPetIdAndClientId(petId,clientId);
+    }
 }
