@@ -37,7 +37,6 @@ public class ManagerNewsController {
 
     private final NewsService newsService;
     private final NewsMapper newsMapper;
-    private static final String NEWS_NOT_FOUND = "news not found";
 
 
     @Autowired
