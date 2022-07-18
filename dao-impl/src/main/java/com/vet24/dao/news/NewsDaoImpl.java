@@ -4,7 +4,6 @@ import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.models.news.News;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
