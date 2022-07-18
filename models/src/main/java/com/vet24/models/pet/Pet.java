@@ -14,30 +14,28 @@ import com.vet24.models.user.Client;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
+
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.FetchType;
+import javax.persistence.CascadeType;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -45,6 +43,7 @@ import java.util.Objects;
 @DiscriminatorColumn(name = "pet_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
+@EqualsAndHashCode
 public abstract class Pet {
 
     @Id
@@ -144,12 +143,12 @@ public abstract class Pet {
     )
     private List<Appointment> appointments = new ArrayList<>();
 
-    @OneToOne(
+    @OneToMany(
             mappedBy = "pet",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private PetContact petContact;
+    private List<PetContact> petContacts = new ArrayList<>();
 
     protected Pet() {
     }
@@ -222,16 +221,4 @@ public abstract class Pet {
         clinicalExamination.setPet(null);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Pet pet = (Pet) o;
-        return id != null && Objects.equals(id, pet.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

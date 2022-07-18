@@ -13,20 +13,20 @@ import java.util.List;
 public class PetContactDaoImpl extends ReadWriteDaoImpl<Long, PetContact> implements PetContactDao {
 
     @Override
-    public List<String> getAllCode() {
-        Query query = manager.createQuery("SELECT petContact.code FROM PetContact AS petContact");
+    public List<String> getAllPetCode() {
+        Query query = manager.createQuery("SELECT petContact.petCode FROM PetContact AS petContact");
         return query.getResultList();
     }
 
     @Override
-    public boolean isExistByCode(String code) {
+    public boolean isExistByPetCode(String petCode) {
         try {
             boolean result = false;
-            if (code != null) {
-                String query = "SELECT CASE WHEN (1 > 0) then true else false end FROM PetContact WHERE code = :id";
+            if (petCode != null) {
+                String query = "SELECT CASE WHEN (1 > 0) then true else false end FROM PetContact WHERE petCode = :id";
                 result = manager
                         .createQuery(query, Boolean.class)
-                        .setParameter("id", code)
+                        .setParameter("id", petCode)
                         .getSingleResult();
             }
             return result;
@@ -36,9 +36,9 @@ public class PetContactDaoImpl extends ReadWriteDaoImpl<Long, PetContact> implem
     }
 
     @Override
-    public PetContact getByCode(String code) {
-        return (PetContact) manager.createQuery("FROM PetContact WHERE code = :code")
-                .setParameter("code", code)
+    public PetContact getByPetCode(String petCode) {
+        return (PetContact) manager.createQuery("FROM PetContact WHERE petCode = :petCode")
+                .setParameter("petCode", petCode)
                 .getSingleResult();
     }
 

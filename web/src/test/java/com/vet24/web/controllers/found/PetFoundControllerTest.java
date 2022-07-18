@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -41,7 +42,7 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
                     "/datasets/pet-entities.yml"})
     public void testSaveDataFoundPetAndSendOwnerPetMessage() throws Exception {
         PetContact petContact = petContactService.getByKey(104L);
-        String code = petContact.getCode();
+        String petCode = petContact.getPetCode();
 
         PetFoundDto petFoundDto = new PetFoundDto("1.2345678", "2.3456789", "Some text");
         String bodyUpdate = objectMapper.valueToTree(petFoundDto).toString();
@@ -51,22 +52,22 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post(URL)
                         .header("Authorization", "Bearer " + token)
                         .content(bodyUpdate).contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .param("code", code))
+                        .param("petCode", petCode))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
-    // get PetContact by code is not found - error 404
+    // get PetContact by petCode is not found - error 404
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/pet-found.yml", "/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void testSaveDataFoundPetAndSendOwnerPetMessageError404Pet() throws Exception {
-        String code = "CD0964F7A769B65E2BA57822840B0E53";
+        String petCode = "CD0964F7A769B65E2BA57822840B0E53";
 
         PetFoundDto petFoundDto = new PetFoundDto("1.2345678", "2.3456789", "Some text");
         String bodyUpdate = objectMapper.valueToTree(petFoundDto).toString();
         mockMvc.perform(MockMvcRequestBuilders.post(URL)
                         .header("Authorization", "Bearer " + token)
                         .content(bodyUpdate).contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .param("code", code))
+                        .param("petCode", petCode))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         Mockito.verify(mailService, times(0))
                 .sendGeolocationPetFoundMessage(any(PetContact.class), anyString(), anyString());

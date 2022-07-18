@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface PetContactService extends ReadWriteService<Long, PetContact> {
 
-    List<String> getAllCode();
-    boolean isExistByCode(String code);
-    PetContact getByCode(String code);
+    List<String> getAllPetCode();
+    boolean isExistByPetCode(String petCode);
+    PetContact getByPetCode(String petCode);
     int getCountId();
     String randomPetContactUniqueCode();
 }

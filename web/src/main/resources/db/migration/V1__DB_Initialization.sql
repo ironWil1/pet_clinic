@@ -210,11 +210,11 @@ create table if not exists pet_contact
     id         int8 not null,
     address    varchar(255),
     owner_name varchar(255),
-    code   varchar(255),
+    pet_code   varchar(255),
     phone      int8,
     primary key (id),
     constraint uk_pet_contact
-        unique (code),
+        unique (pet_code),
     constraint fk_pet_contact_pet_entities
         foreign key (id)
             references pet_entities
