@@ -58,12 +58,8 @@ public class ManagerNewsController {
     @GetMapping("")
     public ResponseEntity<List<NewsDto>> getAllNews() {
         List<NewsDto> newsDtoList = newsMapper.toDto(newsService.getAll());
-
-        if (newsDtoList.isEmpty()) {
-            return new ResponseEntity<>(newsDtoList, HttpStatus.NOT_FOUND);
-        }
-            return new ResponseEntity<>(newsDtoList, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(newsDtoList, HttpStatus.OK);
+    }
 
 
     @Operation(summary = "get news by id")
@@ -123,7 +119,6 @@ public class ManagerNewsController {
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
         newsMapper.updateEntity(newsDto, news);
-        news.setId(newsId);
         newsService.update(news);
         return ResponseEntity.ok(newsMapper.toDto(news));
     }
