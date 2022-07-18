@@ -16,4 +16,34 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
         super(newsDao);
         this.newsDao = newsDao;
     }
+
+    @Transactional
+    @Override
+    public Map<Long, String> publishNews(List<Long> publishNewsId) {
+        Map<Long, String> notPublishNews = new HashMap<>();
+        List<NewsDto> listNewsDto = newsDao.publishNews(publishNewsId);
+
+        List<Long> listNewsId = listNewsDto.stream()
+                .map(NewsDto::getId)
+                .collect(Collectors.toList());
+
+        Set<Long> notExistNewsId = publishNewsId.stream()
+                .filter(i -> !listNewsId.contains(i))
+                .collect(Collectors.toSet());
+
+        List<Long> newsIdEndTime = listNewsDto.stream()
+                .filter(newsDto -> newsDto.getEndTime().isBefore(LocalDateTime.now()))
+                .map(NewsDto::getId)
+                .collect(Collectors.toList());
+
+        for (long id : notExistNewsId) {
+            notPublishNews.put(id, "новость не существует");
+        }
+
+        for (long id : newsIdEndTime) {
+            notPublishNews.put(id, "endData новости уже прошла");
+        }
+
+        return notPublishNews;
+    }
 }
