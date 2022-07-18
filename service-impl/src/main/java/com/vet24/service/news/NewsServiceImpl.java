@@ -1,10 +1,19 @@
 package com.vet24.service.news;
 
 import com.vet24.dao.news.NewsDao;
+import com.vet24.models.dto.news.NewsDto;
 import com.vet24.models.news.News;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements NewsService {
