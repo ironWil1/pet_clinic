@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface NewsService extends ReadWriteService<Long, News> {
-    Map<Long, String> publishNews(List<Long> publishNewsId);
+    Map<Long, String> publishNews(List<Long> ids);
 }
