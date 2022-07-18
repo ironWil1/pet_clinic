@@ -37,7 +37,7 @@ public class ManagerNewsController {
 
     private final NewsService newsService;
     private final NewsMapper newsMapper;
-
+    private static final String NEWS_NOT_FOUND = "news not found";
 
     @Autowired
     public ManagerNewsController(NewsService newsService, NewsMapper newsMapper) {
@@ -57,12 +57,8 @@ public class ManagerNewsController {
     @GetMapping("")
     public ResponseEntity<List<NewsDto>> getAllNews() {
         List<NewsDto> newsDtoList = newsMapper.toDto(newsService.getAll());
-
-        if (newsDtoList.isEmpty()) {
-            return new ResponseEntity<>(newsDtoList, HttpStatus.NOT_FOUND);
-        }
-            return new ResponseEntity<>(newsDtoList, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(newsDtoList, HttpStatus.OK);
+    }
 
 
     @Operation(summary = "get news by id")
