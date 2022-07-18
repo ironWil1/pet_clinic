@@ -119,7 +119,7 @@ class PetContact {
 GET /api/client/pet/contact?petId -> PetContactResponseDto
 ```
 ```
-PUT PetContactDto -> /api/client/ -> PetContactDto
+PUT PetContactDto -> /api/client/pet/contact?petId -> PetContactDto
 ```  
 ```
   class PetContactDto {
