@@ -119,7 +119,6 @@ public class ManagerNewsController {
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
         newsMapper.updateEntity(newsDto, news);
-        news.setId(newsId);
         newsService.update(news);
         return ResponseEntity.ok(newsMapper.toDto(news));
     }
