@@ -1,6 +1,5 @@
 package com.vet24.service.pet;
 
-import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import com.vet24.service.ReadWriteService;
 
@@ -13,6 +12,5 @@ public interface PetContactService extends ReadWriteService<Long, PetContact> {
     PetContact getByCode(String code);
     int getCountId();
     String randomPetContactUniqueCode();
-    String unchangedCode(PetContact petContact);
-    PetContact getByPet(Pet pet);
+    PetContact getByPetId(Long petId);
 }

@@ -48,11 +48,4 @@ public class PetContactDaoImpl extends ReadWriteDaoImpl<Long, PetContact> implem
         Query query = manager.createQuery("SELECT DISTINCT (petContact.id) FROM PetContact AS petContact");
         return query.getResultList().size();
     }
-
-    @Override
-    public PetContact getByPet(Pet pet) {
-        return (PetContact) manager.createQuery("FROM PetContact WHERE pet = :pet")
-                .setParameter("pet", pet)
-                .getSingleResult();
-    }
 }

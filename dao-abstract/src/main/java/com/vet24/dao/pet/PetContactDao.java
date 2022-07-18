@@ -12,5 +12,4 @@ public interface PetContactDao extends ReadWriteDao<Long, PetContact> {
     boolean isExistByCode(String code);
     PetContact getByCode(String code);
     int getCountId();
-    PetContact getByPet(Pet pet);
 }

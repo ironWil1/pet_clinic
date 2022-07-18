@@ -34,7 +34,7 @@ import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 @RestController
 @Slf4j
-@RequestMapping("api/client")
+@RequestMapping("api/client/pet/contact")
 @Tag(name = "petContact-controller", description = "operations with Pets' Contacts")
 public class PetContactController {
 
@@ -58,17 +58,17 @@ public class PetContactController {
             @ApiResponse(responseCode = "400", description = "Pet Contact is not yours",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
-    @GetMapping("pet/contact")
+    @GetMapping("/")
     public ResponseEntity<PetContactDto> getById(@RequestParam Long petId) {
         Client client = (Client)  getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
-        PetContact petContact = petContactService.getByPet(pet);
         if (pet == null) {
             throw new NotFoundException("The pet was not found");
         }
         if (!pet.getClient().getId().equals(client.getId())) {
             throw new BadRequestException("This pet is not yours");
         }
+        PetContact petContact = petContactService.getByPetId(petId);
         return new ResponseEntity<>(petContactMapper.toDto(petContact), HttpStatus.OK);
     }
 
@@ -76,18 +76,20 @@ public class PetContactController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully created Pet Contact"),
             @ApiResponse(responseCode = "404", description = "Pet or Client is not found"),
+            @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")
     })
     @PutMapping("/")
-    public ResponseEntity<PetContactDto> updatePetContact(@Valid @RequestBody PetContactDto petContactDto) {
+    public ResponseEntity<PetContactDto> updatePetContact(@Valid @RequestBody PetContactDto petContactDto, @RequestParam Long petId) {
 
         Client client = (Client) getSecurityUserOrNull();
-        PetContact petContact = petContactMapper.toEntity(petContactDto);
-        if (client != null && petContact.getPet() != null){
-            if(petContact.getCode() == null) {
-                petContact.setCode(petContactService.randomPetContactUniqueCode());
-            } else {
-                petContact.setCode(petContactService.unchangedCode(petContact));
+        Pet pet = petService.getByKey(petId);
+        if (client != null && pet != null){
+            if (!(pet.getClient().getId().equals(client.getId()))) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
+            PetContact petContact = pet.getPetContact();
+            petContactMapper.updateEntity(petContactDto, petContact);
+            petContact.setCode(petContact.getCode());
             petContactService.update(petContact);
             return ResponseEntity.status(201).body(petContactDto);
         }
