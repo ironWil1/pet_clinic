@@ -132,8 +132,8 @@ public class ManagerNewsController {
             @ApiResponse(responseCode = "404", description = "unpublish news not succeed")
     })
     @PutMapping("/api/manager/news/unpublish")
-    public ResponseEntity<Map<Long, String>> unpublishNews(@RequestBody List<Long> ids) {
-        return ResponseEntity.ok(newsService.unpublishNews(ids));
+    public ResponseEntity<Map<Long, String>> unpublishNews(@RequestBody List<Long> newsId) {
+        return ResponseEntity.ok(newsService.unpublishNews(newsId));
     }
 
     @Operation(summary = "delete the news")
