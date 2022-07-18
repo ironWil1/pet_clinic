@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/client/news")
-@Tag(name = "client news rest controller", description = "clientNewsRestController operations")
+@Tag(name = "client news rest controller", description = "операции контроллера clientNewsRestController")
 public class ClientNewsRestController {
     private final NewsService newsService;
 
@@ -28,18 +28,17 @@ public class ClientNewsRestController {
         this.newsService = newsService;
     }
 
-    @Operation(summary = "get all news from base")
+    @Operation(summary = "получить все опубликованные предстоящие новости из базы")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Successful receipt of all news from base",
+                    description = "новости успешно получены",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ClientNewsResponseDto.class))),
             @ApiResponse(responseCode = "404",
-                    description = "news was not found")
+                    description = "новости не были найдены")
     })
     @GetMapping("")
     public ResponseEntity<List<ClientNewsResponseDto>> getAllNews() {
-        List<ClientNewsResponseDto> clientNewsResponseDtoList = newsService.getClientNewsResponseDto();
-        return new ResponseEntity<>(clientNewsResponseDtoList, HttpStatus.OK);
+        return new ResponseEntity<>(newsService.getClientNewsResponseDto(), HttpStatus.OK);
     }
 }
