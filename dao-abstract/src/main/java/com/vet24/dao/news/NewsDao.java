@@ -1,11 +1,11 @@
 package com.vet24.dao.news;
 
 import com.vet24.dao.ReadWriteDao;
-import com.vet24.models.dto.news.NewsDto;
 import com.vet24.models.news.News;
 
 import java.util.List;
 
 public interface NewsDao extends ReadWriteDao<Long, News> {
-    List<NewsDto> publishNews(List<Long> publishNewsId);
+    List<News> getNewsById(List<Long> ids);
+    void publishNews(List<Long> ids);
 }
