@@ -131,8 +131,8 @@ public class ManagerNewsController {
             @ApiResponse(responseCode = "404", description = "news could not be published")
     })
     @PutMapping("/api/manager/news/publish")
-    public ResponseEntity<Map<Long, String>> publishNews(@RequestBody List<Long> publishNewsId) {
-        return ResponseEntity.ok(newsService.publishNews(publishNewsId));
+    public ResponseEntity<Map<Long, String>> publishNews(@RequestBody List<Long> newsId) {
+        return ResponseEntity.ok(newsService.publishNews(newsId));
     }
 
 
