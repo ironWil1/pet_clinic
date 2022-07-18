@@ -1,7 +1,6 @@
 package com.vet24.service.news;
 
 import com.vet24.dao.news.NewsDao;
-import com.vet24.models.dto.news.NewsDto;
 import com.vet24.models.news.News;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,28 +27,36 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
 
     @Transactional
     @Override
-    public Map<Long, String> publishNews(List<Long> publishNewsId) {
+    public Map<Long, String> publishNews(List<Long> ids) {
         Map<Long, String> notPublishNews = new HashMap<>();
-        List<NewsDto> listNewsDto = newsDao.publishNews(publishNewsId);
+        List<News> news = newsDao.getNewsById(ids);
 
-        List<Long> listNewsId = listNewsDto.stream()
-                .map(NewsDto::getId)
+        List<Long> newsIds = news.stream()
+                .map(News::getId)
                 .collect(Collectors.toList());
 
-        Set<Long> notExistNewsId = publishNewsId.stream()
-                .filter(i -> !listNewsId.contains(i))
+        Set<Long> nonExistentNewsIds = ids.stream()
+                .filter(i -> !newsIds.contains(i))
                 .collect(Collectors.toSet());
 
-        List<Long> newsIdEndTime = listNewsDto.stream()
+        List<Long> pastNewsIds = news.stream()
                 .filter(newsDto -> newsDto.getEndTime().isBefore(LocalDateTime.now()))
-                .map(NewsDto::getId)
+                .map(News::getId)
                 .collect(Collectors.toList());
 
-        for (long id : notExistNewsId) {
+        List<Long> publishNewsIds = news.stream()
+                .filter(pastNews -> !pastNews.getEndTime().isBefore(LocalDateTime.now())
+                        && !nonExistentNewsIds.contains(pastNews.getId()))
+                .map(News::getId)
+                .collect(Collectors.toList());
+
+        newsDao.publishNews(publishNewsIds);
+
+        for (long id : nonExistentNewsIds) {
             notPublishNews.put(id, "новость не существует");
         }
 
-        for (long id : newsIdEndTime) {
+        for (long id : pastNewsIds) {
             notPublishNews.put(id, "endData новости уже прошла");
         }
 
