@@ -104,7 +104,7 @@ class PetContact {
     String address;
     Long phone;
     String description; //сообщение нашедшему
-    String сode; //сделать неизменным
+    String code; //сделать неизменным
     private Pet pet // oneToOne;
 ```
 ### 1. Рефактор модели
@@ -113,7 +113,7 @@ class PetContact {
 ## Клиент  
 ### 1. Контактные данные
 1. создать контроллер (PetContactController) для контактных данных питомца, при чем  
-  - petCode не должен изменяться  
+  - code не должен изменяться  
 
 ```
 GET /api/client/pet/contact?petId -> PetContactResponseDto
@@ -131,7 +131,7 @@ PUT PetContactDto -> /api/client/ -> PetContactDto
 ```
 ### 2. QR-code
 
-1. Исправить логику генерации qr-кода. Этот код должен содержать абсолютный путь (не относительный) в эндпоинту http://{хост приложения}/petfound?{petcode}
+1. Исправить логику генерации qr-кода. Этот код должен содержать абсолютный путь (не относительный) в эндпоинту http://{хост приложения}/petfound?{code}
 2. Перенести этот метод в PetContactController
 
 ```
@@ -170,9 +170,10 @@ public class PetFoundDto {
 
 ### 3. История находок питомца
 1. в PetFoundClientController создать эндпоинт получения истории находок питомца  
-``` GET /api/client/petfound?petId -> List<PetFoundClientDto> (сортировка по дате) ```
-
 ```
+GET /api/client/petfound?petId -> List<PetFoundClientDto> (сортировка по дате)
+```
+```  
 public class PetFoundClientDto {
     private Long id;
     private String latitude;
@@ -180,4 +181,77 @@ public class PetFoundClientDto {
     private String text;
     private LocalDateTime foundDate;
 }
+```    
+
+# Профиль пользователя
+
+## Модель
+
+### 1. Создание модели  
+1. Создать сущность + дао + сервис  
+1. В TestDataInitialiser добавить создание по одщной сущности на каждого user  
+```
+class Profile{
+  User user; //onetToOne + MapsId
+  String avatarUrl;
+  string firstName;
+  string lastName;
+  LocalDate birthDate;
+  string discordId;
+  string telegramId;
+}
 ```  
+
+### 2. Рефактор сущности User  
+1. Удалить из User все поля, которые есть в сущности Profile  
+1. Поправить все мапперы, которые превращали User (и наследников) на использование данных из Profile
+1. Поправить все упавшие тесты (не закомментировать а именно исправить, чтобы они работали)  
+1. Удалить из существующих контроллеров методы, изменяющие поля Profile (особое внимание ClientController)  
+
+### 3. Создание контроллера UserProfileController  
+1. контроллер для работы с сущностью Profile  
+```
+GET /api/user/profile -> ProfileDto
+PUT ProfileDto /api/user/profile -> Void
+```
+
+# Интеграция с discord
+
+## DiscordModule
+
+1. Создать мавен модуль discord под интеграцию с дискордом.
+2. создать в этом модуле проект для работы с вебхуками дискорда (нам поднадобится spring boot web + lombok + feign client)  
+3. Создать иерархию папок внтури com.vet42.discord  
+```  
+service  
+model  
+feign  
+```
+в каждый пакет положить по пустому гит файлу, чтобы структуру можно было в репу добавить
+
+## Feign client and dto
+
+1. создать дто классы, которые будут представлять из себя отправляемые в дискорд сообщения. Их структуру взять из discordApi
+2. создать феигн клиент, который будет отправлять сообщения в канал в дискорде (используя выше созданные дто)
+3. использовать вебхук для тестов:
+```
+https://discord.com/api/webhooks/993487572003213342/LV3qfF2IcKhsKIQQrv4TPD6w180ALKTXJh0gmJrlO1pg1JLfM1NRzLb3rl1VaQSOKIRG
+```  
+
+<!--
+Для привязки учетной записи дискорда к профилю сделаем следующее, создадим персональный код для пользователя и отдадим ему код с инструкцией о том, куда в дискорде этот код отправить. Бот, слушающий ивенты в дискорде получит код и сохранит discordId в профиль. После этого дискорд токен будет удален.
+
+## DiscordToken
+
+1. Модель
+```
+class DiscordToken {
+  profile;
+  string token;
+}
+```
+2. Контроллер генерации токена
+```
+GET /api/user/profile/discord -> String
+```
+ -->

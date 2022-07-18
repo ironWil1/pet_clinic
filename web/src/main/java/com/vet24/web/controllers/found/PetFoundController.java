@@ -52,24 +52,24 @@ public class PetFoundController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully save data found and create message",
                     content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "PetContact by petCode is not found"),
+            @ApiResponse(responseCode = "404", description = "PetContact by code is not found"),
     })
     @PostMapping(value = "")
-    public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "petCode", required = false) String petCode,
+    public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "code", required = false) String code,
                                                                           @RequestBody PetFoundDto petFoundDto) {
-        if (petContactService.isExistByPetCode(petCode)) {
-            PetContact petContact = petContactService.getByPetCode(petCode);
+        if (petContactService.isExistByCode(code)) {
+            PetContact petContact = petContactService.getByCode(code);
             PetFound petFound = petFoundMapper.toEntity(petFoundDto);
             petFound.setPet(petContact.getPet());
             petFoundService.persist(petFound);
 
             String text = petFound.getMessage();
             String geolocationPetFoundUrl = String.format(googleMapsServiceUrl, petFound.getLatitude(), petFound.getLongitude());
-            log.info("Pet with this petCode {} found on the latitude{} and longitude {}", petCode,petFound.getLatitude(),petFound.getLongitude());
+            log.info("Pet with this code {} found on the latitude{} and longitude {}", code,petFound.getLatitude(),petFound.getLongitude());
             mailService.sendGeolocationPetFoundMessage(petContact, geolocationPetFoundUrl, text);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
-            log.info("Pet with this petCode {} does not exist or was not found",petCode);
+            log.info("Pet with this code {} does not exist or was not found", code);
             return new ResponseEntity <>(HttpStatus.NOT_FOUND);
         }
     }

@@ -1,6 +1,7 @@
 package com.vet24.web;
 
 import com.vet24.models.enums.Gender;
+import com.vet24.models.enums.NewsType;
 import com.vet24.models.enums.WorkShift;
 import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.enums.DayOffType;
@@ -9,10 +10,6 @@ import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.news.News;
-import com.vet24.models.news.UpdatingNews;
-import com.vet24.models.news.AdvertisingActionsNews;
-import com.vet24.models.news.DiscountsNews;
-import com.vet24.models.news.PromotionNews;
 import com.vet24.models.notification.Notification;
 import com.vet24.models.notification.UserNotification;
 import com.vet24.models.pet.Cat;
@@ -20,7 +17,7 @@ import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
-import com.vet24.models.pet.procedure.EchinococcusProcedure;
+import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
@@ -44,7 +41,7 @@ import com.vet24.service.notification.UserNotificationService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
-import com.vet24.service.pet.procedure.EchinococcusProcedureService;
+import com.vet24.service.pet.procedure.DewormingService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
@@ -86,7 +83,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private final DoctorReviewService doctorReviewService;
     private final VaccinationProcedureService vaccinationProcedureService;
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
-    private final EchinococcusProcedureService echinococcusProcedureService;
+    private final DewormingService dewormingService;
     private final ReproductionService reproductionService;
     private final ClinicalExaminationService clinicalExaminationService;
     private final PetContactService petContactService;
@@ -126,7 +123,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                MedicineService medicineService,
                                VaccinationProcedureService vaccinationProcedureService,
                                ExternalParasiteProcedureService externalParasiteProcedureService,
-                               EchinococcusProcedureService echinococcusProcedureService,
+                               DewormingService dewormingService,
                                ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
                                DoctorService doctorService,
                                PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
@@ -143,7 +140,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.doctorReviewService = doctorReviewService;
         this.vaccinationProcedureService = vaccinationProcedureService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
-        this.echinococcusProcedureService = echinococcusProcedureService;
+        this.dewormingService = dewormingService;
         this.reproductionService = reproductionService;
         this.clinicalExaminationService = clinicalExaminationService;
         this.petContactService = petContactService;
@@ -168,6 +165,7 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userInitialize() {
+
         List<Client> clients = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             clients.add(
@@ -228,29 +226,55 @@ public class TestDataInitializer implements ApplicationRunner {
         medicineService.persistAll(medicines);
     }
 
-    public void procedureInitializer() {
-        List<VaccinationProcedure> vaccination = new ArrayList<>();
-        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
-        List<EchinococcusProcedure> echinococcus = new ArrayList<>();
-
+    public void externalParasiteInitializer(){
+        List<ExternalParasiteProcedure> externalParasiteProcedures = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            if (i <= 10) {
-                vaccination.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + i,
-                        false, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
-            if (i > 10 && i <= 20) {
-                externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
-                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
-            if (i > 20) {
-                echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
-                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
-            }
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
+                    false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
-        vaccinationProcedureService.persistAll(vaccination);
-        externalParasiteProcedureService.persistAll(externalParasite);
-        echinococcusProcedureService.persistAll(echinococcus);
+        externalParasiteProcedureService.persistAll(externalParasiteProcedures);
     }
+
+    public void dewormingInitializer(){
+        List<Deworming> dewormings = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            dewormings.add(new Deworming(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
+                    true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
+                    false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+        }
+        dewormingService.persistAll(dewormings);
+    }
+
+//    public void procedureInitializer() {
+//        List<VaccinationProcedure> vaccination = new ArrayList<>();
+//        List<ExternalParasiteProcedure> externalParasite = new ArrayList<>();
+//        List<EchinococcusProcedure> echinococcus = new ArrayList<>();
+//
+//        for (int i = 1; i <= 30; i++) {
+//            if (i <= 10) {
+//                vaccination.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + i,
+//                        false, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+//            }
+//            if (i > 10 && i <= 20) {
+//                externalParasite.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
+//                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+//            }
+//            if (i > 20) {
+//                echinococcus.add(new EchinococcusProcedure(LocalDate.now(), "EchinococcusMedicineBatchNumber" + i,
+//                        true, i, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+//            }
+//        }
+//        vaccinationProcedureService.persistAll(vaccination);
+//        externalParasiteProcedureService.persistAll(externalParasite);
+//        echinococcusProcedureService.persistAll(echinococcus);
+//    }
 
     public void reproductionInitializer() {
         List<Reproduction> reproductions = new ArrayList<>();
@@ -271,32 +295,32 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void petContactInitializer() {
         Pet pet1 = petService.getByKey(1L);
-        PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_18_00L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact1 = new PetContact("Екатерина", "Луговое 2", 8_962_987_18_00L, "description", petContactService.randomPetContactUniqueCode());
         petContact1.setPet(pet1);
         petContactService.persist(petContact1);
 
         Pet pet2 = petService.getByKey(2L);
-        PetContact petContact2 = new PetContact("Мария", "Парниковое 7", 8_748_585_55_55L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact2 = new PetContact("Мария", "Парниковое 7", 8_748_585_55_55L, "description", petContactService.randomPetContactUniqueCode());
         petContact2.setPet(pet2);
         petContactService.persist(petContact2);
 
         Pet pet3 = petService.getByKey(3L);
-        PetContact petContact3 = new PetContact("Олег", "Садовое 27", 8_696_777_42_42L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact3 = new PetContact("Олег", "Садовое 27", 8_696_777_42_42L, "description", petContactService.randomPetContactUniqueCode());
         petContact3.setPet(pet3);
         petContactService.persist(petContact3);
 
         Pet pet4 = petService.getByKey(4L);
-        PetContact petContact4 = new PetContact("Дмитрий", "Липовая 3", 8_962_478_02_02L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact4 = new PetContact("Дмитрий", "Липовая 3", 8_962_478_02_02L, "description", petContactService.randomPetContactUniqueCode());
         petContact4.setPet(pet4);
         petContactService.persist(petContact4);
 
         Pet pet5 = petService.getByKey(5L);
-        PetContact petContact5 = new PetContact("Кирилл", "Виноградная 20", 8_696_222_32_23L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact5 = new PetContact("Кирилл", "Виноградная 20", 8_696_222_32_23L, "description", petContactService.randomPetContactUniqueCode());
         petContact5.setPet(pet5);
         petContactService.persist(petContact5);
 
         Pet pet6 = petService.getByKey(6L);
-        PetContact petContact6 = new PetContact("Александр", "Стрелковая 70", 8_962_969_10_30L, petContactService.randomPetContactUniqueCode());
+        PetContact petContact6 = new PetContact("Александр", "Стрелковая 70", 8_962_969_10_30L, "description", petContactService.randomPetContactUniqueCode());
         petContact6.setPet(pet6);
         petContactService.persist(petContact6);
     }
@@ -400,33 +424,47 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void newsInit() {
         List<News> newsList = new ArrayList<>();
-        for (int i = 1; i <= 30; i++) {
+        for (int i = 1; i <= 40; i++) {
 
-            if (i <= 7) {
-                newsList
-                        .add(new UpdatingNews("Content of Updating" + i,
-                                true, LocalDateTime.now().plusDays(i)));
+            if (i <= 10) {
+                News updatingNews = new News();
+                updatingNews.setContent("Content of Updating" + i);
+                updatingNews.setImportant(true);
+                updatingNews.setEndTime(LocalDateTime.now().plusDays(i));
+                updatingNews.setType(NewsType.UPDATING);
+                newsList.add(updatingNews);
 
             }
 
-            if (i > 7 && i <= 14) {
-                newsList
-                        .add(new AdvertisingActionsNews("Content of Advertising Actions" + i,
-                                false, LocalDateTime.now().plusWeeks(i)));
+            if (i > 10 && i <= 20) {
+                News advertisingActionsNews = new News();
+                advertisingActionsNews.setContent("Content of Advertising Actions" + i);
+                advertisingActionsNews.setImportant(false);
+                advertisingActionsNews.setEndTime(LocalDateTime.now().plusWeeks(i));
+                advertisingActionsNews.setType(NewsType.ADVERTISING_ACTIONS);
+                newsList.add(advertisingActionsNews);
             }
 
-            if (i > 14 && i <= 21) {
-                newsList
-                        .add(new DiscountsNews("Content of Discounts News" + i,
-                                true, LocalDateTime.now().plusDays(i)));
+            if (i > 20 && i <= 30) {
+                News discountsNews = new News();
+                discountsNews.setContent("Content of Discounts News" + i);
+                discountsNews.setImportant(true);
+                discountsNews.setEndTime(LocalDateTime.now().plusDays(i));
+                discountsNews.setType(NewsType.DISCOUNTS);
+                newsList.add(discountsNews);
             }
-            if (i > 21) {
-                newsList.add(new PromotionNews("Content of Promotion News" + i,
-                        false, LocalDateTime.now().plusWeeks(i)));
+
+            if (i > 30) {
+                News promotionNews = new News();
+                promotionNews.setContent("Content of Promotion News" + i);
+                promotionNews.setImportant(false);
+                promotionNews.setEndTime(LocalDateTime.now().plusWeeks(i));
+                promotionNews.setType(NewsType.PROMOTION);
+                newsList.add(promotionNews);
             }
         }
-           newsService.persistAll(newsList);
-        }
+        newsService.persistAll(newsList);
+    }
 
 
     @Override
@@ -438,7 +476,8 @@ public class TestDataInitializer implements ApplicationRunner {
             petInitialize();
             diagnosisInitilaizer();
             medicineInitialize();
-            procedureInitializer();
+            externalParasiteInitializer();
+            dewormingInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();
