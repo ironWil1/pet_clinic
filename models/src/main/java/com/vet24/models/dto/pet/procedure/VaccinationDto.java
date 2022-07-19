@@ -19,7 +19,6 @@ import java.time.LocalDate;
 @EqualsAndHashCode
 public class VaccinationDto {
 
-
     @JsonView({View.Put.class, View.Get.class})
     private LocalDate date; //if null or blank set now
 
