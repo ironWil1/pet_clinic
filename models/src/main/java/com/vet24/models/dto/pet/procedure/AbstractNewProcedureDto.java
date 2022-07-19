@@ -19,6 +19,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
+        @JsonSubTypes.Type(value = VaccinationDto.class, name = "VACCINATION"),
         @JsonSubTypes.Type(value = ExternalParasiteDto.class, name = "EXTERNAL_PARASITE"),
 })
 public abstract class AbstractNewProcedureDto {

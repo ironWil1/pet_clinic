@@ -23,12 +23,11 @@ import java.util.stream.Collectors;
 public abstract class ProcedureMapper implements
         DtoMapper<Procedure, ProcedureDto>, EntityMapper<ProcedureDto, Procedure> {
 
+
     private Map<ProcedureType, AbstractProcedureMapper> mapperMap;
 
 //    @Autowired
 //    private List<AbstractProcedureMapper> mapperList;
-
-
 //    @PostConstruct
 //    private void init() {
 //        this.setMapperMap(mapperList);

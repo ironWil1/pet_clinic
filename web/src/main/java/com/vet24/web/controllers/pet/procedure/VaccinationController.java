@@ -58,7 +58,7 @@ public class VaccinationController {
     }
 
     private void checkOwnerPet(Long petId) {
-        if (!petService.isPetBelongToClient(petId, getSecurityUserOrNull().getId())) {
+        if (!petService.isExistByPetIdAndClientId(petId, getSecurityUserOrNull().getId())) {
             log.info("The pet with this id {} is not yours", petId);
             throw new BadRequestException(NOT_YOURS);
         }
