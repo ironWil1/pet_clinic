@@ -21,7 +21,6 @@ import java.time.LocalDate;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = VaccinationDto.class, name = "VACCINATION"),
         @JsonSubTypes.Type(value = ExternalParasiteDto.class, name = "EXTERNAL_PARASITE"),
-        @JsonSubTypes.Type(value = EchinococcusDto.class, name = "ECHINOCOCCUS")
 })
 public abstract class AbstractNewProcedureDto {
     LocalDate date; //if null or blank set now

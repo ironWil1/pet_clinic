@@ -242,25 +242,14 @@ public class TestDataInitializer implements ApplicationRunner {
     public void dewormingInitializer(){
         List<Deworming> dewormings = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            dewormings.add(new Deworming(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
+            dewormings.add(new Deworming(LocalDate.now(),"DewormingMedicineBatchNumber" + i,
                     true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
+            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"DewormingMedicineBatchNumber" + i,
                     true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
+            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"DewormingMedicineBatchNumber" + i,
                     false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
         dewormingService.persistAll(dewormings);
-    }
-
-    public void vaccinationInitializer() {
-        List<VaccinationProcedure> vaccinations = new ArrayList<>();
-        for (int petId = 1; petId <= 30; petId++) {
-            for(int procedureId = 1; procedureId<=3;procedureId++) {
-                vaccinations.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + procedureId,
-                        false, 0, medicineService.getByKey((long) petId), petService.getByKey((long) petId)));
-            }
-        }
-        vaccinationProcedureService.persistAll(vaccinations);
     }
 
 //    public void procedureInitializer() {
@@ -489,7 +478,6 @@ public class TestDataInitializer implements ApplicationRunner {
             medicineInitialize();
             externalParasiteInitializer();
             dewormingInitializer();
-            vaccinationInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();

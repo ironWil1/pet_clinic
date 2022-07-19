@@ -104,7 +104,7 @@ class PetContact {
     String address;
     Long phone;
     String description; //сообщение нашедшему
-    String сode; //сделать неизменным
+    String code; //сделать неизменным
     private Pet pet // oneToOne;
 ```
 ### 1. Рефактор модели
@@ -113,7 +113,7 @@ class PetContact {
 ## Клиент  
 ### 1. Контактные данные
 1. создать контроллер (PetContactController) для контактных данных питомца, при чем  
-  - petCode не должен изменяться  
+  - code не должен изменяться  
 
 ```
 GET /api/client/pet/contact?petId -> PetContactResponseDto
@@ -131,7 +131,7 @@ PUT PetContactDto -> /api/client/pet/contact?petId -> PetContactDto
 ```
 ### 2. QR-code
 
-1. Исправить логику генерации qr-кода. Этот код должен содержать абсолютный путь (не относительный) в эндпоинту http://{хост приложения}/petfound?{petcode}
+1. Исправить логику генерации qr-кода. Этот код должен содержать абсолютный путь (не относительный) в эндпоинту http://{хост приложения}/petfound?{code}
 2. Перенести этот метод в PetContactController
 
 ```

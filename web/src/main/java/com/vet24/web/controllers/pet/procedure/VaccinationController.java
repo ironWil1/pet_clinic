@@ -24,9 +24,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
-
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
 @RestController
 @Slf4j
@@ -44,21 +46,21 @@ public class VaccinationController {
     private static final String NOT_YOURS = "pet not yours";
 
     private void checkPet(Long petId) {
-        if (!petService.isExistByKey(petId)) {
+        if (petService.getByKey(petId) == null) {
             log.info("The pet with this id {} was not found", petId);
             throw new NotFoundException(PET_NOT_FOUND);
         }
     }
 
     private void checkProcedure(Long id) {
-        if (!vaccinationProcedureService.isExistByKey(id)) {
+        if (vaccinationProcedureService.getByKey(id) == null) {
             log.info("The procedure with this id {} was not found", id);
             throw new NotFoundException(PROCEDURE_NOT_FOUND);
         }
     }
 
     private void checkOwnerPet(Long petId) {
-        if (!petService.isPetBelongToClient(petId, getSecurityUserOrNull().getId())) {
+        if (!petService.getByKey(petId).getClient().getId().equals(Objects.requireNonNull(getSecurityUserOrNull()).getId())) {
             log.info("The pet with this id {} is not yours", petId);
             throw new BadRequestException(NOT_YOURS);
         }
@@ -74,7 +76,7 @@ public class VaccinationController {
         this.vaccinationMapper = vaccinationMapper;
     }
 
-    @Operation(summary = "получить все процедуры вакцинации по id питомца")
+    @Operation(summary = "get all vaccination procedure for your pet")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a Procedure",
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
@@ -88,20 +90,21 @@ public class VaccinationController {
 
         checkPet(petId);
         checkOwnerPet(petId);
-        List<VaccinationProcedure> vaccinationProcedureList = petService.getByKey(petId).getVaccinationProcedures();
-
-        if (vaccinationProcedureList.isEmpty()) {
-            throw new NotFoundException(PROCEDURE_NOT_FOUND);
-        }
-
+        List<VaccinationProcedure> vaccinationProcedureList = petService.getByKey(petId).getProcedures()
+                .stream()
+                .filter(procedure -> procedure.getClass() == VaccinationProcedure.class)
+                .map(procedure -> (VaccinationProcedure) procedure)
+                .collect(Collectors.toList());
 
         List<VaccinationDto> vaccinationDtoList = vaccinationMapper.toDto(vaccinationProcedureList);
 
+        vaccinationProcedureList.forEach(vaccinationProcedure ->
+                log.info("We have this procedure {}", vaccinationProcedure.getId()));
 
         return new ResponseEntity<>(vaccinationDtoList, HttpStatus.OK);
     }
 
-    @Operation(summary = "получить процедуру вакцинации по id процедуры")
+    @Operation(summary = "get vaccination procedure by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a Procedure",
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
@@ -122,7 +125,7 @@ public class VaccinationController {
         return new ResponseEntity<>(vaccinationDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "добавить процедуру вакцинации")
+    @Operation(summary = "add vaccination procedure for your pet")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully save a Procedure",
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
@@ -147,7 +150,7 @@ public class VaccinationController {
         vaccinationProcedure.setPeriodDays(vaccinationDto.getPeriodDays());
         vaccinationProcedureService.persist(vaccinationProcedure);
 
-        petService.getByKey(petId).addVaccinationProcedure(vaccinationProcedure);
+        petService.getByKey(petId).addProcedure(vaccinationProcedure);
         petService.update(petService.getByKey(petId));
 
         log.info("We added vaccination procedure with this id {}", vaccinationDto.getMedicineId());
@@ -156,7 +159,7 @@ public class VaccinationController {
 
     }
 
-    @Operation(summary = "обновить процедуру вакцинации")
+    @Operation(summary = "update vaccination procedure for your pet")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully save a Procedure",
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
@@ -186,14 +189,14 @@ public class VaccinationController {
         vaccinationProcedure.setPeriodDays(vaccinationDto.getPeriodDays());
         vaccinationProcedureService.update(vaccinationProcedure);
 
-        petService.getByKey(petId).addVaccinationProcedure(vaccinationProcedure);
+        petService.getByKey(petId).addProcedure(vaccinationProcedure);
         petService.update(pet);
 
 
         return new ResponseEntity<>(vaccinationDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "удалить процедуру вакцинации")
+    @Operation(summary = "delete vaccination procedure for your pet")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully delete a Procedure",
                     content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
@@ -212,7 +215,7 @@ public class VaccinationController {
         checkProcedure(vaccinationProcedure.getId());
         checkOwnerPet(vaccinationProcedure.getPet().getId());
         vaccinationProcedureService.delete(vaccinationProcedure);
-        pet.removeVaccinationProcedure(vaccinationProcedure);
+        pet.removeProcedure(vaccinationProcedure);
         petService.update(pet);
 
         log.info("We deleted procedure with this id {}", vaccinationProcedure.getId());
