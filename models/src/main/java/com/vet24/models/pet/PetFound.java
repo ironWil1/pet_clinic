@@ -39,7 +39,7 @@ public class PetFound {
     @CreatedDate
     private LocalDateTime foundDate;
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name ="pet")
+
     private Pet pet;
 
     @Override
