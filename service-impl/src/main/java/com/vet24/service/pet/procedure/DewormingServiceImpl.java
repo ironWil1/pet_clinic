@@ -6,8 +6,6 @@ import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class DewormingServiceImpl extends ReadWriteServiceImpl<Long, Deworming> implements DewormingService {
 
@@ -17,15 +15,5 @@ public class DewormingServiceImpl extends ReadWriteServiceImpl<Long, Deworming> 
     public DewormingServiceImpl(DewormingDao dewormingDao) {
         super(dewormingDao);
         this.dewormingDao = dewormingDao;
-    }
-
-    @Override
-    public boolean isExistByDewormingIdAndClientId(Long dewormingId, Long clientId) {
-        return dewormingDao.isExistByDewormingIdAndClientId(dewormingId,clientId);
-    }
-
-    @Override
-    public List<Deworming> getByPetId(Long petId) {
-        return dewormingDao.getByPetId(petId);
     }
 }

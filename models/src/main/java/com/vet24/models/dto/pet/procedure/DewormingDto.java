@@ -21,21 +21,21 @@ public class DewormingDto {
     @JsonView(View.Get.class)
     Long id;
 
-    @JsonView({View.Post.class, View.Put.class, View.Get.class})
+    @JsonView({View.Put.class, View.Get.class})
     LocalDate date; //if null or blank set now
 
     @NotNull(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineId не должно быть null")
-    @JsonView({View.Post.class, View.Put.class, View.Get.class})
+    @JsonView({View.Put.class, View.Get.class})
     Long medicineId;
 
     @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "Поле medicineBatchNumber не должно быть пустым")
-    @JsonView({View.Post.class, View.Put.class, View.Get.class})
+    @JsonView({View.Put.class, View.Get.class})
     String medicineBatchNumber;
 
-    @JsonView({View.Post.class, View.Put.class, View.Get.class})
+    @JsonView({View.Put.class, View.Get.class})
     Boolean isPeriodical;
 
-    @JsonView({View.Post.class, View.Put.class, View.Get.class})
+    @JsonView({View.Put.class, View.Get.class})
     Integer periodDays;
 
     public DewormingDto(LocalDate date, Long medicineId,

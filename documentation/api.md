@@ -21,7 +21,7 @@ class News {
 GET /api/client/news -> List<ClientNewsResponseDto>
 ```
 1. Создать контроллер ClientNewsRestController
-2. контроллер возвращает список предстоящих новостей, у который published = true.
+2. контроллер возвращает список новостей, у который published = true.
 3. Получение дто осуществляем одни запросом в бд. этот запрос добавить в NewsDao (NewsService соответственно)  
 
 ```
@@ -119,7 +119,7 @@ class PetContact {
 GET /api/client/pet/contact?petId -> PetContactResponseDto
 ```
 ```
-PUT PetContactDto -> /api/client/pet/contact?petId -> PetContactDto
+PUT PetContactDto -> /api/client/ -> PetContactDto
 ```  
 ```
   class PetContactDto {

@@ -165,7 +165,6 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     public void userInitialize() {
-
         List<Client> clients = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             clients.add(
@@ -239,14 +238,24 @@ public class TestDataInitializer implements ApplicationRunner {
         externalParasiteProcedureService.persistAll(externalParasiteProcedures);
     }
 
+    public void vaccinationInitializer() {
+        List<VaccinationProcedure> vaccinations = new ArrayList<>();
+        for (int petId = 1; petId <= 30; petId++) {
+            for(int procedureId = 1; procedureId<=3;procedureId++) {
+                vaccinations.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + procedureId,
+                        false, 0, medicineService.getByKey((long) petId), petService.getByKey((long) petId)));
+            }
+        }
+        vaccinationProcedureService.persistAll(vaccinations);
+    }
     public void dewormingInitializer(){
         List<Deworming> dewormings = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            dewormings.add(new Deworming(LocalDate.now(),"DewormingMedicineBatchNumber" + i,
+            dewormings.add(new Deworming(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
                     true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"DewormingMedicineBatchNumber" + i,
+            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
                     true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"DewormingMedicineBatchNumber" + i,
+            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
                     false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
         dewormingService.persistAll(dewormings);
@@ -466,7 +475,6 @@ public class TestDataInitializer implements ApplicationRunner {
         newsService.persistAll(newsList);
     }
 
-
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
@@ -478,6 +486,7 @@ public class TestDataInitializer implements ApplicationRunner {
             medicineInitialize();
             externalParasiteInitializer();
             dewormingInitializer();
+            vaccinationInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();
