@@ -5,11 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.1</version>
-        <relativePath/>
-        <!-- lookup parent from repository -->
+        <groupId>com.vet24</groupId>
+        <artifactId>pet_clinic</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>discord</artifactId>
     <name>discord</name>
@@ -21,7 +19,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.7.1</version>
         </dependency>
 
         <dependency>
