@@ -14,4 +14,9 @@ public class PetServiceImpl extends ReadWriteServiceImpl<Long, Pet> implements P
         super(petDao);
         this.petDao = petDao;
     }
+
+    @Override
+    public boolean isExistByPetIdAndClientId(Long petId, Long clientId) {
+        return petDao.isExistByPetIdAndClientId(petId,clientId);
+    }
 }
