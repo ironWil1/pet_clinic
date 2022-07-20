@@ -8,4 +8,5 @@ import java.util.Map;
 
 public interface NewsService extends ReadWriteService<Long, News> {
     Map<Long, String> publishNews(List<Long> ids);
+    Map<Long, String> unpublishNews(List<Long> ids);
 }

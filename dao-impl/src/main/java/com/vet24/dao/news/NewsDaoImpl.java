@@ -23,4 +23,11 @@ public class NewsDaoImpl extends ReadWriteDaoImpl<Long, News> implements NewsDao
                 .setParameter("ids", ids)
                 .executeUpdate();
     }
+    @Override
+    public void unpublishNews(List<Long> ids) {
+        manager.createQuery("update News set published= :published where id in :ids")
+                .setParameter("published", false)
+                .setParameter("ids", ids)
+                .executeUpdate();
+    }
 }

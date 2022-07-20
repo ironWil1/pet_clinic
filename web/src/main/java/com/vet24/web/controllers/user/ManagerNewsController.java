@@ -31,6 +31,7 @@ import org.webjars.NotFoundException;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping(value = "api/manager/news")
 @Tag(name = "manager news controller", description = "managerNewsController operations")
@@ -59,8 +60,7 @@ public class ManagerNewsController {
     public ResponseEntity<List<NewsDto>> getAllNews() {
         List<NewsDto> newsDtoList = newsMapper.toDto(newsService.getAll());
         return new ResponseEntity<>(newsDtoList, HttpStatus.OK);
-        }
-
+    }
 
     @Operation(summary = "get news by id")
     @ApiResponses(value = {
@@ -135,6 +135,17 @@ public class ManagerNewsController {
         return ResponseEntity.ok(newsService.publishNews(newsId));
     }
 
+    @Operation(summary = "unpublish news")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "news publication has been canceled",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "unpublish news not succeed")
+    })
+    @PutMapping("/api/manager/news/unpublish")
+    public ResponseEntity<Map<Long, String>> unpublishNews(@RequestBody List<Long> newsId) {
+        return ResponseEntity.ok(newsService.unpublishNews(newsId));
+    }
 
     @Operation(summary = "delete the news")
     @ApiResponses(value = {

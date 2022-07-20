@@ -62,4 +62,42 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
 
         return notPublishNews;
     }
+
+    @Transactional
+    @Override
+    public Map<Long, String> unpublishNews(List<Long> ids) {
+        Map<Long, String> notUnpublishNews = new HashMap<>();
+        List<News> news = newsDao.getNewsById(ids);
+
+        List<Long> newsId = news.stream()
+                .map(News::getId)
+                .collect(Collectors.toList());
+
+        Set<Long> nonExistentNewsIds = ids.stream()
+                .filter(i -> !newsId.contains(i))
+                .collect(Collectors.toSet());
+
+        List<Long> pastNewsIds = news.stream()
+                .filter(pastNews -> pastNews.getEndTime().isBefore(LocalDateTime.now()))
+                .map(News::getId)
+                .collect(Collectors.toList());
+
+        List<Long> unpublishNewsIds = news.stream()
+                .filter(pastNews -> !pastNews.getEndTime().isBefore(LocalDateTime.now())
+                        && !nonExistentNewsIds.contains(pastNews.getId()))
+                .map(News::getId)
+                .collect(Collectors.toList());
+
+        newsDao.unpublishNews(unpublishNewsIds);
+
+        for (long id : nonExistentNewsIds) {
+            notUnpublishNews.put(id, "новость не существует");
+        }
+
+        for (long id : pastNewsIds) {
+            notUnpublishNews.put(id, "endData новости уже прошла");
+        }
+
+        return notUnpublishNews;
+    }
 }
