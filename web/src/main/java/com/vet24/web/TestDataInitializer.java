@@ -31,6 +31,7 @@ import com.vet24.models.user.DoctorNonWorking;
 import com.vet24.models.user.Topic;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.CommentReaction;
+import com.vet24.models.user.User;
 import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.DoctorScheduleService;
@@ -53,6 +54,7 @@ import com.vet24.service.user.DoctorNonWorkingService;
 import com.vet24.service.user.DoctorReviewService;
 import com.vet24.service.user.DoctorService;
 import com.vet24.service.user.ManagerService;
+import com.vet24.service.user.ProfileService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.TopicService;
 import com.vet24.service.user.UserService;
@@ -100,6 +102,8 @@ public class TestDataInitializer implements ApplicationRunner {
     private final NotificationService notificationService;
     private final UserNotificationService userNotificationService;
     private final NewsService newsService;
+
+    private final ProfileService profileService;
     private final Role client = new Role(RoleNameEnum.CLIENT);
     private final Role doctor = new Role(RoleNameEnum.DOCTOR);
     private final Role admin = new Role(RoleNameEnum.ADMIN);
@@ -130,7 +134,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
                                DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService, NotificationService notificationService,
-                               UserNotificationService userNotificationService, NewsService newsService) {
+                               UserNotificationService userNotificationService, NewsService newsService, ProfileService profileService) {
         this.adminService = adminService;
         this.roleService = roleService;
         this.userService = userService;
@@ -158,6 +162,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.userNotificationService = userNotificationService;
         this.newsService = newsService;
 
+        this.profileService = profileService;
     }
 
     public void roleInitialize() {
@@ -238,16 +243,6 @@ public class TestDataInitializer implements ApplicationRunner {
         }
         externalParasiteProcedureService.persistAll(externalParasiteProcedures);
     }
-    public void vaccinationInitializer() {
-        List<VaccinationProcedure> vaccinations = new ArrayList<>();
-        for (int petId = 1; petId <= 30; petId++) {
-            for(int procedureId = 1; procedureId<=3;procedureId++) {
-                vaccinations.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + procedureId,
-                        false, 0, medicineService.getByKey((long) petId), petService.getByKey((long) petId)));
-            }
-        }
-        vaccinationProcedureService.persistAll(vaccinations);
-    }
 
     public void dewormingInitializer(){
         List<Deworming> dewormings = new ArrayList<>();
@@ -260,6 +255,17 @@ public class TestDataInitializer implements ApplicationRunner {
                     false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
         dewormingService.persistAll(dewormings);
+    }
+
+    public void vaccinationInitializer() {
+        List<VaccinationProcedure> vaccinations = new ArrayList<>();
+        for (int petId = 1; petId <= 30; petId++) {
+            for(int procedureId = 1; procedureId<=3;procedureId++) {
+                vaccinations.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + procedureId,
+                        false, 0, medicineService.getByKey((long) petId), petService.getByKey((long) petId)));
+            }
+        }
+        vaccinationProcedureService.persistAll(vaccinations);
     }
 
 //    public void procedureInitializer() {
@@ -475,6 +481,20 @@ public class TestDataInitializer implements ApplicationRunner {
         }
         newsService.persistAll(newsList);
     }
+    public void profileInit(){
+        List<User> users = userService.getAll();
+        List<com.vet24.models.user.Profile> profileList = new ArrayList<>();
+        for (int i = 1; i <= users.size(); i++) {
+            profileList.add(new com.vet24.models.user.Profile(users.get(i-1) ,
+                    "avatarUrl"+ i,
+                    "firstName" +i,
+                    "lastName" +i,
+                    LocalDate.parse("1970-01-01"),
+                    "discordId" + i,
+                    "telegramId" + i ));
+        }
+        profileService.persistAll(profileList);
+    }
 
 
     @Override
@@ -488,6 +508,7 @@ public class TestDataInitializer implements ApplicationRunner {
             medicineInitialize();
             externalParasiteInitializer();
             dewormingInitializer();
+            vaccinationInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();
@@ -502,7 +523,7 @@ public class TestDataInitializer implements ApplicationRunner {
             appointmentInit();
             notificationAndUserNotificationInit();
             newsInit();
-            vaccinationInitializer();
+            profileInit();
         }
     }
 }
