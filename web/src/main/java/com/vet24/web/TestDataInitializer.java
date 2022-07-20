@@ -481,7 +481,6 @@ public class TestDataInitializer implements ApplicationRunner {
                     "discordId" + i,
                     "telegramId" + i ));
         }
-
         profileService.persistAll(profileList);
     }
 

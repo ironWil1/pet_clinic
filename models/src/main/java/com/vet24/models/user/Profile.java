@@ -56,7 +56,6 @@ public class Profile {
     @Column(name = "telegram_id")
     private String telegramId;
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
