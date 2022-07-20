@@ -67,7 +67,7 @@ public class ExternalParasiteController {
     }
 
     private void checkPetOwner(Long petId) {
-        if (!petDao.isPetBelongToClientByPetId(petId, getSecurityUserOrNull().getId())) {
+        if (!petDao.isExistByPetIdAndClientId(petId, getSecurityUserOrNull().getId())) {
             throw new BadRequestException(NOT_YOURS);
         }
     }
