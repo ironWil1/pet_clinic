@@ -21,7 +21,7 @@ class News {
 GET /api/client/news -> List<ClientNewsResponseDto>
 ```
 1. Создать контроллер ClientNewsRestController
-2. контроллер возвращает список новостей, у который published = true.
+2. контроллер возвращает список предстоящих новостей, у который published = true.
 3. Получение дто осуществляем одни запросом в бд. этот запрос добавить в NewsDao (NewsService соответственно)  
 
 ```
@@ -104,7 +104,7 @@ class PetContact {
     String address;
     Long phone;
     String description; //сообщение нашедшему
-    String сode; //сделать неизменным
+    String code; //сделать неизменным
     private Pet pet // oneToOne;
 ```
 ### 1. Рефактор модели
@@ -113,13 +113,13 @@ class PetContact {
 ## Клиент  
 ### 1. Контактные данные
 1. создать контроллер (PetContactController) для контактных данных питомца, при чем  
-  - petCode не должен изменяться  
+  - code не должен изменяться  
 
 ```
 GET /api/client/pet/contact?petId -> PetContactResponseDto
 ```
 ```
-PUT PetContactDto -> /api/client/ -> PetContactDto
+PUT PetContactDto -> /api/client/pet/contact?petId -> PetContactDto
 ```  
 ```
   class PetContactDto {
@@ -131,7 +131,7 @@ PUT PetContactDto -> /api/client/ -> PetContactDto
 ```
 ### 2. QR-code
 
-1. Исправить логику генерации qr-кода. Этот код должен содержать абсолютный путь (не относительный) в эндпоинту http://{хост приложения}/petfound?{petcode}
+1. Исправить логику генерации qr-кода. Этот код должен содержать абсолютный путь (не относительный) в эндпоинту http://{хост приложения}/petfound?{code}
 2. Перенести этот метод в PetContactController
 
 ```
@@ -215,8 +215,30 @@ GET /api/user/profile -> ProfileDto
 PUT ProfileDto /api/user/profile -> Void
 ```
 
-<!-- # Интеграция с discord
+# Интеграция с discord
 
+## DiscordModule
+
+1. Создать мавен модуль discord под интеграцию с дискордом.
+2. создать в этом модуле проект для работы с вебхуками дискорда (нам поднадобится spring boot web + lombok + feign client)  
+3. Создать иерархию папок внтури com.vet42.discord  
+```  
+service  
+model  
+feign  
+```
+в каждый пакет положить по пустому гит файлу, чтобы структуру можно было в репу добавить
+
+## Feign client and dto
+
+1. создать дто классы, которые будут представлять из себя отправляемые в дискорд сообщения. Их структуру взять из discordApi
+2. создать феигн клиент, который будет отправлять сообщения в канал в дискорде (используя выше созданные дто)
+3. использовать вебхук для тестов:
+```
+https://discord.com/api/webhooks/993487572003213342/LV3qfF2IcKhsKIQQrv4TPD6w180ALKTXJh0gmJrlO1pg1JLfM1NRzLb3rl1VaQSOKIRG
+```  
+
+<!--
 Для привязки учетной записи дискорда к профилю сделаем следующее, создадим персональный код для пользователя и отдадим ему код с инструкцией о том, куда в дискорде этот код отправить. Бот, слушающий ивенты в дискорде получит код и сохранит discordId в профиль. После этого дискорд токен будет удален.
 
 ## DiscordToken
@@ -231,4 +253,5 @@ class DiscordToken {
 2. Контроллер генерации токена
 ```
 GET /api/user/profile/discord -> String
-``` -->
+```
+ -->

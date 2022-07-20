@@ -23,7 +23,6 @@ public class Client extends User {
     private List<Pet> pets = new ArrayList<>();
 
 
-
     public Client() {
         super();
     }
