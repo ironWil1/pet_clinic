@@ -25,7 +25,6 @@ import java.util.Map;
 @Service
 @Slf4j
 public class MailServiceImpl implements MailService {
-
     @Value("${spring.mail.username}")
     private String mailFrom;
     @Value("${spring.mail.location}")

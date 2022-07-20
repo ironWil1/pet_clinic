@@ -5,5 +5,5 @@ import com.vet24.models.user.Profile;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ProfileDaoImpl extends ReadWriteDaoImpl<Long, Profile> implements ProfileDao {
+public class ProfileDaoImpl extends ReadWriteDaoImpl<Long, Profile> implements ProfileDao  {
 }

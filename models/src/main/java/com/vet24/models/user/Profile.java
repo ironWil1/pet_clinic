@@ -56,12 +56,6 @@ public class Profile {
     @Column(name = "telegram_id")
     private String telegramId;
 
-    public Profile(@NonNull User user, @NonNull String firstName, @NonNull String lastName) {
-        this.user = user;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

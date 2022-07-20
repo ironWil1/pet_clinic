@@ -19,7 +19,6 @@ import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
-import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
@@ -474,7 +473,6 @@ public class TestDataInitializer implements ApplicationRunner {
                     "discordId" + i,
                     "telegramId" + i ));
         }
-
         profileService.persistAll(profileList);
     }
 

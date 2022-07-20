@@ -17,9 +17,11 @@ public class Admin extends User {
         super();
     }
 
-    public Admin(@NonNull String email,
+    public Admin(@NonNull String firstname,
+                 @NonNull String lastname,
+                 @NonNull String email,
                  @NonNull String password,
                  @NonNull Role role) {
-        super(email, password, role);
+        super(firstname, lastname, email, password, role);
     }
 }
