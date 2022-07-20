@@ -8,7 +8,6 @@ import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
-import com.vet24.models.pet.procedure.Procedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
@@ -94,13 +93,6 @@ public abstract class Pet {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Procedure> procedures = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "pet",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
     private List<ExternalParasiteProcedure> externalParasiteProcedures = new ArrayList<>();
 
     @OneToMany(
@@ -172,21 +164,15 @@ public abstract class Pet {
     }
 
     protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
-                  List<Procedure> procedures, List<ExternalParasiteProcedure> externalParasiteProcedures,
+                  List<ExternalParasiteProcedure> externalParasiteProcedures,
                   List<Deworming> dewormings, List<Reproduction> reproductions,
                   List<ClinicalExamination> clinicalExaminations, List<VaccinationProcedure> vaccinationProcedures) {
         this(name, birthDay, gender, breed, client);
-        this.procedures = procedures;
         this.externalParasiteProcedures = externalParasiteProcedures;
         this.dewormings = dewormings;
         this.reproductions = reproductions;
         this.clinicalExaminations = clinicalExaminations;
         this.vaccinationProcedures = vaccinationProcedures;
-    }
-
-    public void addProcedure(Procedure procedure) {
-        procedures.add(procedure);
-        procedure.setPet(this);
     }
 
     public void addExternalParasiteProcedure(ExternalParasiteProcedure externalParasiteProcedure) {
@@ -197,11 +183,6 @@ public abstract class Pet {
     public void addVaccinationProcedure(VaccinationProcedure vaccinationProcedure) {
         vaccinationProcedures.add(vaccinationProcedure);
         vaccinationProcedure.setPet(this);
-    }
-
-    public void removeProcedure(Procedure procedure) {
-        procedures.remove(procedure);
-        procedure.setPet(null);
     }
 
     public void removeExternalParasiteProcedure(ExternalParasiteProcedure externalParasiteProcedure) {
