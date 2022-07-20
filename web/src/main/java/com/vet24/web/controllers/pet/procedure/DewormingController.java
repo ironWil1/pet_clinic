@@ -139,7 +139,7 @@ public class DewormingController {
         deworming.setMedicine(medicine);
         dewormingService.update(deworming);
 
-        return new ResponseEntity<>(dewormingMapper.toDto(deworming), HttpStatus.CREATED);
+        return new ResponseEntity<>(dewormingMapper.toDto(deworming), HttpStatus.OK);
     }
 
     @Operation(summary = "delete a deworming procedure")
