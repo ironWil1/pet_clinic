@@ -9,4 +9,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface UserInfoMapper extends DtoMapper<User, UserInfoDto>, EntityMapper<UserInfoDto, User> {
 
+
 }
