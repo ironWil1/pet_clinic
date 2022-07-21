@@ -33,9 +33,7 @@ public class ClientNewsRestController {
             @ApiResponse(responseCode = "200",
                     description = "новости успешно получены",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ClientNewsResponseDto.class))),
-            @ApiResponse(responseCode = "404",
-                    description = "новости не были найдены")
+                            schema = @Schema(implementation = ClientNewsResponseDto.class)))
     })
     @GetMapping("")
     public ResponseEntity<List<ClientNewsResponseDto>> getAllNews() {

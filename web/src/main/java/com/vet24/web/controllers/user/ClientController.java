@@ -76,6 +76,7 @@ public class ClientController {
         return clientDto != null ? ResponseEntity.ok(clientDto) : ResponseEntity.notFound().build();
     }
 
+
     @Operation(summary = "get avatar of a Client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the avatar"),

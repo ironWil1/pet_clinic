@@ -9,4 +9,8 @@ import java.util.List;
 
 public interface NewsDao extends ReadWriteDao<Long, News> {
     List<ClientNewsResponseDto> getClientNewsResponseDto();
+
+    List<News> getNewsById(List<Long> ids);
+
+    void unpublishNews(List<Long> ids);
 }
