@@ -1,8 +1,6 @@
 package com.vet24.web.controllers.pet;
 
-import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.PetContactDto;
-import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.PetContactMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
 
@@ -35,7 +32,7 @@ import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 @RestController
 @Slf4j
 @RequestMapping("api/client/pet/contact")
-@Tag(name = "petContact-controller", description = "operations with Pets' Contacts")
+@Tag(name = "petContact-controller", description = "Операции над Контактами питомцев")
 public class PetContactController {
 
     private final PetContactService petContactService;
@@ -49,51 +46,47 @@ public class PetContactController {
         this.petService = petService;
     }
 
-    @Operation(summary = "Get Pet Contact by pet ID")
+    @Operation(summary = "Получние Контакта питомца по ID питомца")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully got a Pet Contact",
+            @ApiResponse(responseCode = "200", description = "Контакт питомца был умпешно получен",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PetContactDto.class))),
-            @ApiResponse(responseCode = "403", description = "Pet Contact was not found",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet Contact is not yours",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
+            @ApiResponse(responseCode = "404", description = "Питомец или Клиент не был найден"),
+            @ApiResponse(responseCode = "400", description = "ID Владельца и ID текущего Клиента не совпадают")
     })
     @GetMapping("/")
-    public ResponseEntity<PetContactDto> getById(@RequestParam Long petId) {
-        Client client = (Client)  getSecurityUserOrNull();
+    public ResponseEntity<PetContactDto> getPetContactByPetId(@RequestParam Long petId) {
+        Client client = (Client) getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
-        if (pet == null) {
-            throw new NotFoundException("The pet was not found");
+        if (client != null && pet != null) {
+            if (!(pet.getClient().getId().equals(client.getId()))) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            PetContact petContact = petContactService.getByPetId(petId);
+            return new ResponseEntity<>(petContactMapper.toDto(petContact), HttpStatus.OK);
         }
-        if (!pet.getClient().getId().equals(client.getId())) {
-            throw new BadRequestException("This pet is not yours");
-        }
-        PetContact petContact = petContactService.getByPetId(petId);
-        return new ResponseEntity<>(petContactMapper.toDto(petContact), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @Operation(summary = "Update Pet Contact")
+    @Operation(summary = "Обновление Контакта питомца")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully created Pet Contact"),
-            @ApiResponse(responseCode = "404", description = "Pet or Client is not found"),
-            @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")
+            @ApiResponse(responseCode = "200", description = "Контакт питомца был успешно обновлен"),
+            @ApiResponse(responseCode = "404", description = "Питомец или Клиент не был найден"),
+            @ApiResponse(responseCode = "400", description = "ID Владельца и ID текущего Клиента не совпадают")
     })
     @PutMapping("/")
     public ResponseEntity<PetContactDto> updatePetContact(@Valid @RequestBody PetContactDto petContactDto, @RequestParam Long petId) {
 
         Client client = (Client) getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
-        if (client != null && pet != null){
+        if (client != null && pet != null) {
             if (!(pet.getClient().getId().equals(client.getId()))) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             PetContact petContact = pet.getPetContact();
             petContactMapper.updateEntity(petContactDto, petContact);
-            petContact.setCode(petContact.getCode());
             petContactService.update(petContact);
-            return ResponseEntity.status(201).body(petContactDto);
+            return new ResponseEntity<>(petContactDto, HttpStatus.OK);
         }
-        return ResponseEntity.notFound().build();
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 }
