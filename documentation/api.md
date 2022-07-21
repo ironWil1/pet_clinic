@@ -21,7 +21,7 @@ class News {
 GET /api/client/news -> List<ClientNewsResponseDto>
 ```
 1. Создать контроллер ClientNewsRestController
-2. контроллер возвращает список новостей, у который published = true.
+2. контроллер возвращает список предстоящих новостей, у который published = true.
 3. Получение дто осуществляем одни запросом в бд. этот запрос добавить в NewsDao (NewsService соответственно)  
 
 ```
@@ -104,7 +104,7 @@ class PetContact {
     String address;
     Long phone;
     String description; //сообщение нашедшему
-    String сode; //сделать неизменным
+    String code; //сделать неизменным
     private Pet pet // oneToOne;
 ```
 ### 1. Рефактор модели
@@ -113,13 +113,13 @@ class PetContact {
 ## Клиент  
 ### 1. Контактные данные
 1. создать контроллер (PetContactController) для контактных данных питомца, при чем  
-  - petCode не должен изменяться  
+  - code не должен изменяться  
 
 ```
 GET /api/client/pet/contact?petId -> PetContactResponseDto
 ```
 ```
-PUT PetContactDto -> /api/client/ -> PetContactDto
+PUT PetContactDto -> /api/client/pet/contact?petId -> PetContactDto
 ```  
 ```
   class PetContactDto {
@@ -131,7 +131,7 @@ PUT PetContactDto -> /api/client/ -> PetContactDto
 ```
 ### 2. QR-code
 
-1. Исправить логику генерации qr-кода. Этот код должен содержать абсолютный путь (не относительный) в эндпоинту http://{хост приложения}/petfound?{petcode}
+1. Исправить логику генерации qr-кода. Этот код должен содержать абсолютный путь (не относительный) в эндпоинту http://{хост приложения}/petfound?{code}
 2. Перенести этот метод в PetContactController
 
 ```

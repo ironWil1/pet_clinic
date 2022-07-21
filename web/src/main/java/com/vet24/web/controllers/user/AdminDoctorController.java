@@ -65,6 +65,7 @@ public class AdminDoctorController {
     }
 
 
+
     @Operation(summary = "Create new doctor")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Doctor is create",

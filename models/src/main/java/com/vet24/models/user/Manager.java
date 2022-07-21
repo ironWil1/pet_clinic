@@ -13,7 +13,6 @@ public class Manager extends User {
     public Manager(String firstname, String lastname, String email, String password, Role role) {
         super(firstname, lastname, email, password, role);
     }
-
     public Manager() {
 
     }
