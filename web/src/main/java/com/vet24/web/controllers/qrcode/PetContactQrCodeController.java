@@ -32,7 +32,6 @@ import javax.validation.Valid;
 @Slf4j
 @RequestMapping("/api/client/pet")
 public class PetContactQrCodeController {
-
     private final PetService petService;
     private final PetContactService petContactService;
     private final PetContactMapper petContactMapper;

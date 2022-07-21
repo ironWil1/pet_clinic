@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
+
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -36,7 +38,6 @@ public class ManagerNewsController {
     private final NewsService newsService;
     private final NewsMapper newsMapper;
     private static final String NEWS_NOT_FOUND = "news not found";
-
 
     @Autowired
     public ManagerNewsController(NewsService newsService, NewsMapper newsMapper) {
@@ -123,12 +124,24 @@ public class ManagerNewsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "picture was successfully added",
-                    content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "no picture could be added")
+                    content = @Content(mediaType = "application/json"))
     })
     @PutMapping("/api/manager/news/{id}/pictures/")
-    public ResponseEntity<Void> addNewsPicture(@RequestBody List<String> listPictures, @PathVariable Long id) {
+    public ResponseEntity<Void> addNewsPicture(@RequestBody List<String> pictures, @PathVariable Long id) {
+        newsService.addNewsPicturesById(id, pictures);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Operation(summary = "unpublish news")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "news publication has been canceled",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "unpublish news not succeed")
+    })
+    @PutMapping("/api/manager/news/unpublish")
+    public ResponseEntity<Map<Long, String>> unpublishNews(@RequestBody List<Long> newsId) {
+        return ResponseEntity.ok(newsService.unpublishNews(newsId));
     }
 
     @Operation(summary = "delete the news")
