@@ -174,9 +174,7 @@ public class TestDataInitializer implements ApplicationRunner {
         List<Client> clients = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             clients.add(
-                    new Client("ClientFirstName" + i,
-                            "ClientLastName" + i,
-                            (i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + EMAIL,
+                    new Client((i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + EMAIL,
                             "client", client, petList));
         }
         clientService.persistAll(clients);
@@ -184,9 +182,7 @@ public class TestDataInitializer implements ApplicationRunner {
         List<Doctor> doctors = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             doctors.add(
-                    new Doctor("DoctorFirstName" + i,
-                            "DoctorLastName" + i,
-                            "doctor" + i + EMAIL,
+                    new Doctor("doctor" + i + EMAIL,
                             "doctor", doctor));
         }
         doctorService.persistAll(doctors);
@@ -195,9 +191,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void adminInit() {
         List<Admin> adminList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            adminList.add(new Admin("AdmFirstName " + i,
-                    "AdmLastName " + i,
-                    "admin" + i + EMAIL,
+            adminList.add(new Admin("admin" + i + EMAIL,
                     "admin", admin));
         }
         adminService.persistAll(adminList);
@@ -383,9 +377,7 @@ public class TestDataInitializer implements ApplicationRunner {
     private void managerInit() {
         List<Manager> managerList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            managerList.add(new Manager("ManagerFirstName " + i,
-                    "ManagerLastName " + i,
-                    "manager" + i + EMAIL,
+            managerList.add(new Manager("manager" + i + EMAIL,
                     "manager", manager));
         }
         managerService.persistAll(managerList);

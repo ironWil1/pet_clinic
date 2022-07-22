@@ -1,6 +1,9 @@
 package com.vet24.models.user;
 
-import lombok.*;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -14,11 +17,10 @@ public class Admin extends User {
         super();
     }
 
-    public Admin(@NonNull String firstname,
-                 @NonNull String lastname,
+    public Admin(
                  @NonNull String email,
                  @NonNull String password,
                  @NonNull Role role) {
-        super(firstname, lastname, email, password, role);
+        super( email, password, role);
     }
 }

@@ -1,81 +1,52 @@
 USER_ENTITIES:
   - ID: 100
     USER_TYPE: "ADMIN"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Admin"
-    LASTNAME: "Admin"
     EMAIL: "admin1@email.com"
     PASSWORD: "{bcrypt}$2a$12$b5SpHA7tzgKb4bLSDppmS.3aZMdBu8diJKNHQDU7eASiTni2WlwHq" #"admin"
   - ID: 101
     USER_TYPE: "MANAGER"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Manager"
-    LASTNAME: "Manager"
     EMAIL: "manager1@email.com"
     PASSWORD: "{bcrypt}$2a$12$c3tOVldsS88AjG8bLd2t5OMTfctjv.UY2hAg4qWtp2.VlDG7MnFa2" #"manager"
   - ID: 102
     USER_TYPE: "CLIENT"
     ENABLED: true
-    FIRSTNAME: "Client"
-    LASTNAME: "Client"
     EMAIL: "client1@email.com"
     PASSWORD: "{bcrypt}$2a$12$Z/gpYA7gLUuFKZM7EROGduwYlXJnZplTVemX.kpKy52khCANZVJWW" #"client"
   - ID: 103
     USER_TYPE: "DOCTOR"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Dr."
-    LASTNAME: "Petrov"
     EMAIL: "doctor103@email.com"
     PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"
   - ID: 33
     USER_TYPE: "DOCTOR"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Doctor"
-    LASTNAME: "Doctor"
     EMAIL: "doctor33@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$0HcODBhE9XaLTV3dfxAPZ.oCmzAc5YAKnfhjsj7pa98CD0S72ynzC" #"user33"
   - ID: 34
     USER_TYPE: "DOCTOR"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Vinni"
-    LASTNAME: "Pukh"
     EMAIL: "doctor34@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$kWsvJ6Tw4yOqUWG/g71J/OeRq5RJNse5KL9QCQYzAsyF4pualpZl." #"user34"
   - ID: 3
     USER_TYPE: "CLIENT"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Ivan"
-    LASTNAME: "Ivanov"
     EMAIL: "user3@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$qz8vaj1icekMnf.7sXSzw.gDdQWezHs3XKv1YhQPaedWYRNjSQVxm" #"user3"
   - ID: 4
     USER_TYPE: "CLIENT"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Petr"
-    LASTNAME: "Petrov"
     EMAIL: "user4@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$sbHmqRpUGv12k/0PhMb8Se5eThsvkUdPXTNuWF2mtj57bD1P8oXbS" #"user4"
   - ID: 31
     USER_TYPE: "DOCTOR"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Dr."
-    LASTNAME: "Petrov"
     EMAIL: "doctor31@email.com"
     PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"
   - ID: 32
     USER_TYPE: "DOCTOR"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Dr."
-    LASTNAME: "Ivanov"
     EMAIL: "doctor32@email.com"
     PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"
 
