@@ -4,9 +4,11 @@ import com.vet24.models.dto.media.UploadedFileDto;
 import com.vet24.models.dto.user.ClientDto;
 import com.vet24.models.mappers.user.ClientMapper;
 import com.vet24.models.user.Client;
+import com.vet24.models.user.Profile;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.user.ClientService;
+import com.vet24.service.user.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -43,12 +45,14 @@ public class ClientController {
     private final UploadService uploadService;
     private final ResourceService resourceService;
 
-    public ClientController(ClientService clientService, ClientMapper clientMapper, UploadService uploadService, ResourceService resourceService) {
+    private final ProfileService profileService;
+
+    public ClientController(ClientService clientService, ClientMapper clientMapper, UploadService uploadService, ResourceService resourceService, ProfileService profileService) {
         this.clientService = clientService;
         this.clientMapper = clientMapper;
         this.uploadService = uploadService;
         this.resourceService = resourceService;
-
+        this.profileService = profileService;
     }
 
     @GetMapping("")
@@ -85,16 +89,17 @@ public class ClientController {
 
     @CheckForNull
     @GetMapping("/avatar")
+
     public ResponseEntity<byte[]> getClientAvatar() {
-        Client client = (Client) getSecurityUserOrNull();
-        if (client != null) {
-            String url = client.getAvatar();
+        Profile profile = getSecurityUserOrNull().getProfile();
+        if (profile != null) {
+            String url = profile.getAvatarUrl();
             if (url != null) {
-                log.info("The client with this id {} have avatar", Objects.requireNonNull(client).getId());
+                log.info("The client with this id {} have avatar", Objects.requireNonNull(profile).getId());
                 return new ResponseEntity<>(resourceService.loadAsByteArray(url), addContentHeaders(url), HttpStatus.OK);
             }
         }
-        log.info("The avatar for client with id {} not found",Objects.requireNonNull(client).getId());
+        log.info("The avatar for client with id {} not found",Objects.requireNonNull(profile).getId());
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -106,15 +111,15 @@ public class ClientController {
     })
     @PostMapping(value = "/avatar", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UploadedFileDto> persistClientAvatar(@RequestParam("file") MultipartFile file) throws IOException {
-        Client client = (Client) getSecurityUserOrNull();
-        if (client == null) {
+        Profile profile = getSecurityUserOrNull().getProfile();
+        if (profile == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         UploadedFileDto uploadedFileDto = uploadService.store(file);
-        client.setAvatar(uploadedFileDto.getUrl());
-        clientService.update(client);
-        log.info("The avatar for client with id {} was uploaded",client.getId());
+        profile.setAvatarUrl(uploadedFileDto.getUrl());
+        profileService.update(profile);
+        log.info("The avatar for client with id {} was uploaded",profile.getId());
         return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
     }
 
