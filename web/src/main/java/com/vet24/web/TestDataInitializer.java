@@ -16,6 +16,7 @@ import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
+import com.vet24.models.pet.PetFound;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
@@ -39,6 +40,7 @@ import com.vet24.service.news.NewsService;
 import com.vet24.service.notification.NotificationService;
 import com.vet24.service.notification.UserNotificationService;
 import com.vet24.service.pet.PetContactService;
+import com.vet24.service.pet.PetFoundService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
 import com.vet24.service.pet.procedure.DewormingService;
@@ -118,6 +120,8 @@ public class TestDataInitializer implements ApplicationRunner {
 
     private static final String EMAIL = "@email.com";
 
+    private final PetFoundService petFoundService;
+
     @Autowired
     public TestDataInitializer(AdminService adminService,
                                RoleService roleService,
@@ -133,7 +137,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
                                DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService, NotificationService notificationService,
-                               UserNotificationService userNotificationService, NewsService newsService, ProfileService profileService) {
+                               UserNotificationService userNotificationService, NewsService newsService, ProfileService profileService, PetFoundService petFoundService) {
         this.adminService = adminService;
         this.roleService = roleService;
         this.userService = userService;
@@ -162,6 +166,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.newsService = newsService;
 
         this.profileService = profileService;
+        this.petFoundService = petFoundService;
     }
 
     public void roleInitialize() {
@@ -485,6 +490,18 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
 
+    public void petFoundInit() {
+        PetFound petFoundTest = new PetFound();
+
+        List<PetFound> petFoundList = new ArrayList<>();
+        petFoundTest.setFoundDate(LocalDateTime.now());
+        petFoundTest.setId(1L);
+        petFoundTest.setMessage("сообщение");
+        petFoundTest.setLongitude("долгота");
+        petFoundTest.setLatitude("широта");
+
+        petFoundService.persistAll(petFoundList);
+    }
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
