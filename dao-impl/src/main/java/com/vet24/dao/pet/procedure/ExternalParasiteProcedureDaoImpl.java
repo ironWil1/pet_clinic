@@ -5,5 +5,5 @@ import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ExternalParasiteProcedureDaoImpl extends ReadWriteDaoImpl<Long, ExternalParasiteProcedure> implements  ExternalParasiteProcedureDao {
+public class ExternalParasiteProcedureDaoImpl extends ReadWriteDaoImpl<Long, ExternalParasiteProcedure> implements ExternalParasiteProcedureDao {
 }

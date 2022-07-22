@@ -22,16 +22,16 @@ public abstract class AbstractNewProcedureMapper implements
 
     private Map<ProcedureType, AbstractProcedureMapper> mapperMap;
 
-    @Autowired
-    private List<AbstractProcedureMapper> mapperList;
+//    @Autowired
+//    private List<AbstractProcedureMapper> mapperList;
 
     @Autowired
     MedicineServiceAdapter medicineServiceAdapter;
 
-    @PostConstruct
-    private void init() {
-        this.setMapperMap(mapperList);
-    }
+//    @PostConstruct
+//    private void init() {
+//        this.setMapperMap(mapperList);
+//    }
 
     private void setMapperMap(List<AbstractProcedureMapper> mapperList) {
         mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractProcedureMapper::getProcedureType, Function.identity()));

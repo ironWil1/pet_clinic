@@ -20,6 +20,7 @@ import com.vet24.models.pet.PetFound;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
+import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.models.user.Client;
 import com.vet24.models.user.Role;
@@ -259,6 +260,17 @@ public class TestDataInitializer implements ApplicationRunner {
                     false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
         }
         dewormingService.persistAll(dewormings);
+    }
+
+    public void vaccinationInitializer() {
+        List<VaccinationProcedure> vaccinations = new ArrayList<>();
+        for (int petId = 1; petId <= 30; petId++) {
+            for(int procedureId = 1; procedureId<=3;procedureId++) {
+                vaccinations.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + procedureId,
+                        false, 0, medicineService.getByKey((long) petId), petService.getByKey((long) petId)));
+            }
+        }
+        vaccinationProcedureService.persistAll(vaccinations);
     }
 
 //    public void procedureInitializer() {
@@ -513,6 +525,7 @@ public class TestDataInitializer implements ApplicationRunner {
             medicineInitialize();
             externalParasiteInitializer();
             dewormingInitializer();
+            vaccinationInitializer();
             reproductionInitializer();
             clinicalExaminationInitializer();
             petContactInitializer();

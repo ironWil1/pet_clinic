@@ -26,14 +26,12 @@ public abstract class ProcedureMapper implements
 
     private Map<ProcedureType, AbstractProcedureMapper> mapperMap;
 
-    @Autowired
-    private List<AbstractProcedureMapper> mapperList;
-
-
-    @PostConstruct
-    private void init() {
-        this.setMapperMap(mapperList);
-    }
+//    @Autowired
+//    private List<AbstractProcedureMapper> mapperList;
+//    @PostConstruct
+//    private void init() {
+//        this.setMapperMap(mapperList);
+//    }
 
     private void setMapperMap(List<AbstractProcedureMapper> mapperList) {
         mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractProcedureMapper::getProcedureType, Function.identity()));
