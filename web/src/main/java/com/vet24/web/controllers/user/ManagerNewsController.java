@@ -119,6 +119,18 @@ public class ManagerNewsController {
         return ResponseEntity.ok(newsMapper.toDto(news));
     }
 
+    @Operation(summary = "add news picture")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "picture was successfully added",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @PutMapping("/api/manager/news/{id}/pictures/")
+    public ResponseEntity<Void> addNewsPicture(@RequestBody List<String> pictures, @PathVariable Long id) {
+        newsService.addNewsPicturesById(id, pictures);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @Operation(summary = "publish news")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
