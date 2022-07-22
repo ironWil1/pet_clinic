@@ -42,9 +42,4 @@ public class PetContactServiceImpl extends ReadWriteServiceImpl<Long, PetContact
     public String randomPetContactUniqueCode() {
         return UUID.randomUUID().toString();
     }
-
-    @Override
-    public PetContact getByPetId(Long petId) {
-        return super.getByKey(petId);
-    }
 }

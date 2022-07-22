@@ -12,5 +12,4 @@ public interface PetContactService extends ReadWriteService<Long, PetContact> {
     PetContact getByCode(String code);
     int getCountId();
     String randomPetContactUniqueCode();
-    PetContact getByPetId(Long petId);
 }

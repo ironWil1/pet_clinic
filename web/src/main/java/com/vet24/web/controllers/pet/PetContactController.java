@@ -2,7 +2,6 @@ package com.vet24.web.controllers.pet;
 
 import com.vet24.models.dto.pet.PetContactDto;
 import com.vet24.models.mappers.pet.PetContactMapper;
-import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.user.Client;
 import com.vet24.service.pet.PetContactService;
@@ -46,47 +45,37 @@ public class PetContactController {
         this.petService = petService;
     }
 
-    @Operation(summary = "Получние Контакта питомца по ID питомца")
+    @Operation(summary = "Получние Контакта питомца по его ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Контакт питомца был умпешно получен",
+            @ApiResponse(responseCode = "200", description = "Контакт питомца получен",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PetContactDto.class))),
-            @ApiResponse(responseCode = "404", description = "Питомец или Клиент не был найден"),
-            @ApiResponse(responseCode = "400", description = "ID Владельца и ID текущего Клиента не совпадают")
+            @ApiResponse(responseCode = "400", description = "Питомец не найден или Вам не принадлежит")
     })
     @GetMapping("/")
     public ResponseEntity<PetContactDto> getPetContactByPetId(@RequestParam Long petId) {
         Client client = (Client) getSecurityUserOrNull();
-        Pet pet = petService.getByKey(petId);
-        if (client != null && pet != null) {
-            if (!(pet.getClient().getId().equals(client.getId()))) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-            PetContact petContact = petContactService.getByPetId(petId);
+        if (petService.isExistByPetIdAndClientId(petId, client.getId())) {
+            PetContact petContact = petContactService.getByKey(petId);
             return new ResponseEntity<>(petContactMapper.toDto(petContact), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @Operation(summary = "Обновление Контакта питомца")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Контакт питомца был успешно обновлен"),
-            @ApiResponse(responseCode = "404", description = "Питомец или Клиент не был найден"),
-            @ApiResponse(responseCode = "400", description = "ID Владельца и ID текущего Клиента не совпадают")
+            @ApiResponse(responseCode = "200", description = "Контакт питомца обновлен"),
+            @ApiResponse(responseCode = "400", description = "Питомец не найден или Вам не принадлежит")
     })
     @PutMapping("/")
     public ResponseEntity<PetContactDto> updatePetContact(@Valid @RequestBody PetContactDto petContactDto, @RequestParam Long petId) {
 
         Client client = (Client) getSecurityUserOrNull();
-        Pet pet = petService.getByKey(petId);
-        if (client != null && pet != null) {
-            if (!(pet.getClient().getId().equals(client.getId()))) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-            PetContact petContact = pet.getPetContact();
+        if (petService.isExistByPetIdAndClientId(petId, client.getId())) {
+            PetContact petContact = petContactService.getByKey(petId);
             petContactMapper.updateEntity(petContactDto, petContact);
             petContactService.update(petContact);
             return new ResponseEntity<>(petContactDto, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
