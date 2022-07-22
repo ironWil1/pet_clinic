@@ -20,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Doctor extends User {
 
+
     @OneToMany(
             mappedBy = "doctor",
             cascade = CascadeType.ALL
@@ -47,7 +48,7 @@ public class Doctor extends User {
         super();
     }
 
-    public Doctor(String firstname, String lastname, String email, String password, Role role) {
-        super(firstname, lastname, email, password, role);
+    public Doctor(String email, String password, Role role) {
+        super(email, password, role);
     }
 }

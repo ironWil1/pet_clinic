@@ -29,9 +29,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 
 @Entity
 @Getter
@@ -50,13 +53,9 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @NonNull
-    @Column(nullable = false)
-    private String firstname;
-
-    @NonNull
-    @Column(nullable = false)
-    private String lastname;
+    @OneToOne
+    @PrimaryKeyJoinColumn
+    private Profile profile;
 
     @NonNull
     @NaturalId
@@ -66,9 +65,6 @@ public class User implements UserDetails {
     @NonNull
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = true)
-    private String avatar;
 
     private Boolean enabled;
 
@@ -84,6 +80,7 @@ public class User implements UserDetails {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+
     private List<CommentReaction> commentReactions = new ArrayList<>();
 
     @OneToMany(

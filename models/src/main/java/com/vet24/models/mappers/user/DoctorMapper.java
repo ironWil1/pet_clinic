@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
 @Component
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",uses = {UserInfoMapper.class})
 public interface DoctorMapper extends DtoMapper<Doctor, DoctorDto>, EntityMapper<DoctorDto, Doctor> {
 
 }
