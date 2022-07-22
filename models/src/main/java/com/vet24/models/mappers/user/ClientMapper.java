@@ -8,7 +8,7 @@ import com.vet24.models.mappers.pet.PetMapper;
 import com.vet24.models.user.Client;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", uses = {PetMapper.class})
+@Mapper(componentModel = "spring", uses = {PetMapper.class,UserInfoMapper.class})
 public interface ClientMapper extends DtoMapper<Client, RegisterDto>, EntityMapper<ClientDto, Client> {
 
 }
