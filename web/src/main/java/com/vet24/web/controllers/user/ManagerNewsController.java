@@ -172,4 +172,3 @@ public class ManagerNewsController {
         return ResponseEntity.ok().build();
     }
 }
-
