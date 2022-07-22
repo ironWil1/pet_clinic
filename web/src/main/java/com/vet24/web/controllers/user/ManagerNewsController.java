@@ -60,7 +60,6 @@ public class ManagerNewsController {
         return new ResponseEntity<>(newsDtoList, HttpStatus.OK);
     }
 
-
     @Operation(summary = "get news by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -132,6 +131,18 @@ public class ManagerNewsController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @Operation(summary = "publish news")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "news has been published",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "news could not be published")
+    })
+    @PutMapping("/api/manager/news/publish")
+    public ResponseEntity<Map<Long, String>> publishNews(@RequestBody List<Long> newsId) {
+        return ResponseEntity.ok(newsService.publishNews(newsId));
+    }
+
     @Operation(summary = "unpublish news")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -161,4 +172,3 @@ public class ManagerNewsController {
         return ResponseEntity.ok().build();
     }
 }
-

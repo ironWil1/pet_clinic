@@ -27,6 +27,44 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
 
     @Transactional
     @Override
+    public Map<Long, String> publishNews(List<Long> ids) {
+        Map<Long, String> notPublishNews = new HashMap<>();
+        List<News> news = newsDao.getNewsById(ids);
+
+        List<Long> newsIds = news.stream()
+                .map(News::getId)
+                .collect(Collectors.toList());
+
+        Set<Long> nonExistentNewsIds = ids.stream()
+                .filter(i -> !newsIds.contains(i))
+                .collect(Collectors.toSet());
+
+        List<Long> pastNewsIds = news.stream()
+                .filter(newsDto -> newsDto.getEndTime().isBefore(LocalDateTime.now()))
+                .map(News::getId)
+                .collect(Collectors.toList());
+
+        List<Long> publishNewsIds = news.stream()
+                .filter(pastNews -> !pastNews.getEndTime().isBefore(LocalDateTime.now())
+                        && !nonExistentNewsIds.contains(pastNews.getId()))
+                .map(News::getId)
+                .collect(Collectors.toList());
+
+        newsDao.publishNews(publishNewsIds);
+
+        for (long id : nonExistentNewsIds) {
+            notPublishNews.put(id, "новость не существует");
+        }
+
+        for (long id : pastNewsIds) {
+            notPublishNews.put(id, "endData новости уже прошла");
+        }
+
+        return notPublishNews;
+    }
+
+    @Transactional
+    @Override
     public Map<Long, String> unpublishNews(List<Long> ids) {
         Map<Long, String> notUnpublishNews = new HashMap<>();
         List<News> news = newsDao.getNewsById(ids);
