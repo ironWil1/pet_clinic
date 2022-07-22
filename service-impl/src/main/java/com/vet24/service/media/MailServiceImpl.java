@@ -70,6 +70,7 @@ public class MailServiceImpl implements MailService {
         }
     }
 
+
     // TODO: необходимо переделать метод получения email из NotificationDTO
     @Override
     public void sendNotificationMassage(List<MailNotification> mailNotifications) {
@@ -105,7 +106,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendGeolocationPetFoundMessage(PetContact petContact, String geolocationPetFoundUrl, String text) {
         var model = new HashMap<String, Object>();
-        model.put("name", petContact.getPet().getClient().getFirstname());
+        model.put("name", petContact.getPet().getClient().getProfile().getFirstName());
         model.put("geolocationPetFoundUrl", geolocationPetFoundUrl);
         model.put("petName", petContact.getPet().getName());
         model.put("text", text);
