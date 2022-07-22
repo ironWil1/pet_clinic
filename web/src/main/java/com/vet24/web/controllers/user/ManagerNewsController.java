@@ -1,12 +1,10 @@
 package com.vet24.web.controllers.user;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.news.NewsDto;
 import com.vet24.models.mappers.news.NewsMapper;
 import com.vet24.models.news.News;
-import com.vet24.models.util.View;
 import com.vet24.service.news.NewsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -78,8 +76,8 @@ public class ManagerNewsController {
             throw new NotFoundException(NEWS_NOT_FOUND);
         }
         return new ResponseEntity<>(newsMapper.toDto(newsService
-                                                   .getByKey(newsId)),
-                                                    HttpStatus.OK);
+                .getByKey(newsId)),
+                HttpStatus.OK);
     }
 
     @Operation(summary = "persist the new News")
@@ -92,8 +90,7 @@ public class ManagerNewsController {
     })
     @PostMapping("")
     public ResponseEntity<NewsDto> persistNews(@Validated(OnCreate.class)
-                                                   @JsonView(View.Post.class)
-                                                   @RequestBody NewsDto newsDto) {
+                                               @RequestBody NewsDto newsDto) {
 
         News news = newsMapper.toEntity(newsDto);
         newsService.persist(news);
@@ -102,17 +99,16 @@ public class ManagerNewsController {
 
     @Operation(summary = "update news")
     @ApiResponses(value = {
-                  @ApiResponse(responseCode = "200",
-                               description = "news are update",
-                               content = @Content(mediaType = "application/json",
-                               schema = @Schema(implementation = NewsDto.class))),
-                  @ApiResponse(responseCode = "404",
-                               description = "news are not found")
+            @ApiResponse(responseCode = "200",
+                    description = "news are update",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = NewsDto.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "news are not found")
     })
     @PutMapping("/{id}")
     public ResponseEntity<NewsDto> updateNewsById(@PathVariable("id") Long newsId,
                                                   @Validated(OnUpdate.class)
-                                                  @JsonView(View.Put.class)
                                                   @RequestBody NewsDto newsDto) {
         News news = newsService.getByKey(newsId);
         if (!newsService.isExistByKey(newsId)) {
@@ -121,6 +117,18 @@ public class ManagerNewsController {
         newsMapper.updateEntity(newsDto, news);
         newsService.update(news);
         return ResponseEntity.ok(newsMapper.toDto(news));
+    }
+
+    @Operation(summary = "add news picture")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "picture was successfully added",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @PutMapping("/api/manager/news/{id}/pictures/")
+    public ResponseEntity<Void> addNewsPicture(@RequestBody List<String> pictures, @PathVariable Long id) {
+        newsService.addNewsPicturesById(id, pictures);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "publish news")
