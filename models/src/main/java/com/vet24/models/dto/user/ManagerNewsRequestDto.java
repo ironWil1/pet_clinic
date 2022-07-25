@@ -16,16 +16,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ManagerNewsRequestDto {
-    @JsonView({View.Get.class})
     private String title;
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
     @NotBlank(groups = {OnCreate.class, OnUpdate.class},
             message = "Поле content не должно быть пустым")
     private String content;
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
     private NewsType type;
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
     private boolean isImportant;
-    @JsonView({View.Put.class, View.Post.class, View.Get.class})
     private LocalDateTime endTime;
 }
