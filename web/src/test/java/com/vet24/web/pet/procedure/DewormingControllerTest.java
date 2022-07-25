@@ -5,7 +5,6 @@ import com.vet24.models.dto.pet.procedure.DewormingDto;
 import com.vet24.models.mappers.pet.procedure.DewormingMapper;
 import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.web.ControllerAbstractIntegrationTest;
-import com.vet24.web.controllers.pet.procedure.DewormingController;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
-
-    @Autowired
-    DewormingController dewormingController;
 
     @Autowired
     DewormingMapper dewormingMapper;
