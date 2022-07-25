@@ -33,11 +33,12 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     private static final String URI = "/api/client/procedure";
     private static final DewormingDto DTO_FOR_JSON = new DewormingDto(LocalDate.now(), 100L, "4f435", false, 5);
+    private static final long INITIAL_SIZE = 4;
     private String token;
 
     @Before
     public void setToken() throws Exception {
-        token = getAccessToken("user3@gmail.com", "user3");
+        token = getAccessToken("user2@gmail.com", "user2");
     }
 
     private DewormingDto getById(Long id) {
@@ -48,18 +49,19 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
         return entityManager.createQuery("SELECT COUNT(d) FROM Deworming d", Long.class).getSingleResult();
     }
 
-    private ResultMatcher expectJsonObject(String prefix, DewormingDto dewormingDto) {
+    private ResultMatcher expectJsonObject(DewormingDto dewormingDto) {
         return ResultMatcher.matchAll(
-                jsonPath(prefix + ".date", is(dewormingDto.getDate().toString())),
-                jsonPath(prefix + ".medicineId", is(dewormingDto.getMedicineId().intValue())),
-                jsonPath(prefix + ".medicineBatchNumber", is(dewormingDto.getMedicineBatchNumber())),
-                jsonPath(prefix + ".isPeriodical", is(dewormingDto.getIsPeriodical())),
-                jsonPath(prefix + ".periodDays", is(dewormingDto.getPeriodDays()))
+                jsonPath("$.date", is(dewormingDto.getDate().toString())),
+                jsonPath("$.medicineId", is(dewormingDto.getMedicineId().intValue())),
+                jsonPath("$.medicineBatchNumber", is(dewormingDto.getMedicineBatchNumber())),
+                jsonPath("$.isPeriodical", is(dewormingDto.getIsPeriodical())),
+                jsonPath("$.periodDays", is(dewormingDto.getPeriodDays()))
         );
     }
 
     private ResultMatcher expectJsonArray(String prefix, DewormingDto dewormingDto) {
         return ResultMatcher.matchAll(
+                jsonPath(prefix + ".id", hasItem(dewormingDto.getId().intValue())),
                 jsonPath(prefix + ".date", hasItem(dewormingDto.getDate().toString())),
                 jsonPath(prefix + ".medicineId", hasItem(dewormingDto.getMedicineId().intValue())),
                 jsonPath(prefix + ".medicineBatchNumber", hasItem(dewormingDto.getMedicineBatchNumber())),
@@ -70,19 +72,19 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, GET deworming by id - 200 SUCCESS
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testGetDewormingByIdSuccess() throws Exception {
         DewormingDto dewormingDto = getById(102L);
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/deworming/{dewormingId}", 102)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(102)))
-                .andExpect(expectJsonObject("$", dewormingDto));
+                .andExpect(expectJsonObject(dewormingDto));
     }
 
     // +mock, GET deworming by id - 400 ERROR "deworming not found"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testGetDewormingByIdErrorDewormingNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/deworming/{dewormingId}", 33)
                         .header("Authorization", "Bearer " + token))
@@ -91,7 +93,7 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, GET deworming by id - 400 ERROR "deworming not yours"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testGetDewormingByIdErrorDewormingNotYours() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/deworming/{dewormingId}", 100)
                         .header("Authorization", "Bearer " + token))
@@ -100,7 +102,7 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, GET dewormings by pet id - 200 SUCCESS
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testGetDewormingsByPetIdSuccess() throws Exception {
         DewormingDto dewormingDto1 = getById(102L);
         DewormingDto dewormingDto2 = getById(103L);
@@ -108,15 +110,13 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[?(@.id == 102)].id", hasItem(102)))
                 .andExpect(expectJsonArray("$[?(@.id == 102)]", dewormingDto1))
-                .andExpect(jsonPath("$[?(@.id == 103)].id", hasItem(103)))
                 .andExpect(expectJsonArray("$[?(@.id == 103)]", dewormingDto2));
     }
 
     // +mock, GET dewormings by pet id - 400 ERROR "pet not found"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testGetDewormingsByPetIdErrorPetNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/deworming?petId={petId}", 33)
                         .header("Authorization", "Bearer " + token))
@@ -125,7 +125,7 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, GET dewormings by pet id - 400 ERROR "pet not yours"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testGetDewormingsByPetIdErrorPetNotYours() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/deworming?petId={petId}", 100)
                         .header("Authorization", "Bearer " + token))
@@ -134,93 +134,86 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, ADD new deworming - 201 SUCCESS
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testAddDewormingSuccess() throws Exception {
-        long beforeCount = getSize();
+        long beforeCount = INITIAL_SIZE;
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/deworming?petId={petId}", 102)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(DTO_FOR_JSON).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue()))
-                .andExpect(expectJsonObject("$", DTO_FOR_JSON));
+                .andExpect(expectJsonObject(DTO_FOR_JSON));
         assertThat(++beforeCount).isEqualTo(getSize());
     }
 
     // +mock, ADD new deworming - 404 ERROR "pet not found"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testAddDewormingErrorPetNotFound() throws Exception {
-        long beforeCount = getSize();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/deworming?petId={petId}", 33)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(DTO_FOR_JSON).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-        assertThat(beforeCount).isEqualTo(getSize());
+        assertThat(INITIAL_SIZE).isEqualTo(getSize());
     }
 
     // +mock, ADD new deworming - 400 ERROR "pet not yours"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testAddDewormingErrorPetNotYours() throws Exception {
-        long beforeCount = getSize();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/deworming?petId={petId}", 100)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(DTO_FOR_JSON).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-        assertThat(beforeCount).isEqualTo(getSize());
+        assertThat(INITIAL_SIZE).isEqualTo(getSize());
     }
 
     // +mock, UPDATE  deworming - 200 SUCCESS
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testUpdateDewormingSuccess() throws Exception {
-        long beforeCount = getSize();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/deworming/{dewormingId}", 102)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(DTO_FOR_JSON).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(102)))
-                .andExpect(expectJsonObject("$", DTO_FOR_JSON));
-
-
-        assertThat(beforeCount).isEqualTo(getSize());
+                .andExpect(expectJsonObject(DTO_FOR_JSON));
+        assertThat(INITIAL_SIZE).isEqualTo(getSize());
     }
 
     // +mock, UPDATE  deworming - 400 ERROR "deworming not found"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testUpdateDewormingErrorDewormingNotFound() throws Exception {
-        long beforeCount = getSize();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/deworming/{dewormingId}", 33)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(DTO_FOR_JSON).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-        assertThat(beforeCount).isEqualTo(getSize());
+        assertThat(INITIAL_SIZE).isEqualTo(getSize());
     }
 
     // +mock, UPDATE  deworming - 400 ERROR "deworming not yours"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testUpdateDewormingErrorDewormingNotYours() throws Exception {
-        long beforeCount = getSize();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/deworming/{dewormingId}", 100)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(DTO_FOR_JSON).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-        assertThat(beforeCount).isEqualTo(getSize());
+        assertThat(INITIAL_SIZE).isEqualTo(getSize());
     }
 
     // +mock, DELETE deworming - 200 SUCCESS
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testDeleteDewormingSuccess() throws Exception {
-        long beforeCount = getSize();
+        long beforeCount = INITIAL_SIZE;
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/deworming/{dewormingId}", 102)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
@@ -229,23 +222,21 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, DELETE deworming - 400 ERROR "deworming not found"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testDeleteDewormingErrorDewormingNotFound() throws Exception {
-        long beforeCount = getSize();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/deworming/{dewormingId}", 33)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
-        assertThat(beforeCount).isEqualTo(getSize());
+        assertThat(INITIAL_SIZE).isEqualTo(getSize());
     }
 
     // +mock, DELETE deworming - 400 ERROR "deworming not yours"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml", "/datasets/medicine.yml", "/datasets/dewormingController.yml", "datasets/reproduction.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
     public void testDeleteDewormingErrorDewormingNotYours() throws Exception {
-        long beforeCount = getSize();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/deworming/{dewormingId}", 100)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
-        assertThat(beforeCount).isEqualTo(getSize());
+        assertThat(INITIAL_SIZE).isEqualTo(getSize());
     }
 }
