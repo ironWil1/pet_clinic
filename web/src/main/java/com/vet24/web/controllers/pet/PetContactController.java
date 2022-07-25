@@ -95,10 +95,10 @@ public class PetContactController {
             @ApiResponse(responseCode = "400", description = "Питомец не найден или Вам не принадлежит")
     })
     @GetMapping(value = "/qr?{petId}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> createPetContactQrCode(@PathVariable("petId") Long id) {
+    public ResponseEntity<byte[]> createPetContactQrCode(@RequestParam Long petId) {
         Client client = clientService.getCurrentClientWithPets();
-        if (petService.isExistByPetIdAndClientId(id, client.getId())) {
-            PetContact petContact = petContactService.getByKey(id);
+        if (petService.isExistByPetIdAndClientId(petId, client.getId())) {
+            PetContact petContact = petContactService.getByKey(petId);
             String urlToAlertPetContact = URL + "/api/petFound?code=" + petContact.getCode();
             String sb = "Имя питомца - " + petContact.getPet().getName() + ", " +
                     "Владелец - " + petContact.getOwnerName() + ", " +
