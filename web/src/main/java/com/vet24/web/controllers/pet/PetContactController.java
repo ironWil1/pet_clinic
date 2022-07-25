@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,7 +93,7 @@ public class PetContactController {
             @ApiResponse(responseCode = "200", description = "QR код был успешно создан"),
             @ApiResponse(responseCode = "400", description = "Питомец не найден или Вам не принадлежит")
     })
-    @GetMapping(value = "/qr?{petId}", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> createPetContactQrCode(@RequestParam Long petId) {
         Client client = clientService.getCurrentClientWithPets();
         if (petService.isExistByPetIdAndClientId(petId, client.getId())) {
