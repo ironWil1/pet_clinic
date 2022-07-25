@@ -1,6 +1,7 @@
 package com.vet24.dao.pet;
 
 import com.vet24.dao.ReadWriteDao;
+import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 
 import java.util.List;
