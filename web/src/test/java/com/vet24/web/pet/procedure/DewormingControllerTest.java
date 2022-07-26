@@ -68,7 +68,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, GET deworming by id - 200 SUCCESS
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testGetDewormingByIdSuccess() throws Exception {
         DewormingDto dewormingDto = getById(102L);
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/deworming/{dewormingId}", 102)
@@ -80,7 +83,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, GET deworming by id - 400 ERROR "deworming not found"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testGetDewormingByIdErrorDewormingNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/deworming/{dewormingId}", 33)
                         .header("Authorization", "Bearer " + token))
@@ -89,7 +95,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, GET deworming by id - 400 ERROR "deworming not yours"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testGetDewormingByIdErrorDewormingNotYours() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/deworming/{dewormingId}", 100)
                         .header("Authorization", "Bearer " + token))
@@ -98,7 +107,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, GET dewormings by pet id - 200 SUCCESS
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testGetDewormingsByPetIdSuccess() throws Exception {
         DewormingDto dewormingDto1 = getById(102L);
         DewormingDto dewormingDto2 = getById(103L);
@@ -112,7 +124,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, GET dewormings by pet id - 400 ERROR "pet not found"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testGetDewormingsByPetIdErrorPetNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/deworming?petId={petId}", 33)
                         .header("Authorization", "Bearer " + token))
@@ -121,7 +136,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, GET dewormings by pet id - 400 ERROR "pet not yours"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testGetDewormingsByPetIdErrorPetNotYours() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/deworming?petId={petId}", 100)
                         .header("Authorization", "Bearer " + token))
@@ -130,7 +148,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, ADD new deworming - 201 SUCCESS
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testAddDewormingSuccess() throws Exception {
         long beforeCount = INITIAL_SIZE;
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/deworming?petId={petId}", 102)
@@ -145,7 +166,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, ADD new deworming - 404 ERROR "pet not found"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testAddDewormingErrorPetNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/deworming?petId={petId}", 33)
                         .header("Authorization", "Bearer " + token)
@@ -157,7 +181,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, ADD new deworming - 400 ERROR "pet not yours"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testAddDewormingErrorPetNotYours() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/deworming?petId={petId}", 100)
                         .header("Authorization", "Bearer " + token)
@@ -169,7 +196,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, UPDATE  deworming - 200 SUCCESS
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testUpdateDewormingSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/deworming/{dewormingId}", 102)
                         .header("Authorization", "Bearer " + token)
@@ -183,7 +213,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, UPDATE  deworming - 400 ERROR "deworming not found"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testUpdateDewormingErrorDewormingNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/deworming/{dewormingId}", 33)
                         .header("Authorization", "Bearer " + token)
@@ -195,7 +228,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, UPDATE  deworming - 400 ERROR "deworming not yours"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testUpdateDewormingErrorDewormingNotYours() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/deworming/{dewormingId}", 100)
                         .header("Authorization", "Bearer " + token)
@@ -207,7 +243,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, DELETE deworming - 200 SUCCESS
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testDeleteDewormingSuccess() throws Exception {
         long beforeCount = INITIAL_SIZE;
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/deworming/{dewormingId}", 102)
@@ -218,7 +257,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, DELETE deworming - 400 ERROR "deworming not found"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testDeleteDewormingErrorDewormingNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/deworming/{dewormingId}", 33)
                         .header("Authorization", "Bearer " + token))
@@ -228,7 +270,10 @@ public class DewormingControllerTest extends ControllerAbstractIntegrationTest {
 
     // +mock, DELETE deworming - 400 ERROR "deworming not yours"
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/dewormingController/user.yml", "/datasets/dewormingController/pet.yml", "/datasets/dewormingController/medicine.yml", "/datasets/dewormingController/deworming.yml"})
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/pet/procedure/dewormingControllerTest/users.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/pets.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/medicines.yml",
+            "/datasets/controllers/pet/procedure/dewormingControllerTest/dewormings.yml"})
     public void testDeleteDewormingErrorDewormingNotYours() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/deworming/{dewormingId}", 100)
                         .header("Authorization", "Bearer " + token))
