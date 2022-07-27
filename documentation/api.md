@@ -166,6 +166,7 @@ public class PetFoundDto {
     private String text;
 }
 ```
+3. Сделать ```/api/petfound``` доступным для всех
 <!-- //TODO добавить функционал яндекс карт на фронт + доработать хранение координат/адреса -->
 
 ### 3. История находок питомца
@@ -255,3 +256,34 @@ class DiscordToken {
 GET /api/user/profile/discord -> String
 ```
  -->
+# Медосмотр
+
+## Рефактор контроллера:  
+1. Перенести всю бизнеслогику в ClinicalExaminationService, в контроллере оставить только валидацию
+2. перевести сваггер на русский язык
+3. контроллер сделать согласно следующему апи:  
+```
+POST ClinicalExaminationRequestDto -> /api/doctor/exam?petId={petId}
+GET /api/doctor/exam?petId={petId} -> List<ClinicalExaminationResponseDto>  
+GET /api/doctor/exam/{examId} -> ClinicalExaminationResponseDto
+PUT ClinicalExaminationRequestDto -> /api/doctor/exam/{examId} -> Void
+DELETE /api/doctor/exam/{examId} -> Void
+```
+```
+ClinicalExaminationRequestDto {
+  Double weight;
+  Boolean isCanMove;
+  String text;
+}
+```
+```
+ClinicalExaminationResponseDto {
+   Long id;
+   Long petId;
+   Double weight;
+   Boolean isCanMove;
+   String text;
+}
+```
+4. При добавлении нового  медосмотра обновлять данные о весе питомца
+5. При изменении последнего медосмотра для питомца обновлять данные о весе питомца

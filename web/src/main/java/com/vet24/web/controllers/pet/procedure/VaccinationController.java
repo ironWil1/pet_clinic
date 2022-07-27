@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.pet.procedure;
 
 import com.vet24.models.dto.exception.ExceptionDto;
-import com.vet24.models.dto.pet.procedure.ProcedureDto;
 import com.vet24.models.dto.pet.procedure.VaccinationDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.procedure.VaccinationMapper;
@@ -77,7 +76,7 @@ public class VaccinationController {
     @Operation(summary = "получить все процедуры вакцинации по id питомца")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a Procedure",
-                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+                    content = @Content(schema = @Schema(implementation = VaccinationDto.class))),
             @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
@@ -104,7 +103,7 @@ public class VaccinationController {
     @Operation(summary = "получить процедуру вакцинации по id процедуры")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a Procedure",
-                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+                    content = @Content(schema = @Schema(implementation = VaccinationDto.class))),
             @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
@@ -125,7 +124,7 @@ public class VaccinationController {
     @Operation(summary = "добавить процедуру вакцинации")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully save a Procedure",
-                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+                    content = @Content(schema = @Schema(implementation = VaccinationDto.class))),
             @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
@@ -159,7 +158,7 @@ public class VaccinationController {
     @Operation(summary = "обновить процедуру вакцинации")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully save a Procedure",
-                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+                    content = @Content(schema = @Schema(implementation = VaccinationDto.class))),
             @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
@@ -196,7 +195,7 @@ public class VaccinationController {
     @Operation(summary = "удалить процедуру вакцинации")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully delete a Procedure",
-                    content = @Content(schema = @Schema(implementation = ProcedureDto.class))),
+                    content = @Content(schema = @Schema(implementation = VaccinationDto.class))),
             @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",

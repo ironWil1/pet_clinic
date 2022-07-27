@@ -1,6 +1,5 @@
 package com.vet24.models.medicine;
 
-import com.vet24.models.pet.procedure.Procedure;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,8 +29,4 @@ public class Treatment implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     private Diagnosis diagnosis;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Procedure> procedureList;
-
 }
