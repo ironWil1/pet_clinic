@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -37,7 +39,8 @@ public class PetFound {
     @Column(name = "found_date")
     @CreatedDate
     private LocalDateTime foundDate;
-    @ManyToOne(targetEntity = Pet.class, fetch = FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Pet pet;
 
     @Override

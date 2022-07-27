@@ -497,14 +497,14 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void petFoundInit() {
         PetFound petFoundTest = new PetFound();
-
+        Pet petTest = petService.getByKey(1L);
         List<PetFound> petFoundList = new ArrayList<>();
         petFoundTest.setFoundDate(LocalDateTime.now());
-        petFoundTest.setId(1L);
         petFoundTest.setMessage("сообщение");
         petFoundTest.setLongitude("долгота");
         petFoundTest.setLatitude("широта");
-
+        petFoundTest.setPet(petTest);
+        petFoundList.add(petFoundTest);
         petFoundService.persistAll(petFoundList);
     }
 
@@ -535,6 +535,7 @@ public class TestDataInitializer implements ApplicationRunner {
             notificationAndUserNotificationInit();
             newsInit();
             profileInit();
+            petFoundInit();
         }
     }
 }
