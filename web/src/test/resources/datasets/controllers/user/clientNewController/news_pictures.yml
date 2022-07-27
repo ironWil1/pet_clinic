@@ -1,0 +1,6 @@
+NEWS_PICTURES:
+  - NEWS_ID: 1
+    PICTURES: "picture1"
+
+  - NEWS_ID: 2
+    PICTURES: "picture2"

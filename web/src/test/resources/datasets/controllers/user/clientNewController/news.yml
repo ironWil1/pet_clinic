@@ -1,0 +1,16 @@
+NEWS:
+  - ID: 1
+    TYPE: "PROMOTION"
+    CONTENT: 'content'
+    TITLE: "news"
+    IS_IMPORTANT: true
+    PUBLISHED: false
+    END_TIME: "2022-11-27 20:09:00.712268"
+
+  - ID: 2
+    TYPE: "PROMOTION"
+    CONTENT: 'content'
+    TITLE: "news"
+    IS_IMPORTANT: true
+    PUBLISHED: true
+    END_TIME: "2022-09-27 20:09:00.712268"
