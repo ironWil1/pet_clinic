@@ -16,6 +16,7 @@ import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
+import com.vet24.models.pet.PetFound;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
@@ -40,6 +41,7 @@ import com.vet24.service.news.NewsService;
 import com.vet24.service.notification.NotificationService;
 import com.vet24.service.notification.UserNotificationService;
 import com.vet24.service.pet.PetContactService;
+import com.vet24.service.pet.PetFoundService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.clinicalexamination.ClinicalExaminationService;
 import com.vet24.service.pet.procedure.DewormingService;
@@ -119,6 +121,8 @@ public class TestDataInitializer implements ApplicationRunner {
 
     private static final String EMAIL = "@email.com";
 
+    private final PetFoundService petFoundService;
+
     @Autowired
     public TestDataInitializer(AdminService adminService,
                                RoleService roleService,
@@ -134,7 +138,7 @@ public class TestDataInitializer implements ApplicationRunner {
                                CommentReactionService commentReactionService, DiagnosisService diagnosisService,
                                DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
                                DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService, NotificationService notificationService,
-                               UserNotificationService userNotificationService, NewsService newsService, ProfileService profileService) {
+                               UserNotificationService userNotificationService, NewsService newsService, ProfileService profileService, PetFoundService petFoundService) {
         this.adminService = adminService;
         this.roleService = roleService;
         this.userService = userService;
@@ -163,6 +167,7 @@ public class TestDataInitializer implements ApplicationRunner {
         this.newsService = newsService;
 
         this.profileService = profileService;
+        this.petFoundService = petFoundService;
     }
 
     public void roleInitialize() {
@@ -225,28 +230,28 @@ public class TestDataInitializer implements ApplicationRunner {
         medicineService.persistAll(medicines);
     }
 
-    public void externalParasiteInitializer(){
+    public void externalParasiteInitializer() {
         List<ExternalParasiteProcedure> externalParasiteProcedures = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now(),"ExternalParasiteMedicineBatchNumber" + i,
-                    true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(2),"ExternalParasiteMedicineBatchNumber" + i,
-                    true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(6),"ExternalParasiteMedicineBatchNumber" + i,
-                    false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now(), "ExternalParasiteMedicineBatchNumber" + i,
+                    true, 2, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(2), "ExternalParasiteMedicineBatchNumber" + i,
+                    true, 4, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+            externalParasiteProcedures.add(new ExternalParasiteProcedure(LocalDate.now().plusDays(6), "ExternalParasiteMedicineBatchNumber" + i,
+                    false, 0, medicineService.getByKey((long) i), petService.getByKey((long) i)));
         }
         externalParasiteProcedureService.persistAll(externalParasiteProcedures);
     }
 
-    public void dewormingInitializer(){
+    public void dewormingInitializer() {
         List<Deworming> dewormings = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            dewormings.add(new Deworming(LocalDate.now(),"DewormingMedicineBatchNumber" + i,
-                    true,2,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            dewormings.add(new Deworming(LocalDate.now().plusDays(2),"DewormingMedicineBatchNumber" + i,
-                    true,4,medicineService.getByKey((long) i),petService.getByKey((long) i)));
-            dewormings.add(new Deworming(LocalDate.now().plusDays(6),"DewormingMedicineBatchNumber" + i,
-                    false,0,medicineService.getByKey((long) i),petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now(), "DewormingMedicineBatchNumber" + i,
+                    true, 2, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now().plusDays(2), "DewormingMedicineBatchNumber" + i,
+                    true, 4, medicineService.getByKey((long) i), petService.getByKey((long) i)));
+            dewormings.add(new Deworming(LocalDate.now().plusDays(6), "DewormingMedicineBatchNumber" + i,
+                    false, 0, medicineService.getByKey((long) i), petService.getByKey((long) i)));
         }
         dewormingService.persistAll(dewormings);
     }
@@ -254,7 +259,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void vaccinationInitializer() {
         List<VaccinationProcedure> vaccinations = new ArrayList<>();
         for (int petId = 1; petId <= 30; petId++) {
-            for(int procedureId = 1; procedureId<=3;procedureId++) {
+            for (int procedureId = 1; procedureId <= 3; procedureId++) {
                 vaccinations.add(new VaccinationProcedure(LocalDate.now(), "VaccinationMedicineBatchNumber" + procedureId,
                         false, 0, medicineService.getByKey((long) petId), petService.getByKey((long) petId)));
             }
@@ -403,7 +408,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void appointmentInit() {
         List<Appointment> appointmentList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            appointmentList.add(new Appointment(doctorService.getByKey((long)i), petService.getByKey((long)i), LocalDateTime.now().plusDays(7), "description" + i ));
+            appointmentList.add(new Appointment(doctorService.getByKey((long) i), petService.getByKey((long) i), LocalDateTime.now().plusDays(7), "description" + i));
         }
         appointmentService.persistAll(appointmentList);
     }
@@ -421,10 +426,10 @@ public class TestDataInitializer implements ApplicationRunner {
         notificationList.add(managerNotification);
 
         List<UserNotification> userNotificationList = new ArrayList<>();
-        userNotificationList.add(new UserNotification(clientNotification, userService.getByKey(1L),false));
-        userNotificationList.add(new UserNotification(doctorNotification, userService.getByKey(31L),false));
-        userNotificationList.add(new UserNotification(adminNotification, userService.getByKey(61L),false));
-        userNotificationList.add(new UserNotification(managerNotification, userService.getByKey(66L),false));
+        userNotificationList.add(new UserNotification(clientNotification, userService.getByKey(1L), false));
+        userNotificationList.add(new UserNotification(doctorNotification, userService.getByKey(31L), false));
+        userNotificationList.add(new UserNotification(adminNotification, userService.getByKey(61L), false));
+        userNotificationList.add(new UserNotification(managerNotification, userService.getByKey(66L), false));
 
         notificationService.persistAll(notificationList);
         userNotificationService.persistAll(userNotificationList);
@@ -473,21 +478,35 @@ public class TestDataInitializer implements ApplicationRunner {
         }
         newsService.persistAll(newsList);
     }
-    public void profileInit(){
+
+    public void profileInit() {
         List<User> users = userService.getAll();
         List<com.vet24.models.user.Profile> profileList = new ArrayList<>();
         for (int i = 1; i <= users.size(); i++) {
-            profileList.add(new com.vet24.models.user.Profile(users.get(i-1) ,
-                    "avatarUrl"+ i,
-                    "firstName" +i,
-                    "lastName" +i,
+            profileList.add(new com.vet24.models.user.Profile(users.get(i - 1),
+                    "avatarUrl" + i,
+                    "firstName" + i,
+                    "lastName" + i,
                     LocalDate.parse("1970-01-01"),
                     "discordId" + i,
-                    "telegramId" + i ));
+                    "telegramId" + i));
         }
         profileService.persistAll(profileList);
     }
 
+
+    public void petFoundInit() {
+        PetFound petFoundTest = new PetFound();
+        Pet petTest = petService.getByKey(1L);
+        List<PetFound> petFoundList = new ArrayList<>();
+        petFoundTest.setFoundDate(LocalDateTime.now());
+        petFoundTest.setMessage("сообщение");
+        petFoundTest.setLongitude("долгота");
+        petFoundTest.setLatitude("широта");
+        petFoundTest.setPet(petTest);
+        petFoundList.add(petFoundTest);
+        petFoundService.persistAll(petFoundList);
+    }
 
     @Override
     @Transactional
@@ -516,6 +535,7 @@ public class TestDataInitializer implements ApplicationRunner {
             notificationAndUserNotificationInit();
             newsInit();
             profileInit();
+            petFoundInit();
         }
     }
 }
