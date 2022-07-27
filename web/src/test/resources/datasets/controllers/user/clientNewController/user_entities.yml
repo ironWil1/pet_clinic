@@ -1,0 +1,19 @@
+USER_ENTITIES:
+  - ID: 1
+    USER_TYPE: "CLIENT"
+    ENABLED: true
+    EMAIL: "client1@email.com"
+    PASSWORD: "{bcrypt}$2a$12$Z/gpYA7gLUuFKZM7EROGduwYlXJnZplTVemX.kpKy52khCANZVJWW" #"client"
+
+PROFILES:
+  - USER_ID: 1
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Client"
+    LAST_NAME: "Client"
+
+ROLE:
+  - NAME: "CLIENT"
+
+USER_ROLE:
+  - USER_ID: 1
+    ROLE_NAME: "CLIENT"
