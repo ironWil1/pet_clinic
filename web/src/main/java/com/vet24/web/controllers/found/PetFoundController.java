@@ -63,7 +63,7 @@ public class PetFoundController {
             petFound.setPet(petContact.getPet());
             petFoundService.persist(petFound);
 
-            String text = petFound.getText();
+            String text = petFound.getMessage();
             String geolocationPetFoundUrl = String.format(googleMapsServiceUrl, petFound.getLatitude(), petFound.getLongitude());
             log.info("Pet with this code {} found on the latitude{} and longitude {}", code,petFound.getLatitude(),petFound.getLongitude());
             mailService.sendGeolocationPetFoundMessage(petContact, geolocationPetFoundUrl, text);
