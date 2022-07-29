@@ -16,4 +16,9 @@ public class ExternalParasiteProcedureServiceImpl extends ReadWriteServiceImpl<L
         super(externalParasiteProcedureDao);
         this.externalParasiteProcedureDao = externalParasiteProcedureDao;
     }
+
+    @Override
+    public boolean isExistByIdAndClientId(Long id, Long clientId) {
+        return externalParasiteProcedureDao.isExistByIdAndClientId(id, clientId);
+    }
 }
