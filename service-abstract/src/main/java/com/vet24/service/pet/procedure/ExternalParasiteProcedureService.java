@@ -4,4 +4,5 @@ import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.service.ReadWriteService;
 
 public interface ExternalParasiteProcedureService extends ReadWriteService<Long, ExternalParasiteProcedure> {
+    boolean isExistByIdAndClientId(Long id,Long clientId);
 }

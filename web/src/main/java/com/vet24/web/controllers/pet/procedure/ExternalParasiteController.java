@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,11 +47,12 @@ public class ExternalParasiteController {
     private final MedicineService medicineService;
     private final ExternalParasiteMapper externalParasiteMapper;
     private final ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao;
-    private  final PetDaoImpl petDao;
+    private final PetDaoImpl petDao;
 
     private static final String PET_NOT_FOUND = "Питомец не найден";
     private static final String PROCEDURE_NOT_FOUND = "Процедура не найдена";
-    private static final String NOT_YOURS = "Данный питомец Вам не принадлежит";
+    private static final String PET_NOT_YOURS = "Данный питомец Вам не принадлежит";
+    private static final String PROCEDURE_NOT_YOURS = "Данная запись на процедуру не для Вашего питомца";
 
     private void checkPet(Long petId) {
         if (!petService.isExistByKey(petId)) {
@@ -66,9 +66,15 @@ public class ExternalParasiteController {
         }
     }
 
+    private void checkClientProcedure(Long id) {
+        if (!externalParasiteProcedureService.isExistByIdAndClientId(id, getSecurityUserOrNull().getId())) {
+            throw new BadRequestException(PROCEDURE_NOT_YOURS);
+        }
+    }
+
     private void checkPetOwner(Long petId) {
         if (!petDao.isExistByPetIdAndClientId(petId, getSecurityUserOrNull().getId())) {
-            throw new BadRequestException(NOT_YOURS);
+            throw new BadRequestException(PET_NOT_YOURS);
         }
     }
 
@@ -123,6 +129,7 @@ public class ExternalParasiteController {
     @GetMapping("/{id}")
     public ResponseEntity<ExternalParasiteDto> getById(@PathVariable Long id) {
         checkProcedure(id);
+        checkClientProcedure(id);
 
         ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getByKey(id);
         ExternalParasiteDto externalParasiteDto = externalParasiteMapper.toDto(externalParasiteProcedure);
@@ -172,6 +179,7 @@ public class ExternalParasiteController {
                                                       @Validated(OnUpdate.class)
                                                       @RequestBody ExternalParasiteDto externalParasiteDto) {
         checkProcedure(id);
+        checkClientProcedure(id);
 
         ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getByKey(id);
         Pet pet = externalParasiteProcedure.getPet();
@@ -180,6 +188,7 @@ public class ExternalParasiteController {
         checkPetOwner(pet.getId());
 
         externalParasiteMapper.updateEntity(externalParasiteDto, externalParasiteProcedure);
+        externalParasiteProcedure.setId(id);
         Medicine medicine = medicineService.getByKey(externalParasiteDto.getMedicineId());
         externalParasiteProcedure.setMedicine(medicine);
         externalParasiteProcedureService.update(externalParasiteProcedure);
@@ -198,6 +207,7 @@ public class ExternalParasiteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         checkProcedure(id);
+        checkClientProcedure(id);
 
         ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureService.getByKey(id);
         Pet pet = externalParasiteProcedure.getPet();
