@@ -1,21 +1,23 @@
 USER_ENTITIES:
   - ID: 1
     USER_TYPE: "CLIENT"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Ivan"
-    LASTNAME: "Ivanov"
     EMAIL: "user1@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$K/wWuWj7/fFSLB./szNWSuEa8BZy6gOcIG0G4ZTiH2iqFCsdsBhne" #"user1"
   - ID: 2
     USER_TYPE: "CLIENT"
-    AVATAR: "test.png"
     ENABLED: true
-    FIRSTNAME: "Petr"
-    LASTNAME: "Petrov"
     EMAIL: "user2@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$FP8JBFyJttuTOitlBAR.xe5ThNOa8qX8TlNSWgQetSyvHdH/9o9Pq" #"user2"
-
+PROFILES:
+  - USER_ID: 1
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Ivan"
+    LAST_NAME: "Ivanov"
+  - USER_ID: 2
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Petr"
+    LAST_NAME: "Petrov"
 ROLE:
   - NAME: "CLIENT"
 

@@ -1,4 +1,4 @@
-package com.vet24.web.pet.procedure;
+package com.vet24.web.controllers.pet.procedure;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.models.dto.pet.procedure.DewormingDto;

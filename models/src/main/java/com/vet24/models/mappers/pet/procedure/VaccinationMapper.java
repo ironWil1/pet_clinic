@@ -1,6 +1,5 @@
 package com.vet24.models.mappers.pet.procedure;
 
-
 import com.vet24.models.dto.pet.procedure.VaccinationDto;
 import com.vet24.models.mappers.DtoMapper;
 import com.vet24.models.mappers.EntityMapper;
@@ -9,8 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface VaccinationMapper extends
-        DtoMapper<VaccinationProcedure, VaccinationDto>, EntityMapper<VaccinationDto, VaccinationProcedure> {
+public interface VaccinationMapper extends DtoMapper<VaccinationProcedure, VaccinationDto>, EntityMapper<VaccinationDto, VaccinationProcedure> {
 
     @Mapping(source = "medicine.id", target = "medicineId")
     @Override
