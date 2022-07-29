@@ -1,0 +1,9 @@
+NEWS_PICTURES:
+  - NEWS_ID: 101
+    PICTURES: "picture1"
+
+  - NEWS_ID: 202
+    PICTURES: "picture2"
+
+  - NEWS_ID: 303
+    PICTURES: "picture3"

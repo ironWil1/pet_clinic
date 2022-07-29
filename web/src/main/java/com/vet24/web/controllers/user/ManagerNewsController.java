@@ -128,7 +128,7 @@ public class ManagerNewsController {
                     description = "picture was successfully added",
                     content = @Content(mediaType = "application/json"))
     })
-    @PutMapping("/api/manager/news/{id}/pictures/")
+    @PutMapping("/{id}/pictures/")
     public ResponseEntity<Void> addNewsPicture(@RequestBody List<String> pictures, @PathVariable Long id) {
         newsService.addNewsPicturesById(id, pictures);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -141,7 +141,7 @@ public class ManagerNewsController {
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "news could not be published")
     })
-    @PutMapping("/api/manager/news/publish")
+    @PutMapping("/publish")
     public ResponseEntity<Map<Long, String>> publishNews(@RequestBody List<Long> newsId) {
         return ResponseEntity.ok(newsService.publishNews(newsId));
     }
@@ -153,7 +153,7 @@ public class ManagerNewsController {
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "unpublish news not succeed")
     })
-    @PutMapping("/api/manager/news/unpublish")
+    @PutMapping("/unpublish")
     public ResponseEntity<Map<Long, String>> unpublishNews(@RequestBody List<Long> newsId) {
         return ResponseEntity.ok(newsService.unpublishNews(newsId));
     }

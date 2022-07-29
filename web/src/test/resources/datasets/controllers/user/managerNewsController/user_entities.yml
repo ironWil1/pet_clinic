@@ -1,0 +1,19 @@
+USER_ENTITIES:
+  - ID: 1
+    USER_TYPE: "MANAGER"
+    ENABLED: true
+    EMAIL: "manager1@email.com"
+    PASSWORD: "{bcrypt}$2a$12$c3tOVldsS88AjG8bLd2t5OMTfctjv.UY2hAg4qWtp2.VlDG7MnFa2" #"manager"
+
+PROFILES:
+  - USER_ID: 1
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Manager"
+    LAST_NAME: "Manager"
+
+ROLE:
+  - NAME: "MANAGER"
+
+USER_ROLE:
+  - USER_ID: 1
+    ROLE_NAME: "MANAGER"
