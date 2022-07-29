@@ -11,7 +11,7 @@ To create and start the database enter the following command in the terminal in 
 
 To stop service
 
-```docker-compose stop```
+```docker-compose stop```  
 
 Start service
 
