@@ -108,6 +108,7 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
         return notUnpublishNews;
     }
 
+    @Transactional
     @Override
     public void addNewsPicturesById(Long id, List<String> pictures) {
         News news = newsDao.getByKey(id);
