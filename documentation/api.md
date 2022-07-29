@@ -287,3 +287,41 @@ ClinicalExaminationResponseDto {
 ```
 4. При добавлении нового  медосмотра обновлять данные о весе питомца
 5. При изменении последнего медосмотра для питомца обновлять данные о весе питомца
+
+# Препараты
+
+## Управление препаратами менеджером
+
+1. Исправить контроллер MedicineController:
+```
+GET api/manager/medicine?manufactureName(не обязательный)&name(не обязательный)&searchText(не обязательный) -> List<MedicineResponseDto> (объединить его с /search)
+GET api/manager/medicine/{id} -> MedicineResponseDto
+DELETE api/manager/medicine/{id} -> Void
+PUT MedicineRequestDto -> api/manager/medicine/{id} -> MedicineResponseDto
+POST MedicineRequestDto -> api/manager/medicine/ -> MedicineResponseDto
+
+```
+```
+MedicineResponseDto {
+  id,
+  manufactureName,
+  name,
+  iconUrl,
+  description,
+  creationDateTime;
+  lastUpdateDateTime;
+  UserInfoDto createAuthor;
+  UserInfoDto lastUpdateAuthor;
+}
+```
+```
+MedicineRequestDto {
+  manufactureName, //notNull
+  name, //notNull
+  iconUrl, //notNull
+  description, //notNull
+}
+```
+2. методы по установке картинки  - удалить
+3. тесты поправить
+4. Сортировка выдачи списка препаратов осуществляется сперва по имени производителя, затем по названию препарата
