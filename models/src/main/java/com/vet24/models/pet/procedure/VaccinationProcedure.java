@@ -1,6 +1,5 @@
 package com.vet24.models.pet.procedure;
 
-import com.vet24.models.enums.ProcedureType;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
 import lombok.EqualsAndHashCode;
@@ -13,14 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
 import javax.persistence.ManyToOne;
 import javax.persistence.FetchType;
 import java.io.Serializable;
 import java.time.LocalDate;
-
-import static com.vet24.models.enums.ProcedureType.VACCINATION;
 
 @Getter
 @Setter
@@ -38,9 +33,6 @@ public class VaccinationProcedure implements Serializable {
     @Column
     private LocalDate date;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    public ProcedureType type;
     @Column
     private String medicineBatchNumber;
 
@@ -64,11 +56,6 @@ public class VaccinationProcedure implements Serializable {
         this.periodDays = periodDays;
         this.medicine = medicine;
         this.pet = pet;
-        this.type = VACCINATION;
-    }
-    public void setType(ProcedureType type) { this.type = VACCINATION; }
-    public ProcedureType getType() {
-        return VACCINATION;
     }
 
 }

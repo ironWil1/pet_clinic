@@ -1,0 +1,24 @@
+NEWS:
+  - ID: 101
+    TYPE: "PROMOTION"
+    CONTENT: 'content'
+    TITLE: "news"
+    IS_IMPORTANT: true
+    PUBLISHED: false
+    END_TIME: "2022-11-27 20:09:00.712268"
+
+  - ID: 202
+    TYPE: "PROMOTION"
+    CONTENT: 'content'
+    TITLE: "news"
+    IS_IMPORTANT: true
+    PUBLISHED: true
+    END_TIME: "2022-09-27 20:09:00.712268"
+
+  - ID: 303
+    TYPE: "UPDATING"
+    CONTENT: 'content'
+    TITLE: "news"
+    IS_IMPORTANT: true
+    PUBLISHED: true
+    END_TIME: "2022-07-27 20:09:00.712268"
