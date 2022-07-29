@@ -35,7 +35,7 @@ build:
       - ./target
       - ./.m2
   tags:
-    - clinic_shell
+    - docker_runner
   rules:
     - changes:
         - documentation/**/*
@@ -85,8 +85,12 @@ clean:
   tags:
     - clinic_shell
   rules:
+    - changes:
+        - documentation/**/*
+        - .gitlab-ci.yml
+      when: never
     - if: $CI_COMMIT_BRANCH == 'master'
-      when: manual
+      when: always
 
 rebuilding:
   stage: rebuilding
