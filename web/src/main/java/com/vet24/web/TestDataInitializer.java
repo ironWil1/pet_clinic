@@ -66,6 +66,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -496,15 +497,52 @@ public class TestDataInitializer implements ApplicationRunner {
 
 
     public void petFoundInit() {
+        List<PetFound> petFoundList = new ArrayList<>();
         PetFound petFoundTest = new PetFound();
         Pet petTest = petService.getByKey(1L);
-        List<PetFound> petFoundList = new ArrayList<>();
         petFoundTest.setFoundDate(LocalDateTime.now());
         petFoundTest.setMessage("сообщение");
         petFoundTest.setLongitude("долгота");
         petFoundTest.setLatitude("широта");
         petFoundTest.setPet(petTest);
         petFoundList.add(petFoundTest);
+
+        PetFound petFoundTest2 = new PetFound();
+        Pet petTest2 = petService.getByKey(2L);
+        petFoundTest2.setFoundDate(LocalDateTime.now());
+        petFoundTest2.setMessage("сообщение");
+        petFoundTest2.setLongitude("долгота");
+        petFoundTest2.setLatitude("широта");
+        petFoundTest2.setPet(petTest2);
+        petFoundList.add(petFoundTest2);
+
+        PetFound petFoundTest3 = new PetFound();
+        Pet petTest3 = petService.getByKey(3L);
+        petFoundTest3.setFoundDate(LocalDateTime.now());
+        petFoundTest3.setMessage("сообщение");
+        petFoundTest3.setLongitude("долгота");
+        petFoundTest3.setLatitude("широта");
+        petFoundTest3.setPet(petTest3);
+        petFoundList.add(petFoundTest3);
+
+        PetFound petFoundTest4 = new PetFound();
+        Pet petTest4 = petService.getByKey(4L);
+        petFoundTest4.setFoundDate(LocalDateTime.now());
+        petFoundTest4.setMessage("сообщение");
+        petFoundTest4.setLongitude("долгота");
+        petFoundTest4.setLatitude("широта");
+        petFoundTest4.setPet(petTest4);
+        petFoundList.add(petFoundTest4);
+
+        PetFound petFoundTest5 = new PetFound();
+        Pet petTest5 = petService.getByKey(5L);
+        petFoundTest5.setFoundDate(LocalDateTime.now());
+        petFoundTest5.setMessage("сообщение");
+        petFoundTest5.setLongitude("долгота");
+        petFoundTest5.setLatitude("широта");
+        petFoundTest5.setPet(petTest5);
+        petFoundList.add(petFoundTest5);
+
         petFoundService.persistAll(petFoundList);
     }
 
