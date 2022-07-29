@@ -1,5 +1,7 @@
 package com.vet24.web.controllers.pet.procedure;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.vet24.models.dto.OnCreate;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.procedure.VaccinationDto;
 import com.vet24.models.exception.BadRequestException;
@@ -7,6 +9,7 @@ import com.vet24.models.mappers.pet.procedure.VaccinationMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
+import com.vet24.models.util.View;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
@@ -82,7 +86,7 @@ public class VaccinationController {
             @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<VaccinationDto>> getByPetId(@RequestParam(name = "petId") Long petId) {
 
         checkPet(petId);
@@ -125,13 +129,15 @@ public class VaccinationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully save a Procedure",
                     content = @Content(schema = @Schema(implementation = VaccinationDto.class))),
-            @ApiResponse(responseCode = "404", description = "Pet or Procedure not found",
+            @ApiResponse(responseCode = "404", description = "Pet not found",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet not assigned with Procedure OR pet not yours",
+            @ApiResponse(responseCode = "400", description = "Pet not yours",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<VaccinationDto> save(@RequestParam(name = "petId") Long petId,
+                                               @JsonView(View.Post.class)
+                                               @Validated(OnCreate.class)
                                                @RequestBody VaccinationDto vaccinationDto) {
         checkPet(petId);
         checkOwnerPet(petId);
