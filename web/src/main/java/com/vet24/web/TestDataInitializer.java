@@ -499,47 +499,16 @@ public class TestDataInitializer implements ApplicationRunner {
     public void petFoundInit() {
         List<Pet> pets = petService.getAll();
         List<PetFound> petFoundList = new ArrayList<>();
-        for (int j = 1; j <= 30; j++) {
-            PetFound petFoundTest = new PetFound();
-            petFoundTest.setFoundDate(LocalDateTime.now());
-            petFoundTest.setMessage("сообщение");
-            petFoundTest.setLongitude("долгота");
-            petFoundTest.setLatitude("широта");
-            petFoundTest.setPet(petService.getByKey((long) j));
-            petFoundList.add(petFoundTest);
-
-            PetFound petFoundTest2 = new PetFound();
-            petFoundTest2.setFoundDate(LocalDateTime.now());
-            petFoundTest2.setMessage("сообщение");
-            petFoundTest2.setLongitude("долгота");
-            petFoundTest2.setLatitude("широта");
-            petFoundTest2.setPet(petService.getByKey((long) j));
-            ;
-            petFoundList.add(petFoundTest2);
-
-            PetFound petFoundTest3 = new PetFound();
-            petFoundTest3.setFoundDate(LocalDateTime.now());
-            petFoundTest3.setMessage("сообщение");
-            petFoundTest3.setLongitude("долгота");
-            petFoundTest3.setLatitude("широта");
-            petFoundTest3.setPet(petService.getByKey((long) j));
-            petFoundList.add(petFoundTest3);
-
-            PetFound petFoundTest4 = new PetFound();
-            petFoundTest4.setFoundDate(LocalDateTime.now());
-            petFoundTest4.setMessage("сообщение");
-            petFoundTest4.setLongitude("долгота");
-            petFoundTest4.setLatitude("широта");
-            petFoundTest4.setPet(petService.getByKey((long) j));
-            petFoundList.add(petFoundTest4);
-
-            PetFound petFoundTest5 = new PetFound();
-            petFoundTest5.setFoundDate(LocalDateTime.now());
-            petFoundTest5.setMessage("сообщение");
-            petFoundTest5.setLongitude("долгота");
-            petFoundTest5.setLatitude("широта");
-            petFoundTest5.setPet(petService.getByKey((long) j));
-            petFoundList.add(petFoundTest5);
+        for (int i = 1; i <= pets.size(); i++) {
+            for (int j = 1; j <= 5; j++) {
+                PetFound petFoundTest = new PetFound();
+                petFoundTest.setFoundDate(LocalDateTime.now());
+                petFoundTest.setMessage("сообщение");
+                petFoundTest.setLongitude("долгота");
+                petFoundTest.setLatitude("широта");
+                petFoundTest.setPet(petService.getByKey((long) i));
+                petFoundList.add(petFoundTest);
+            }
         }
         petFoundService.persistAll(petFoundList);
     }
