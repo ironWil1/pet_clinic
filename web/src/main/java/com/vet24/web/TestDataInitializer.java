@@ -66,6 +66,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -496,15 +497,19 @@ public class TestDataInitializer implements ApplicationRunner {
 
 
     public void petFoundInit() {
-        PetFound petFoundTest = new PetFound();
-        Pet petTest = petService.getByKey(1L);
+        List<Pet> pets = petService.getAll();
         List<PetFound> petFoundList = new ArrayList<>();
-        petFoundTest.setFoundDate(LocalDateTime.now());
-        petFoundTest.setMessage("сообщение");
-        petFoundTest.setLongitude("долгота");
-        petFoundTest.setLatitude("широта");
-        petFoundTest.setPet(petTest);
-        petFoundList.add(petFoundTest);
+        for (int i = 1; i <= pets.size(); i++) {
+            for (int j = 1; j <= 5; j++) {
+                PetFound petFoundTest = new PetFound();
+                petFoundTest.setFoundDate(LocalDateTime.now());
+                petFoundTest.setMessage("сообщение");
+                petFoundTest.setLongitude("долгота");
+                petFoundTest.setLatitude("широта");
+                petFoundTest.setPet(petService.getByKey((long) i));
+                petFoundList.add(petFoundTest);
+            }
+        }
         petFoundService.persistAll(petFoundList);
     }
 
