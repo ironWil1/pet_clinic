@@ -7,15 +7,12 @@ import org.hibernate.Hibernate;
 import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -41,7 +38,7 @@ public class PetFound {
     @Column(name = "found_date")
     @CreatedDate
     private LocalDateTime foundDate;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = Pet.class, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY , targetEntity = Pet.class, optional = false)
     private Pet pet;
 
     @Override
