@@ -1,0 +1,67 @@
+USER_ENTITIES:
+  - ID: 100
+    USER_TYPE: "ADMIN"
+    EMAIL: "admin1@email.com"
+    ENABLED: true
+    PASSWORD: "{bcrypt}$2a$12$b5SpHA7tzgKb4bLSDppmS.3aZMdBu8diJKNHQDU7eASiTni2WlwHq" #"admin"
+  - ID: 101
+    USER_TYPE: "MANAGER"
+    EMAIL: "manager1@email.com"
+    ENABLED: true
+    PASSWORD: "{bcrypt}$2a$12$c3tOVldsS88AjG8bLd2t5OMTfctjv.UY2hAg4qWtp2.VlDG7MnFa2" #"manager"
+  - ID: 102
+    USER_TYPE: "CLIENT"
+    EMAIL: "client1@email.com"
+    ENABLED: true
+    PASSWORD: "{bcrypt}$2a$12$Z/gpYA7gLUuFKZM7EROGduwYlXJnZplTVemX.kpKy52khCANZVJWW" #"client"
+  - ID: 103
+    USER_TYPE: "DOCTOR"
+    EMAIL: "doctor103@email.com"
+    ENABLED: true
+    PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"
+
+PROFILES:
+  - USER_ID: 100
+    AVATAR_URL: "test.png"
+    BIRTH_DATE: "1999-03-10"
+    DISCORD_ID: "discordId100"
+    FIRST_NAME: "Admin"
+    LAST_NAME: "Admin"
+    TELEGRAM_ID: "telegramId100"
+  - USER_ID: 101
+    AVATAR_URL: "test.png"
+    BIRTH_DATE: "1999-03-11"
+    DISCORD_ID: "discordId101"
+    FIRST_NAME: "Manager"
+    LAST_NAME: "Manager"
+    TELEGRAM_ID: "telegramId101"
+  - USER_ID: 102
+    AVATAR_URL: "test.png"
+    BIRTH_DATE: "1999-03-12"
+    DISCORD_ID: "discordId102"
+    FIRST_NAME: "Client"
+    LAST_NAME: "Client"
+    TELEGRAM_ID: "telegramId102"
+  - USER_ID: 103
+    AVATAR_URL: "test.png"
+    BIRTH_DATE: "1999-03-13"
+    DISCORD_ID: "discordId103"
+    FIRST_NAME: "Dr."
+    LAST_NAME: "Petrov"
+    TELEGRAM_ID: "telegramId103"
+
+ROLE:
+  - NAME: "ADMIN"
+  - NAME: "MANAGER"
+  - NAME: "CLIENT"
+  - NAME: "DOCTOR"
+
+USER_ROLE:
+  - USER_ID: 100
+    ROLE_NAME: "ADMIN"
+  - USER_ID: 101
+    ROLE_NAME: "MANAGER"
+  - USER_ID: 102
+    ROLE_NAME: "CLIENT"
+  - USER_ID: 103
+    ROLE_NAME: "DOCTOR"
