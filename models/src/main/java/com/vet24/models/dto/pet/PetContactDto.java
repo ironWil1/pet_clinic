@@ -17,5 +17,8 @@ public class PetContactDto {
 
     @NotNull(message = "Поле phone не должно быть null")
     private Long phone;
+
+    @NotBlank(message = "Поле description не должно быть пустым")
+    private String description;
 }
 
