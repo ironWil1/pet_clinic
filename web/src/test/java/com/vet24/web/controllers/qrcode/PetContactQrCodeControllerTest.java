@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -22,9 +21,9 @@ public class PetContactQrCodeControllerTest extends ControllerAbstractIntegratio
     @Autowired
     PetContactDao petContactDao;
 
-    PetContactDto petContactDtoNew = new PetContactDto("Петр", "Пущино 39", 89267777777L);
-    PetContactDto petContactDto1 = new PetContactDto("Мария", "Невского 17", 4854789899L);
-    PetContactDto petContactDto2 = new PetContactDto("Ираида", "Кастанаевская 45", 84951447200L);
+    PetContactDto petContactDtoNew = new PetContactDto("Петр", "Пущино 39", 89267777777L, "Some description");
+    PetContactDto petContactDto1 = new PetContactDto("Мария", "Невского 17", 4854789899L, "Some description");
+    PetContactDto petContactDto2 = new PetContactDto("Ираида", "Кастанаевская 45", 84951447200L, "Some description");
 
     @Before
     public void setToken() throws Exception {
