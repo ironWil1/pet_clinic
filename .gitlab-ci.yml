@@ -77,6 +77,8 @@ integration_test_job:
     - docker_runner
   rules:
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
+    - if: $CI_COMMIT_TITLE =~ /-draft$/
+            when: never
 
 clean:
   stage: clean
