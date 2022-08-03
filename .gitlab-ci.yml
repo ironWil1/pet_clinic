@@ -3,7 +3,6 @@ stages:
   - build
   - restart
   - test
-  - clean
   - rebuilding
 
 #sonarqube-check:
@@ -24,44 +23,43 @@ stages:
 build:
   image: maven:3.8-jdk-11-slim
   stage: build
+  variables:
+    MAVEN_OPTS: -Dmaven.test.skip=true -Dmaven.repo.local=.m2/repository
   script:
-    - 'mvn package -Dmaven.test.skip=true'
+    - mvn package
   artifacts:
+    name: petclinic
     paths:
-      - target/*.jar
+      - web/target/*.jar
     expire_in: 1 day
   cache:
     paths:
-      - ./target
-      - ./.m2
+      - .m2/repository
   tags:
     - docker_runner
   rules:
     - changes:
         - documentation/**/*
-        - .gitlab-ci.yml
+        - README.md
       when: never
     - if: $CI_COMMIT_BRANCH == 'master'
       when: always
 
 restart:
-  image: docker:20.10.16
   stage: restart
-  before_script:
-    - docker-compose build petclinic
   script:
-    - docker-compose up -d petclinic
-  after_script:
-    - docker image prune -f
+    - docker-compose rm -f -s -v petclinic
+    - docker image rm petclinic_image || true
+    - docker-compose up -d --no-deps petclinic
   tags:
     - clinic_shell
   rules:
     - changes:
         - documentation/**/*
-        - .gitlab-ci.yml
+        - README.md
       when: never
     - if: $CI_COMMIT_BRANCH == 'master'
-      when: manual
+      when: on_success
 
 integration_test_job:
   services:
@@ -78,38 +76,21 @@ integration_test_job:
   rules:
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
 
-clean:
-  stage: clean
-  script:
-    - docker image prune
-  tags:
-    - clinic_shell
-  rules:
-    - changes:
-        - documentation/**/*
-        - .gitlab-ci.yml
-      when: never
-    - if: $CI_COMMIT_BRANCH == 'master'
-      when: always
-
 rebuilding:
   stage: rebuilding
-  before_script:
-    - docker-compose down -v
-    - docker image prune -a -f
-    - docker-compose build pets_db
-    - docker-compose build petclinic
+  needs:
+    - build
+  dependencies:
+    - build
   script:
-    - docker-compose up -d pets_db
-    - docker-compose up -d petclinic
-  after_script:
-    - docker image prune -f
+    - docker-compose down -v --rmi all
+    - docker-compose up -d
   tags:
     - clinic_shell
   rules:
     - changes:
         - documentation/**/*
-        - .gitlab-ci.yml
+        - README.md
       when: never
     - if: $CI_COMMIT_BRANCH == 'master'
       when: manual
