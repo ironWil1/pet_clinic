@@ -78,7 +78,7 @@ integration_test_job:
   rules:
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
     - if: $CI_COMMIT_TITLE =~ /-draft$/
-            when: never
+      when: never
 
 clean:
   stage: clean
