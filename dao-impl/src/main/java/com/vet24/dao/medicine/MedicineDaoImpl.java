@@ -27,6 +27,7 @@ public class MedicineDaoImpl extends ReadWriteDaoImpl<Long, Medicine> implements
         return manager.createNativeQuery("SELECT * from medicine WHERE "
                 + "manufacture_name LIKE :manufactureName "
                 + "AND name LIKE :name "
+                + "ORDER BY manufacture_name ASC, name ASC"
                 , Medicine.class)
                 .setParameter("manufactureName", "%" + manufactureName + "%")
                 .setParameter("name", "%" + name + "%")
