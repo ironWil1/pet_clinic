@@ -37,4 +37,3 @@ build/
 
 ### VS Code ###
 .vscode/
-/web/src/main/java/com/vet24/web/controllers/media/TestDiscordContoller.java

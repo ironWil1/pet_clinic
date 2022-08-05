@@ -34,7 +34,7 @@ public class DiscordMessage {
     private Long discordMsgId;
 
     @Column(name = "channel_id")
-    private Long channel_id;
+    private Long channelId;
 
     @Override
     public boolean equals(Object o) {
