@@ -78,6 +78,7 @@ integration_test_job:
       when: never
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
 
+
 rebuilding:
   stage: rebuilding
   needs:
