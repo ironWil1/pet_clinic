@@ -32,7 +32,7 @@ public class DiscordServiceImpl implements DiscordService {
             ResponseEntity<MessageDto> response = discordClient.send(dto, dto.getChannel_id(), true);
             discordMessage.setDiscordMsgId(response.getBody().getId());
             if (response.getBody().getChannel_id() != null) {
-                discordMessage.setChannel_id(response.getBody().getChannel_id());
+                discordMessage.setChannelId(response.getBody().getChannel_id());
             }
             discordMessageDao.persist(discordMessage);
         } catch (JsonProcessingException e) {
