@@ -9,5 +9,5 @@ public class PetFoundDto {
 
     private String latitude;
     private String longitude;
-    private String text;
+    private String message;
 }

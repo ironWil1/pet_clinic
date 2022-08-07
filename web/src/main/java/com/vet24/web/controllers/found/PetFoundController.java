@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @Slf4j
 @RequestMapping("/api/petFound")
@@ -59,31 +61,35 @@ public class PetFoundController {
         "longitude" : "2.3456789",
         "text" : "Какой-то текст"
     }*/
-//    @Operation(summary = "Сохранение данных найденного питомца и создание с отправкой владельцу сообщения о питомце")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "201", description = "Данные найденного питомца успешно сохранены, сообщение создано",
-//                    content = @Content(mediaType = "application/json")),
-//            @ApiResponse(responseCode = "404", description = "Данные о питомце по коду не найдены"),
-//    })
-//    @PostMapping(value = "")
-//    public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "code", required = false) String code,
-//                                                                          @RequestBody PetFoundDto petFoundDto) {
-//        if (petContactService.isExistByCode(code)) {
-//            PetContact petContact = petContactService.getByCode(code);
-//            PetFound petFound = petFoundMapper.toEntity(petFoundDto);
-//            petFound.setPet(petContact.getPet());
-//            petFoundService.persist(petFound);
-//
-//            String text = petFound.getMessage();
-//            String geolocationPetFoundUrl = String.format(googleMapsServiceUrl, petFound.getLatitude(), petFound.getLongitude());
-//            log.info("Pet with this code {} found on the latitude{} and longitude {}", code, petFound.getLatitude(), petFound.getLongitude());
-//            mailService.sendGeolocationPetFoundMessage(petContact, geolocationPetFoundUrl, text);
-//            return new ResponseEntity<>(HttpStatus.CREATED);
-//        } else {
-//            log.info("Pet with this code {} does not exist or was not found", code);
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
+
+    @Operation(summary = "Сохранение данных найденного питомца и создание с отправкой владельцу сообщения о питомце")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Данные найденного питомца успешно сохранены, сообщение создано",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Данные о питомце по коду не найдены"),
+    })
+    @PostMapping(value = "")
+    public ResponseEntity<PetFoundDto> savePetFoundAndSendOwnerPetMessage(@RequestParam(value = "code", required = false) String code,
+                                                                          @RequestBody PetFoundDto petFoundDto) {
+        if (petContactService.isExistByCode(code)) {
+            PetContact petContact = petContactService.getByCode(code);
+            PetFound petFound = petFoundMapper.toEntity(petFoundDto);
+            petFound.setPet(petContact.getPet());
+            petFound.setFoundDate(LocalDateTime.now());
+
+            petFoundService.persist(petFound);
+
+            String message = petFound.getMessage();
+            String geolocationPetFoundUrl = String.format(googleMapsServiceUrl, petFound.getLatitude(), petFound.getLongitude());
+            log.info("Pet with this code {} found on the latitude{} and longitude {}", code, petFound.getLatitude(), petFound.getLongitude());
+            mailService.sendGeolocationPetFoundMessage(petContact, geolocationPetFoundUrl, message);
+
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } else {
+            log.info("Pet with this code {} does not exist or was not found", code);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     @Operation(summary = "получение контактной информации")
     @ApiResponses(value = {
@@ -94,6 +100,9 @@ public class PetFoundController {
     @GetMapping(value = "")
     public ResponseEntity<PetContactDto> getPetContaсtInfo(@RequestParam(value = "code") String code) {
         PetContact petContact = petContactService.getByCode(code);
-        return new ResponseEntity<>(petContactMapper.toDto(petContact), HttpStatus.OK);
+        if (code != null) {
+            return new ResponseEntity<>(petContactMapper.toDto(petContact), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
