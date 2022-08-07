@@ -4,13 +4,20 @@ MEDICINE:
     ICON_URL: "test.png"
     MANUFACTURE_NAME: "test_manufacture_name1"
     NAME: "name1"
+    CREATION_DATE_TIME: "2022-02-11"
+    LAST_UPDATE_DATE_TIME: "2022-03-19"
+
   - ID: 101
     DESCRIPTION: "test_description2"
     ICON_URL: "test.png"
     MANUFACTURE_NAME: "test_manufacture_name2"
     NAME: "name2"
+    CREATION_DATE_TIME: "2021-11-02"
+    LAST_UPDATE_DATE_TIME: "2022-11-03"
   - ID: 102
     DESCRIPTION: "test_description3"
     ICON_URL: "test.png"
     MANUFACTURE_NAME: "test_manufacture_name3"
     NAME: "name3"
+    CREATION_DATE_TIME: "2009-01-16"
+    LAST_UPDATE_DATE_TIME: "2022-05-10"

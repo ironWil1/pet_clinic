@@ -1,0 +1,26 @@
+USER_ENTITIES:
+  - ID: 100
+    USER_TYPE: "ADMIN"
+    ENABLED: true
+    EMAIL: "admin1@email.com"
+    PASSWORD: "{bcrypt}$2a$12$b5SpHA7tzgKb4bLSDppmS.3aZMdBu8diJKNHQDU7eASiTni2WlwHq" #"admin"
+PROFILES:
+  - USER_ID: 100
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Admin"
+    LAST_NAME: "Admin"
+    BIRTH_DATE: 2022-03-02
+    DISCORD_ID: "DISCORD"
+    TELEGRAM_ID: "TELEGRAM"
+
+ROLE:
+  - NAME: "ADMIN"
+  - NAME: "MANAGER"
+  - NAME: "CLIENT"
+  - NAME: "UNVERIFIED_CLIENT"
+  - NAME: "DOCTOR"
+
+USER_ROLE:
+  - USER_ID: 100
+    ROLE_NAME: "ADMIN"
+

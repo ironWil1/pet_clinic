@@ -4,6 +4,7 @@ package com.vet24.web.controllers.user;
 import com.vet24.models.dto.user.ProfileDto;
 import com.vet24.models.mappers.user.ProfileMapper;
 import com.vet24.models.user.Profile;
+import com.vet24.service.user.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,12 +31,15 @@ public class UserProfileController {
 
     private final ProfileMapper profileMapper;
 
+    private final ProfileService profileService;
 
-    public UserProfileController(ProfileMapper profileMapper) {
+
+    public UserProfileController(ProfileMapper profileMapper, ProfileService profileService) {
         this.profileMapper = profileMapper;
+        this.profileService = profileService;
     }
 
-    @Operation(summary = "Получить профиль по id")
+    @Operation(summary = "Получить профиль")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Профиль успешно получен",
                     content = @Content(mediaType = "application/json",
@@ -65,6 +69,7 @@ public class UserProfileController {
         Profile profile = getSecurityUserOrNull().getProfile();
         if (profile != null) {
             profileMapper.updateEntity(profileDto, profile);
+            profileService.update(profile);
             return ResponseEntity.ok().build();
         } else {
             throw new NotFoundException("Профиль не найден");
