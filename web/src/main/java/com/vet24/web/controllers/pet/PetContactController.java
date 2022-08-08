@@ -51,7 +51,7 @@ public class PetContactController {
         this.clientService = clientService;
     }
 
-    @Operation(summary = "Получние Контакта питомца по его ID")
+    @Operation(summary = "Получение Контакта питомца по его ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Контакт питомца получен",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PetContactDto.class))),

@@ -1,26 +1,30 @@
 package com.vet24.models.dto.user;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.vet24.models.dto.OnCreate;
-import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.enums.NewsType;
-import com.vet24.models.util.View;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ManagerNewsRequestDto {
+    @NotBlank(message = "Поле title не должно быть пустым")
     private String title;
-    @NotBlank(groups = {OnCreate.class, OnUpdate.class},
-            message = "Поле content не должно быть пустым")
+
+    @NotBlank(message = "Поле content не должно быть пустым")
     private String content;
+
+    @NotNull(message = "Поле type не должно быть пустым")
     private NewsType type;
+
+    @NotNull(message = "Поле isImportant не должно быть пустым")
     private boolean isImportant;
+
+    @NotNull(message = "Поле endTime не должно быть пустым")
     private LocalDateTime endTime;
 }

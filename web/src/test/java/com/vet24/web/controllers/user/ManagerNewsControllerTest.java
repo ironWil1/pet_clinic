@@ -12,30 +12,59 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest {
     private final String URI = "/api/manager/news";
-    private ManagerNewsRequestDto requestDto;
+
+    private ManagerNewsRequestDto managerNewsSuccess;
+    private ManagerNewsRequestDto managerNewsEmptyFirstField;
+    private ManagerNewsRequestDto managerNewsEmptySecondField;
+    private ManagerNewsRequestDto managerNewsEmptyThirdField;
+    private ManagerNewsRequestDto managerNewsEmptyFifthField;
+
     private List<String> pictures;
+    private List<String> pics;
+    private int initialCount = 3;
     private String token;
+
+    @Before
+    public void createManagerNewsRequestDto() {
+        managerNewsSuccess = new ManagerNewsRequestDto("news", "content", NewsType.PROMOTION, true, LocalDateTime.now());
+        managerNewsEmptyFirstField = new ManagerNewsRequestDto(null , "content", NewsType.PROMOTION, true, LocalDateTime.now());
+        managerNewsEmptySecondField = new ManagerNewsRequestDto("news", null, NewsType.PROMOTION, true, LocalDateTime.now());
+        managerNewsEmptyThirdField = new ManagerNewsRequestDto("news", "content", null, true, LocalDateTime.now());
+        managerNewsEmptyFifthField = new ManagerNewsRequestDto("news", "content", NewsType.PROMOTION, true, null);
+        pics = new ArrayList<>();
+        pics.add("picture2");
+    }
+
+    @Before
+    public void addPictures() {
+        pictures = new ArrayList<>();
+        pictures.add("picture1123");
+        pictures.add("picture1125");
+    }
 
     @Before
     public void setToken() throws Exception {
         token = getAccessToken("manager1@email.com", "manager");
 
-        requestDto = new ManagerNewsRequestDto();
-        requestDto.setContent("content");
-        requestDto.setTitle("news");
-        requestDto.setType(NewsType.PROMOTION);
+    }
 
-        pictures = new ArrayList<>();
-        pictures.add("picture1123");
-        pictures.add("picture1125");
+    private long getCountNews() {
+        return entityManager.createQuery("SELECT COUNT(n) FROM News n", Long.class).getSingleResult();
+    }
+
+    private News getNews() {
+        return entityManager.createQuery("select n from News n join fetch n.pictures where n.id = :id", News.class).setParameter("id", 202L).getSingleResult();
     }
 
     @Test
@@ -44,10 +73,10 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
             "/datasets/controllers/user/managerNewsController/news.yml",
             "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
-    public void getAllNews_ShouldShowAllNews() throws Exception {
+    public void getAllNewsSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].id").value(303))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].title").value("news"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].content").value("content"))
@@ -65,10 +94,10 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
             "/datasets/controllers/user/managerNewsController/news.yml",
             "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
-    public void getNewsById_withId_ShouldShowNewsById() throws Exception {
+    public void getNewsByIdSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/" + 202)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(202))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("news"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content").value("content"))
@@ -80,34 +109,92 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.is(8)));
     }
 
+    // Новости с таким ID не существует для GET запроса
     @Test
     @DataSet(cleanBefore = true, value = {
             "/datasets/controllers/user/managerNewsController/user_entities.yml",
             "/datasets/controllers/user/managerNewsController/news.yml",
             "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
-    public void persistNews_RequestDto_ShouldPersistNews() throws Exception {
+    public void getNonExistingNewsError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/" + 1000)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void persistNewsSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(URI)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(requestDto))
+                        .content(objectMapper.valueToTree(managerNewsSuccess).toString())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(status().isOk());
+        assertThat(++initialCount).isEqualTo(getCountNews());
+    }
 
-        List<News> news = entityManager.createQuery("select n from News n where " +
-                        "n.title = :title " +
-                        "and n.type = :type " +
-                        "and n.content = :content " +
-                        "and n.id = :id")
-                .setParameter("title", "news")
-                .setParameter("type", NewsType.PROMOTION)
-                .setParameter("content", "content")
-                .setParameter("id", 1L)
-                .getResultList();
+    // Были заполнены не все поля при создании Новости (1 поле)
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void persistNewsEmptyFirstFieldError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(managerNewsEmptyFirstField).toString())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
 
-        assertEquals(1, news.get(0).getId());
-        assertEquals(NewsType.PROMOTION, news.get(0).getType());
-        assertEquals("content", news.get(0).getContent());
-        assertEquals("news", news.get(0).getTitle());
+    // Были заполнены не все поля при создании Новости (2 поле)
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void persistNewsEmptySecondFieldError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(managerNewsEmptySecondField).toString())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    // Были заполнены не все поля при создании Новости (3 поле)
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void persistNewsEmptyThirdFieldError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(managerNewsEmptyThirdField).toString())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    // Были заполнены не все поля при создании Новости (5 поле)
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void persistNewsEmptyFifthFieldError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post(URI)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(managerNewsEmptyFifthField).toString())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -116,21 +203,94 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
             "/datasets/controllers/user/managerNewsController/news.yml",
             "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
-    public void updateNewsById_RequestDto_ShouldUpdateNews() throws Exception {
-        requestDto.setContent("content2");
-        requestDto.setTitle("discord is on fire");
+    public void updateNewsSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/" + 202)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(requestDto))
+                        .content(objectMapper.valueToTree(managerNewsSuccess).toString())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(status().isOk());
+        assertThat(getNews().getTitle()).isEqualTo("news");
+        assertThat(getNews().getContent()).isEqualTo("content");
+        assertThat(getNews().getType()).isEqualTo(NewsType.PROMOTION);
+        assertThat(getNews().getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))).isEqualTo(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        assertThat(new ArrayList<>(getNews().getPictures())).isEqualTo(pics);
+        assertThat(getNews().isImportant()).isTrue();
+        assertThat(getNews().isPublished()).isTrue();
+    }
 
-        List<News> news = entityManager.createQuery("select n from News n where n.id = :id")
-                .setParameter("id", 202L)
-                .getResultList();
+    // Новости с таким ID не существует для PUT запроса
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void updateNonExistingNewsSuccess() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/" + 1000)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(managerNewsSuccess).toString())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound());
+    }
 
-        assertEquals("discord is on fire", news.get(0).getTitle());
-        assertEquals("content2", news.get(0).getContent());
+    // Были заполнены не все поля при изменении Новости (1 поле)
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void updateNonEmptyFirstFieldError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/" + 202)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(managerNewsEmptyFirstField).toString())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    // Были заполнены не все поля при изменении Новости (2 поле)
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void updateNonEmptySecondFieldError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/" + 202)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(managerNewsEmptySecondField).toString())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    // Были заполнены не все поля при изменении Новости (3 поле)
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void updateNonEmptyThirdFieldError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/" + 202)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(managerNewsEmptyThirdField).toString())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    // Были заполнены не все поля при изменении Новости (5 поле)
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void updateNonEmptyFifthFieldError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/" + 202)
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.valueToTree(managerNewsEmptyFifthField).toString())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -139,21 +299,39 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
             "/datasets/controllers/user/managerNewsController/news.yml",
             "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
-    public void addNewsPicture_Pictures_ShouldAddNewsPicture() throws Exception {
+    public void deleteNewsSuccess() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 202)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+        assertThat(--initialCount).isEqualTo(getCountNews());
+    }
+
+    // Новости с таким ID не существует для DELETE запроса
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void deleteNonExistingNewsError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 1000)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/user/managerNewsController/user_entities.yml",
+            "/datasets/controllers/user/managerNewsController/news.yml",
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
+    })
+    public void addNewsPictureSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{id}/pictures/", "202")
                 .header("Authorization", "Bearer " + token)
-                .content(objectMapper.writeValueAsString(pictures))
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
-
-        List<News> news = entityManager.createQuery("select n " +
-                        "from News n " +
-                        "join fetch n.pictures " +
-                        "where n.id = :id")
-                .setParameter("id", 202L)
-                .getResultList();
-
-        assertEquals("picture1123", news.get(0).getPictures().get(0));
-        assertEquals("picture1125", news.get(0).getPictures().get(1));
+                .content(objectMapper.valueToTree(pictures).toString())
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNoContent());
+        assertThat(new ArrayList<>(getNews().getPictures())).isEqualTo(pictures);
     }
 
     @Test
@@ -162,19 +340,16 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
             "/datasets/controllers/user/managerNewsController/news.yml",
             "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
-    public void publishNews_Ids_ShouldPublishNews() throws Exception {
+    public void publishNewsSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/publish")
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(Arrays.asList(101, 202)))
+                        .content(objectMapper.valueToTree(Arrays.asList(101, 202)).toString())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        List<News> news = entityManager.createQuery("select n from News n where n.id in :ids")
-                .setParameter("ids", Arrays.asList(101L, 202L))
-                .getResultList();
-
-        assertEquals(true, news.get(0).isPublished());
-        assertEquals(true, news.get(1).isPublished());
+                .andExpect(status().isOk());
+        News news1 = entityManager.find(News.class, 101L);
+        News news2 = entityManager.find(News.class, 202L);
+        assertThat(news1.isPublished()).isTrue();
+        assertThat(news2.isPublished()).isTrue();
     }
 
     @Test
@@ -183,36 +358,15 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
             "/datasets/controllers/user/managerNewsController/news.yml",
             "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
-    public void unpublishNews_Ids_ShouldUnpublishNews() throws Exception {
+    public void unpublishNewsSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/unpublish")
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(Arrays.asList(101, 202)))
+                        .content(objectMapper.valueToTree(Arrays.asList(101, 202)).toString())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        List<News> news = entityManager.createQuery("select n from News n where n.id in :ids")
-                .setParameter("ids", Arrays.asList(101L, 202L))
-                .getResultList();
-
-        assertEquals(false, news.get(0).isPublished());
-        assertEquals(false, news.get(1).isPublished());
-    }
-
-    @Test
-    @DataSet(cleanBefore = true, value = {
-            "/datasets/controllers/user/managerNewsController/user_entities.yml",
-            "/datasets/controllers/user/managerNewsController/news.yml",
-            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
-    })
-    public void deleteNewsById_Ids_ShoudDeleteNews() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", "101")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        List<News> news = entityManager.createQuery("select n from News n where n.id = : id")
-                .setParameter("id", 101L)
-                .getResultList();
-
-        assertEquals(true, news.isEmpty());
+                .andExpect(status().isOk());
+        News news1 = entityManager.find(News.class, 101L);
+        News news2 = entityManager.find(News.class, 202L);
+        assertThat(news1.isPublished()).isFalse();
+        assertThat(news2.isPublished()).isFalse();
     }
 }
