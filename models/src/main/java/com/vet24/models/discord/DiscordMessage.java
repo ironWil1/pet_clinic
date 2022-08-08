@@ -33,6 +33,9 @@ public class DiscordMessage {
     @NotNull
     private Long discordMsgId;
 
+    @Column(name = "channel_id")
+    private Long channelId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
