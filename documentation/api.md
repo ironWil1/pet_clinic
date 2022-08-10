@@ -255,7 +255,7 @@ class DiscordMessage{
  - sendMessage(MessageDto) -> DiscordMessage - метод отправляет сообщение в чат, сохраняет сущность в базу и возвращает эту сущность)  
  - deleteMessage(discordMessageId) - метод удаляет сообщение из дискорда и удаляет его из базы  
  - editMessage(discordMessageId, MessageDto) - изменяет сообщение в дискорде.  
-   
+
 
 <!--
 Для привязки учетной записи дискорда к профилю сделаем следующее, создадим персональный код для пользователя и отдадим ему код с инструкцией о том, куда в дискорде этот код отправить. Бот, слушающий ивенты в дискорде получит код и сохранит discordId в профиль. После этого дискорд токен будет удален.
@@ -317,7 +317,6 @@ GET api/manager/medicine/{id} -> MedicineResponseDto
 DELETE api/manager/medicine/{id} -> Void
 PUT MedicineRequestDto -> api/manager/medicine/{id} -> MedicineResponseDto
 POST MedicineRequestDto -> api/manager/medicine/ -> MedicineResponseDto
-
 ```
 ```
 MedicineResponseDto {
@@ -343,3 +342,18 @@ MedicineRequestDto {
 2. методы по установке картинки  - удалить
 3. тесты поправить
 4. Сортировка выдачи списка препаратов осуществляется сперва по имени производителя, затем по названию препарата
+
+# Аутентификация
+
+### Получение текущего пользователя
+
+1. Добавить эндпоинт ``` GET /api/auth/getCurrent -> AuthResponse ```
+2. эндпоинт должен быть доступен только аутентифицированным пользователям  
+3. Токен берется из хидера и добавляется в дто  
+
+# Репродукция  
+
+## Client  
+
+### Получение всех записей о репродукции  
+1. создать эндпоинт ``` GET /api/client/pet/{petId}/reproduction -> List<ReproductionDto>  
