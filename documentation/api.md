@@ -356,4 +356,15 @@ MedicineRequestDto {
 ## Client  
 
 ### Получение всех записей о репродукции  
-1. создать эндпоинт ``` GET /api/client/pet/{petId}/reproduction -> List<ReproductionDto>  
+1. создать эндпоинт ``` GET /api/client/pet/{petId}/reproduction -> List<ReproductionDto>```  
+
+# User  
+
+## Рефактор  
+
+### Избавляемся от наследования в моделях User  
+1. Сделать класс User не абстрактным  
+1. Перенести поля из наследников в класс User
+1. Удалить всех наследников  
+1. Исправить весь застрагиваемый код  
+1. Исправить все затрагиваемые тесты
