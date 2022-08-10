@@ -29,7 +29,7 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
 
     @Before
     public void setToken() throws Exception {
-        token = getAccessToken("client1@email.com","client");
+        token = getAccessToken("client1@email.com", "client");
     }
 
     // Сохранение данных найденного питомца и создание с отправкой владельцу сообщения о питомце - успешно
@@ -71,7 +71,6 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
                 .andExpect(jsonPath("$.latitude").value("1.2345678"))
                 .andExpect(jsonPath("$.longitude").value("2.3456789"))
                 .andExpect(jsonPath("$.message").value("какой-то текст"));
-
 
 
 //        PetFoundDto petFoundDto = new PetFoundDto("1.2345678", "2.3456789", "Какой-то текст");
