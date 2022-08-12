@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
 public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
@@ -33,7 +33,7 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
     private PetFoundDao petFoundDao;
 
-    private  PetFoundDto petFoundDto;
+    private PetFoundDto petFoundDto;
 
 
     @Before
@@ -80,4 +80,41 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
         Mockito.verify(mailService, times(0))
                 .sendGeolocationPetFoundMessage(any(PetContact.class), anyString(), anyString());
     }
+
+    //получение контактной информации - успешно
+    @Test
+    @DataSet(cleanBefore = true,
+            value = {"/datasets/pet-found.yml",
+                    "/datasets/pet-contact.yml",
+                    "/datasets/user-entities.yml",
+                    "/datasets/pet-entities.yml"})
+    public void testGetPetContaсtInfoSuccess() throws Exception {
+        String code = "2C8B05A948803EA65B96C3E1DD4DCDDC";
+        PetContact petContact = petContactService.getByCode(code);
+        mockMvc.perform(MockMvcRequestBuilders.get(URL + "/")
+                        .param("code", code)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.address").value("Стрелковая 70"))
+                .andExpect(jsonPath("$.ownerName").value("Александр"))
+                .andExpect(jsonPath("$.phone").value(89629691030L));
+    }
+
+//    @Test
+//    @DataSet(cleanBefore = true,
+//            value = {"/datasets/pet-found.yml",
+//                    "/datasets/pet-contact.yml",
+//                    "/datasets/user-entities.yml",
+//                    "/datasets/pet-entities.yml"})
+//    public void testGetPetContaсtInfoEror404Pet() throws Exception {
+//        String code = "CD0964F7A769B65E2BA57822840B0E53";
+//        PetContact petContact = petContactService.getByCode(code);
+//        mockMvc.perform(MockMvcRequestBuilders.get(URL + "/")
+//                        .param("code", code)
+//                        .header("Authorization", "Bearer " + token))
+//                .andExpect(jsonPath("$.address").value("Стрелковая 70"))
+//                .andExpect(jsonPath("$.ownerName").value("Александр"))
+//                .andExpect(jsonPath("$.phone").value(89629691030L))
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+//    }
 }
