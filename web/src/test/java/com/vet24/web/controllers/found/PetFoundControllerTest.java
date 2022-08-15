@@ -109,12 +109,10 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
             "/datasets/controllers/petContactController/pet-contact.yml"})
     public void testGetPetContaсtInfoEror404Pet() throws Exception {
         String code = "2C8B05A948803EA65B96C3E1DD4DCDDX";
-        if (petContactService.isExistByCode(code)) {
-            mockMvc.perform(MockMvcRequestBuilders.get(URL + "/")
-                            .header("Authorization", "Bearer " + token)
-                            .param("code", code)
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(MockMvcResultMatchers.status().isNotFound());
-        }
+        mockMvc.perform(MockMvcRequestBuilders.get(URL + "/")
+                        .header("Authorization", "Bearer " + token)
+                        .param("code", code)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 }
