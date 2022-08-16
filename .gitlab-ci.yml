@@ -27,8 +27,6 @@ build:
     MAVEN_OPTS: -Dmaven.test.skip=true -Dmaven.repo.local=.m2/repository
   script:
     - mvn -q clean package
-    - mvn compile
-    - mvn package
   artifacts:
     name: petclinic
     paths:
