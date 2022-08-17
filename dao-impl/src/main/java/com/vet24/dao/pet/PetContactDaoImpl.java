@@ -38,16 +38,10 @@ public class PetContactDaoImpl extends ReadWriteDaoImpl<Long, PetContact> implem
 
     @Override
     public PetContact getByCode(String code) {
-        try {
-            if (isExistByCode(code)) {
-                return (PetContact) manager.createQuery("FROM PetContact WHERE code = :code")
+
+                return  manager.createQuery("FROM PetContact WHERE code = :code", PetContact.class)
                         .setParameter("code", code)
                         .getSingleResult();
-            }
-        } catch (NoResultException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
     }
 
     @Override
