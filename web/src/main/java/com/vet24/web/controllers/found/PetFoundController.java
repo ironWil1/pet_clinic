@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.webjars.NotFoundException;
 
+import javax.persistence.NoResultException;
 import java.time.LocalDateTime;
 
 @RestController
@@ -99,10 +101,11 @@ public class PetFoundController {
     })
     @GetMapping(value = "")
     public ResponseEntity<PetContactDto> getPetContaсtInfo(@RequestParam(value = "code") String code) {
-        PetContact petContact = petContactService.getByCode(code);
-        if (code != null) {
+        if (petContactService.isExistByCode(code)) {
+            PetContact petContact = petContactService.getByCode(code);
             return new ResponseEntity<>(petContactMapper.toDto(petContact), HttpStatus.OK);
+        } else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
