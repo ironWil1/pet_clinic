@@ -8,13 +8,14 @@ import com.vet24.service.media.MailService;
 import com.vet24.service.pet.PetContactService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mockito;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -36,7 +37,6 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
 
     private PetFoundDto petFoundDto;
 
-
     @Before
     public void setToken() throws Exception {
         token = getAccessToken("client1@email.com", "client");
@@ -45,14 +45,13 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
     // Сохранение данных найденного питомца и создание с отправкой владельцу сообщения о питомце - успешно
     @Test
     @DataSet(cleanBefore = true,
-            value = {"/datasets/pet-found.yml",
-                    "/datasets/pet-contact.yml",
-                    "/datasets/user-entities.yml",
-                    "/datasets/pet-entities.yml"})
+            value = {"/datasets/controllers/petFoundController/user-entities.yml",
+                    "/datasets/controllers/petFoundController/pet-entities.yml",
+                    "/datasets/controllers/petFoundController/pet-contact.yml",
+                    "/datasets/controllers/petFoundController/pet-found.yml"})
     public void testSaveDataFoundPetAndSendOwnerPetMessage() throws Exception {
-        PetContact petContact = petContactService.getByKey(100L);
-        String code = petContact.getCode();
-
+        String code = "57747D2DAEB3397A1BD2F2313E67891E";
+        int sizeBefore = petFoundDao.getAll().size();
         PetFoundDto petFoundDto = new PetFoundDto("1.2345678", "2.3456789", "Some text");
         String bodyUpdate = objectMapper.valueToTree(petFoundDto).toString();
         Mockito.doNothing()
@@ -63,11 +62,17 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
                         .content(bodyUpdate).contentType(MediaType.APPLICATION_JSON_VALUE)
                         .param("code", code))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
+        assertThat(++sizeBefore).isEqualTo(petFoundDao.getAll().size());
+
     }
 
     // Сохранение данных найденного питомца и создание с отправкой владельцу сообщения о питомце - ошибка 404
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/pet-found.yml", "/datasets/pet-contact.yml", "/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
+    @DataSet(cleanBefore = true,
+            value = {"/datasets/controllers/petFoundController/user-entities.yml",
+                    "/datasets/controllers/petFoundController/pet-entities.yml",
+                    "/datasets/controllers/petFoundController/pet-contact.yml",
+                    "/datasets/controllers/petFoundController/pet-found.yml"})
     public void testSaveDataFoundPetAndSendOwnerPetMessageError404Pet() throws Exception {
         String code = "CD0964F7A769B65E2BA57822840B0E53";
 
@@ -85,13 +90,12 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
     //получение контактной информации - успешно
     @Test
     @DataSet(cleanBefore = true,
-            value = {"/datasets/pet-found.yml",
-                    "/datasets/pet-contact.yml",
-                    "/datasets/user-entities.yml",
-                    "/datasets/pet-entities.yml"})
+            value = {"/datasets/controllers/petFoundController/user-entities.yml",
+                    "/datasets/controllers/petFoundController/pet-entities.yml",
+                    "/datasets/controllers/petFoundController/pet-contact.yml",
+                    "/datasets/controllers/petFoundController/pet-found.yml"})
     public void testGetPetContaсtInfoSuccess() throws Exception {
         String code = "2C8B05A948803EA65B96C3E1DD4DCDDC";
-        PetContact petContact = petContactService.getByCode(code);
         mockMvc.perform(MockMvcRequestBuilders.get(URL + "/")
                         .param("code", code)
                         .header("Authorization", "Bearer " + token))
@@ -101,12 +105,14 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
                 .andExpect(jsonPath("$.phone").value(89629691030L));
     }
 
-    //получение контактной информации - ошибка
+    //получение контактной информации - ошибка 404
 
     @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/controllers/petContactController/user-entities.yml",
-            "/datasets/controllers/petContactController/pet-entities.yml",
-            "/datasets/controllers/petContactController/pet-contact.yml"})
+    @DataSet(cleanBefore = true,
+            value = {"/datasets/controllers/petFoundController/user-entities.yml",
+                    "/datasets/controllers/petFoundController/pet-entities.yml",
+                    "/datasets/controllers/petFoundController/pet-contact.yml",
+                    "/datasets/controllers/petFoundController/pet-found.yml"})
     public void testGetPetContaсtInfoEror404Pet() throws Exception {
         String code = "2C8B05A948803EA65B96C3E1DD4DCDDX";
         mockMvc.perform(MockMvcRequestBuilders.get(URL + "/")

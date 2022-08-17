@@ -101,8 +101,8 @@ public class PetFoundController {
     })
     @GetMapping(value = "")
     public ResponseEntity<PetContactDto> getPetContaсtInfo(@RequestParam(value = "code") String code) {
-        PetContact petContact = petContactService.getByCode(code);
         if (petContactService.isExistByCode(code)) {
+            PetContact petContact = petContactService.getByCode(code);
             return new ResponseEntity<>(petContactMapper.toDto(petContact), HttpStatus.OK);
         } else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
