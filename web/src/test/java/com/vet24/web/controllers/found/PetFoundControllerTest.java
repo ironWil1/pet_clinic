@@ -5,11 +5,10 @@ import com.vet24.dao.pet.PetFoundDao;
 import com.vet24.models.dto.pet.PetFoundDto;
 import com.vet24.models.pet.PetContact;
 import com.vet24.service.media.MailService;
-import com.vet24.service.pet.PetContactService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Before;
-import org.mockito.Mockito;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -26,16 +25,12 @@ public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
 
     private final String URL = "/api/petFound";
     private String token;
-
-    @Autowired
-    private PetContactService petContactService;
     @Autowired
     private MailService mailService;
 
     @Autowired
     private PetFoundDao petFoundDao;
 
-    private PetFoundDto petFoundDto;
 
     @Before
     public void setToken() throws Exception {
