@@ -6,6 +6,8 @@ import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ReproductionServiceImpl extends ReadWriteServiceImpl<Long, Reproduction> implements ReproductionService {
 
@@ -15,5 +17,10 @@ public class ReproductionServiceImpl extends ReadWriteServiceImpl<Long, Reproduc
     public ReproductionServiceImpl(ReproductionDao reproductionDao) {
         super(reproductionDao);
         this.reproductionDao = reproductionDao;
+    }
+
+    @Override
+    public List<Reproduction> getAllByPetId(Long petId) {
+        return reproductionDao.getAllByPetId(petId);
     }
 }
