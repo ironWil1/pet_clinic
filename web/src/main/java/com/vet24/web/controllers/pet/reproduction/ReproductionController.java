@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
+
+import java.util.List;
 
 import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 
@@ -57,6 +60,18 @@ public class ReproductionController {
         this.petService = petService;
     }
 
+    @Operation(summary = "get all reproduction")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved all reproductions"),
+            @ApiResponse(responseCode = "404", description = "Client or Pet or Pet's reproductions is not found")
+    })
+    @GetMapping()
+    public ResponseEntity<List<ReproductionDto>> getAll(@PathVariable Long petId){
+        checkPet(petId);
+        checkOwnerPet(petId);
+        List<Reproduction> reproductions = reproductionService.getAllByPetId(petId);
+        return new ResponseEntity<>(reproductionMapper.toDto(reproductions),HttpStatus.OK);
+    }
 
     @Operation(summary = "get reproduction by id")
     @ApiResponse(responseCode = "200", description = "ok",
@@ -199,4 +214,17 @@ public class ReproductionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    private void checkPet(Long petId){
+        if (!petService.isExistByKey(petId)){
+            log.info("The pet with this id {} was not found", petId);
+            throw new NotFoundException(PET_NOT_FOUND);
+        }
+    }
+
+    private void checkOwnerPet(Long petId){
+        if (!petService.isExistByPetIdAndClientId(petId, getSecurityUserOrNull().getId())){
+            log.info("The pet with this id {} is not yours", petId);
+            throw new BadRequestException(NOT_YOURS);
+        }
+    }
 }
