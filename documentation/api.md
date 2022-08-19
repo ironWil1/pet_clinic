@@ -377,3 +377,102 @@ MedicineRequestDto {
 1. Удалить всех наследников  
 1. Исправить весь застрагиваемый код  
 1. Исправить все затрагиваемые тесты
+
+# Pet
+
+## AppearanceController
+1. Создать таблицу, которая будет заполнена породами для каждого типа животных (у нас сейчас есть только собака и кошка) - сочетание тип порода должны быть уникальными
+1. создать дао и сервис
+1. Создать эндпоинт для получения списка пород из нашей бд. text - поле по которому происходит поиск совпадений в таблице (для поиска использовать триграммы в postgres). petType - тип животного, среди пород которых надо искать. Если не указан - искать среди всех. Если и text и petType пустые, то отправлять пустой список
+```
+GET /api/appearance/breed?petType(необязательный параметр)&text(необязательный параметр) -> List<String>
+```  
+
+
+1. Создать таблицу, содержащую список возможных окрасов животных (каждый цвет - уникальный).
+1. создать дао и сервис
+1. Создать эндпоинт получения списка окрасов, text - поле по которому происходит поиск совпадений в таблице (для поиска использовать триграммы в postgres). Если text - пустой, то отдавать пустой список
+```
+GET /api/appearance/color?text -> List<String>
+```
+
+## PetController -> PetClientController
+1. переименовать и переписать контроллер.
+1. при запросе Put обновлять в сущности только те поля, которые не null в дто
+1. Удалить все остальные методы из контроллера
+1. при создании или изменении проверять что breed и color представлены в нашей базу (задача выше)
+1. Избавиться от AbstractNewPetDto наследников и мапперов
+
+  ```
+  GET api/client/pet -> List<PetResponseDto>
+  GET api/client/pet/{petId} -> PetResponseDto
+  POST PetRequestDto_Post -> api/client/pet/{petId} -> PetResponseDto
+  PUT PetRequestDto_Put -> api/client/pet/{petId} -> PetResponseDto (переименовать PetDto)
+  DELETE api/client/pet/{petId} -> Void
+  ```
+
+  ```
+    PetRequestDto_Post {
+      name // notNull
+      avatar // nullable
+      birthDay // notNull
+      petType // notNull
+      breed // notNull
+      gender // notNull
+      color // notNull
+      size // nullable
+      weight // nullable
+      desription // nullable
+    }
+  ```
+
+  ```
+    PetRequestDto_Put {
+      name // nullable
+      avatar // nullable
+      birthDay // nullable
+      petType // nullable
+      breed // nullable
+      gender // nullable
+      color // nullable
+      size // nullable
+      weight // nullable
+      desription // nullable
+    }
+  ```
+
+  ```
+  public class PetResponseDto {
+      private Long id;
+      private String name;
+      private String avatar;
+      private LocalDate birthDay;
+      private PetType petType;
+  }
+  ```
+
+  # Запись на прием
+
+  ## получение календаря доступных записей на неделю
+  1. создать эндпоинт полчение доступных слотов для записи на неделю, при чем - если doctorId не указан, то смотрится среди всех докторов сразу. Если date не указан, то присылать календарь на текущую неделю, если указан, то на неделю, к которой относится дата. Все прошедшие дни присылать как без доступных записей
+  1. Условием доступности доктора является то, что доктор в этот день не в отпуске, не на больничном, не на выходном, в это время он на соответствующей смене и в это время у него нет других записей
+  1. расписание можно давать только на текущую и следующую неделю, если дата - из прошлого, или дальше чем следующая неделя - отправлять 400 статус
+  ```GET /api/client/appointment?doctorId(необязательный)&date(необязательный) -> AppointmentCallendarDto
+  ```
+  ```
+  AppointmentCallendarDto {
+    List<AppointmentDayDto> days;
+  }
+  ```
+  ```
+  AppointmentCallendarElementDto {
+    date;
+    List<AppointmentDayElementDto> appointments; один запись длится один час и начинается в начале каждого часа
+  }
+  ```
+  ```
+  AppointmentDayELementDto {
+    time // формат hh:mm
+    isAvailable // доступен слот или нет
+  }
+  ```
