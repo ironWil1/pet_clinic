@@ -6,6 +6,8 @@ import com.vet24.models.user.User;
 import com.vet24.security.config.JwtUtils;
 import com.vet24.service.security.JwtTokenService;
 import com.vet24.service.user.UserServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,9 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -78,4 +78,18 @@ public class AuthController {
         }
         return new ResponseEntity<>(jwtUtils.validateJwtToken(token), HttpStatus.OK);
     }
+
+    @Operation(summary = "get current authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Authenticated user found successfully",
+            content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "403", description = "Operation is not allowed for not authenticated user")
+    })
+    @GetMapping("/api/auth/getCurrent")
+    public ResponseEntity<AuthResponse> getCurrentUser(HttpServletRequest request) {
+        User user = (User) userService.loadUserByUsername(request.getUserPrincipal().getName());
+        return new ResponseEntity<>(new AuthResponse(request.getHeader("Authorization"), user.getRole().getName()), HttpStatus.OK);
+    }
+
+
 }
