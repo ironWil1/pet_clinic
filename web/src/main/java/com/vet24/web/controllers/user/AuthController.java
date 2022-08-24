@@ -94,12 +94,12 @@ public class AuthController {
             @ApiResponse(responseCode = "403", description = "Operation is not allowed for not authenticated user")
     })
     @GetMapping("/api/auth/getCurrent")
-    public ResponseEntity<AuthResponse> getCurrentUser(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String header) {
+    public ResponseEntity<AuthResponse> getCurrentUser(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
         User user = SecurityUtil.getSecurityUserOrNull();
-        if (user == null || header == null) {
+        if (user == null || token == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return new ResponseEntity<>(new AuthResponse(header, user.getRole().getName()), HttpStatus.OK);
+        return new ResponseEntity<>(new AuthResponse(token, user.getRole().getName()), HttpStatus.OK);
     }
 
 
