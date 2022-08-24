@@ -1,64 +1,55 @@
 package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.vet24.dao.medicine.DiagnosisDao;
 import com.vet24.models.dto.medicine.DiagnosisDto;
-import com.vet24.service.user.DoctorService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
-
-    @Autowired
-    DoctorService doctorService;
-    @Autowired
-    DiagnosisDao diagnosisDao;
-
-    DiagnosisDto diagnosisDto = new DiagnosisDto(4L, 4L, 33L, "text");
 
     private final String URI = "/api/doctor/pet/{petId}/addDiagnosis";
     private String token;
 
     @Before
     public void setToken() throws Exception {
-        token = getAccessToken("doctor33@gmail.com","user33");
+        token = getAccessToken("doctor33@gmail.com", "user33");
     }
 
-    //+mock, no find diagnosis
     @Test
-    @DataSet(value = {"/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
+    @DataSet(value = {"/datasets/controllers/doctorControllerTest/clients.yml",
+            "/datasets/controllers/doctorControllerTest/doctors.yml"},
+            cleanBefore = true)
     public void diagnosisShouldBeBadRequest() throws Exception {
-        String diagnosis = "bla-bla-bla";
-
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<String> entity = new HttpEntity<>(diagnosis, headers);
-
-        mockMvc.perform(MockMvcRequestBuilders.post(URI, entity, DiagnosisDto.class, 1001)
+        mockMvc.perform(MockMvcRequestBuilders.post(URI, 1001)
                         .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(new DiagnosisDto(4L, 1001L, 33L, "text")))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        boolean isDiagnosisNotCreated = entityManager.createQuery("SELECT CASE WHEN dd.diagnoses.size = 0 " +
+                        "THEN TRUE ELSE FALSE END FROM Doctor dd WHERE dd.email =: email", Boolean.class)
+                .setParameter("email", "doctor33@gmail.com").getSingleResult();
+        assertTrue("Тест не пройден! Диагноз создался, а не должен был!", isDiagnosisNotCreated);
     }
 
-    //+mock, add diagnosis - success
     @Test
-    @DataSet(value = {"/datasets/clients.yml","/datasets/doctors.yml"}, cleanBefore = true)
+    @DataSet(value = {"/datasets/controllers/doctorControllerTest/clients.yml",
+            "/datasets/controllers/doctorControllerTest/doctors.yml"},
+            cleanBefore = true)
     public void shouldBeCreated() throws Exception {
-        int beforeCount = diagnosisDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI, 101)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(diagnosisDto).toString())
+                        .content(objectMapper.writeValueAsString(new DiagnosisDto(4L, 4L, 33L, "text")))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
-        assertThat(++beforeCount).isEqualTo(diagnosisDao.getAll().size());
+        boolean isDiagnosisCreated = entityManager.createQuery("SELECT CASE WHEN dd.diagnoses.size = 1 " +
+                        "THEN TRUE ELSE FALSE END FROM Doctor dd WHERE dd.email =: email", Boolean.class)
+                .setParameter("email", "doctor33@gmail.com").getSingleResult();
+        assertTrue("Тест не пройден! Список диагнозов не равен 1", isDiagnosisCreated);
     }
 }
