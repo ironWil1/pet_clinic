@@ -124,17 +124,17 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
                 .getSingleResult());
     }
 
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/authControllerTest/jwt-token.yml"})
-    public void jwtTokenIsValidTest() throws Exception {
-        JwtToken jwtToken = new JwtToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTY1ODgzMzI4NiwiZXhwIjoxNjYwODMzMjg2fQ.Y6vZEmJHReb9JmAUDrO6JYPpS6HnvDeJKif4cYcCBWRagAPxLBdaEi9xnolP2LwW9u5YLpU-k5lVYuHrjae4kw");
-
-        mockMvc.perform(post(URI + "/token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jwtToken.getToken()))
-                .andExpect(content().string("true"))
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/authControllerTest/jwt-token.yml"})
+//    public void jwtTokenIsValidTest() throws Exception {
+//        JwtToken jwtToken = new JwtToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTY1ODgzMzI4NiwiZXhwIjoxNjYwODMzMjg2fQ.Y6vZEmJHReb9JmAUDrO6JYPpS6HnvDeJKif4cYcCBWRagAPxLBdaEi9xnolP2LwW9u5YLpU-k5lVYuHrjae4kw");
+//
+//        mockMvc.perform(post(URI + "/token")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(jwtToken.getToken()))
+//                .andExpect(content().string("true"))
+//                .andExpect(status().isOk());
+//    }
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/authControllerTest/jwt-token.yml"})
