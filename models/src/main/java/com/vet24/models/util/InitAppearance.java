@@ -9,13 +9,17 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+<<<<<<< HEAD
 import javax.persistence.EntityTransaction;
+=======
+>>>>>>> 835b6bca (если executeUpdate оставляет,то выпадает ошибка TransactionRequiredException Executing an update/delete query, если убираю,то табл просто не сохраняется)
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 @Component
 public class InitAppearance {
 
+<<<<<<< HEAD
     //    @PersistenceContext
     @Autowired
     private EntityManager manager;
@@ -50,4 +54,22 @@ public class InitAppearance {
     }
 
 
+=======
+    @PersistenceContext
+    protected EntityManager manager;
+
+
+
+    @PostConstruct
+    public void colorTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS color (id BIGINT PRIMARY KEY AUTO_INCREMENT," +
+                "color VARCHAR(255))";
+        manager.createNativeQuery(sql).executeUpdate();
+    }
+
+    @PostConstruct
+    public void BreedTable() {
+
+    }
+>>>>>>> 835b6bca (если executeUpdate оставляет,то выпадает ошибка TransactionRequiredException Executing an update/delete query, если убираю,то табл просто не сохраняется)
 }
