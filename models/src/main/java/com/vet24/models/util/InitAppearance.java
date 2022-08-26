@@ -16,34 +16,38 @@ import javax.transaction.Transactional;
 @Component
 public class InitAppearance {
 
-    @PersistenceContext
-    protected EntityManager manager;
-
+    //    @PersistenceContext
     @Autowired
-    EntityManagerFactory entityManagerFactory;
-    EntityTransaction txn = null;
-    String sql = "CREATE TABLE IF NOT EXISTS color (id BIGINT PRIMARY KEY AUTO_INCREMENT," +
-            "color VARCHAR(255))";
+    private EntityManager manager;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+    private EntityTransaction txn = null;
+    //    String sql = "CREATE TABLE color (id BIGINT PRIMARY KEY AUTO_INCREMENT," +
+//            "color VARCHAR(255))";
+    String sql2 = "CREATE TABLE if not exists pet_color (id serial  PRIMARY KEY," +
+            "            color TEXT not null unique )";
+    String sql3 = "CREATE TABLE if not exists  pet_breed (id serial  PRIMARY KEY," +
+            "pet_type TEXT not null, breed TEXT not null, UNIQUE (pet_type,breed));";
 
+    // без EntityManagerFactory и EntityTransaction я не смог создать таблицы
+
+    @Transactional
     @PostConstruct
     public void colorTable() {
         try {
             manager = entityManagerFactory.createEntityManager();
             txn = manager.getTransaction();
             txn.begin();
-            manager.createNativeQuery(sql).executeUpdate();
+            manager.createNativeQuery(sql2).executeUpdate();
+            manager.createNativeQuery(sql3).executeUpdate();
             txn.commit();
-        } catch ( Throwable e ) {
-            if ( txn != null && txn.isActive() ) {
+        } catch (Throwable e) {
+            if (txn != null && txn.isActive()) {
                 txn.rollback();
             }
             throw e;
         }
-
     }
 
-    @PostConstruct
-    public void BreedTable() {
 
-    }
 }
