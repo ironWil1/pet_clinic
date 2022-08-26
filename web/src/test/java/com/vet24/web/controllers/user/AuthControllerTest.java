@@ -2,8 +2,10 @@ package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.models.secutity.JwtToken;
+import com.vet24.security.config.JwtUtils;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -15,7 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class AuthControllerTest extends ControllerAbstractIntegrationTest {
 
-    final String URI = "/api/auth";
+    private final String URI = "/api/auth";
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/authControllerTest/users.yml"})
@@ -74,6 +79,7 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
                         .content(objectMapper.valueToTree(authRequest).toString()))
                 .andExpect(status().is(403));
     }
+
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/authControllerTest/users.yml"})
     public void jwtTokenNotSaveDataBaseTest() throws Exception {
@@ -127,8 +133,7 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/authControllerTest/jwt-token.yml"})
     public void jwtTokenIsValidTest() throws Exception {
-        JwtToken jwtToken = new JwtToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnQxQGVtYWlsLmNvbSIsImlhdCI6MTY1ODgzMzI4NiwiZXhwIjoxNjYwODMzMjg2fQ.Y6vZEmJHReb9JmAUDrO6JYPpS6HnvDeJKif4cYcCBWRagAPxLBdaEi9xnolP2LwW9u5YLpU-k5lVYuHrjae4kw");
-
+        JwtToken jwtToken = new JwtToken(jwtUtils.generateJwtToken("admin1@email.com"));
         mockMvc.perform(post(URI + "/token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jwtToken.getToken()))

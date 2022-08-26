@@ -3,8 +3,11 @@ package com.vet24.web.pet.reproduction;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.dao.pet.PetDao;
 import com.vet24.dao.pet.reproduction.ReproductionDao;
+import com.vet24.models.dto.pet.procedure.DewormingDto;
 import com.vet24.models.dto.pet.reproduction.ReproductionDto;
 import com.vet24.models.mappers.pet.reproduction.ReproductionMapper;
+import com.vet24.models.pet.procedure.Deworming;
+import com.vet24.models.pet.reproduction.Reproduction;
 import com.vet24.service.pet.reproduction.ReproductionService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import com.vet24.web.controllers.pet.reproduction.ReproductionController;
@@ -12,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -19,6 +23,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class ReproductionControllerTest extends ControllerAbstractIntegrationTest {
     @Autowired
@@ -53,7 +59,74 @@ public class ReproductionControllerTest extends ControllerAbstractIntegrationTes
 
     @Before
     public void setToken() throws Exception {
-        token = getAccessToken("user3@gmail.com","user3");
+        token = getAccessToken("user3@gmail.com", "user3");
+    }
+
+    private ReproductionDto getById(Long id) {
+        return reproductionMapper.toDto(entityManager.find(Reproduction.class, id));
+    }
+
+    private ResultMatcher expectJsonArray(Integer indexArr, ReproductionDto reproductionDto) {
+        return ResultMatcher.matchAll(
+                jsonPath("$[" + indexArr + "].childCount", is(reproductionDto.getChildCount())),
+                jsonPath("$[" + indexArr + "].estrusStart", is(reproductionDto.getEstrusStart().toString())),
+                jsonPath("$[" + indexArr + "].mating", is(reproductionDto.getMating().toString())),
+                jsonPath("$[" + indexArr + "].dueDate", is(reproductionDto.getDueDate().toString()))
+        );
+    }
+
+    //Получить все репродукции по petId - 200 SUCCESS
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/reproductionController/user-entities.yml",
+            "/datasets/controllers/reproductionController/pet-entities.yml",
+            "/datasets/controllers/reproductionController/reproduction.yml"})
+    public void testGetAllReproductionSuccess() throws Exception {
+        ReproductionDto reproductionDto102 = getById(102L);
+        ReproductionDto reproductionDto104 = getById(104L);
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction", 102)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$[0].id", is(102)))
+                .andExpect(jsonPath("$[1].id", is(104)))
+                .andExpect(expectJsonArray(0, reproductionDto102))
+                .andExpect(expectJsonArray(1, reproductionDto104));
+    }
+
+    // Получить все репродукции по petId - 404 Pet not found
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/reproductionController/user-entities.yml",
+            "/datasets/controllers/reproductionController/pet-entities.yml",
+            "/datasets/controllers/reproductionController/reproduction.yml"})
+    public void testGetAllReproductionErrorPetNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction", 33)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    // Получить все репродукции по petId - 400 Питомец вам не принадлежит
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/reproductionController/user-entities.yml",
+            "/datasets/controllers/reproductionController/pet-entities.yml",
+            "/datasets/controllers/reproductionController/reproduction.yml"})
+    public void testGetAllReproductionErrorPetNotYours() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{petId}/reproduction", 100)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    // Получить все репродукции по petId - 400 PetId не указан
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "/datasets/controllers/reproductionController/user-entities.yml",
+            "/datasets/controllers/reproductionController/pet-entities.yml",
+            "/datasets/controllers/reproductionController/reproduction.yml"})
+    public void testGetAllReproductionErrorNoPetId() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/reproduction")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     // +mock, get reproduction by id - success
