@@ -5,6 +5,8 @@ import com.vet24.models.mappers.pet.PetFoundClientMapper;
 import com.vet24.models.pet.PetFound;
 import com.vet24.models.user.User;
 import com.vet24.service.pet.PetFoundService;
+import com.vet24.service.pet.PetService;
+import com.vet24.service.user.ClientService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +33,16 @@ public class PetFoundClientController {
 
     private final PetFoundClientMapper petFoundClientMapper;
     private final PetFoundService petFoundService;
+    private final ClientService clientService;
+    private final PetService petService;
 
     public PetFoundClientController(PetFoundClientMapper petFoundClientMapper,
-                                    PetFoundService petFoundService) {
+                                    PetFoundService petFoundService, ClientService clientService,
+                                    PetService petService) {
         this.petFoundClientMapper = petFoundClientMapper;
         this.petFoundService = petFoundService;
+        this.clientService = clientService;
+        this.petService = petService;
     }
 
     @Operation(summary = "Получение истории находок питомца")
@@ -49,8 +56,8 @@ public class PetFoundClientController {
     @GetMapping(value = "")
     public ResponseEntity<List<PetFoundClientDto>> getHistoryPetById(@RequestParam(value = "petId") Long petId,
                                                                      Principal user) {
-        User currentUser = petFoundService.findByLogin(user.getName()).get();
-        if (petFoundService.getClientPet(petId, currentUser.getId()).isEmpty()) {
+        User currentUser = clientService.getClientByEmail(user.getName());
+        if (!petService.isExistByPetIdAndClientId(petId, currentUser.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         if (!petFoundService.isExistByKey(petId)) {
