@@ -7,7 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 
 @Data
@@ -26,10 +32,10 @@ public class DoctorReview {
 
     @OneToOne(targetEntity = Comment.class, cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
     private Comment comment;
-    @ManyToOne(targetEntity = Doctor.class)
-    private Doctor doctor;
+    @ManyToOne(targetEntity = User.class)
+    private User doctor;
 
-    public DoctorReview(Comment comment, Doctor doctor) {
+    public DoctorReview(Comment comment, User doctor) {
         this.comment = comment;
         this.doctor = doctor;
     }

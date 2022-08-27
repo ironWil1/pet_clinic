@@ -1,6 +1,6 @@
 USER_ENTITIES:
   - ID: 1
-    USER_TYPE: "CLIENT"
+    ##USER_TYPE: "User"
     ENABLED: true
     EMAIL: "client1@email.com"
     PASSWORD: "{bcrypt}$2a$12$Z/gpYA7gLUuFKZM7EROGduwYlXJnZplTVemX.kpKy52khCANZVJWW" #"client"

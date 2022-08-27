@@ -2,7 +2,6 @@ package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.dao.user.CommentDao;
-import com.vet24.service.user.ClientService;
 import com.vet24.service.user.DoctorReviewService;
 import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.junit.Before;
@@ -10,7 +9,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -19,9 +17,6 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
 
     private final String URI = "/api/client/doctor";
     private String token;
-
-    @Autowired
-    private ClientService clientService;
 
     @Autowired
     private CommentDao commentDao;

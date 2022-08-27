@@ -3,19 +3,19 @@ ROLE:
 
 USER_ENTITIES:
   - ID: 3
-    USER_TYPE: "CLIENT"
+    #USER_TYPE: "CLIENT"
     ENABLED: true
     EMAIL: "user3@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$qz8vaj1icekMnf.7sXSzw.gDdQWezHs3XKv1YhQPaedWYRNjSQVxm" #"user3"
 
   - ID: 4
-    USER_TYPE: "CLIENT"
+    #USER_TYPE: "CLIENT"
     ENABLED: true
     EMAIL: "user4@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$sbHmqRpUGv12k/0PhMb8Se5eThsvkUdPXTNuWF2mtj57bD1P8oXbS" #"user4"
 
   - ID: 5
-    USER_TYPE: "CLIENT"
+    #USER_TYPE: "CLIENT"
     ENABLED: true
     EMAIL: "user5@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$OHWVkepe31F0kA4i25reGuEGmHxNZ7Ca5jSbiVgTgrMiXnnmI4U3m" #"user5"

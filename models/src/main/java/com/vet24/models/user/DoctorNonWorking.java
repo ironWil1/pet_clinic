@@ -1,9 +1,19 @@
 package com.vet24.models.user;
 
 import com.vet24.models.enums.DayOffType;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -20,7 +30,7 @@ public class DoctorNonWorking implements Serializable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Doctor doctor;
+    private User doctor;
 
     @Enumerated(EnumType.STRING)
     @EqualsAndHashCode.Include
@@ -29,7 +39,7 @@ public class DoctorNonWorking implements Serializable {
     @EqualsAndHashCode.Include
     private LocalDate date;
 
-    public DoctorNonWorking(Doctor doctor, DayOffType type, LocalDate date) {
+    public DoctorNonWorking(User doctor, DayOffType type, LocalDate date) {
         this.doctor = doctor;
         this.type = type;
         this.date = date;

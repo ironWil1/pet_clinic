@@ -3,7 +3,7 @@ package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.user.ProfileDto;
 import com.vet24.models.mappers.user.ProfileMapper;
-import com.vet24.models.user.Profile;
+import com.vet24.models.user.User;
 import com.vet24.service.user.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 
 @RestController
@@ -48,13 +49,10 @@ public class UserProfileController {
     })
     @GetMapping()
     public ResponseEntity<ProfileDto> getUserProfile() {
-        Profile profile = getSecurityUserOrNull().getProfile();
-        if (profile != null) {
-            ProfileDto profileDto = profileMapper.toDto(profile);
-            return ResponseEntity.ok(profileDto);
-        } else {
-            throw new NotFoundException("Профиль не найден");
-        }
+        return getOptionalOfNullableSecurityUser().map(User::getProfile)
+                .map(profileMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new NotFoundException("Профиль не найден"));
     }
 
     @Operation(summary = "Обновление профиля")
@@ -66,13 +64,11 @@ public class UserProfileController {
     })
     @PutMapping()
     public ResponseEntity<Void> updateProfile(@RequestBody ProfileDto profileDto) {
-        Profile profile = getSecurityUserOrNull().getProfile();
-        if (profile != null) {
-            profileMapper.updateEntity(profileDto, profile);
-            profileService.update(profile);
-            return ResponseEntity.ok().build();
-        } else {
-            throw new NotFoundException("Профиль не найден");
-        }
+        return getOptionalOfNullableSecurityUser().map(User::getProfile)
+                .map(profile -> {
+                    profileMapper.updateEntity(profileDto, profile);
+                    return profileService.update(profile);
+                }).map(x -> new ResponseEntity<Void>(HttpStatus.OK))
+                .orElseThrow(() -> new NotFoundException("Профиль не найден"));
     }
 }

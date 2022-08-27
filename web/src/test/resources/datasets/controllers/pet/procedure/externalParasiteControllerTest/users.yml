@@ -1,11 +1,11 @@
 USER_ENTITIES:
   - ID: 1
-    USER_TYPE: "CLIENT"
+    ##USER_TYPE: "User"
     ENABLED: true
     EMAIL: "user1@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$K/wWuWj7/fFSLB./szNWSuEa8BZy6gOcIG0G4ZTiH2iqFCsdsBhne" #"user1"
   - ID: 2
-    USER_TYPE: "CLIENT"
+    ##USER_TYPE: "User"
     ENABLED: true
     EMAIL: "user2@gmail.com"
     PASSWORD: "{bcrypt}$2a$12$FP8JBFyJttuTOitlBAR.xe5ThNOa8qX8TlNSWgQetSyvHdH/9o9Pq" #"user2"

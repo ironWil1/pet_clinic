@@ -10,6 +10,7 @@ import com.vet24.models.mappers.pet.procedure.ExternalParasiteMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
+import com.vet24.models.user.User;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
@@ -36,12 +37,16 @@ import org.webjars.NotFoundException;
 
 import java.util.List;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 @RestController
 @RequestMapping("api/client/procedure/external")
 @Tag(name = "Обработка от эктопаразитов - контроллер")
 public class ExternalParasiteController {
+    private static final String PET_NOT_FOUND = "Питомец не найден";
+    private static final String PROCEDURE_NOT_FOUND = "Процедура не найдена";
+    private static final String PET_NOT_YOURS = "Данный питомец Вам не принадлежит";
+    private static final String PROCEDURE_NOT_YOURS = "Данная запись на процедуру не для Вашего питомца";
     private final PetService petService;
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
     private final MedicineService medicineService;
@@ -49,10 +54,18 @@ public class ExternalParasiteController {
     private final ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao;
     private final PetDaoImpl petDao;
 
-    private static final String PET_NOT_FOUND = "Питомец не найден";
-    private static final String PROCEDURE_NOT_FOUND = "Процедура не найдена";
-    private static final String PET_NOT_YOURS = "Данный питомец Вам не принадлежит";
-    private static final String PROCEDURE_NOT_YOURS = "Данная запись на процедуру не для Вашего питомца";
+    @Autowired
+    public ExternalParasiteController(PetService petService, MedicineService medicineService,
+                                      ExternalParasiteMapper externalParasiteMapper,
+                                      ExternalParasiteProcedureService externalParasiteProcedureService,
+                                      ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao, PetDaoImpl petDao) {
+        this.petService = petService;
+        this.externalParasiteProcedureService = externalParasiteProcedureService;
+        this.medicineService = medicineService;
+        this.externalParasiteMapper = externalParasiteMapper;
+        this.externalParasiteProcedureDao = externalParasiteProcedureDao;
+        this.petDao = petDao;
+    }
 
     private void checkPet(Long petId) {
         if (!petService.isExistByKey(petId)) {
@@ -67,28 +80,17 @@ public class ExternalParasiteController {
     }
 
     private void checkClientProcedure(Long id) {
-        if (!externalParasiteProcedureService.isExistByIdAndClientId(id, getSecurityUserOrNull().getId())) {
-            throw new BadRequestException(PROCEDURE_NOT_YOURS);
-        }
+        getOptionalOfNullableSecurityUser()
+                .map(User::getId)
+                .filter(userId -> externalParasiteProcedureService.isExistByIdAndClientId(id, userId))
+                .orElseThrow(() -> new BadRequestException(PROCEDURE_NOT_YOURS));
     }
 
     private void checkPetOwner(Long petId) {
-        if (!petDao.isExistByPetIdAndClientId(petId, getSecurityUserOrNull().getId())) {
-            throw new BadRequestException(PET_NOT_YOURS);
-        }
-    }
-
-    @Autowired
-    public ExternalParasiteController(PetService petService, MedicineService medicineService,
-                                      ExternalParasiteMapper externalParasiteMapper,
-                                      ExternalParasiteProcedureService externalParasiteProcedureService,
-                                      ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao, PetDaoImpl petDao) {
-        this.petService = petService;
-        this.externalParasiteProcedureService = externalParasiteProcedureService;
-        this.medicineService = medicineService;
-        this.externalParasiteMapper = externalParasiteMapper;
-        this.externalParasiteProcedureDao = externalParasiteProcedureDao;
-        this.petDao = petDao;
+        getOptionalOfNullableSecurityUser()
+                .map(User::getId)
+                .filter(userId -> petDao.isExistByPetIdAndClientId(petId, userId))
+                .orElseThrow(() -> new BadRequestException(PET_NOT_YOURS));
     }
 
     @Operation(summary = "Получить все записи питомца на обработку от эктопаразитов")

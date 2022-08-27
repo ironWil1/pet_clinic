@@ -1,9 +1,8 @@
 package com.vet24.dao.user;
 
 import com.vet24.dao.ReadWriteDaoImpl;
-import com.vet24.models.medicine.DoctorSchedule;
-import com.vet24.models.user.Doctor;
 import com.vet24.models.user.DoctorNonWorking;
+import com.vet24.models.user.User;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
@@ -14,11 +13,11 @@ import java.util.List;
 public class DoctorNonWorkingDaoImpl extends ReadWriteDaoImpl<Long, DoctorNonWorking> implements DoctorNonWorkingDao {
 
     @Override
-    public boolean isExistByDoctorIdAndDate(Doctor doctor, LocalDate date) {
+    public boolean isExistByDoctorIdAndDate(User doctor, LocalDate date) {
         try {
             Long id = doctor.getId();
             Long dnw = manager.createQuery(
-                    "SELECT d.doctor.id FROM DoctorNonWorking d WHERE d.doctor.id = :id AND d.date = :date", Long.class)
+                            "SELECT d.doctor.id FROM DoctorNonWorking d WHERE d.doctor.id = :id AND d.date = :date", Long.class)
                     .setParameter("id", id)
                     .setParameter("date", date)
                     .getSingleResult();
