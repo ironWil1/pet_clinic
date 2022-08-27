@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class BreedDaoImpl implements BreedDao{
+public class BreedDaoImpl implements BreedDao {
 
     @PersistenceContext
     private EntityManager manager;
@@ -17,23 +17,21 @@ public class BreedDaoImpl implements BreedDao{
     @Override
     public List<String> getBreed(String petType, String breed) {
         List<String> listBreed = new ArrayList<>();
-        if (petType.isEmpty()){
-            listBreed.addAll(
-                    manager.createNativeQuery("SELECT breed from pet_breed where breed % :br ")
-                            .setParameter("br",breed).getResultList());
-        } else {
-            listBreed.addAll(
-                    manager.createNativeQuery("SELECT breed from pet_breed where " +
-                            "pet_type % :pt and breed % :br")
-                            .setParameter("pt",petType)
-                            .setParameter("br",breed)
-                            .getResultList());
-        }
+        listBreed.addAll(
+                manager.createNativeQuery("SELECT breed from pet_breed where " +
+                                "pet_type = :pt and breed % :br")
+                        .setParameter("pt", petType)
+                        .setParameter("br", breed)
+                        .getResultList());
         return listBreed;
     }
 
-//    @PostConstruct
-//    void test(){
-//        System.out.println(getBreed("dog","бульдог"));
-//    }
+    @Override
+    public List<String> getBreedIfPetTypeIsEmpty(String breed) {
+        List<String> listBreed = new ArrayList<>();
+        listBreed.addAll(
+                manager.createNativeQuery("SELECT breed from pet_breed where breed % :br ")
+                        .setParameter("br", breed).getResultList());
+        return listBreed;
+    }
 }

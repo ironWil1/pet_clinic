@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ColorServiceImpl implements ColorService{
+public class ColorServiceImpl implements ColorService {
 
     private final ColorDao colorDao;
 
