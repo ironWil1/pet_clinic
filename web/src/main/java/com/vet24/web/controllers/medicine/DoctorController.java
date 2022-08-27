@@ -1,13 +1,10 @@
 package com.vet24.web.controllers.medicine;
 
 import com.vet24.models.dto.medicine.DiagnosisDto;
-import com.vet24.models.dto.medicine.TreatmentDto;
 import com.vet24.models.mappers.medicine.DiagnosisMapper;
 import com.vet24.models.mappers.medicine.TreatmentMapper;
 import com.vet24.models.medicine.Diagnosis;
-import com.vet24.models.medicine.Treatment;
 import com.vet24.models.pet.Pet;
-import com.vet24.models.user.Doctor;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.TreatmentService;
 import com.vet24.service.pet.PetService;
@@ -27,9 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
-import java.util.List;
-
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 
 @RestController
@@ -64,19 +59,19 @@ public class DoctorController {
 
     @PostMapping("/pet/{petId}/addDiagnosis")
     public ResponseEntity<DiagnosisDto> addDiagnosis(@PathVariable Long petId,
-                                                     @RequestBody String text){
+                                                     @RequestBody String text) {
         Pet pet = petService.getByKey(petId);
-        if(pet == null){
-            log.info("No such pet found with Id {}",petId);
+        if (pet == null) {
+            log.info("No such pet found with Id {}", petId);
             throw new NotFoundException("No such pet found");
         }
-
-        Doctor doctor = (Doctor) getSecurityUserOrNull();
-        Diagnosis diagnosis = new Diagnosis(doctor,pet,text);
-        diagnosisService.persist(diagnosis);
-        log.info("Added new diagnosis {}",text);
-        return new ResponseEntity<>(diagnosisMapper.toDto(diagnosis),
-                HttpStatus.CREATED);
+        return getOptionalOfNullableSecurityUser().
+                map(doctor -> new Diagnosis(doctor, pet, text))
+                .map(diagnosis -> {
+                    diagnosisService.persist(diagnosis);
+                    log.info("Added new diagnosis {}", text);
+                    return new ResponseEntity<>(diagnosisMapper.toDto(diagnosis), HttpStatus.CREATED);
+                }).orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
 //    @Operation(summary = "add treatment for diagnose")

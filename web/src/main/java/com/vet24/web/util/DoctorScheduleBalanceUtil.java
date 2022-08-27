@@ -2,10 +2,10 @@ package com.vet24.web.util;
 
 import com.vet24.models.enums.WorkShift;
 import com.vet24.models.medicine.DoctorSchedule;
-import com.vet24.models.user.Doctor;
+import com.vet24.models.user.User;
 import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.user.DoctorNonWorkingService;
-import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class DoctorScheduleBalanceUtil {
     private final DoctorScheduleService doctorScheduleService;
     private final DoctorNonWorkingService doctorNonWorkingService;
-    private final DoctorService doctorService;
+    private final UserService userService;
 
     private LocalDate localDate = LocalDate.now();
     private LocalDate currentData;
@@ -41,10 +41,10 @@ public class DoctorScheduleBalanceUtil {
     @Autowired
     public DoctorScheduleBalanceUtil(DoctorScheduleService doctorScheduleService,
                                      DoctorNonWorkingService doctorNonWorkingService,
-                                     DoctorService doctorService) {
+                                     UserService userService) {
         this.doctorScheduleService = doctorScheduleService;
         this.doctorNonWorkingService = doctorNonWorkingService;
-        this.doctorService = doctorService;
+        this.userService = userService;
     }
 
     /**
@@ -52,10 +52,7 @@ public class DoctorScheduleBalanceUtil {
      */
     private boolean doctorNonWorkingByIdAndWeek(Long doctorId, LocalDate date) {
         int week = date.get(WeekFields.of(Locale.getDefault()).weekOfYear());
-        if (doctorNonWorkingMap.containsKey(doctorId) && doctorNonWorkingMap.get(doctorId).contains(week)) {
-            return true;
-        }
-        return false;
+        return doctorNonWorkingMap.containsKey(doctorId) && doctorNonWorkingMap.get(doctorId).contains(week);
     }
 
     /**
@@ -156,7 +153,7 @@ public class DoctorScheduleBalanceUtil {
     /**
      * Балансировка смен за счет вновь принятых докторов, или вышедших с нерабочих дней
      */
-    private void addNewAndNonWorkingDoctor(Doctor doctor, LocalDate date) {
+    private void addNewAndNonWorkingDoctor(User doctor, LocalDate date) {
         if ((countWorkWeekFirstShift < countWorkWeekSecondShift)
                 && (!getShiftByLocalDate(doctor.getId(), date.minusWeeks(1)).equals("FIRST_SHIFT")
                 && !getShiftByLocalDate(doctor.getId(), date.minusWeeks(2)).equals("FIRST_SHIFT"))) {
@@ -176,14 +173,14 @@ public class DoctorScheduleBalanceUtil {
     @Scheduled(cron = "0 0 3 * * *")
     public void balancer() {
         //Получение всех докторов
-        List<Doctor> doctorsList = doctorService.getAll();
+        List<User> doctorsList = userService.getAll();
         //Выходной лист DoctorSchedule для записи в БД
         doctorScheduleList = new ArrayList<>();
 
         //Стартовое заполнение карт из БД
         initialize();
         //Лист для докторов, вышедших с выходных, для балансировки
-        List<Doctor> doctorsListNonWorkingMinusOneWeek = new ArrayList<>(0);
+        List<User> doctorsListNonWorkingMinusOneWeek = new ArrayList<>(0);
 
         //Начало итераций цикла по неделям текущего месяца
         //TODO По поводу недель тоже нужно подумать, если по 4 недели прибавлять, то постепенно выходим на середину месяца
@@ -195,7 +192,7 @@ public class DoctorScheduleBalanceUtil {
             countWorkWeekSecondShift = 0;
 
             //Загружаем докторов работающих на текущей неделе, за минусом неработающих
-            List<Doctor> doctorsCurrentWeekList = doctorsList.stream()
+            List<User> doctorsCurrentWeekList = doctorsList.stream()
                     .filter(doc -> !doctorNonWorkingByIdAndWeek(doc.getId(), localDate))
                     .collect(Collectors.toList());
             //Перемешиваем коллекцию, для случайного распределения смен, в принципе нужно только при начальной инициализации БД

@@ -13,5 +13,4 @@ public class AuthResponse {
     RoleNameEnum role;
 
 
-
 }

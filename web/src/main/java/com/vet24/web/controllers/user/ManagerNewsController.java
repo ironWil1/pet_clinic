@@ -35,10 +35,10 @@ import java.util.Map;
 @Tag(name = "manager news controller", description = "managerNewsController operations")
 public class ManagerNewsController {
 
+    private static final String NEWS_NOT_FOUND = "news not found";
     private final NewsService newsService;
     private final ManagerNewsResponseMapper responseMapper;
     private final ManagerNewsRequestMapper requestMapper;
-    private static final String NEWS_NOT_FOUND = "news not found";
 
     @Autowired
     public ManagerNewsController(NewsService newsService,
@@ -98,7 +98,7 @@ public class ManagerNewsController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<ManagerNewsResponseDto> updateNewsById(@PathVariable("id") Long newsId,
-                                                  @Valid @RequestBody ManagerNewsRequestDto newsDto) {
+                                                                 @Valid @RequestBody ManagerNewsRequestDto newsDto) {
         News news = newsService.getByKey(newsId);
         if (!newsService.isExistByKey(newsId)) {
             throw new NotFoundException(NEWS_NOT_FOUND);

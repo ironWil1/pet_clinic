@@ -1,13 +1,26 @@
 package com.vet24.models.medicine;
 
-import com.vet24.models.user.Doctor;
-import com.vet24.models.validation.FirstDayOfWeek;
-import lombok.*;
 import com.vet24.models.enums.WorkShift;
+import com.vet24.models.user.User;
+import com.vet24.models.validation.FirstDayOfWeek;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.internal.util.stereotypes.Immutable;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -27,7 +40,7 @@ public class DoctorSchedule {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Doctor doctor;
+    private User doctor;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -40,7 +53,7 @@ public class DoctorSchedule {
     @FirstDayOfWeek
     private LocalDate startWeek;
 
-    public DoctorSchedule(Doctor doctor, WorkShift workShift, LocalDate startWeek) {
+    public DoctorSchedule(User doctor, WorkShift workShift, LocalDate startWeek) {
         this.doctor = doctor;
         this.workShift = workShift;
         this.startWeek = startWeek;

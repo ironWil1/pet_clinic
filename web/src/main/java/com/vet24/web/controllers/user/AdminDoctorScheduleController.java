@@ -9,7 +9,7 @@ import com.vet24.models.mappers.user.DoctorScheduleMapper;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.util.View;
 import com.vet24.service.medicine.DoctorScheduleService;
-import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
 @RestController
@@ -30,58 +36,39 @@ import org.webjars.NotFoundException;
 public class AdminDoctorScheduleController {
     private final DoctorScheduleService doctorScheduleService;
     private final DoctorScheduleMapper doctorScheduleMapper;
-    private final DoctorService doctorService;
+    private final UserService userService;
 
     @Autowired
-    public AdminDoctorScheduleController(DoctorScheduleService doctorScheduleService,
-                                         DoctorScheduleMapper doctorScheduleMapper,
-                                         DoctorService doctorService) {
+    public AdminDoctorScheduleController(DoctorScheduleService doctorScheduleService, DoctorScheduleMapper doctorScheduleMapper, UserService userService) {
         this.doctorScheduleService = doctorScheduleService;
         this.doctorScheduleMapper = doctorScheduleMapper;
-        this.doctorService = doctorService;
+        this.userService = userService;
     }
 
     @Operation(summary = "Create schedule")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Schedule is create",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = DoctorScheduleDto.class))),
-            @ApiResponse(responseCode = "404", description = "Doctor not found"),
-            @ApiResponse(responseCode = "422", description = "Doctor already has a work shift")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Schedule is create", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DoctorScheduleDto.class))), @ApiResponse(responseCode = "404", description = "Doctor not found"), @ApiResponse(responseCode = "422", description = "Doctor already has a work shift")})
     @PostMapping
-    public ResponseEntity<DoctorScheduleDto> createDoctorSchedule(@RequestBody(required = false)
-                                                                  @JsonView(View.Post.class)
-                                                                  @Validated(OnCreate.class)
-                                                                          DoctorScheduleDto doctorScheduleDto) {
-        if (!doctorService.isExistByKey(doctorScheduleDto.getDoctorId())) {
+    public ResponseEntity<DoctorScheduleDto> createDoctorSchedule(@RequestBody(required = false) @JsonView(View.Post.class) @Validated(OnCreate.class) DoctorScheduleDto doctorScheduleDto) {
+        if (!userService.isExistByKey(doctorScheduleDto.getDoctorId())) {
             log.error("User with id {} is not a doctor", doctorScheduleDto.getDoctorId());
             throw new NotFoundException("doctor not found");
         }
-        if (doctorScheduleService
-                .isExistByDoctorIdAndWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getStartWeek())) {
+        if (doctorScheduleService.isExistByDoctorIdAndWeekNumber(doctorScheduleDto.getDoctorId(), doctorScheduleDto.getStartWeek())) {
             log.error("Doctor already has a work shift at week {}", doctorScheduleDto.getStartWeek());
             throw new UnprocessableEntityException("Doctor already has a work shift");
         }
         DoctorSchedule doctorSchedule = doctorScheduleMapper.toEntity(doctorScheduleDto);
-        doctorSchedule.setDoctor(doctorService.getByKey(doctorScheduleDto.getDoctorId()));
+        doctorSchedule.setDoctor(userService.getByKey(doctorScheduleDto.getDoctorId()));
         doctorScheduleService.persist(doctorSchedule);
         log.info("Schedule with id {} created", doctorSchedule.getId());
         return ResponseEntity.status(201).body(doctorScheduleMapper.toDto(doctorSchedule));
     }
 
     @Operation(summary = "Update schedule")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Schedule is update",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = DoctorScheduleDto.class))),
-            @ApiResponse(responseCode = "404", description = "Schedule not found")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Schedule is update", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DoctorScheduleDto.class))), @ApiResponse(responseCode = "404", description = "Schedule not found")})
 
     @PutMapping("/{id}")
-    public ResponseEntity<DoctorScheduleDto> updateDoctorSchedule(@RequestBody(required = false)
-                                                                  @JsonView(View.Put.class)
-                                                                  @Validated(OnUpdate.class)
-                                                                          DoctorScheduleDto doctorScheduleDto,
-                                                                  @PathVariable ("id") Long id) {
+    public ResponseEntity<DoctorScheduleDto> updateDoctorSchedule(@RequestBody(required = false) @JsonView(View.Put.class) @Validated(OnUpdate.class) DoctorScheduleDto doctorScheduleDto, @PathVariable("id") Long id) {
         DoctorSchedule doctorSchedule = doctorScheduleService.getByKey(id);
         if (doctorSchedule != null) {
             doctorSchedule.setWorkShift(doctorScheduleDto.getWorkShift());
@@ -95,10 +82,7 @@ public class AdminDoctorScheduleController {
     }
 
     @Operation(summary = "Delete schedule")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Schedule deleted"),
-            @ApiResponse(responseCode = "404", description = "Schedule not found")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Schedule deleted"), @ApiResponse(responseCode = "404", description = "Schedule not found")})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDoctorSchedule(@PathVariable("id") Long id) {
         DoctorSchedule doctorSchedule = doctorScheduleService.getByKey(id);

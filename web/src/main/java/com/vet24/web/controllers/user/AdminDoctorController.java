@@ -1,13 +1,14 @@
 package com.vet24.web.controllers.user;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.vet24.models.dto.user.DoctorDto;
 import com.vet24.models.dto.user.DoctorDtoPost;
-import com.vet24.models.mappers.user.DoctorMapper;
+import com.vet24.models.dto.user.UserDoctorDto;
+import com.vet24.models.dto.user.UserDto;
 import com.vet24.models.mappers.user.DoctorPostMapper;
-import com.vet24.models.user.Doctor;
+import com.vet24.models.mappers.user.UserMapper;
+import com.vet24.models.user.User;
 import com.vet24.models.util.View;
-import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,22 +36,22 @@ import java.util.List;
 @Tag(name = "AdminDoctor controller", description = "CRUD operations")
 public class AdminDoctorController {
 
-    private final DoctorService doctorService;
-    private final DoctorMapper doctorMapper;
+    private final UserService userService;
+    private final UserMapper userMapper;
     private final DoctorPostMapper doctorPostMapper;
 
 
-    public AdminDoctorController(DoctorService doctorServiceImpl, DoctorMapper doctorMapper, DoctorPostMapper doctorPostMapper) {
-        this.doctorService = doctorServiceImpl;
-        this.doctorMapper = doctorMapper;
+    public AdminDoctorController(UserService userService, UserMapper userMapper, DoctorPostMapper doctorPostMapper) {
+        this.userService = userService;
+        this.userMapper = userMapper;
         this.doctorPostMapper = doctorPostMapper;
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<DoctorDto> getDoctorById(@PathVariable Long id) {
-        Doctor doctor = doctorService.getByKey(id);
+    public ResponseEntity<UserDto> getDoctorById(@PathVariable Long id) {
+        User doctor = userService.getByKey(id);
         if (doctor != null) {
-            DoctorDto doctorDto = doctorMapper.toDto(doctor);
+            UserDto doctorDto = userMapper.toDto(doctor);
             return ResponseEntity.ok(doctorDto);
         } else {
             log.info("The current doctor is not found");
@@ -59,11 +60,10 @@ public class AdminDoctorController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<DoctorDto>> getAllDoctors() {
-        List<Doctor> doctorList = doctorService.getAll();
-        return ResponseEntity.ok(doctorMapper.toDto(doctorList));
+    public ResponseEntity<List<UserDto>> getAllDoctors() {
+        List<User> doctorList = userService.getAll();
+        return ResponseEntity.ok(userMapper.toDto(doctorList));
     }
-
 
 
     @Operation(summary = "Create new doctor")
@@ -74,9 +74,9 @@ public class AdminDoctorController {
             @ApiResponse(responseCode = "404", description = "Doctor not found"),
     })
     @PostMapping
-    public ResponseEntity<DoctorDto> doctorDtoPost(@JsonView(View.Post.class) @Valid @RequestBody DoctorDtoPost doctorDtoPost) {
-        Doctor doctor = doctorPostMapper.toEntity(doctorDtoPost);
-        doctorService.persist(doctor);
+    public ResponseEntity<UserDoctorDto> doctorDtoPost(@JsonView(View.Post.class) @Valid @RequestBody DoctorDtoPost doctorDtoPost) {
+        User doctor = doctorPostMapper.toEntity(doctorDtoPost);
+        userService.persist(doctor);
         return ResponseEntity.status(200).body(doctorPostMapper.toDto(doctor));
     }
 
@@ -88,14 +88,14 @@ public class AdminDoctorController {
             @ApiResponse(responseCode = "404", description = "Doctor not found"),
     })
     @PutMapping("{id}")
-    public ResponseEntity<DoctorDto> doctorDtoPut(@JsonView(View.Put.class) @Valid @RequestBody DoctorDtoPost doctorDtoPost,
-                                                  @PathVariable("id") long id) {
-        Doctor doctor = doctorService.getByKey(id);
+    public ResponseEntity<UserDto> doctorDtoPut(@JsonView(View.Put.class) @Valid @RequestBody DoctorDtoPost doctorDtoPost,
+                                                @PathVariable("id") long id) {
+        User doctor = userService.getByKey(id);
 
         doctor.setPassword(doctorDtoPost.getPassword());
 
-        doctorService.update(doctor);
-        return ResponseEntity.ok(doctorMapper.toDto(doctor));
+        userService.update(doctor);
+        return ResponseEntity.ok(userMapper.toDto(doctor));
     }
 
     @Operation(summary = "Delete doctor")
@@ -107,9 +107,9 @@ public class AdminDoctorController {
     })
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteDto(@PathVariable("id") long id) {
-        Doctor doctor = doctorService.getByKey(id);
+        User doctor = userService.getByKey(id);
         if (doctor != null) {
-            doctorService.delete(doctor);
+            userService.delete(doctor);
             return ResponseEntity.ok().build();
         } else {
             log.info("The current doctor is not found");

@@ -23,21 +23,32 @@ public class UserDaoImpl extends ReadWriteDaoImpl<Long, User> implements UserDao
                 .findFirst();
     }
 
-    @Override
-    public User getByUserEmail(String email) {
+    public User getWithAllCommentReactions(String email) {
         try {
-            return manager
-                    .createQuery("SELECT u FROM User u WHERE u.email =:email", User.class)
+            return manager.createQuery("SELECT u FROM User u LEFT JOIN FETCH u.commentReactions WHERE u.email=:email", User.class)
                     .setParameter(EMAIL, email).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 
-    public User getWithAllCommentReactions(String email) {
+    @Override
+    public User getUserWithPetsByEmail(String email) {
         try {
-            return manager.createQuery("SELECT u FROM User u LEFT JOIN FETCH u.commentReactions WHERE u.email=:email", User.class)
-                    .setParameter(EMAIL, email).getSingleResult();
+            return manager
+                    .createQuery("SELECT u FROM User u JOIN FETCH u.pets WHERE u.email =:email", User.class)
+                    .setParameter("email", email).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public User getUserWithReactionsByEmail(String email) {
+        try {
+            return manager
+                    .createQuery("SELECT c FROM User c JOIN FETCH c.commentReactions WHERE c.email =:email", User.class)
+                    .setParameter("email", email).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

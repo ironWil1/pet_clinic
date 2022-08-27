@@ -10,7 +10,7 @@ import com.vet24.models.mappers.pet.procedure.DewormingMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.Deworming;
-import com.vet24.models.user.Client;
+import com.vet24.models.user.User;
 import com.vet24.models.util.View;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
@@ -36,10 +36,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import java.util.List;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 @RestController
 @Slf4j
@@ -47,13 +46,12 @@ import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 @Tag(name = "deworming-controller", description = "operations with deworming procedure")
 public class DewormingController {
 
+    private static final String PET_EXCEPTION = "Питомец не найден или вам не принадлежит";
+    private static final String PROCEDURE_EXCEPTION = "Процедура не найдена или не принадлежит вашему питомцу";
     private final PetService petService;
     private final DewormingService dewormingService;
     private final DewormingMapper dewormingMapper;
     private final MedicineService medicineService;
-
-    private static final String PET_EXCEPTION = "Питомец не найден или вам не принадлежит";
-    private static final String PROCEDURE_EXCEPTION = "Процедура не найдена или не принадлежит вашему питомцу";
 
     @Autowired
     public DewormingController(PetService petService, DewormingService dewormingService,
@@ -158,19 +156,19 @@ public class DewormingController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //TODO add validationUtil
+    //TODO add validationUtilΩ
     private void dewormingCheck(Long dewormingId) {
-        Client client = (Client) getSecurityUserOrNull();
-        if (!dewormingService.isExistByDewormingIdAndClientId(dewormingId, client.getId())) {
-            throw new BadRequestException(PROCEDURE_EXCEPTION);
-        }
+        getOptionalOfNullableSecurityUser()
+                .map(User::getId)
+                .filter(userId -> dewormingService.isExistByDewormingIdAndClientId(dewormingId, userId))
+                .orElseThrow(() -> new BadRequestException(PROCEDURE_EXCEPTION));
     }
 
     //TODO add validationUtil
     private void petCheck(Long petId) {
-        Client client = (Client) getSecurityUserOrNull();
-        if (!petService.isExistByPetIdAndClientId(petId, client.getId())) {
-            throw new BadRequestException(PET_EXCEPTION);
-        }
+        getOptionalOfNullableSecurityUser()
+                .map(User::getId)
+                .filter(userId -> petService.isExistByPetIdAndClientId(petId, userId))
+                .orElseThrow(() -> new BadRequestException(PET_EXCEPTION));
     }
 }

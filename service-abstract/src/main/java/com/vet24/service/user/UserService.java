@@ -4,6 +4,16 @@ import com.vet24.models.user.User;
 import com.vet24.service.ReadWriteService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.Optional;
+
 public interface UserService extends ReadWriteService<Long, User>, UserDetailsService {
     User getWithAllCommentReactions(String email);
+
+    Optional<User> getUserByEmail(String email);
+
+    User getCurrentClientWithPets();
+
+    User getCurrentClientWithReactions();
+
+    User getCurrentUser();
 }

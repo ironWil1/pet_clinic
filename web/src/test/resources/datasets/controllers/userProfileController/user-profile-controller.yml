@@ -1,6 +1,6 @@
 USER_ENTITIES:
   - ID: 100
-    USER_TYPE: "ADMIN"
+    ##USER_TYPE: "User"
     ENABLED: true
     EMAIL: "admin1@email.com"
     PASSWORD: "{bcrypt}$2a$12$b5SpHA7tzgKb4bLSDppmS.3aZMdBu8diJKNHQDU7eASiTni2WlwHq" #"admin"
