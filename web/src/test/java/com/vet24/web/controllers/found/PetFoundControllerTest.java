@@ -19,7 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 public class PetFoundControllerTest extends ControllerAbstractIntegrationTest {
-
     private final String URL = "/api/petFound";
     private String token;
 
