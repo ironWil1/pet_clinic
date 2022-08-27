@@ -1,8 +1,5 @@
 package com.vet24.models.util;
 
-import jdk.jshell.execution.Util;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,36 +7,28 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 @Component
 public class InitAppearance {
-
-    //    @PersistenceContext
-    @Autowired
-    private EntityManager manager;
     @Autowired
     private EntityManagerFactory entityManagerFactory;
     private EntityTransaction txn = null;
-    //    String sql = "CREATE TABLE color (id BIGINT PRIMARY KEY AUTO_INCREMENT," +
-//            "color VARCHAR(255))";
-    String sql2 = "CREATE TABLE if not exists pet_color (id serial  PRIMARY KEY," +
-            "            color TEXT not null unique )";
-    String sql3 = "CREATE TABLE if not exists  pet_breed (id serial  PRIMARY KEY," +
-            "pet_type TEXT not null, breed TEXT not null, UNIQUE (pet_type,breed));";
 
-    // без EntityManagerFactory и EntityTransaction я не смог создать таблицы
+    private final String SQL_COLOR = "CREATE TABLE if not exists pet_color (id serial  PRIMARY KEY," +
+            "            color TEXT not null unique )";
+    private final String SQL_BREED = "CREATE TABLE if not exists  pet_breed (id serial  PRIMARY KEY," +
+            "pet_type TEXT not null, breed TEXT not null, UNIQUE (pet_type,breed));";
 
     @Transactional
     @PostConstruct
     public void colorTable() {
         try {
-            manager = entityManagerFactory.createEntityManager();
+            EntityManager manager = entityManagerFactory.createEntityManager();
             txn = manager.getTransaction();
             txn.begin();
-            manager.createNativeQuery(sql2).executeUpdate();
-            manager.createNativeQuery(sql3).executeUpdate();
+            manager.createNativeQuery(SQL_COLOR).executeUpdate();
+            manager.createNativeQuery(SQL_BREED).executeUpdate();
             txn.commit();
         } catch (Throwable e) {
             if (txn != null && txn.isActive()) {
@@ -48,6 +37,5 @@ public class InitAppearance {
             throw e;
         }
     }
-
 
 }

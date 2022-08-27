@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class ColorDaoImpl implements ColorDao{
+public class ColorDaoImpl implements ColorDao {
 
     @PersistenceContext
     private EntityManager manager;
@@ -19,16 +19,8 @@ public class ColorDaoImpl implements ColorDao{
         List<String> colorList = new ArrayList<>();
         colorList.addAll(
                 manager.createNativeQuery("SELECT color FROM pet_color WHERE color % :cl")
-                        .setParameter("cl",color)
+                        .setParameter("cl", color)
                         .getResultList());
         return colorList;
     }
-
-
-//    @PostConstruct
-//    public void test(){
-//
-//        System.out.println(getColor("blackk"));
-//    }
-
 }
