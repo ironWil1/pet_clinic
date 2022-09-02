@@ -2,7 +2,7 @@ package com.vet24.service.user;
 
 import com.eatthepath.uuid.FastUUID;
 import com.vet24.dao.user.VerificationDao;
-import com.vet24.models.user.Client;
+import com.vet24.models.user.User;
 import com.vet24.models.user.VerificationToken;
 import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Service
-public class VerificationServiceImpl extends ReadWriteServiceImpl<Long, VerificationToken>
-        implements VerificationService {
+public class VerificationServiceImpl extends ReadWriteServiceImpl<Long, VerificationToken> implements VerificationService {
     private final VerificationDao verificationDao;
 
     @Autowired
@@ -25,14 +24,14 @@ public class VerificationServiceImpl extends ReadWriteServiceImpl<Long, Verifica
 
     @Override
     @Transactional
-    public String createVerificationToken(Client client) {
+    public String createVerificationToken(User client) {
         UUID randomUUID = UUID.randomUUID();
         Long tokenId = randomUUID.getLeastSignificantBits() * 37 + 11;
         persistTokenWithClient(client, tokenId);
         return FastUUID.toString(randomUUID);
     }
 
-    private void persistTokenWithClient(Client client, Long tokenId) {
+    private void persistTokenWithClient(User client, Long tokenId) {
         VerificationToken vt = new VerificationToken(tokenId, client);
         verificationDao.persist(vt);
     }

@@ -32,7 +32,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         boolean isDiagnosisNotCreated = entityManager.createQuery("SELECT CASE WHEN dd.diagnoses.size = 0 " +
-                        "THEN TRUE ELSE FALSE END FROM Doctor dd WHERE dd.email =: email", Boolean.class)
+                        "THEN TRUE ELSE FALSE END FROM User dd WHERE dd.email =: email", Boolean.class)
                 .setParameter("email", "doctor33@gmail.com").getSingleResult();
         assertTrue("Тест не пройден! Диагноз создался, а не должен был!", isDiagnosisNotCreated);
     }
@@ -48,7 +48,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         boolean isDiagnosisCreated = entityManager.createQuery("SELECT CASE WHEN dd.diagnoses.size = 1 " +
-                        "THEN TRUE ELSE FALSE END FROM Doctor dd WHERE dd.email =: email", Boolean.class)
+                        "THEN TRUE ELSE FALSE END FROM User dd WHERE dd.email =: email", Boolean.class)
                 .setParameter("email", "doctor33@gmail.com").getSingleResult();
         assertTrue("Тест не пройден! Список диагнозов не равен 1", isDiagnosisCreated);
     }

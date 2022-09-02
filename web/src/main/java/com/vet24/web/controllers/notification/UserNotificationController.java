@@ -8,15 +8,19 @@ import com.vet24.service.notification.UserNotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
 import java.util.List;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 
 @RestController
@@ -39,11 +43,12 @@ public class UserNotificationController {
     })
     @GetMapping("")
     public ResponseEntity<List<UserNotificationDto>> getAllNotifications() {
-
-        User user = getSecurityUserOrNull();
-        List<UserNotification> userNotificationList = userNotificationService.getAllUserNotificationByUserId(user.getId());
-
-        return new ResponseEntity<>(userNotificationDtoMapper.toDto(userNotificationList), HttpStatus.OK);
+        return getOptionalOfNullableSecurityUser()
+                .map(User::getId)
+                .map(userNotificationService::getAllUserNotificationByUserId)
+                .map(userNotificationDtoMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @Operation(summary = "Receive notification by id")
@@ -53,30 +58,28 @@ public class UserNotificationController {
     })
     @GetMapping("/{notificationId}")
     public ResponseEntity<UserNotificationDto> getUserNotificationById(@PathVariable("notificationId") Long notificationId) {
-
-        User user = getSecurityUserOrNull();
         UserNotification userNotification = userNotificationService.getByKey(notificationId);
-
-        if (userNotification.getUser().getId() == user.getId()) {
-            return new ResponseEntity<>(userNotificationDtoMapper.toDto(userNotification), HttpStatus.OK);
-        } else {
-            log.info("UserNotification not found");
-            throw new NotFoundException("UserNotification not found");
-        }
+        return getOptionalOfNullableSecurityUser().map(User::getId)
+                .filter(userNotification.getUser().getId()::equals)
+                .map(x -> userNotificationDtoMapper.toDto(userNotification))
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> {
+                    log.info("UserNotification not found");
+                    throw new NotFoundException("UserNotification not found");
+                });
     }
 
     @PutMapping("/{notificationId}")
     public void notificationsStatus(@PathVariable("notificationId") Long notificationId) {
-
-        User user = getSecurityUserOrNull();
         UserNotification userNotification = userNotificationService.getByKey(notificationId);
-
-        if (userNotification.getUser().getId() == user.getId()) {
-            userNotification.setShow(false);
-            userNotificationService.update(userNotification);
-        } else {
-            log.info("UserNotification not found");
-            throw new NotFoundException("UserNotification not found");
-        }
+        getOptionalOfNullableSecurityUser().map(User::getId)
+                .filter(userNotification.getUser().getId()::equals)
+                .map(x -> {
+                    userNotification.setShow(false);
+                    return userNotificationService.update(userNotification);
+                }).orElseThrow(() -> {
+                    log.info("UserNotification not found");
+                    throw new NotFoundException("UserNotification not found");
+                });
     }
 }

@@ -1,21 +1,21 @@
 USER_ENTITIES:
   - ID: 100
-    USER_TYPE: "ADMIN"
+    ##USER_TYPE: "User"
     EMAIL: "admin1@email.com"
     ENABLED: true
     PASSWORD: "{bcrypt}$2a$12$b5SpHA7tzgKb4bLSDppmS.3aZMdBu8diJKNHQDU7eASiTni2WlwHq" #"admin"
   - ID: 101
-    USER_TYPE: "MANAGER"
+    ##USER_TYPE: "User"
     EMAIL: "manager1@email.com"
     ENABLED: true
     PASSWORD: "{bcrypt}$2a$12$c3tOVldsS88AjG8bLd2t5OMTfctjv.UY2hAg4qWtp2.VlDG7MnFa2" #"manager"
   - ID: 102
-    USER_TYPE: "CLIENT"
+    ##USER_TYPE: "User"
     EMAIL: "client1@email.com"
     ENABLED: true
     PASSWORD: "{bcrypt}$2a$12$Z/gpYA7gLUuFKZM7EROGduwYlXJnZplTVemX.kpKy52khCANZVJWW" #"client"
   - ID: 103
-    USER_TYPE: "DOCTOR"
+    ##USER_TYPE: "User"
     EMAIL: "doctor103@email.com"
     ENABLED: true
     PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"

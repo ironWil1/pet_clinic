@@ -1,10 +1,10 @@
 package com.vet24.web;
 
+import com.vet24.models.enums.DayOffType;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.NewsType;
-import com.vet24.models.enums.WorkShift;
 import com.vet24.models.enums.RoleNameEnum;
-import com.vet24.models.enums.DayOffType;
+import com.vet24.models.enums.WorkShift;
 import com.vet24.models.medicine.Appointment;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.DoctorSchedule;
@@ -22,16 +22,12 @@ import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.user.Client;
-import com.vet24.models.user.Role;
-import com.vet24.models.user.Doctor;
-import com.vet24.models.user.Admin;
-import com.vet24.models.user.Manager;
-import com.vet24.models.user.DoctorReview;
-import com.vet24.models.user.DoctorNonWorking;
-import com.vet24.models.user.Topic;
 import com.vet24.models.user.Comment;
 import com.vet24.models.user.CommentReaction;
+import com.vet24.models.user.DoctorNonWorking;
+import com.vet24.models.user.DoctorReview;
+import com.vet24.models.user.Role;
+import com.vet24.models.user.Topic;
 import com.vet24.models.user.User;
 import com.vet24.service.medicine.AppointmentService;
 import com.vet24.service.medicine.DiagnosisService;
@@ -48,14 +44,10 @@ import com.vet24.service.pet.procedure.DewormingService;
 import com.vet24.service.pet.procedure.ExternalParasiteProcedureService;
 import com.vet24.service.pet.procedure.VaccinationProcedureService;
 import com.vet24.service.pet.reproduction.ReproductionService;
-import com.vet24.service.user.AdminService;
-import com.vet24.service.user.ClientService;
 import com.vet24.service.user.CommentReactionService;
 import com.vet24.service.user.CommentService;
 import com.vet24.service.user.DoctorNonWorkingService;
 import com.vet24.service.user.DoctorReviewService;
-import com.vet24.service.user.DoctorService;
-import com.vet24.service.user.ManagerService;
 import com.vet24.service.user.ProfileService;
 import com.vet24.service.user.RoleService;
 import com.vet24.service.user.TopicService;
@@ -70,9 +62,9 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -80,10 +72,13 @@ import java.util.stream.Stream;
 @Profile({"local", "prod"})
 public class TestDataInitializer implements ApplicationRunner {
 
-    private final AdminService adminService;
+    private static final WorkShift firstShift = WorkShift.FIRST_SHIFT;
+    private static final WorkShift secondShift = WorkShift.SECOND_SHIFT;
+    private static final Gender MALE = Gender.MALE;
+    private static final Gender FEMALE = Gender.FEMALE;
+    private static final String EMAIL = "@email.com";
     private final RoleService roleService;
     private final UserService userService;
-    private final ClientService clientService;
     private final MedicineService medicineService;
     private final DoctorReviewService doctorReviewService;
     private final VaccinationProcedureService vaccinationProcedureService;
@@ -93,7 +88,6 @@ public class TestDataInitializer implements ApplicationRunner {
     private final ClinicalExaminationService clinicalExaminationService;
     private final PetContactService petContactService;
     private final PetService petService;
-    private final DoctorService doctorService;
     private final Environment environment;
     private final CommentService commentService;
     private final CommentReactionService commentReactionService;
@@ -105,45 +99,31 @@ public class TestDataInitializer implements ApplicationRunner {
     private final NotificationService notificationService;
     private final UserNotificationService userNotificationService;
     private final NewsService newsService;
-
     private final ProfileService profileService;
     private final Role client = new Role(RoleNameEnum.CLIENT);
     private final Role doctor = new Role(RoleNameEnum.DOCTOR);
     private final Role admin = new Role(RoleNameEnum.ADMIN);
     private final Role manager = new Role(RoleNameEnum.MANAGER);
-
-    private static final WorkShift firstShift = WorkShift.FIRST_SHIFT;
-    private static final WorkShift secondShift = WorkShift.SECOND_SHIFT;
-
     private final List<Pet> petList = new ArrayList<>();
-    private static final Gender MALE = Gender.MALE;
-    private static final Gender FEMALE = Gender.FEMALE;
-    private final ManagerService managerService;
-
-    private static final String EMAIL = "@email.com";
-
     private final PetFoundService petFoundService;
 
     @Autowired
-    public TestDataInitializer(AdminService adminService,
-                               RoleService roleService,
-                               UserService userService,
-                               ClientService clientService,
-                               MedicineService medicineService,
-                               VaccinationProcedureService vaccinationProcedureService,
-                               ExternalParasiteProcedureService externalParasiteProcedureService,
-                               DewormingService dewormingService,
-                               ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
-                               DoctorService doctorService,
-                               PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
-                               CommentReactionService commentReactionService, DiagnosisService diagnosisService,
-                               DoctorReviewService doctorReviewService, TopicService topicService, ManagerService managerService,
-                               DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService, NotificationService notificationService,
-                               UserNotificationService userNotificationService, NewsService newsService, ProfileService profileService, PetFoundService petFoundService) {
-        this.adminService = adminService;
+    public TestDataInitializer(
+            RoleService roleService,
+            UserService userService,
+            MedicineService medicineService,
+            VaccinationProcedureService vaccinationProcedureService,
+            ExternalParasiteProcedureService externalParasiteProcedureService,
+            DewormingService dewormingService,
+            ReproductionService reproductionService, ClinicalExaminationService clinicalExaminationService, PetContactService petContactService,
+            PetService petService, DoctorScheduleService doctorScheduleService, Environment environment, CommentService commentService,
+            CommentReactionService commentReactionService, DiagnosisService diagnosisService,
+            DoctorReviewService doctorReviewService, TopicService topicService,
+            DoctorNonWorkingService doctorNonWorkingService, AppointmentService appointmentService, NotificationService notificationService,
+            UserNotificationService userNotificationService, NewsService newsService, ProfileService profileService, PetFoundService petFoundService) {
+
         this.roleService = roleService;
         this.userService = userService;
-        this.clientService = clientService;
         this.medicineService = medicineService;
         this.doctorScheduleService = doctorScheduleService;
         this.doctorReviewService = doctorReviewService;
@@ -154,13 +134,11 @@ public class TestDataInitializer implements ApplicationRunner {
         this.clinicalExaminationService = clinicalExaminationService;
         this.petContactService = petContactService;
         this.petService = petService;
-        this.doctorService = doctorService;
         this.environment = environment;
         this.commentService = commentService;
         this.commentReactionService = commentReactionService;
         this.diagnosisService = diagnosisService;
         this.topicService = topicService;
-        this.managerService = managerService;
         this.doctorNonWorkingService = doctorNonWorkingService;
         this.appointmentService = appointmentService;
         this.notificationService = notificationService;
@@ -177,39 +155,39 @@ public class TestDataInitializer implements ApplicationRunner {
 
     public void userInitialize() {
 
-        List<Client> clients = new ArrayList<>();
+        List<User> clients = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             clients.add(
-                    new Client((i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + EMAIL,
+                    new User((i == 3) ? "petclinic.vet24@gmail.com" : "client" + i + EMAIL,
                             "client", client, petList));
         }
-        clientService.persistAll(clients);
+        userService.persistAll(clients);
 
-        List<Doctor> doctors = new ArrayList<>();
+        List<User> doctors = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             doctors.add(
-                    new Doctor("doctor" + i + EMAIL,
+                    new User("doctor" + i + EMAIL,
                             "doctor", doctor));
         }
-        doctorService.persistAll(doctors);
+        userService.persistAll(doctors);
     }
 
     public void adminInit() {
-        List<Admin> adminList = new ArrayList<>();
+        List<User> adminList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            adminList.add(new Admin("admin" + i + EMAIL,
+            adminList.add(new User("admin" + i + EMAIL,
                     "admin", admin));
         }
-        adminService.persistAll(adminList);
+        userService.persistAll(adminList);
     }
 
     public void petInitialize() {
         List<Pet> pets = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             if (i <= 15) {
-                pets.add(new Dog("DogName" + i, LocalDate.now(), MALE, "DogBreed" + i, clientService.getByKey((long) i)));
+                pets.add(new Dog("DogName" + i, LocalDate.now(), MALE, "DogBreed" + i, userService.getByKey((long) i)));
             } else {
-                pets.add(new Cat("CatName" + i, LocalDate.now(), FEMALE, "CatBreed" + i, clientService.getByKey((long) i)));
+                pets.add(new Cat("CatName" + i, LocalDate.now(), FEMALE, "CatBreed" + i, userService.getByKey((long) i)));
             }
         }
         petService.persistAll(pets);
@@ -218,7 +196,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void diagnosisInitilaizer() {
         List<Diagnosis> diagnoses = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            diagnoses.add(new Diagnosis(doctorService.getByKey(30 + (long) i), petService.getByKey((long) i), "some diagnosis " + i));
+            diagnoses.add(new Diagnosis(userService.getByKey(30 + (long) i), petService.getByKey((long) i), "some diagnosis " + i));
         }
         diagnosisService.persistAll(diagnoses);
     }
@@ -304,7 +282,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void clinicalExaminationInitializer() {
         List<ClinicalExamination> clinicalExaminations = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            clinicalExaminations.add(new ClinicalExamination(LocalDate.now(), petService.getByKey((long) i), doctorService.getByKey((long) i + 30), (double) i, true, "text"));
+            clinicalExaminations.add(new ClinicalExamination(LocalDate.now(), petService.getByKey((long) i), userService.getByKey((long) i + 30), (double) i, true, "text"));
         }
         clinicalExaminationService.persistAll(clinicalExaminations);
     }
@@ -362,7 +340,7 @@ public class TestDataInitializer implements ApplicationRunner {
         for (int i = 1; i <= 30; i++) {
             for (int j = 1; j <= 30; j++) {
                 doctorReviewComment = new Comment(userService.getByKey((long) j), "комментарий пользователя " + j + " доктору " + (i + 30), LocalDateTime.now());
-                doctorReviews.add(new DoctorReview(doctorReviewComment, doctorService.getByKey((long) i + 30)));
+                doctorReviews.add(new DoctorReview(doctorReviewComment, userService.getByKey((long) i + 30)));
             }
         }
         doctorReviewService.persistAll(doctorReviews);
@@ -381,27 +359,27 @@ public class TestDataInitializer implements ApplicationRunner {
     }
 
     private void managerInit() {
-        List<Manager> managerList = new ArrayList<>();
+        List<User> managerList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            managerList.add(new Manager("manager" + i + EMAIL,
+            managerList.add(new User("manager" + i + EMAIL,
                     "manager", manager));
         }
-        managerService.persistAll(managerList);
+        userService.persistAll(managerList);
     }
 
     private void doctorScheduleInit() {
         List<DoctorSchedule> doctorScheduleList = new ArrayList<>();
-        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(31L), firstShift, LocalDate.of(2021, 7, 26)));
-        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(32L), secondShift, LocalDate.of(2021, 7, 26)));
-        doctorScheduleList.add(new DoctorSchedule(doctorService.getByKey(33L), secondShift, LocalDate.of(2021, 7, 26)));
+        doctorScheduleList.add(new DoctorSchedule(userService.getByKey(31L), firstShift, LocalDate.of(2021, 7, 26)));
+        doctorScheduleList.add(new DoctorSchedule(userService.getByKey(32L), secondShift, LocalDate.of(2021, 7, 26)));
+        doctorScheduleList.add(new DoctorSchedule(userService.getByKey(33L), secondShift, LocalDate.of(2021, 7, 26)));
         doctorScheduleService.persistAll(doctorScheduleList);
     }
 
     public void doctorNonWorkingInit() {
         List<DoctorNonWorking> doctorNonWorkings = Arrays.asList(
-                new DoctorNonWorking(doctorService.getByKey(31L), DayOffType.SICK_LEAVE, LocalDate.of(2021, 10, 15)),
-                new DoctorNonWorking(doctorService.getByKey(32L), DayOffType.DAY_OFF, LocalDate.of(2021, 10, 10)),
-                new DoctorNonWorking(doctorService.getByKey(33L), DayOffType.VACATION, LocalDate.of(2021, 10, 7))
+                new DoctorNonWorking(userService.getByKey(31L), DayOffType.SICK_LEAVE, LocalDate.of(2021, 10, 15)),
+                new DoctorNonWorking(userService.getByKey(32L), DayOffType.DAY_OFF, LocalDate.of(2021, 10, 10)),
+                new DoctorNonWorking(userService.getByKey(33L), DayOffType.VACATION, LocalDate.of(2021, 10, 7))
         );
         doctorNonWorkingService.persistAll(doctorNonWorkings);
     }
@@ -409,7 +387,7 @@ public class TestDataInitializer implements ApplicationRunner {
     public void appointmentInit() {
         List<Appointment> appointmentList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            appointmentList.add(new Appointment(doctorService.getByKey((long) i), petService.getByKey((long) i), LocalDateTime.now().plusDays(7), "description" + i));
+            appointmentList.add(new Appointment(userService.getByKey((long) i), petService.getByKey((long) i), LocalDateTime.now().plusDays(7), "description" + i));
         }
         appointmentService.persistAll(appointmentList);
     }

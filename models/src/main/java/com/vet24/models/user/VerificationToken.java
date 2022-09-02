@@ -7,7 +7,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 
 @Entity
@@ -16,16 +21,16 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class VerificationToken  implements Serializable {
+public class VerificationToken implements Serializable {
     @Id
     @NonNull
     @EqualsAndHashCode.Include
     private Long id;
 
     @NonNull
-    @OneToOne(targetEntity = Client.class,cascade = {CascadeType.PERSIST},
+    @OneToOne(targetEntity = User.class, cascade = {CascadeType.PERSIST},
             fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, unique = true, name = "user_id")
-    private Client client;
+    private User client;
 
 }

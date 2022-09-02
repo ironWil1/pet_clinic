@@ -9,6 +9,7 @@ import com.vet24.models.mappers.pet.procedure.VaccinationMapper;
 import com.vet24.models.medicine.Medicine;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
+import com.vet24.models.user.User;
 import com.vet24.models.util.View;
 import com.vet24.service.medicine.MedicineService;
 import com.vet24.service.pet.PetService;
@@ -24,27 +25,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
-
 import java.util.List;
+
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 @RestController
 @Slf4j
 @RequestMapping("api/client/procedure/vaccination")
 @Tag(name = "vaccination-controller", description = "operations with vaccination procedure")
 public class VaccinationController {
-    private final PetService petService;
-    private final VaccinationProcedureService vaccinationProcedureService;
-    private final MedicineService medicineService;
-
-    private final VaccinationMapper vaccinationMapper;
-
     private static final String PET_NOT_FOUND = "pet not found";
     private static final String PROCEDURE_NOT_FOUND = "procedure not found";
     private static final String NOT_YOURS = "pet not yours";
+    private final PetService petService;
+    private final VaccinationProcedureService vaccinationProcedureService;
+    private final MedicineService medicineService;
+    private final VaccinationMapper vaccinationMapper;
+
+    @Autowired
+    public VaccinationController(PetService petService, MedicineService medicineService,
+                                 VaccinationMapper vaccinationMapper,
+                                 VaccinationProcedureService vaccinationProcedureService) {
+        this.petService = petService;
+        this.vaccinationProcedureService = vaccinationProcedureService;
+        this.medicineService = medicineService;
+        this.vaccinationMapper = vaccinationMapper;
+    }
 
     private void checkPet(Long petId) {
         if (!petService.isExistByKey(petId)) {
@@ -61,20 +78,13 @@ public class VaccinationController {
     }
 
     private void checkOwnerPet(Long petId) {
-        if (!petService.isExistByPetIdAndClientId(petId, getSecurityUserOrNull().getId())) {
-            log.info("The pet with this id {} is not yours", petId);
-            throw new BadRequestException(NOT_YOURS);
-        }
-    }
-
-    @Autowired
-    public VaccinationController(PetService petService, MedicineService medicineService,
-                                 VaccinationMapper vaccinationMapper,
-                                 VaccinationProcedureService vaccinationProcedureService) {
-        this.petService = petService;
-        this.vaccinationProcedureService = vaccinationProcedureService;
-        this.medicineService = medicineService;
-        this.vaccinationMapper = vaccinationMapper;
+        getOptionalOfNullableSecurityUser()
+                .map(User::getId)
+                .filter(userId -> petService.isExistByPetIdAndClientId(petId, userId))
+                .orElseThrow(() -> {
+                    log.info("The pet with this id {} is not yours", petId);
+                    throw new BadRequestException(NOT_YOURS);
+                });
     }
 
     @Operation(summary = "получить все процедуры вакцинации по id питомца")

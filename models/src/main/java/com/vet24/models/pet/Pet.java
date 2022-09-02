@@ -10,7 +10,7 @@ import com.vet24.models.pet.procedure.Deworming;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import com.vet24.models.pet.procedure.VaccinationProcedure;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.user.Client;
+import com.vet24.models.user.User;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -86,7 +86,7 @@ public abstract class Pet {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Client client;
+    private User client;
 
     @OneToMany(
             mappedBy = "pet",
@@ -155,7 +155,7 @@ public abstract class Pet {
     protected Pet() {
     }
 
-    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client) {
+    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, User client) {
         this.name = name;
         this.birthDay = birthDay;
         this.gender = gender;
@@ -163,7 +163,7 @@ public abstract class Pet {
         this.client = client;
     }
 
-    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, Client client,
+    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, User client,
                   List<ExternalParasiteProcedure> externalParasiteProcedures,
                   List<Deworming> dewormings, List<Reproduction> reproductions,
                   List<ClinicalExamination> clinicalExaminations, List<VaccinationProcedure> vaccinationProcedures) {

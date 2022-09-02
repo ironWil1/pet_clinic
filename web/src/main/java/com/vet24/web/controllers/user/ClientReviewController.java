@@ -5,14 +5,12 @@ import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.exception.RepeatedCommentException;
 import com.vet24.models.mappers.user.CommentMapper;
 import com.vet24.models.mappers.user.DoctorReviewMapper;
-import com.vet24.models.user.Client;
 import com.vet24.models.user.Comment;
-import com.vet24.models.user.Doctor;
 import com.vet24.models.user.DoctorReview;
 import com.vet24.models.user.User;
 import com.vet24.service.user.CommentService;
 import com.vet24.service.user.DoctorReviewService;
-import com.vet24.service.user.DoctorService;
+import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,12 +21,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 
 @RestController
@@ -37,16 +42,16 @@ import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 @Tag(name = "client review controller", description = "operations with comments")
 public class ClientReviewController {
 
-    private final DoctorService doctorService;
+    private final UserService userService;
     private final CommentService commentService;
     private final DoctorReviewService doctorReviewService;
     private final CommentMapper commentMapper;
     private final DoctorReviewMapper doctorReviewMapper;
 
     @Autowired
-    public ClientReviewController(DoctorService doctorService, CommentService commentService,
+    public ClientReviewController(UserService userService, CommentService commentService,
                                   DoctorReviewService doctorReviewService, CommentMapper commentMapper, DoctorReviewMapper doctorReviewMapper) {
-        this.doctorService = doctorService;
+        this.userService = userService;
         this.commentService = commentService;
         this.doctorReviewService = doctorReviewService;
         this.commentMapper = commentMapper;
@@ -60,13 +65,13 @@ public class ClientReviewController {
             @ApiResponse(responseCode = "404", description = "Doctor not found")
     })
     public ResponseEntity<DoctorReviewDto> persistComment(@PathVariable("doctorId") Long doctorId, String text) {
-        Doctor doctor = doctorService.getByKey(doctorId);
+        User doctor = userService.getByKey(doctorId);
         if (doctor == null) {
             throw new NotFoundException("Doctor not found");
         } else {
             Comment comment = null;
             DoctorReview doctorReview = null;
-            User currentUser = getSecurityUserOrNull();
+            User currentUser = getOptionalOfNullableSecurityUser().orElseThrow(() -> new BadRequestException("User not found"));
             Long userId = currentUser.getId();
             if (doctorReviewService.getByDoctorAndClientId(doctorId, userId) == null) {
                 comment = new Comment(
@@ -93,14 +98,14 @@ public class ClientReviewController {
     })
     @PutMapping(value = "/{doctorId}/review")
     public ResponseEntity<DoctorReviewDto> updateComment(@PathVariable("doctorId") Long doctorId, @RequestBody String text) {
-        Client client = (Client) getSecurityUserOrNull();
+        Long clientId = getOptionalOfNullableSecurityUser().map(User::getId).orElseThrow(() -> new BadRequestException("User not found"));
 
-        DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
+        DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, clientId);
         if (doctorReview == null) {
             log.info("Doctor have bad doctorId");
             throw new NotFoundException("Comment not found");
         }
-        if (!(doctorReview.getComment().getUser().getId().equals(client.getId()))) {
+        if (!(doctorReview.getComment().getUser().getId().equals(clientId))) {
             log.info("Another client's comment with id {}", doctorReview.getComment().getId());
             throw new BadRequestException("Another client's comment");
         }
@@ -118,14 +123,14 @@ public class ClientReviewController {
     })
     @DeleteMapping(value = "/{doctorId}/review")
     public ResponseEntity<Void> deleteComment(@PathVariable("doctorId") Long doctorId) {
-        Client client = (Client) getSecurityUserOrNull();
+        Long clientId = getOptionalOfNullableSecurityUser().map(User::getId).orElseThrow(() -> new BadRequestException("User not found"));
 
-        DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
+        DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, clientId);
         if (doctorReview == null) {
             log.info("Comment not found");
             throw new NotFoundException("Comment not found");
         }
-        if (!(doctorReview.getComment().getUser().getId().equals(client.getId()))) {
+        if (!(doctorReview.getComment().getUser().getId().equals(clientId))) {
             log.info("Another client's comment with id {}", doctorReview.getComment().getId());
             throw new BadRequestException("Another client's comment");
         }
@@ -142,14 +147,13 @@ public class ClientReviewController {
     })
     @GetMapping(value = "/{doctorId}/review")
     public ResponseEntity<DoctorReviewDto> getComment(@PathVariable("doctorId") Long doctorId) {
-        Client client = (Client) getSecurityUserOrNull();
-
-        DoctorReview doctorReview = doctorReviewService.getByDoctorAndClientId(doctorId, client.getId());
-        if (doctorReview == null) {
-            log.info("Comment not found");
-            throw new NotFoundException("Comment not found");
-        }
-        return ResponseEntity.ok().body(doctorReviewMapper.toDto(doctorReview));
-
+        return getOptionalOfNullableSecurityUser().map(User::getId)
+                .map(userId -> doctorReviewService.getByDoctorAndClientId(doctorId, userId))
+                .map(doctorReviewMapper::toDto)
+                .map(dto -> ResponseEntity.ok().body(dto))
+                .orElseThrow(() -> {
+                    log.info("Comment not found");
+                    throw new NotFoundException("Comment not found");
+                });
     }
 }

@@ -8,7 +8,7 @@ import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.reproduction.ReproductionMapper;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.reproduction.Reproduction;
-import com.vet24.models.user.Client;
+import com.vet24.models.user.User;
 import com.vet24.models.util.View;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.reproduction.ReproductionService;
@@ -33,9 +33,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
 import java.util.List;
+import java.util.function.Function;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
-
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 
 @RestController
@@ -84,7 +84,7 @@ public class ReproductionController {
     public ResponseEntity<ReproductionDto> getById(@PathVariable Long petId,
                                                    @PathVariable Long reproductionId) {
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = (Client) getSecurityUserOrNull();
+        User client = getOptionalOfNullableSecurityUser().orElseThrow(() -> new NotFoundException("client not found"));
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
@@ -122,7 +122,7 @@ public class ReproductionController {
 
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionMapper.toEntity(reproductionDto);
-        Client client = (Client) getSecurityUserOrNull();
+        User client = getOptionalOfNullableSecurityUser().orElseThrow(() -> new NotFoundException("client not found"));
 
         if (pet == null) {
             throw new NotFoundException(PET_NOT_FOUND);
@@ -157,7 +157,7 @@ public class ReproductionController {
 
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = (Client) getSecurityUserOrNull();
+        User client = getOptionalOfNullableSecurityUser().orElseThrow(() -> new NotFoundException("client not found"));
 
         if (pet == null) {
             throw new NotFoundException(PET_NOT_FOUND);
@@ -193,7 +193,8 @@ public class ReproductionController {
     public ResponseEntity<Void> deleteById(@PathVariable Long petId, @PathVariable Long reproductionId) {
         Pet pet = petService.getByKey(petId);
         Reproduction reproduction = reproductionService.getByKey(reproductionId);
-        Client client = (Client) getSecurityUserOrNull();
+        User client = getOptionalOfNullableSecurityUser().orElseThrow(() -> new NotFoundException("client not found"));
+
 
         if (pet == null) {
             throw new NotFoundException(PET_NOT_FOUND);
@@ -222,9 +223,11 @@ public class ReproductionController {
     }
 
     private void checkOwnerPet(Long petId){
-        if (!petService.isExistByPetIdAndClientId(petId, getSecurityUserOrNull().getId())){
-            log.info("The pet with this id {} is not yours", petId);
-            throw new BadRequestException(NOT_YOURS);
-        }
+        getOptionalOfNullableSecurityUser()
+                .filter(user -> petService.isExistByPetIdAndClientId(petId, user.getId()))
+                .orElseThrow(() -> {
+                    log.info("The pet with this id {} is not yours", petId);
+                    throw new BadRequestException(NOT_YOURS);
+                });
     }
 }

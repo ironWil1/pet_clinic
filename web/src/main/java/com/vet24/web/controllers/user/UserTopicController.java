@@ -10,9 +10,9 @@ import com.vet24.models.user.Comment;
 import com.vet24.models.user.Topic;
 import com.vet24.models.user.User;
 import com.vet24.models.util.View;
-import com.vet24.service.user.ClientService;
 import com.vet24.service.user.CommentService;
 import com.vet24.service.user.TopicService;
+import com.vet24.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,7 +22,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
 import javax.validation.constraints.NotBlank;
@@ -30,7 +37,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 
 //TODO: Убрать NPE в getAllTopics
@@ -39,7 +46,7 @@ import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
 @Tag(name = "Topic controller", description = "operation with topic")
 public class UserTopicController {
 
-    private final ClientService clientService;
+    private final UserService userService;
     private final TopicService topicService;
     private final TopicMapper topicMapper;
     private final CommentService commentService;
@@ -47,8 +54,8 @@ public class UserTopicController {
 
 
     @Autowired
-    public UserTopicController(ClientService clientService, TopicService topicService, TopicMapper topicMapper, CommentService commentService, CommentMapper commentMapper) {
-        this.clientService = clientService;
+    public UserTopicController(UserService userService, TopicService topicService, TopicMapper topicMapper, CommentService commentService, CommentMapper commentMapper) {
+        this.userService = userService;
         this.topicService = topicService;
         this.topicMapper = topicMapper;
         this.commentService = commentService;
@@ -75,12 +82,11 @@ public class UserTopicController {
     })
     @GetMapping("/yourTopics")
     public ResponseEntity<List<TopicDto>> getAllClientTopic() {
-
-        User user = getSecurityUserOrNull();
-        if (topicMapper.toDto(topicService.getTopicByClientId(user.getId())).isEmpty()) {
-            throw new NotFoundException("Topics are not found");
-        }
-        return new ResponseEntity<>(topicMapper.toDto(topicService.getTopicByClientId(user.getId())), HttpStatus.OK);
+        return getOptionalOfNullableSecurityUser().map(User::getId)
+                .map(topicService::getTopicByClientId)
+                .map(topicMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new NotFoundException("Topics are not found"));
     }
 
     @Operation(summary = "get topic by Id")
@@ -110,7 +116,7 @@ public class UserTopicController {
             throw new BadRequestException("title or content can't null");
         }
         Topic topic = topicMapper.toEntity(topicDto);
-        topic.setTopicStarter(getSecurityUserOrNull());
+        topic.setTopicStarter(getOptionalOfNullableSecurityUser().orElseThrow(() -> new NotFoundException("user not found")));
         topic.setCreationDate(LocalDateTime.now());
         topic.setLastUpdateDate(LocalDateTime.now());
         topicService.persist(topic);
@@ -125,16 +131,14 @@ public class UserTopicController {
     })
     @PutMapping("/{topicId}")
     public ResponseEntity<TopicDto> updateTopic(@PathVariable("topicId") Long topicId, @JsonView(View.Put.class)
-                                                @RequestBody(required = false) TopicDto topicDto) {
+    @RequestBody(required = false) TopicDto topicDto) {
         if (!topicService.isExistByKey(topicId)) {
             throw new NotFoundException("topic not found");
         }
 
-        User user = getSecurityUserOrNull();
         Topic topic = topicService.getByKey(topicId);
-        if (!topic.getTopicStarter().equals(user)) {
-            throw new NotFoundException("it's not your topic");
-        }
+        getOptionalOfNullableSecurityUser().filter(topic.getTopicStarter()::equals)
+                .orElseThrow(() -> new NotFoundException("it's not your topic"));
 
         if (!(topicDto.getTitle() == null || topicDto.getTitle().trim().equals(""))) {
             topic.setTitle(topicDto.getTitle());
@@ -157,12 +161,11 @@ public class UserTopicController {
             throw new NotFoundException("topic is not found");
         }
 
-        User user = getSecurityUserOrNull();
-
         Topic topic = topicService.getByKey(topicId);
-        if (!topic.getTopicStarter().equals(user)) {
-            throw new NotFoundException("it's not you topic");
-        }
+        getOptionalOfNullableSecurityUser()
+                .filter(topic.getTopicStarter()::equals)
+                .orElseThrow(() -> new NotFoundException("it's not your topic"));
+
         topicService.delete(topic);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -187,7 +190,7 @@ public class UserTopicController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        Comment comment = new Comment(clientService.getCurrentClientWithPets(), content);
+        Comment comment = new Comment(userService.getCurrentUser(), content);
         commentService.persist(comment);
         topic.getComments().add(comment);
         topicService.persist(topic);

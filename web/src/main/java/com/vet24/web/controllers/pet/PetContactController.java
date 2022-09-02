@@ -3,11 +3,10 @@ package com.vet24.web.controllers.pet;
 import com.vet24.models.dto.pet.PetContactDto;
 import com.vet24.models.mappers.pet.PetContactMapper;
 import com.vet24.models.pet.PetContact;
-import com.vet24.models.user.Client;
+import com.vet24.models.user.User;
 import com.vet24.service.pet.PetContactService;
-
 import com.vet24.service.pet.PetService;
-import com.vet24.service.user.ClientService;
+import com.vet24.service.user.UserService;
 import com.vet24.util.qrcode.PetContactQrCodeGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 @RestController
 @Slf4j
@@ -41,10 +40,12 @@ public class PetContactController {
     private final PetContactService petContactService;
     private final PetContactMapper petContactMapper;
     private final PetService petService;
-    private final ClientService clientService;
+    private final UserService clientService;
+    @Value("${application.domain.name}")
+    private String URL;
 
     @Autowired
-    public PetContactController(PetContactService petContactService, PetContactMapper petContactMapper, PetService petService, ClientService clientService) {
+    public PetContactController(PetContactService petContactService, PetContactMapper petContactMapper, PetService petService, UserService clientService) {
         this.petContactService = petContactService;
         this.petContactMapper = petContactMapper;
         this.petService = petService;
@@ -59,12 +60,12 @@ public class PetContactController {
     })
     @GetMapping("/")
     public ResponseEntity<PetContactDto> getPetContactByPetId(@RequestParam Long petId) {
-        Client client = (Client) getSecurityUserOrNull();
-        if (petService.isExistByPetIdAndClientId(petId, client.getId())) {
-            PetContact petContact = petContactService.getByKey(petId);
-            return new ResponseEntity<>(petContactMapper.toDto(petContact), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return getOptionalOfNullableSecurityUser().map(User::getId)
+                .filter(userId -> petService.isExistByPetIdAndClientId(petId, userId))
+                .map(x -> petContactService.getByKey(petId))
+                .map(petContactMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @Operation(summary = "Обновление Контакта питомца")
@@ -74,19 +75,17 @@ public class PetContactController {
     })
     @PutMapping("/")
     public ResponseEntity<PetContactDto> updatePetContact(@Valid @RequestBody PetContactDto petContactDto, @RequestParam Long petId) {
-
-        Client client = (Client) getSecurityUserOrNull();
-        if (petService.isExistByPetIdAndClientId(petId, client.getId())) {
-            PetContact petContact = petContactService.getByKey(petId);
-            petContactMapper.updateEntity(petContactDto, petContact);
-            petContactService.update(petContact);
-            return new ResponseEntity<>(petContactDto, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return getOptionalOfNullableSecurityUser()
+                .map(User::getId)
+                .filter(userId -> petService.isExistByPetIdAndClientId(petId, userId))
+                .map(x -> petContactService.getByKey(petId))
+                .map(petContact -> {
+                    petContactMapper.updateEntity(petContactDto, petContact);
+                    return petContactService.update(petContact);
+                })
+                .map(x -> new ResponseEntity<>(petContactDto, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
-
-    @Value("${application.domain.name}")
-    private String URL;
 
     @Operation(summary = "Создание QR кода для Контакта питомца")
     @ApiResponses(value = {
@@ -95,7 +94,7 @@ public class PetContactController {
     })
     @GetMapping(value = "/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> createPetContactQrCode(@RequestParam Long petId) {
-        Client client = clientService.getCurrentClientWithPets();
+        User client = clientService.getCurrentClientWithPets();
         if (petService.isExistByPetIdAndClientId(petId, client.getId())) {
             PetContact petContact = petContactService.getByKey(petId);
             String urlToAlertPetContact = URL + "/api/petFound?code=" + petContact.getCode();

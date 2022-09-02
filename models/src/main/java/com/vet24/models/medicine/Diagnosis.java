@@ -1,7 +1,7 @@
 package com.vet24.models.medicine;
 
 import com.vet24.models.pet.Pet;
-import com.vet24.models.user.Doctor;
+import com.vet24.models.user.User;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,19 +26,16 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 public class Diagnosis implements Serializable {
 
+    @NonNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    protected User doctor;
+    @NonNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    protected Pet pet;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
-
-    @NonNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    protected Doctor doctor;
-
-    @NonNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    protected Pet pet;
-
     @NonNull
     @Column(nullable = false)
     private String description;

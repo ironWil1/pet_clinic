@@ -1,6 +1,11 @@
 package com.vet24.models.user;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
@@ -37,19 +42,19 @@ public class Profile {
     private String avatarUrl;
 
     @NonNull
-    @Column(name="first_name")
+    @Column(name = "first_name")
     private String firstName;
 
     @NonNull
-    @Column(name="last_name")
+    @Column(name = "last_name")
     private String lastName;
 
     @NonNull
-    @Column(name="birth_date")
+    @Column(name = "birth_date")
     private LocalDate birthDate;
 
     @NonNull
-    @Column(name="discord_id")
+    @Column(name = "discord_id")
     private String discordId;
 
     @NonNull

@@ -8,7 +8,7 @@ import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.AbstractNewPetMapper;
 import com.vet24.models.mappers.pet.PetMapper;
 import com.vet24.models.pet.Pet;
-import com.vet24.models.user.Client;
+import com.vet24.models.user.User;
 import com.vet24.service.media.ResourceService;
 import com.vet24.service.media.UploadService;
 import com.vet24.service.pet.PetService;
@@ -37,8 +37,9 @@ import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Optional;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 
 @RestController
@@ -53,8 +54,7 @@ public class PetController {
     private final UploadService uploadService;
     private final ResourceService resourceService;
 
-    public PetController(PetService petService, PetMapper petMapper, AbstractNewPetMapper newPetMapper,
-                         UploadService uploadService, ResourceService resourceService) {
+    public PetController(PetService petService, PetMapper petMapper, AbstractNewPetMapper newPetMapper, UploadService uploadService, ResourceService resourceService) {
         this.petService = petService;
         this.petMapper = petMapper;
         this.newPetMapper = newPetMapper;
@@ -63,64 +63,46 @@ public class PetController {
     }
 
     @Operation(summary = "get pet by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully get a Pet",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PetDto.class))),
-            @ApiResponse(responseCode = "404", description = "Pet not found",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class))),
-            @ApiResponse(responseCode = "400", description = "Pet not yours",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully get a Pet", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PetDto.class))), @ApiResponse(responseCode = "404", description = "Pet not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class))), @ApiResponse(responseCode = "400", description = "Pet not yours", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))})
     @GetMapping("/{petId}")
     public ResponseEntity<PetDto> getById(@PathVariable("petId") Long petId) {
-        Client client = (Client)  getSecurityUserOrNull();
         Pet pet = petService.getByKey(petId);
 
         if (pet == null) {
             log.info("The pet with this id {} was not found", petId);
             throw new NotFoundException("pet not found");
         }
-        if (!pet.getClient().getId().equals(client.getId())) {
+        getOptionalOfNullableSecurityUser().map(User::getId).filter(userId -> !pet.getClient().getId().equals(userId)).orElseThrow(() -> {
             log.info("The pet with this id {} is not yours", petId);
             throw new BadRequestException("pet not yours");
-        }
+        });
+
 
         log.info("We have pet with this id {}", petId);
         return new ResponseEntity<>(petMapper.toDto(pet), HttpStatus.OK);
     }
 
     @Operation(summary = "add a new Pet")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully added a new Pet",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AbstractNewPetDto.class))),
-            @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Successfully added a new Pet", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AbstractNewPetDto.class))), @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)})
     @PostMapping("/add")
     public ResponseEntity<AbstractNewPetDto> persistPet(@Valid @RequestBody AbstractNewPetDto petDto) {
-
-        Client client = (Client) getSecurityUserOrNull();
-        if (client != null) {
+        return getOptionalOfNullableSecurityUser().map(user -> {
             Pet pet = newPetMapper.toEntity(petDto);
-            pet.setClient(client);
+            pet.setClient(user);
             petService.persist(pet);
             log.info("We added new pet {}", petDto.getName());
             return ResponseEntity.status(201).body(petDto);
-        }
-        return ResponseEntity.notFound().build();
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "delete a Pet")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully deleted the Pet"),
-            @ApiResponse(responseCode = "404", description = "Pet or Client is not found"),
-            @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully deleted the Pet"), @ApiResponse(responseCode = "404", description = "Pet or Client is not found"), @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")})
     @DeleteMapping("/{petId}")
     public ResponseEntity<Void> deletePet(@PathVariable("petId") Long petId) {
-        Client client = (Client)  getSecurityUserOrNull();
+        Optional<User> client = getOptionalOfNullableSecurityUser();
         Pet pet = petService.getByKey(petId);
-        if (client != null && pet != null) {
-            if (pet.getClient().getId().equals(client.getId())) {
+        if (client.isPresent() && pet != null) {
+            if (pet.getClient().getId().equals(client.get().getId())) {
                 petService.delete(pet);
                 log.info("We deleted pet with this id {}", petId);
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -131,17 +113,12 @@ public class PetController {
     }
 
     @Operation(summary = "update a Pet")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully updated the Pet"),
-            @ApiResponse(responseCode = "404", description = "Pet or Client is not found"),
-            @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully updated the Pet"), @ApiResponse(responseCode = "404", description = "Pet or Client is not found"), @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")})
     @PutMapping("/{petId}")
-    public ResponseEntity<AbstractNewPetDto> updatePet(@PathVariable("petId") Long petId, @Valid
-    @RequestBody AbstractNewPetDto petDto) {
-        Client client = (Client)  getSecurityUserOrNull();
+    public ResponseEntity<AbstractNewPetDto> updatePet(@PathVariable("petId") Long petId, @Valid @RequestBody AbstractNewPetDto petDto) {
+        Optional<User> client = getOptionalOfNullableSecurityUser();
         Pet pet = petService.getByKey(petId);
-        if (pet == null) {
+        if (pet == null || client.isEmpty()) {
             throw new NotFoundException("Pet is not found");
         }
         if (!(pet.getPetType().equals(petDto.getPetType()))) {
@@ -150,12 +127,12 @@ public class PetController {
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (!(pet.getClient().getId().equals(client.getId()))) {
+        if (!(pet.getClient().getId().equals(client.get().getId()))) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Pet updatedPet = newPetMapper.toEntity(petDto);
         updatedPet.setId(pet.getId());
-        updatedPet.setClient(client);
+        updatedPet.setClient(client.get());
         petService.update(updatedPet);
         log.info("We updated pet with this id {}", petId);
         return ResponseEntity.ok().body(petDto);
@@ -163,15 +140,12 @@ public class PetController {
 
 
     @Operation(summary = "get avatar of a Pet")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the avatar"),
-            @ApiResponse(responseCode = "404", description = "Client or Pet or Pet's avatar is not found")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully retrieved the avatar"), @ApiResponse(responseCode = "404", description = "Client or Pet or Pet's avatar is not found")})
     @GetMapping(value = "/{petId}/avatar")
     public ResponseEntity<byte[]> getPetAvatar(@PathVariable("petId") Long petId) {
-        Client client = (Client)  getSecurityUserOrNull();
+        Optional<User> client = getOptionalOfNullableSecurityUser();
         Pet pet = petService.getByKey(petId);
-        if (client != null && pet != null) {
+        if (client.isPresent() && pet != null) {
             String url = pet.getAvatar();
             if (url != null) {
                 log.info(" The pet has avatar  {} ", url);
@@ -182,23 +156,17 @@ public class PetController {
     }
 
     @Operation(summary = "upload avatar for a Pet")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully uploaded the avatar",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UploadedFileDto.class))),
-            @ApiResponse(responseCode = "404", description = "Client or Pet is not found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully uploaded the avatar", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UploadedFileDto.class))), @ApiResponse(responseCode = "404", description = "Client or Pet is not found", content = @Content), @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")})
     @PostMapping(value = "/{petId}/avatar", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<UploadedFileDto> persistPetAvatar(@PathVariable("petId") Long petId,
-                                                            @RequestParam("file") MultipartFile file) throws IOException {
-        Client client = (Client)  getSecurityUserOrNull();
+    public ResponseEntity<UploadedFileDto> persistPetAvatar(@PathVariable("petId") Long petId, @RequestParam("file") MultipartFile file) throws IOException {
+        Optional<User> client = getOptionalOfNullableSecurityUser();
         Pet pet = petService.getByKey(petId);
-        if (client != null && pet != null) {
-            if (pet.getClient().getId().equals(client.getId())) {
+        if (client.isPresent() && pet != null) {
+            if (pet.getClient().getId().equals(client.get().getId())) {
                 UploadedFileDto uploadedFileDto = uploadService.store(file);
                 pet.setAvatar(uploadedFileDto.getUrl());
                 petService.update(pet);
-                log.info(" The pet with this id {} changes avatar  {} ", petId);
+                log.info(" The pet with this id {} changes avatar  {} ", petId, uploadedFileDto.getUrl());
                 return new ResponseEntity<>(uploadedFileDto, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

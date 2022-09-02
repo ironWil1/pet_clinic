@@ -1,15 +1,15 @@
 package com.vet24.models.annotation;
 
 
-import com.vet24.models.user.User;
 import com.vet24.models.util.ReflectionUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.event.spi.MergeEvent;
 import org.hibernate.event.spi.MergeEventListener;
+
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 public class MergeEventListenerImpl implements MergeEventListener {
     public static final MergeEventListenerImpl INSTANCE = new MergeEventListenerImpl();
@@ -17,8 +17,7 @@ public class MergeEventListenerImpl implements MergeEventListener {
 
     @Override
     public void onMerge(MergeEvent mergeEvent) throws HibernateException {
-        User activeUser = getSecurityUserOrNull();
-        if (activeUser != null) {
+        getOptionalOfNullableSecurityUser().ifPresent(activeUser -> {
             final Object entity = mergeEvent.getEntity();
             Field field = ReflectionUtil.searchFieldWithAnnotation(entity.getClass(), UpdateAuthor.class);
             if (field != null) {
@@ -29,7 +28,7 @@ public class MergeEventListenerImpl implements MergeEventListener {
                     e.printStackTrace();
                 }
             }
-        }
+        });
     }
 
     @Override
