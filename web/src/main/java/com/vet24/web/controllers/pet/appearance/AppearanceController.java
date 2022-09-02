@@ -28,7 +28,7 @@ public class AppearanceController {
     @ApiResponse(responseCode = "200", description = "Окрас успешно получен или получен пустой список")
     @GetMapping("/color")
     public List<String> getColor(@RequestParam String text) {
-        return colorService.getColor(text);
+        return colorService.findColor(text);
     }
 
     @Operation(summary = "Получение возможной породы животного")

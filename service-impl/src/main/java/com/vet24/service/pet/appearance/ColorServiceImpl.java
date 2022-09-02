@@ -17,7 +17,7 @@ public class ColorServiceImpl implements ColorService {
     }
 
     @Override
-    public List<String> getColor(String color) {
-        return colorDao.getColor(color);
+    public List<String> findColor(String color) {
+        return colorDao.findColor(color);
     }
 }

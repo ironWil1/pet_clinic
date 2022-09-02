@@ -20,7 +20,6 @@ public class InitAppearance {
     private final String SQL_BREED = "CREATE TABLE if not exists  pet_breed (id serial  PRIMARY KEY," +
             "pet_type TEXT not null, breed TEXT not null, UNIQUE (pet_type,breed));";
 
-    @Transactional
     @PostConstruct
     public void colorTable() {
         try {

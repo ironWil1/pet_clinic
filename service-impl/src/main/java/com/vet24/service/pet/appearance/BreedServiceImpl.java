@@ -4,8 +4,6 @@ import com.vet24.dao.pet.appearance.BreedDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,9 +20,9 @@ public class BreedServiceImpl implements BreedService {
     public List<String> getBreed(String petType, String breed) {
         List<String> breedList;
         if (petType.isEmpty()) {
-            breedList = breedDao.getBreedIfPetTypeIsEmpty(breed);
+            breedList = breedDao.getBreedByBreed(breed);
         } else {
-            breedList = breedDao.getBreed(petType, breed);
+            breedList = breedDao.getBreedByPetTypeByBreed(petType, breed);
         }
         return breedList;
     }

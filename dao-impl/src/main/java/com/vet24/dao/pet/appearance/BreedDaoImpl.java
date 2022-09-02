@@ -15,7 +15,7 @@ public class BreedDaoImpl implements BreedDao {
     private EntityManager manager;
 
     @Override
-    public List<String> getBreed(String petType, String breed) {
+    public List<String> getBreedByPetTypeByBreed(String petType, String breed) {
         List<String> listBreed = new ArrayList<>();
         listBreed.addAll(
                 manager.createNativeQuery("SELECT breed from pet_breed where " +
@@ -27,7 +27,7 @@ public class BreedDaoImpl implements BreedDao {
     }
 
     @Override
-    public List<String> getBreedIfPetTypeIsEmpty(String breed) {
+    public List<String> getBreedByBreed(String breed) {
         List<String> listBreed = new ArrayList<>();
         listBreed.addAll(
                 manager.createNativeQuery("SELECT breed from pet_breed where breed % :br ")

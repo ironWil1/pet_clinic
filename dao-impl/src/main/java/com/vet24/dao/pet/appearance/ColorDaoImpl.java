@@ -15,7 +15,7 @@ public class ColorDaoImpl implements ColorDao {
     private EntityManager manager;
 
     @Override
-    public List<String> getColor(String color) {
+    public List<String> findColor(String color) {
         List<String> colorList = new ArrayList<>();
         colorList.addAll(
                 manager.createNativeQuery("SELECT color FROM pet_color WHERE color % :cl")
