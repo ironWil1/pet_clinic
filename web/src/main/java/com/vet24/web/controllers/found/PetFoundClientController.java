@@ -1,12 +1,13 @@
 package com.vet24.web.controllers.found;
 
+import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+
 import com.vet24.models.dto.pet.PetFoundClientDto;
 import com.vet24.models.mappers.pet.PetFoundClientMapper;
 import com.vet24.models.pet.PetFound;
-import com.vet24.models.user.User;
+import com.vet24.models.user.Client;
 import com.vet24.service.pet.PetFoundService;
 import com.vet24.service.pet.PetService;
-import com.vet24.service.user.ClientService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,15 +33,13 @@ public class PetFoundClientController {
 
     private final PetFoundClientMapper petFoundClientMapper;
     private final PetFoundService petFoundService;
-    private final ClientService clientService;
     private final PetService petService;
 
     public PetFoundClientController(PetFoundClientMapper petFoundClientMapper,
-                                    PetFoundService petFoundService, ClientService clientService,
+                                    PetFoundService petFoundService,
                                     PetService petService) {
         this.petFoundClientMapper = petFoundClientMapper;
         this.petFoundService = petFoundService;
-        this.clientService = clientService;
         this.petService = petService;
     }
 
@@ -54,16 +52,15 @@ public class PetFoundClientController {
             @ApiResponse(responseCode = "404", description = "История находок питомца не найдена")
     })
     @GetMapping(value = "")
-    public ResponseEntity<List<PetFoundClientDto>> getHistoryPetById(@RequestParam(value = "petId") Long petId,
-                                                                     Principal user) {
-        User currentUser = clientService.getClientByEmail(user.getName());
-        if (!petService.isExistByPetIdAndClientId(petId, currentUser.getId())) {
+    public ResponseEntity<List<PetFoundClientDto>> getHistoryPetById(@RequestParam(value = "petId") Long petId) {
+        Client client = (Client) getSecurityUserOrNull();
+        if (client == null || !petService.isExistByPetIdAndClientId(petId, client.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         if (!petFoundService.isExistByKey(petId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        List<PetFound> petFounds = petFoundService.getPetFoundById(petId);
+        List<PetFound> petFounds = petFoundService.getPetFoundByPetId(petId);
         return new ResponseEntity<>(petFoundClientMapper.toDto(petFounds), HttpStatus.OK);
     }
 }

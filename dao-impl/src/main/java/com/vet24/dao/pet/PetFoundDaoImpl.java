@@ -12,7 +12,7 @@ public class PetFoundDaoImpl extends ReadWriteDaoImpl<Long, PetFound> implements
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<PetFound> getPetFoundById(Long petId) {
+    public List<PetFound> getPetFoundByPetId(Long petId) {
         return manager.createQuery("from PetFound pf where pf.pet.id = :petId order by pf.foundDate")
                 .setParameter("petId", petId)
                 .getResultList();

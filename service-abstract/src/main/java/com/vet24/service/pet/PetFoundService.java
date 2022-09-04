@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PetFoundService extends ReadWriteService<Long, PetFound> {
 
-    List<PetFound> getPetFoundById(Long petId);
+    List<PetFound> getPetFoundByPetId(Long petId);
 }

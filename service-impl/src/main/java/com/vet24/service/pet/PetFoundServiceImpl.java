@@ -19,7 +19,7 @@ public class PetFoundServiceImpl extends ReadWriteServiceImpl<Long, PetFound> im
     }
 
     @Override
-    public List<PetFound> getPetFoundById(Long petId) {
-        return petFoundDao.getPetFoundById(petId);
+    public List<PetFound> getPetFoundByPetId(Long petId) {
+        return petFoundDao.getPetFoundByPetId(petId);
     }
 }
