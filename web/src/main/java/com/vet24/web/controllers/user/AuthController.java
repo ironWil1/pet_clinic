@@ -96,9 +96,6 @@ public class AuthController {
     @GetMapping("/api/auth/getCurrent")
     public ResponseEntity<AuthResponse> getCurrentUser(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
         User user = SecurityUtil.getOptionalOfNullableSecurityUser().get();
-        if (user == null || token == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         return new ResponseEntity<>(new AuthResponse(token, user.getRole().getName()), HttpStatus.OK);
     }
 
