@@ -1,11 +1,11 @@
 package com.vet24.web.controllers.found;
 
-import static com.vet24.models.secutity.SecurityUtil.getSecurityUserOrNull;
+import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
 import com.vet24.models.dto.pet.PetFoundClientDto;
 import com.vet24.models.mappers.pet.PetFoundClientMapper;
 import com.vet24.models.pet.PetFound;
-import com.vet24.models.user.Client;
+import com.vet24.models.user.User;
 import com.vet24.service.pet.PetFoundService;
 import com.vet24.service.pet.PetService;
 
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -53,8 +54,8 @@ public class PetFoundClientController {
     })
     @GetMapping(value = "")
     public ResponseEntity<List<PetFoundClientDto>> getHistoryPetById(@RequestParam(value = "petId") Long petId) {
-        Client client = (Client) getSecurityUserOrNull();
-        if (client == null || !petService.isExistByPetIdAndClientId(petId, client.getId())) {
+        Optional<User> client = getOptionalOfNullableSecurityUser();
+        if (client.isEmpty() || !petService.isExistByPetIdAndClientId(petId, client.get().getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         if (!petFoundService.isExistByKey(petId)) {
