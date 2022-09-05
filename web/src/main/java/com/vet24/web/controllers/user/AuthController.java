@@ -2,22 +2,30 @@ package com.vet24.web.controllers.user;
 
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.secutity.JwtToken;
+import com.vet24.models.secutity.SecurityUtil;
 import com.vet24.models.user.User;
+
 import com.vet24.security.config.JwtUtils;
 import com.vet24.service.security.JwtTokenService;
 import com.vet24.service.user.UserServiceImpl;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,4 +86,18 @@ public class AuthController {
         }
         return new ResponseEntity<>(jwtUtils.validateJwtToken(token), HttpStatus.OK);
     }
+
+    @Operation(summary = "get current authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Authenticated user found successfully",
+            content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "403", description = "Operation is not allowed for not authenticated user")
+    })
+    @GetMapping("/api/auth/getCurrent")
+    public ResponseEntity<AuthResponse> getCurrentUser(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token) {
+        User user = SecurityUtil.getOptionalOfNullableSecurityUser().get();
+        return new ResponseEntity<>(new AuthResponse(token, user.getRole().getName()), HttpStatus.OK);
+    }
+
+
 }
