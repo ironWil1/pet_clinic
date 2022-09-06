@@ -11,7 +11,6 @@ import java.util.List;
 public class PetFoundDaoImpl extends ReadWriteDaoImpl<Long, PetFound> implements PetFoundDao {
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<PetFound> getPetFoundByPetId(Long petId) {
         return manager.createQuery("from PetFound pf where pf.pet.id = :petId order by pf.foundDate")
                 .setParameter("petId", petId)
