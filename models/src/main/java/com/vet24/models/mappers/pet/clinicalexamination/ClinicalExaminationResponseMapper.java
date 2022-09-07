@@ -6,9 +6,14 @@ import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ClinicalExaminationResponseMapper extends
         DtoMapper<ClinicalExamination, ClinicalExaminationResponseDto>,
         EntityMapper<ClinicalExaminationResponseDto, ClinicalExamination> {
+
+    @Mapping(source = "pet.id", target = "petId")
+    @Override
+    ClinicalExaminationResponseDto toDto(ClinicalExamination clinicalExamination);
 }

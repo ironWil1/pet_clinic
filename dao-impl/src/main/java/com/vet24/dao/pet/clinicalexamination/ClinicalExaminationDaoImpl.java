@@ -12,7 +12,6 @@ public class ClinicalExaminationDaoImpl extends ReadWriteDaoImpl<Long, ClinicalE
         implements ClinicalExaminationDao {
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<ClinicalExamination> getByPetId(Long petId) {
         return manager.createQuery("from ClinicalExamination ce where ce.pet.id = :petId")
                 .setParameter("petId", petId)
@@ -38,6 +37,14 @@ public class ClinicalExaminationDaoImpl extends ReadWriteDaoImpl<Long, ClinicalE
                                    Boolean.class)
                 .setParameter("petId", petId)
                 .setParameter("doctorId", doctorId)
+                .getSingleResult();
+    }
+
+    @Override
+    public ClinicalExamination getById(Long examId) {
+        return manager.createQuery("from ClinicalExamination ce join fetch ce.pet where ce.id = :examId",
+                                   ClinicalExamination.class)
+                .setParameter("examId", examId)
                 .getSingleResult();
     }
 }

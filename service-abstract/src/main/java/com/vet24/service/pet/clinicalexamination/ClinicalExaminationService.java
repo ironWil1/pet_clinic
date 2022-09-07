@@ -13,4 +13,6 @@ public interface ClinicalExaminationService extends ReadWriteService<Long, Clini
     boolean isExistByIdAndDoctorId(Long examId, Long doctorId);
 
     boolean isExistByPetIdAndDoctorId(Long petId, Long doctorId);
+
+    ClinicalExamination getById(Long examId);
 }

@@ -33,4 +33,9 @@ public class ClinicalExaminationServiceImpl extends ReadWriteServiceImpl<Long, C
     public boolean isExistByPetIdAndDoctorId(Long petId, Long doctorId) {
         return clinicalExaminationDao.isExistByPetIdAndDoctorId(petId, doctorId);
     }
+
+    @Override
+    public ClinicalExamination getById(Long examId) {
+        return clinicalExaminationDao.getById(examId);
+    }
 }

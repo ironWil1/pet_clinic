@@ -31,6 +31,7 @@ import org.webjars.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -54,61 +55,12 @@ public class ClinicalExaminationController {
     public ClinicalExaminationController(PetService petService, ClinicalExaminationService clinicalExaminationService,
                                          ClinicalExaminationResponseMapper clinicalExaminationResponseMapper,
                                          ClinicalExaminationRequestMapper clinicalExaminationRequestMapper) {
-            this.petService = petService;
-            this.clinicalExaminationService = clinicalExaminationService;
-            this.clinicalExaminationResponseMapper = clinicalExaminationResponseMapper;
-            this.clinicalExaminationRequestMapper = clinicalExaminationRequestMapper;
-        }
+        this.petService = petService;
+        this.clinicalExaminationService = clinicalExaminationService;
+        this.clinicalExaminationResponseMapper = clinicalExaminationResponseMapper;
+        this.clinicalExaminationRequestMapper = clinicalExaminationRequestMapper;
+    }
 
-                @Operation(summary = "Получение клинических обследований по ID питомца",
-                        description = "Введите ID питомца")
-                @ApiResponse(responseCode = "200", description = "Список клинических обследований питомца найден",
-                        content = @Content(mediaType = "application/json", array = @ArraySchema(
-                                schema = @Schema(implementation = ClinicalExaminationResponseDto.class))))
-                @ApiResponse(responseCode = "400", description = "Указан некорректный запрос",
-                        content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-                @ApiResponse(responseCode = "404",
-                        content = @Content(schema = @Schema(implementation = ExceptionDto.class)),
-                        description = "Клинические обследования или питомец с этим идентификатором не найдены")
-                @GetMapping("")
-                public ResponseEntity<List<ClinicalExaminationResponseDto>> getByPetId
-                (@RequestParam(value = "petId") Long petId){
-                    Doctor doctor = (Doctor) getSecurityUserOrNull();
-                    if (doctor == null ||
-                            !clinicalExaminationService.isExistByPetIdAndDoctorId(petId, doctor.getId())) {
-                        throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
-                    }
-                    List<ClinicalExamination> clinicalExaminations = clinicalExaminationService.getByPetId(petId);
-                    if (clinicalExaminations.isEmpty()) {
-                        throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
-                    }
-                    return new ResponseEntity<>(clinicalExaminationResponseMapper.toDto(clinicalExaminations),
-                                                HttpStatus.OK);
-                }
-
-                @Operation(summary = "Получение клинического обследования по ID",
-                        description = "Введите ID клинического обследования")
-                @ApiResponse(responseCode = "200", description = "Клиническое обследование найдено",
-                        content = @Content(schema = @Schema(implementation = ClinicalExaminationResponseDto.class)))
-                @ApiResponse(responseCode = "400", description = "Указан некорректный запрос",
-                        content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-                @ApiResponse(responseCode = "404",
-                        description = "Клиническое обследование с этим идентификатором не найдено",
-                        content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-                @GetMapping("/{examId}")
-                public ResponseEntity<ClinicalExaminationResponseDto> getById (@PathVariable Long examId){
-                    Doctor doctor = (Doctor) getSecurityUserOrNull();
-                    if (doctor == null || !clinicalExaminationService.isExistByIdAndDoctorId(examId, doctor.getId())) {
-                        throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
-                    }
-
-                    ClinicalExaminationDto clinicalExaminationDto =
-                            clinicalExaminationMapper.toDto(clinicalExamination);
-                    return new ResponseEntity<>(clinicalExaminationDto, HttpStatus.OK);
-                    ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examId);
-                    return new ResponseEntity<>(clinicalExaminationResponseMapper.toDto(clinicalExamination),
-                                                HttpStatus.OK);
-                }
     @Operation(summary = "Получение клинических обследований по ID питомца",
             description = "Введите ID питомца")
     @ApiResponse(responseCode = "200", description = "Список клинических обследований питомца найден",
@@ -120,8 +72,8 @@ public class ClinicalExaminationController {
             description = "Клинические обследования или питомец с этим идентификатором не найдены")
     @GetMapping("")
     public ResponseEntity<List<ClinicalExaminationResponseDto>> getByPetId(@RequestParam(value = "petId") Long petId) {
-        Doctor doctor = (Doctor) getSecurityUserOrNull();
-        if (doctor == null || !clinicalExaminationService.isExistByPetIdAndDoctorId(petId, doctor.getId())) {
+        Optional<User> doctor = getOptionalOfNullableSecurityUser();
+        if (doctor.isEmpty() || !clinicalExaminationService.isExistByPetIdAndDoctorId(petId, doctor.get().getId())) {
             throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
         }
         List<ClinicalExamination> clinicalExaminations = clinicalExaminationService.getByPetId(petId);
@@ -141,11 +93,14 @@ public class ClinicalExaminationController {
             content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     @GetMapping("/{examId}")
     public ResponseEntity<ClinicalExaminationResponseDto> getById(@PathVariable Long examId) {
-        Doctor doctor = (Doctor) getSecurityUserOrNull();
-        if (doctor == null || !clinicalExaminationService.isExistByIdAndDoctorId(examId, doctor.getId())) {
+        Optional<User> doctor = getOptionalOfNullableSecurityUser();
+        if (doctor.isEmpty() || !clinicalExaminationService.isExistByIdAndDoctorId(examId, doctor.get().getId())) {
             throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
         }
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examId);
+        if (clinicalExamination == null) {
+            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
+        }
         return new ResponseEntity<>(clinicalExaminationResponseMapper.toDto(clinicalExamination), HttpStatus.OK);
     }
 
@@ -161,155 +116,72 @@ public class ClinicalExaminationController {
             @RequestBody ClinicalExaminationRequestDto clinicalExamRequestDto,
             @RequestParam(value = "petId") Long petId) {
         Pet pet = petService.getByKey(petId);
-        ClinicalExamination clinicalExamination = clinicalExaminationRequestMapper.toEntity(clinicalExamRequestDto);
         if (pet == null) {
             throw new NotFoundException("pet not found");
         }
-//        clinicalExamination.setId(null);
-//        clinicalExamination.setDoctor((Doctor) getSecurityUserOrNull());
-//        clinicalExamination.setDate(LocalDate.now());
-//        pet.setWeight(clinicalExamination.getWeight());
-//        clinicalExamination.setPet(pet);
-//        pet.addClinicalExamination(clinicalExamination);
-//        clinicalExaminationService.add(clinicalExamination);
-//        petService.update(pet);
-//        return new ResponseEntity<>(clinicalExaminationMapper.toDto(clinicalExamination), HttpStatus.CREATED);
-        return null; //в работе
+        ClinicalExamination clinicalExamination = clinicalExaminationRequestMapper.toEntity(clinicalExamRequestDto);
+        getOptionalOfNullableSecurityUser().ifPresentOrElse(clinicalExamination::setDoctor, () -> {
+            throw new BadRequestException("user not found");
+        });
+        clinicalExamination.setDate(LocalDate.now());
+        pet.setWeight(clinicalExamination.getWeight());
+        pet.addClinicalExamination(clinicalExamination);
+        clinicalExamination.setPet(pet);
+        clinicalExaminationService.persist(clinicalExamination);
+        petService.update(pet);
+
+        return new ResponseEntity<>(clinicalExaminationResponseMapper.toDto(clinicalExamination), HttpStatus.CREATED);
     }
-                @Operation(summary = "Добавить новое клиническое обследование",
-                        description =
-                                "Чтобы добавить новое клиническое обследование - введите ID питомца и заполните поля:" +
-                                        " " +
-                                        "wight, isCanMove, text")
-                @ApiResponse(responseCode = "201", description = "Клиническое обследование успешно добавлено",
-                        content = @Content(schema = @Schema(implementation = ClinicalExaminationResponseDto.class)))
-                @ApiResponse(responseCode = "404", description = "Питомец с таким ID не найден",
-                        content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-                @PostMapping("")
-                public ResponseEntity<ClinicalExaminationDto> save (@RequestBody ClinicalExaminationDto
-                clinicalExaminationDto){
-                    Pet pet = petService.getByKey(clinicalExaminationDto.getPetId());
-                    ClinicalExamination clinicalExamination =
-                            clinicalExaminationMapper.toEntity(clinicalExaminationDto);
-                    public ResponseEntity<ClinicalExaminationResponseDto> save (
-                            @RequestBody ClinicalExaminationRequestDto clinicalExamRequestDto,
-                            @RequestParam(value = "petId") Long petId){
-                        Pet pet = petService.getByKey(petId);
-                        ClinicalExamination clinicalExamination =
-                                clinicalExaminationRequestMapper.toEntity(clinicalExamRequestDto);
-                        if (pet == null) {
-                            throw new NotFoundException("pet not found");
-                        }
-                        clinicalExamination.setId(null);
-                        getOptionalOfNullableSecurityUser().ifPresentOrElse(clinicalExamination::setDoctor, () -> {
-                            throw new BadRequestException("user not found");
-                        });
-
-                        clinicalExamination.setDate(LocalDate.now());
-
-                        clinicalExaminationService.persist(clinicalExamination);
-                        pet.setWeight(clinicalExamination.getWeight());
-                        clinicalExamination.setPet(petService.getByKey(clinicalExaminationDto.getPetId()));
-
-                        pet.addClinicalExamination(clinicalExamination);
-                        petService.update(pet);
-                        return new ResponseEntity<>(clinicalExaminationMapper.toDto(clinicalExamination),
-                                                    HttpStatus.CREATED);
-//        clinicalExamination.setId(null);
-//        clinicalExamination.setDoctor((Doctor) getSecurityUserOrNull());
-//        clinicalExamination.setDate(LocalDate.now());
-//        pet.setWeight(clinicalExamination.getWeight());
-//        clinicalExamination.setPet(pet);
-//        pet.addClinicalExamination(clinicalExamination);
-//        clinicalExaminationService.add(clinicalExamination);
-//        petService.update(pet);
-//        return new ResponseEntity<>(clinicalExaminationMapper.toDto(clinicalExamination), HttpStatus.CREATED);
-                        return null; //в работе
-                    }
 
     @Operation(summary = "Обновить клиническое обследование по ID",
-            description = "Введите ID питомца и ID клинического обследования")
-    @ApiResponse(responseCode = "200", description = "Клиническое обследование успешно обновлено",
-            content = @Content(schema = @Schema(implementation = ClinicalExaminationResponseDto.class)))
-    @ApiResponse(responseCode = "404", description = "Клиническое обследование или питомец с этим ID не найдено",
+            description = "Чтобы обновить клиническое обследование - введите ID и заполните поля: " +
+                    "wight, isCanMove, text")
+    @ApiResponse(responseCode = "200", description = "Клиническое обследование успешно обновлено")
+    @ApiResponse(responseCode = "404", description = "Клиническое обследование с этим ID не найдено",
             content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-    @ApiResponse(responseCode = "400", description = "Клиническое обследование не назначено этому питомцу или \n" +
-            "ID обследования в пути и в теле запроса не равен или \nу питомца нет врача",
+    @ApiResponse(responseCode = "400", description = "Клиническое обследование не назначено этому питомцу",
             content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-    @PutMapping("/{examinationId}")
-    public ResponseEntity<ClinicalExaminationResponseDto> update(@PathVariable Long examinationId,
-                                                                 @JsonView(View.Put.class)
-                                                                 @RequestBody ClinicalExaminationResponseDto
-                                                                         clinicalExaminationDto) {
-        Pet pet = petService.getByKey(clinicalExaminationDto.getPetId());
-        ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
-        if (pet == null) {
-            throw new NotFoundException("pet not found");
+    @PutMapping("/{examId}")
+    public ResponseEntity<Void> update(@PathVariable Long examId,
+                                       @JsonView(View.Put.class)
+                                       @RequestBody
+                                       ClinicalExaminationRequestDto clinicalExamRequestDto) {
+        Optional<User> doctor = getOptionalOfNullableSecurityUser();
+        if (doctor.isEmpty() || !clinicalExaminationService.isExistByIdAndDoctorId(examId, doctor.get().getId())) {
+            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
         }
-                    @Operation(summary = "Обновить клиническое обследование по ID",
-                            description = "Введите ID питомца и ID клинического обследования")
-                    @ApiResponse(responseCode = "200", description = "Клиническое обследование успешно обновлено",
-                            content = @Content(schema = @Schema(implementation = ClinicalExaminationResponseDto.class)))
-                    @ApiResponse(responseCode = "404",
-                            description = "Клиническое обследование или питомец с этим ID не найдено",
-                            content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-                    @ApiResponse(responseCode = "400",
-                            description = "Клиническое обследование не назначено этому питомцу или \n" +
-                                    "ID обследования в пути и в теле запроса не равен или \nу питомца нет врача",
-                            content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-                    @PutMapping("/{examinationId}")
-                    public ResponseEntity<ClinicalExaminationDto> update (@PathVariable Long
-                    examinationId, @JsonView(View.Put.class) @RequestBody ClinicalExaminationDto clinicalExaminationDto)
-                    {
-                        public ResponseEntity<ClinicalExaminationResponseDto> update (@PathVariable Long examinationId,
-                            @JsonView(View.Put.class)
-                            @RequestBody ClinicalExaminationResponseDto
-                        clinicalExaminationDto){
-                        Pet pet = petService.getByKey(clinicalExaminationDto.getPetId());
-                        ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examinationId);
-                        if (pet == null) {
-                            throw new NotFoundException("pet not found");
-                        }
+        ClinicalExamination clinicalExamination = clinicalExaminationService.getById(examId);
+        Pet pet = clinicalExamination.getPet();
 
-                        User doctor = getOptionalOfNullableSecurityUser()
-                                .orElseThrow(() -> new NotFoundException("there is no doctor assigned to this pet"));
+        clinicalExamination.setDoctor(doctor.get());
+        clinicalExamination.setDate(LocalDate.now());
+        clinicalExamination.setWeight(clinicalExamRequestDto.getWeight());
+        pet.setWeight(clinicalExamRequestDto.getWeight());
+        clinicalExamination.setPet(pet);
+        clinicalExamination.setIsCanMove(clinicalExamRequestDto.getIsCanMove());
+        clinicalExamination.setText(clinicalExamRequestDto.getText());
+        petService.update(pet);
 
-                        if (clinicalExamination == null) {
-                            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
-                        }
-
-                        if (!clinicalExamination.getPet().getId().equals(pet.getId())) {
-                            throw new BadRequestException("clinical examination not assigned to this pet");
-                        }
-
-                        clinicalExamination.setDoctor(doctor);
-                        clinicalExamination.setDate(LocalDate.now());
-                        clinicalExamination.setWeight(clinicalExaminationDto.getWeight());
-                        clinicalExamination.setDate(LocalDate.now());
-                        clinicalExamination.setPet(pet);
-                        clinicalExamination.setId(examinationId);
-                        clinicalExamination.setIsCanMove(clinicalExaminationDto.getIsCanMove());
-                        clinicalExamination.setText(clinicalExaminationDto.getText());
-                        clinicalExaminationService.update(clinicalExamination);
-
-                        return new ResponseEntity<>(clinicalExaminationResponseMapper.toDto(clinicalExamination),
-                                                    HttpStatus.OK);
-                    }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 
-                        @Operation(summary = "Удалить клиническое обследование по ID",
-                                description = "Введите ID клинического " + "обследования питомца")
-                        @ApiResponse(responseCode = "200", description = "Клиническое обследование успешно удалено")
-                        @ApiResponse(responseCode = "404", description = "Клиническое обследование не найдено",
-                                content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-                        @DeleteMapping(value = "/{examId}")
-                        public ResponseEntity<Void> deleteById (@PathVariable Long examId){
-
-                            ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examId);
-                            if (clinicalExamination == null) {
-                                throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
-                            }
-                            clinicalExaminationService.delete(clinicalExamination);
-                            return new ResponseEntity<>(HttpStatus.OK);
-                        }
-                    }
+    @Operation(summary = "Удалить клиническое обследование по ID",
+            description = "Введите ID клинического " + "обследования питомца")
+    @ApiResponse(responseCode = "200", description = "Клиническое обследование успешно удалено")
+    @ApiResponse(responseCode = "404", description = "Клиническое обследование не найдено",
+            content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    @DeleteMapping(value = "/{examId}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long examId) {
+        Optional<User> doctor = getOptionalOfNullableSecurityUser();
+        if (doctor.isEmpty() || !clinicalExaminationService.isExistByIdAndDoctorId(examId, doctor.get().getId())) {
+            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
+        }
+        ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examId);
+        if (clinicalExamination == null) {
+            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
+        }
+        clinicalExaminationService.delete(clinicalExamination);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+}

@@ -12,4 +12,6 @@ public interface ClinicalExaminationDao extends ReadWriteDao<Long, ClinicalExami
     boolean isExistByIdAndDoctorId(Long examId, Long doctorId);
 
     boolean isExistByPetIdAndDoctorId(Long petId, Long doctorId);
+
+    ClinicalExamination getById(Long examId);
 }
