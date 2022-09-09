@@ -54,12 +54,12 @@ public class PetFoundClientController {
     })
     @GetMapping(value = "")
     public ResponseEntity<List<PetFoundClientDto>> getHistoryPetById(@RequestParam(value = "petId") Long petId) {
+        if (!petFoundService.isExistByKey(petId)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         Optional<User> client = getOptionalOfNullableSecurityUser();
         if (client.isEmpty() || !petService.isExistByPetIdAndClientId(petId, client.get().getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if (!petFoundService.isExistByKey(petId)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         List<PetFound> petFounds = petFoundService.getPetFoundByPetId(petId);
         return new ResponseEntity<>(petFoundClientMapper.toDto(petFounds), HttpStatus.OK);
