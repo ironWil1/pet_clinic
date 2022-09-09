@@ -154,61 +154,61 @@ public class PetControllerTest extends ControllerAbstractIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
     }
+//
+//    // mock, put pet avatar
+//    @Test
+//    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
+//    public void getPetAvatarButPetDoesNotExistBadRequest() throws Exception {
+//        Pet pet = petDao.getByKey(69000L);
+//        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/avatar", byte[].class, 69000L)
+//                        .header("Authorization", "Bearer " + token)
+//                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+//                        .contentType(MediaType.MULTIPART_FORM_DATA))
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+//        assertThat(pet).isNull();
+//    }
+//
+//    // +mock, pet avatar by id - success
+//    @Test
+//    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
+//    public void persistPetAvatarSuccess() throws Exception {
+//        ClassPathResource classPathResource = new ClassPathResource("test.png");
+//        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
+//                classPathResource.getFilename(), null, classPathResource.getInputStream());
+//        mockMvc.perform(multipart(URI + "/{petId}/avatar", 107)
+//                        .file(mockMultipartFile)
+//                        .header("Authorization", "Bearer " + token)
+//                        .header("Content-Type", "multipart/form-data"))
+//                .andExpect(status().isOk());
+//    }
 
-    // mock, put pet avatar
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void getPetAvatarButPetDoesNotExistBadRequest() throws Exception {
-        Pet pet = petDao.getByKey(69000L);
-        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/avatar", byte[].class, 69000L)
-                        .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        assertThat(pet).isNull();
-    }
-
-    // +mock, pet avatar by id - success
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void persistPetAvatarSuccess() throws Exception {
-        ClassPathResource classPathResource = new ClassPathResource("test.png");
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
-                classPathResource.getFilename(), null, classPathResource.getInputStream());
-        mockMvc.perform(multipart(URI + "/{petId}/avatar", 107)
-                        .file(mockMultipartFile)
-                        .header("Authorization", "Bearer " + token)
-                        .header("Content-Type", "multipart/form-data"))
-                .andExpect(status().isOk());
-    }
-
-    //+mock
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void persistPetAvatarOfAnotherOwnerBadRequest() throws Exception {
-        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("file", new ClassPathResource("test.png"));
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
-        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/avatar", String.class,  100)
-                        .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
-
-    //+mock
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void persistPetAvatarButPetDoesNotExistNotFound() throws Exception {
-        ClassPathResource classPathResource = new ClassPathResource("test.png");
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
-                classPathResource.getFilename(), null, classPathResource.getInputStream());
-        mockMvc.perform(multipart(URI + "/{petId}/avatar", 69000)
-                        .file(mockMultipartFile)
-                        .header("Authorization", "Bearer " + token)
-                        .header("Content-Type", "multipart/form-data"))
-                .andExpect(status().isNotFound());
-    }
+//    //+mock
+//    @Test
+//    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
+//    public void persistPetAvatarOfAnotherOwnerBadRequest() throws Exception {
+//        LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+//        parameters.add("file", new ClassPathResource("test.png"));
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+//        HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
+//        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/avatar", String.class,  100)
+//                        .header("Authorization", "Bearer " + token)
+//                        .content(objectMapper.valueToTree(abstractNewPetDto).toString())
+//                        .contentType(MediaType.MULTIPART_FORM_DATA))
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+//    }
+//
+//    //+mock
+//    @Test
+//    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
+//    public void persistPetAvatarButPetDoesNotExistNotFound() throws Exception {
+//        ClassPathResource classPathResource = new ClassPathResource("test.png");
+//        MockMultipartFile mockMultipartFile = new MockMultipartFile("file",
+//                classPathResource.getFilename(), null, classPathResource.getInputStream());
+//        mockMvc.perform(multipart(URI + "/{petId}/avatar", 69000)
+//                        .file(mockMultipartFile)
+//                        .header("Authorization", "Bearer " + token)
+//                        .header("Content-Type", "multipart/form-data"))
+//                .andExpect(status().isNotFound());
+//    }
 }

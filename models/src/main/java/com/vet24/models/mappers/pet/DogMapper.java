@@ -1,8 +1,8 @@
 package com.vet24.models.mappers.pet;
 
-import com.vet24.models.dto.pet.AbstractNewPetDto;
 import com.vet24.models.dto.pet.DogDto;
-import com.vet24.models.dto.pet.PetDto;
+import com.vet24.models.dto.pet.PetRequestDto;
+import com.vet24.models.dto.pet.PetResponseDto;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.mappers.DtoMapper;
 import com.vet24.models.mappers.EntityMapper;
@@ -19,15 +19,17 @@ public interface DogMapper extends AbstractPetMapper, DtoMapper<Dog, DogDto>, En
     }
 
     @Override
-    default Pet abstractNewPetDtoToPet(AbstractNewPetDto petDto) {
-        return toEntity((DogDto) petDto);
+    default Pet petRequestDtoToPet(PetRequestDto petDto) {
+        return toEntity(petDto);
     }
+
+    Dog toEntity(PetRequestDto petResponseDto);
 
     @Override
-    default Pet abstractPetDtoToPet(PetDto petDto) {
-        return petDtoToPet(petDto);
+    default Pet abstractPetDtoToPet(PetResponseDto petResponseDto) {
+        return toEntity(petResponseDto);
     }
 
-    Dog petDtoToPet(PetDto petDto);
+    Dog toEntity(PetResponseDto petResponseDto);
 
 }
