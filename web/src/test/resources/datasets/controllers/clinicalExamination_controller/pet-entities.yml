@@ -34,7 +34,7 @@ PET_ENTITIES:
     NAME: "pet3"
     PET_SIZE: "BIG"
     WEIGHT: 21
-    CLIENT_ID: 3
+    CLIENT_ID: 103
   - ID: 103
     PET_TYPE: "DOG"
     AVATAR: "test.png"
@@ -58,7 +58,7 @@ PET_ENTITIES:
     NAME: "pet5"
     PET_SIZE: "BIG"
     WEIGHT: 21
-    CLIENT_ID: 3
+    CLIENT_ID: 103
   - ID: 105
     PET_TYPE: "CAT"
     AVATAR: "test.png"

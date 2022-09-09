@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.vet24.models.dto.pet.clinicalexamination.ClinicalExaminationRequestDto;
 import com.vet24.models.dto.pet.clinicalexamination.ClinicalExaminationResponseDto;
 import com.vet24.models.pet.clinicalexamination.ClinicalExamination;
 import com.vet24.web.ControllerAbstractIntegrationTest;
@@ -26,18 +27,18 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     final HttpHeaders HEADERS = new HttpHeaders();
     private String token;
 
-    ClinicalExaminationResponseDto clinicalExaminationResponseDtoNew1;
-    ClinicalExaminationResponseDto clinicalExaminationResponseDto1;
-    ClinicalExaminationResponseDto clinicalExaminationResponseDto3;
-    ClinicalExaminationResponseDto clinicalExaminationResponseDto4;
+    private ClinicalExaminationRequestDto clinicalExaminationRequestDto;
+    private ClinicalExaminationResponseDto clinicalExaminationResponseDto;
+    private ClinicalExaminationRequestDto clinicalExaminationRequestDto1;
+    private ClinicalExaminationRequestDto clinicalExaminationRequestDto2;
 
 
     @Before
     public void createNewClinicalExaminationAndClinicalExaminationResponseDto() {
-        this.clinicalExaminationResponseDtoNew1 = new ClinicalExaminationResponseDto(31L, 100L, 10.0, true, "textNew");
-        this.clinicalExaminationResponseDto1 = new ClinicalExaminationResponseDto(101L, 101L, 20.0, true, "text1");
-        this.clinicalExaminationResponseDto3 = new ClinicalExaminationResponseDto(102L, 102L, 40.0, true, "text3");
-        this.clinicalExaminationResponseDto4 = new ClinicalExaminationResponseDto(101L, 1043432L, 40.0, true, "text3");
+        this.clinicalExaminationRequestDto = new ClinicalExaminationRequestDto(10.0, true, "textNew");
+        this.clinicalExaminationResponseDto = new ClinicalExaminationResponseDto(102L, 102L, 40.0, true, "text3");
+        this.clinicalExaminationRequestDto1 = new ClinicalExaminationRequestDto(20.0, true, "text1");
+        this.clinicalExaminationRequestDto2 = new ClinicalExaminationRequestDto(40.0, true, "text3");
     }
 
     @Before
@@ -51,9 +52,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
             "/datasets/controllers/clinicalExamination_controller/pet-entities.yml",
             "/datasets/controllers/clinicalExamination_controller/clinical-examination.yml"})
     public void testGetClinicalExaminationSuccess() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{examinationId}", 102)
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{examId}", 102)
                                 .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto3))
+                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(102)))
@@ -69,9 +70,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
             "/datasets/controllers/clinicalExamination_controller/pet-entities.yml",
             "/datasets/controllers/clinicalExamination_controller/clinical-examination.yml"})
     public void testGetClinicalExaminationErrorClinicalExaminationNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{examinationId}", 33)
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/{examId}", 33)
                                 .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto3))
+                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(jsonPath("$.message", Is.is("clinical examination not found")));
@@ -83,12 +84,11 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
             "/datasets/controllers/clinicalExamination_controller/pet-entities.yml",
             "/datasets/controllers/clinicalExamination_controller/clinical-examination.yml"})
     public void testAddClinicalExaminationSuccess() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URI, 102)
+        mockMvc.perform(MockMvcRequestBuilders.post(URI + "?petId={petId}", 102)
                                 .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDtoNew1))
+                                .content(objectMapper.writeValueAsString(clinicalExaminationRequestDto))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(jsonPath("$.petId", Is.is(100)))
                 .andExpect(jsonPath("$.weight", Is.is(10.0)))
                 .andExpect(jsonPath("$.isCanMove", Is.is(true)))
                 .andExpect(jsonPath("$.text", Is.is("textNew")));
@@ -96,9 +96,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         assertTrue("Проверка наличия новой информации о диспансеризации в БД", entityManager.createQuery(
                         "SELECT COUNT(id) > 0 FROM ClinicalExamination WHERE " +
                                 "weight = :weight AND isCanMove = :isCanMove AND text = :text", Boolean.class)
-                .setParameter("weight", clinicalExaminationResponseDtoNew1.getWeight())
-                .setParameter("isCanMove", clinicalExaminationResponseDtoNew1.getIsCanMove())
-                .setParameter("text", clinicalExaminationResponseDtoNew1.getText())
+                .setParameter("weight", clinicalExaminationRequestDto.getWeight())
+                .setParameter("isCanMove", clinicalExaminationRequestDto.getIsCanMove())
+                .setParameter("text", clinicalExaminationRequestDto.getText())
                 .getSingleResult());
     }
 
@@ -110,7 +110,7 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
     public void testAddClinicalExaminationErrorPetNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/{petId}/reproduction", 33)
                                 .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto3))
+                                .content(objectMapper.writeValueAsString(clinicalExaminationRequestDto1))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -121,21 +121,16 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
             "/datasets/controllers/clinicalExamination_controller/pet-entities.yml",
             "/datasets/controllers/clinicalExamination_controller/clinical-examination.yml"})
     public void testPutClinicalExaminationSuccess() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examId}", 102)
                                 .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto3))
+                                .content(objectMapper.writeValueAsString(clinicalExaminationRequestDto1))
                                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.id", Is.is(102)))
-                .andExpect(jsonPath("$.petId", Is.is(102)))
-                .andExpect(jsonPath("$.weight", Is.is(40.0)))
-                .andExpect(jsonPath("$.isCanMove", Is.is(true)))
-                .andExpect(jsonPath("$.text", Is.is("text3")));
+                .andExpect(MockMvcResultMatchers.status().isOk());
 
         ClinicalExamination clinicalExamination =
                 entityManager.createQuery("SELECT c from ClinicalExamination c WHERE c.id = 102",
                                           ClinicalExamination.class).getSingleResult();
-        assertEquals(Optional.of(40.0), Optional.of(clinicalExamination.getWeight()));
+        assertEquals(Optional.of(20.0), Optional.of(clinicalExamination.getWeight()));
     }
 
     // +mock, put clinical examination by id - PetNotAssigned
@@ -144,40 +139,12 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
             "/datasets/controllers/clinicalExamination_controller/pet-entities.yml",
             "/datasets/controllers/clinicalExamination_controller/clinical-examination.yml"})
     public void testPutClinicalExaminationErrorPetNotAssigned() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examId}", 104)
                                 .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto1))
+                                .content(objectMapper.writeValueAsString(clinicalExaminationRequestDto1))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(jsonPath("$.message", Is.is("clinical examination not assigned to this pet")));
-    }
-
-    // +mock, put clinical examination by id - BadRequest
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/controllers/clinicalExamination_controller/user-entities.yml",
-            "/datasets/controllers/clinicalExamination_controller/pet-entities.yml",
-            "/datasets/controllers/clinicalExamination_controller/clinical-examination.yml"})
-    public void testPutClinicalExaminationErrorBadRequest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
-                                .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto1))
-                                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(jsonPath("$.message", Is.is("clinical examination not assigned to this pet")));
-    }
-
-    // +mock, put clinical examination by id - pet not found
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/controllers/clinicalExamination_controller/user-entities.yml",
-            "/datasets/controllers/clinicalExamination_controller/pet-entities.yml",
-            "/datasets/controllers/clinicalExamination_controller/clinical-examination.yml"})
-    public void testPutClinicalExaminationErrorPetNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 102)
-                                .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto4))
-                                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(jsonPath("$.message", Is.is("pet not found")));
     }
 
     // +mock, put clinical examination by id - Not Found clinical examination
@@ -186,9 +153,9 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
             "/datasets/controllers/clinicalExamination_controller/pet-entities.yml",
             "/datasets/controllers/clinicalExamination_controller/clinical-examination.yml"})
     public void testPutClinicalExaminationErrorClinicalExaminationNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examinationId}", 108562)
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{examId}", 108562)
                                 .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto3))
+                                .content(objectMapper.writeValueAsString(clinicalExaminationRequestDto2))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(jsonPath("$.message", Is.is("clinical examination not found")));
@@ -200,9 +167,8 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
             "/datasets/controllers/clinicalExamination_controller/pet-entities.yml",
             "/datasets/controllers/clinicalExamination_controller/clinical-examination.yml"})
     public void testDeleteClinicalExaminationSuccess() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{examinationId}", 100)
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{examId}", 100)
                                 .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto3))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertFalse("Проверка удаления информации о диспансеризации из БД",
@@ -216,13 +182,12 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
             "/datasets/controllers/clinicalExamination_controller/pet-entities.yml",
             "/datasets/controllers/clinicalExamination_controller/clinical-examination.yml"})
     public void testDeleteClinicalExaminationErrorNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{examinationId}", 33)
+        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{examId}", 33)
                                 .header("Authorization", "Bearer " + token)
-                                .content(objectMapper.writeValueAsString(clinicalExaminationResponseDto3))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(jsonPath("$.message", Is.is("clinical examination not found")));
-        assertEquals(Long.valueOf(3),
+        assertEquals(Long.valueOf(5),
                      entityManager.createQuery("SELECT COUNT(c) FROM ClinicalExamination c", Long.class)
                              .getSingleResult());
     }

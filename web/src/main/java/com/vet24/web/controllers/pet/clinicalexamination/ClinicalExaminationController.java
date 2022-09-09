@@ -152,6 +152,9 @@ public class ClinicalExaminationController {
         }
         ClinicalExamination clinicalExamination = clinicalExaminationService.getById(examId);
         Pet pet = clinicalExamination.getPet();
+        if (!petService.isExistByPetIdAndClientId(pet.getId(), doctor.get().getId())) {
+            throw new BadRequestException("clinical examination not assigned to this pet");
+        }
 
         clinicalExamination.setDoctor(doctor.get());
         clinicalExamination.setDate(LocalDate.now());
