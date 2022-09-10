@@ -8,11 +8,9 @@ import java.util.List;
 
 public interface ClinicalExaminationService extends ReadWriteService<Long, ClinicalExamination> {
 
+    boolean isExistByPetId(Long petId);
+
     List<ClinicalExamination> getByPetId(Long petId);
-
-    boolean isExistByIdAndDoctorId(Long examId, Long doctorId);
-
-    boolean isExistByPetIdAndDoctorId(Long petId, Long doctorId);
 
     ClinicalExamination getById(Long examId);
 }

@@ -46,6 +46,26 @@ public class ClinicalExaminationControllerTest extends ControllerAbstractIntegra
         token = getAccessToken("doctor103@email.com", "doctor");
     }
 
+    //Список клинических обследований питомца найден - 200 SUCCESS
+    @Test
+    @DataSet
+    public void testGetByPetIdSuccess() {
+
+    }
+
+    //Указан неверный ID питомца - 400 BAD_REQUEST "no pet with this id"
+    @Test
+    @DataSet
+    public void testGetByPetIdBadRequest() {
+
+    }
+
+    //Клинические обследования с таким ID питомца не найдены - 404 NOT_FOUND "clinical examination not found"
+    @Test
+    @DataSet
+    public void testGetByPetIdNotFound() {
+
+    }
     // +mock, get clinical examination by id - success
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/controllers/clinicalExamination_controller/user-entities.yml",

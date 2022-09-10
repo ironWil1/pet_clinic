@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Optional;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -64,22 +63,21 @@ public class ClinicalExaminationController {
     @Operation(summary = "Получение клинических обследований по ID питомца",
             description = "Введите ID питомца")
     @ApiResponse(responseCode = "200", description = "Список клинических обследований питомца найден",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(
-                    schema = @Schema(implementation = ClinicalExaminationResponseDto.class))))
-    @ApiResponse(responseCode = "400", description = "Указан некорректный запрос",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ClinicalExaminationResponseDto.class)))
+    @ApiResponse(responseCode = "400", description = "Указан неверный ID питомца",
             content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ExceptionDto.class)),
-            description = "Клинические обследования или питомец с этим идентификатором не найдены")
+            description = "Клинические обследования с таким ID питомца не найдены")
     @GetMapping("")
     public ResponseEntity<List<ClinicalExaminationResponseDto>> getByPetId(@RequestParam(value = "petId") Long petId) {
-        Optional<User> doctor = getOptionalOfNullableSecurityUser();
-        if (doctor.isEmpty() || !clinicalExaminationService.isExistByPetIdAndDoctorId(petId, doctor.get().getId())) {
+        if (!petService.isExistByKey(petId)) {
+            throw new BadRequestException("no pet with this id");
+        }
+        if (!clinicalExaminationService.isExistByPetId(petId)) {
             throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
         }
         List<ClinicalExamination> clinicalExaminations = clinicalExaminationService.getByPetId(petId);
-        if (clinicalExaminations.isEmpty()) {
-            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
-        }
         return new ResponseEntity<>(clinicalExaminationResponseMapper.toDto(clinicalExaminations), HttpStatus.OK);
     }
 
@@ -94,9 +92,6 @@ public class ClinicalExaminationController {
     @GetMapping("/{examId}")
     public ResponseEntity<ClinicalExaminationResponseDto> getById(@PathVariable Long examId) {
         Optional<User> doctor = getOptionalOfNullableSecurityUser();
-        if (doctor.isEmpty() || !clinicalExaminationService.isExistByIdAndDoctorId(examId, doctor.get().getId())) {
-            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
-        }
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examId);
         if (clinicalExamination == null) {
             throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
@@ -120,9 +115,6 @@ public class ClinicalExaminationController {
             throw new NotFoundException("pet not found");
         }
         ClinicalExamination clinicalExamination = clinicalExaminationRequestMapper.toEntity(clinicalExamRequestDto);
-        getOptionalOfNullableSecurityUser().ifPresentOrElse(clinicalExamination::setDoctor, () -> {
-            throw new BadRequestException("user not found");
-        });
         clinicalExamination.setDate(LocalDate.now());
         pet.setWeight(clinicalExamination.getWeight());
         pet.addClinicalExamination(clinicalExamination);
@@ -147,9 +139,6 @@ public class ClinicalExaminationController {
                                        @RequestBody
                                        ClinicalExaminationRequestDto clinicalExamRequestDto) {
         Optional<User> doctor = getOptionalOfNullableSecurityUser();
-        if (doctor.isEmpty() || !clinicalExaminationService.isExistByIdAndDoctorId(examId, doctor.get().getId())) {
-            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
-        }
         ClinicalExamination clinicalExamination = clinicalExaminationService.getById(examId);
         Pet pet = clinicalExamination.getPet();
         if (!petService.isExistByPetIdAndClientId(pet.getId(), doctor.get().getId())) {
@@ -158,11 +147,9 @@ public class ClinicalExaminationController {
 
         clinicalExamination.setDoctor(doctor.get());
         clinicalExamination.setDate(LocalDate.now());
-        clinicalExamination.setWeight(clinicalExamRequestDto.getWeight());
         pet.setWeight(clinicalExamRequestDto.getWeight());
         clinicalExamination.setPet(pet);
-        clinicalExamination.setIsCanMove(clinicalExamRequestDto.getIsCanMove());
-        clinicalExamination.setText(clinicalExamRequestDto.getText());
+        clinicalExaminationRequestMapper.updateEntity(clinicalExamRequestDto, clinicalExamination);
         petService.update(pet);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -177,9 +164,6 @@ public class ClinicalExaminationController {
     @DeleteMapping(value = "/{examId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long examId) {
         Optional<User> doctor = getOptionalOfNullableSecurityUser();
-        if (doctor.isEmpty() || !clinicalExaminationService.isExistByIdAndDoctorId(examId, doctor.get().getId())) {
-            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
-        }
         ClinicalExamination clinicalExamination = clinicalExaminationService.getByKey(examId);
         if (clinicalExamination == null) {
             throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);

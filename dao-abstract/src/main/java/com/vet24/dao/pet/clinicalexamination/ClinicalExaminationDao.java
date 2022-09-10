@@ -7,11 +7,9 @@ import java.util.List;
 
 public interface ClinicalExaminationDao extends ReadWriteDao<Long, ClinicalExamination> {
 
+    boolean isExistByPetId(Long petId);
+
     List<ClinicalExamination> getByPetId(Long petId);
-
-    boolean isExistByIdAndDoctorId(Long examId, Long doctorId);
-
-    boolean isExistByPetIdAndDoctorId(Long petId, Long doctorId);
 
     ClinicalExamination getById(Long examId);
 }
