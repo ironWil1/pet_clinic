@@ -1,4 +1,4 @@
-package com.vet24.web.pet.clinicalexamination;
+package com.vet24.web.controllers.pet.clinicalexamination;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
