@@ -26,30 +26,30 @@ public class PetRequestDto {
 
     }
 
-    @NotBlank(groups = {Post.class})
+    @NotBlank(groups = {Post.class}, message = "name не должно быть пустым")
     private String name;
 
     private String avatar;
 
-    @NotNull(groups = {Post.class})
-    @PastOrPresent(groups = {Post.class, Put.class})
+    @NotNull(groups = {Post.class}, message = "birthDay не должно быть пустым")
+    @PastOrPresent(groups = {Post.class, Put.class}, message = "birthDay должно быть меньше или равно текущей дате")
     private LocalDate birthDay;
 
-    @NotNull(groups = {Post.class})
+    @NotNull(groups = {Post.class}, message = "petType не должно быть пустым")
     private PetType petType;
 
-    @NotBlank(groups = {Post.class})
+    @NotBlank(groups = {Post.class}, message = "breed не должно быть пустым")
     private String breed;
 
-    @NotNull(groups = {Post.class})
+    @NotNull(groups = {Post.class}, message = "gender не должно быть пустым")
     private Gender gender;
 
-    @NotBlank(groups = {Post.class})
+    @NotBlank(groups = {Post.class}, message = "color не должно быть пустым")
     private String color;
 
     private PetSize size;
 
-    @Positive(groups = {Post.class, Put.class})
+    @Positive(groups = {Post.class, Put.class}, message = "weight должно быть больше 0")
     private Double weight;
 
     private String description;

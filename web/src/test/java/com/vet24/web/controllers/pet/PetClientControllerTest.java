@@ -22,9 +22,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.LinkedMultiValueMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,15 +41,42 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
     private PetRequestDto petRequestDto;
     private String token;
 
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+    private EntityTransaction txn = null;
+
+    @Before
+    public void colorTable() {
+        try {
+            EntityManager manager = entityManagerFactory.createEntityManager();
+            txn = manager.getTransaction();
+            txn.begin();
+            manager.createNativeQuery("CREATE EXTENSION IF NOT EXISTS pg_trgm").executeUpdate();
+            txn.commit();
+        } catch (Throwable e) {
+            if (txn != null && txn.isActive()) {
+                txn.rollback();
+            }
+            throw e;
+        }
+    }
+
     @Before
     public void createNewClientAndDog() {
         this.petRequestDto = new PetRequestDto("name", "black avatar", LocalDate.now(), PetType.DOG,
-                "breed", Gender.MALE, "color", PetSize.SMALL, 0.1, "test.png");
+                "breed", Gender.MALE, "white", PetSize.SMALL, 0.1, "test.png");
     }
 
     @Before
     public void setToken() throws Exception {
         token = getAccessToken("client1@email.com","client");
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml"})
+    public void getAllPetsSuccess() throws Exception {
+        mockMvc.perform(get(URI).header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     // +mock, add pet - success
@@ -131,11 +162,11 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
     public void updatePetChangeTypeBadRequest() throws Exception{
         int beforeCount = petDao.getAll().size();
-        PetRequestDto abstractCat = new PetRequestDto();
-        abstractCat.setPetType(PetType.CAT);
+        PetRequestDto updatedCat = new PetRequestDto();
+        updatedCat.setPetType(PetType.CAT);
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 102)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(abstractCat).toString())
+                        .content(objectMapper.valueToTree(updatedCat).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());

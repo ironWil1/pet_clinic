@@ -148,14 +148,14 @@ public class PetClientController {
         if(petRequestDto.getColor() != null) {
             if(colorService.findColor(petRequestDto.getColor())
                     .stream().noneMatch(petRequestDto.getColor()::equalsIgnoreCase)) {
-                throw new NotFoundException("No such color is presented");
+                throw new NotFoundException("No such color is exists");
             }
         }
 
         if(petRequestDto.getBreed() != null) {
             if(breedService.getBreed(petRequestDto.getPetType().name(), petRequestDto.getBreed())
                     .stream().noneMatch(petRequestDto.getBreed()::equalsIgnoreCase)) {
-                throw new NotFoundException("No such breed is presented");
+                throw new NotFoundException("No such breed exists");
             }
         }
 
@@ -165,11 +165,13 @@ public class PetClientController {
             throw new NotFoundException("Pet is not found");
         }
         if (!(pet.getPetType().equals(petRequestDto.getPetType())) & petRequestDto.getPetType() != null) {
-                throw new NotFoundException("The type of pet can not be changed");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//            throw new NotFoundException("The type of pet can not be changed");
         }
         if (!(pet.getClient().getId().equals(client.get().getId()))) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
 
         petMapper.updateEntity(petRequestDto, pet);
         petService.update(pet);
