@@ -1,13 +1,13 @@
 package com.vet24.models.dto.pet;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
@@ -16,10 +16,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "petType")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = DogDto.class, name = "DOG"),
-        @JsonSubTypes.Type(value = CatDto.class, name = "CAT")
-})
 public abstract class AbstractNewPetDto {
     @NotBlank(message = "Поле name не должно быть пустым")
     private String name;
