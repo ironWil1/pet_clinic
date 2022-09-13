@@ -95,9 +95,9 @@ public class PetClientController {
             @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)})
     @PostMapping
     public ResponseEntity<PetResponseDto> persistPet(@Validated(PetRequestDto.Post.class) @RequestBody PetRequestDto petRequestDto) {
-        Boolean hasColor = colorService.findColor(petRequestDto.getColor())
+        boolean hasColor = colorService.findColor(petRequestDto.getColor())
                 .stream().anyMatch(petRequestDto.getColor()::equalsIgnoreCase);
-        Boolean hasBreed = breedService.getBreed(petRequestDto.getPetType().name(), petRequestDto.getBreed())
+        boolean hasBreed = breedService.getBreed(petRequestDto.getPetType().name(), petRequestDto.getBreed())
                 .stream().anyMatch(petRequestDto.getBreed()::equalsIgnoreCase);
 
         if (!hasColor) {
@@ -170,7 +170,6 @@ public class PetClientController {
         if (!(pet.getClient().getId().equals(client.get().getId()))) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
 
         petMapper.updateEntity(petRequestDto, pet);
         petService.update(pet);
