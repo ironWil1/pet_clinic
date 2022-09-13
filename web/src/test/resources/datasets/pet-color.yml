@@ -1,0 +1,9 @@
+PET_COLOR:
+  - ID: 100
+    COLOR: "white"
+  - ID: 101
+    COLOR: "black"
+  - ID: 102
+    COLOR: "brown"
+  - ID: 103
+    COLOR: "purple"

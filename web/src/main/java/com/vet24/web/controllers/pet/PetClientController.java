@@ -100,11 +100,11 @@ public class PetClientController {
         Boolean hasBreed = breedService.getBreed(petRequestDto.getPetType().name(), petRequestDto.getBreed())
                 .stream().anyMatch(petRequestDto.getBreed()::equalsIgnoreCase);
 
-        if(!hasColor) {
+        if (!hasColor) {
             throw new NotFoundException("No such color is presented");
         }
 
-        if(!hasBreed) {
+        if (!hasBreed) {
             throw new NotFoundException("No such breed is presented");
         }
 
@@ -145,14 +145,14 @@ public class PetClientController {
     @PutMapping("/{petId}")
     public ResponseEntity<PetResponseDto> updatePet(@PathVariable("petId") Long petId, @Validated(PetRequestDto.Put.class) @RequestBody PetRequestDto petRequestDto) {
 
-        if(petRequestDto.getColor() != null) {
+        if (petRequestDto.getColor() != null) {
             if(colorService.findColor(petRequestDto.getColor())
                     .stream().noneMatch(petRequestDto.getColor()::equalsIgnoreCase)) {
                 throw new NotFoundException("No such color is exists");
             }
         }
 
-        if(petRequestDto.getBreed() != null) {
+        if (petRequestDto.getBreed() != null) {
             if(breedService.getBreed(petRequestDto.getPetType().name(), petRequestDto.getBreed())
                     .stream().noneMatch(petRequestDto.getBreed()::equalsIgnoreCase)) {
                 throw new NotFoundException("No such breed exists");
@@ -166,7 +166,6 @@ public class PetClientController {
         }
         if (!(pet.getPetType().equals(petRequestDto.getPetType())) & petRequestDto.getPetType() != null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//            throw new NotFoundException("The type of pet can not be changed");
         }
         if (!(pet.getClient().getId().equals(client.get().getId()))) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

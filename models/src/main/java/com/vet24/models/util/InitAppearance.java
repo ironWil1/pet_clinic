@@ -7,7 +7,6 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.transaction.Transactional;
 
 @Component
 public class InitAppearance {
@@ -26,6 +25,7 @@ public class InitAppearance {
             EntityManager manager = entityManagerFactory.createEntityManager();
             txn = manager.getTransaction();
             txn.begin();
+            manager.createNativeQuery("CREATE EXTENSION IF NOT EXISTS pg_trgm").executeUpdate();
             manager.createNativeQuery(SQL_COLOR).executeUpdate();
             manager.createNativeQuery(SQL_BREED).executeUpdate();
             txn.commit();
