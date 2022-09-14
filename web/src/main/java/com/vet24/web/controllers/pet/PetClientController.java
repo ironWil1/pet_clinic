@@ -32,6 +32,7 @@ import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
@@ -79,13 +80,17 @@ public class PetClientController {
         return new ResponseEntity<>(petMapper.toDto(pet), HttpStatus.OK);
     }
 
-    @Operation(summary = "get all pets")
+    @Operation(summary = "get all pets of current user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully got Pets")
     })
     @GetMapping
-    public ResponseEntity<List<PetResponseDto>> getAllPets() {
-        return new ResponseEntity<>(petMapper.toDto(petService.getAll()), HttpStatus.OK);
+    public ResponseEntity<List<PetResponseDto>> getAllPetsOfCurrentUser() {
+        Optional<User> client = getOptionalOfNullableSecurityUser();
+        List<Pet> petsOfCurrentUser = petService.getAll().stream().filter(pet ->
+                pet.getClient().getId().equals(client.get().getId())).collect(Collectors.toList());
+
+        return new ResponseEntity<>(petMapper.toDto(petsOfCurrentUser), HttpStatus.OK);
     }
 
     @Operation(summary = "add a new Pet")
