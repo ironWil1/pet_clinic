@@ -40,7 +40,7 @@ import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecuri
 @RestController
 @Slf4j
 @RequestMapping("api/client/pet")
-@Tag(name = "pet-controller", description = "operations with Pets")
+@Tag(name = "petClient-controller", description = "operations with Pets")
 public class PetClientController {
 
     private final PetService petService;
