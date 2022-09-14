@@ -54,7 +54,7 @@ public class PetFoundClientController {
     })
     @GetMapping(value = "")
     public ResponseEntity<List<PetFoundClientDto>> getHistoryPetById(@RequestParam(value = "petId") Long petId) {
-        if (!petFoundService.isExistByKey(petId)) {
+        if (!petFoundService.isExistByPetId(petId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Optional<User> client = getOptionalOfNullableSecurityUser();

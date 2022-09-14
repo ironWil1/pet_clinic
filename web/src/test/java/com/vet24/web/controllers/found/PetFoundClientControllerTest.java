@@ -29,7 +29,7 @@ public class PetFoundClientControllerTest extends ControllerAbstractIntegrationT
             "/datasets/controllers/petFoundClientController/pet-found.yml"})
     public void testGetHistoryPetByIdSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
-                                .param("petId", "100")
+                                .param("petId", "101")
                                 .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$[0].latitude").value("1.2345678"))
@@ -46,7 +46,7 @@ public class PetFoundClientControllerTest extends ControllerAbstractIntegrationT
             "/datasets/controllers/petFoundClientController/pet-found.yml"})
     public void testGetHistoryPetByIdBadRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
-                                .param("petId", "101")
+                                .param("petId", "102")
                                 .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -59,7 +59,7 @@ public class PetFoundClientControllerTest extends ControllerAbstractIntegrationT
             "/datasets/controllers/petFoundClientController/pet-found.yml"})
     public void testGetHistoryPetByIdNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
-                                .param("petId", "999999")
+                                .param("petId", "100")
                                 .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }

@@ -22,7 +22,7 @@ PET_ENTITIES:
     NAME: "pet2"
     PET_SIZE: "SMALL"
     WEIGHT: 3
-    CLIENT_ID: 3
+    CLIENT_ID: 102
   - ID: 102
     PET_TYPE: "DOG"
     AVATAR: "test.png"
