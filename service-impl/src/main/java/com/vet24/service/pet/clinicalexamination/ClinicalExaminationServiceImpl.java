@@ -30,7 +30,7 @@ public class ClinicalExaminationServiceImpl extends ReadWriteServiceImpl<Long, C
     }
 
     @Override
-    public ClinicalExamination getById(Long examId) {
-        return clinicalExaminationDao.getById(examId);
+    public ClinicalExamination getClinicalExaminationWithPetById(Long examId) {
+        return clinicalExaminationDao.getClinicalExaminationWithPetById(examId);
     }
 }

@@ -11,5 +11,5 @@ public interface ClinicalExaminationDao extends ReadWriteDao<Long, ClinicalExami
 
     List<ClinicalExamination> getByPetId(Long petId);
 
-    ClinicalExamination getById(Long examId);
+    ClinicalExamination getClinicalExaminationWithPetById(Long examId);
 }

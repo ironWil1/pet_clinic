@@ -11,7 +11,7 @@ import lombok.Data;
 public class ClinicalExaminationRequestDto {
     @Positive(message = "Поле weight должно быть больше 0")
     @NotNull(message = "Поле weight не может быть null")
-    Double weight;
-    Boolean isCanMove;
-    String text;
+    private Double weight;
+    private Boolean isCanMove;
+    private String text;
 }

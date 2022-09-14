@@ -12,5 +12,5 @@ public interface ClinicalExaminationService extends ReadWriteService<Long, Clini
 
     List<ClinicalExamination> getByPetId(Long petId);
 
-    ClinicalExamination getById(Long examId);
+    ClinicalExamination getClinicalExaminationWithPetById(Long examId);
 }

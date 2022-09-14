@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClinicalExaminationResponseDto {
     @JsonView(View.Get.class)
-    Long id;
+    private Long id;
     @JsonView({View.Put.class, View.Get.class})
-    Long petId;
+    private Long petId;
     @JsonView({View.Put.class, View.Get.class})
-    Double weight;
+    private Double weight;
     @JsonView({View.Put.class, View.Get.class})
-    Boolean isCanMove;
+    private Boolean isCanMove;
     @JsonView({View.Put.class, View.Get.class})
-    String text;
+    private String text;
 }

@@ -137,7 +137,7 @@ public class ClinicalExaminationController {
         if (clinicalExamination == null) {
             throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
         }
-        Pet pet = clinicalExaminationService.getById(examId).getPet();
+        Pet pet = clinicalExaminationService.getClinicalExaminationWithPetById(examId).getPet();
 
         clinicalExamination.setDoctor(getOptionalOfNullableSecurityUser().get());
         clinicalExamination.setDate(LocalDate.now());

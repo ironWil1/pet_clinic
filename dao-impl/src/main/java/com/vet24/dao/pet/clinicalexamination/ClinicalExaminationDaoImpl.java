@@ -27,7 +27,7 @@ public class ClinicalExaminationDaoImpl extends ReadWriteDaoImpl<Long, ClinicalE
     }
 
     @Override
-    public ClinicalExamination getById(Long examId) {
+    public ClinicalExamination getClinicalExaminationWithPetById(Long examId) {
         return manager.createQuery("from ClinicalExamination ce join fetch ce.pet where ce.id = :examId",
                                    ClinicalExamination.class)
                 .setParameter("examId", examId)
