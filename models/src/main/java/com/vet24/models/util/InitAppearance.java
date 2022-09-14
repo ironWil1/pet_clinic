@@ -14,6 +14,7 @@ public class InitAppearance {
     private EntityManagerFactory entityManagerFactory;
     private EntityTransaction txn = null;
 
+    private final String PG_TRGM = "CREATE EXTENSION if not exists pg_trgm";
     private final String SQL_COLOR = "CREATE TABLE if not exists pet_color (id serial  PRIMARY KEY," +
             "            color TEXT not null unique )";
     private final String SQL_BREED = "CREATE TABLE if not exists  pet_breed (id serial  PRIMARY KEY," +
@@ -25,7 +26,7 @@ public class InitAppearance {
             EntityManager manager = entityManagerFactory.createEntityManager();
             txn = manager.getTransaction();
             txn.begin();
-            manager.createNativeQuery("CREATE EXTENSION IF NOT EXISTS pg_trgm").executeUpdate();
+            manager.createNativeQuery(PG_TRGM).executeUpdate();
             manager.createNativeQuery(SQL_COLOR).executeUpdate();
             manager.createNativeQuery(SQL_BREED).executeUpdate();
             txn.commit();
