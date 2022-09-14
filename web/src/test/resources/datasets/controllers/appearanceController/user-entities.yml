@@ -1,0 +1,114 @@
+USER_ENTITIES:
+  - ID: 100
+    #USER_TYPE: "ADMIN"
+    ENABLED: true
+    EMAIL: "admin1@email.com"
+    PASSWORD: "{bcrypt}$2a$12$b5SpHA7tzgKb4bLSDppmS.3aZMdBu8diJKNHQDU7eASiTni2WlwHq" #"admin"
+  - ID: 101
+    #USER_TYPE: "MANAGER"
+    ENABLED: true
+    EMAIL: "manager1@email.com"
+    PASSWORD: "{bcrypt}$2a$12$c3tOVldsS88AjG8bLd2t5OMTfctjv.UY2hAg4qWtp2.VlDG7MnFa2" #"manager"
+  - ID: 102
+    #USER_TYPE: "CLIENT"
+    ENABLED: true
+    EMAIL: "client1@email.com"
+    PASSWORD: "{bcrypt}$2a$12$Z/gpYA7gLUuFKZM7EROGduwYlXJnZplTVemX.kpKy52khCANZVJWW" #"client"
+  - ID: 103
+    #USER_TYPE: "DOCTOR"
+    ENABLED: true
+    EMAIL: "doctor103@email.com"
+    PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"
+  - ID: 33
+    #USER_TYPE: "DOCTOR"
+    ENABLED: true
+    EMAIL: "doctor33@gmail.com"
+    PASSWORD: "{bcrypt}$2a$12$0HcODBhE9XaLTV3dfxAPZ.oCmzAc5YAKnfhjsj7pa98CD0S72ynzC" #"user33"
+  - ID: 34
+    #USER_TYPE: "DOCTOR"
+    ENABLED: true
+    EMAIL: "doctor34@gmail.com"
+    PASSWORD: "{bcrypt}$2a$12$kWsvJ6Tw4yOqUWG/g71J/OeRq5RJNse5KL9QCQYzAsyF4pualpZl." #"user34"
+  - ID: 3
+    #USER_TYPE: "CLIENT"
+    ENABLED: true
+    EMAIL: "user3@gmail.com"
+    PASSWORD: "{bcrypt}$2a$12$qz8vaj1icekMnf.7sXSzw.gDdQWezHs3XKv1YhQPaedWYRNjSQVxm" #"user3"
+  - ID: 4
+    #USER_TYPE: "CLIENT"
+    ENABLED: true
+    EMAIL: "user4@gmail.com"
+    PASSWORD: "{bcrypt}$2a$12$sbHmqRpUGv12k/0PhMb8Se5eThsvkUdPXTNuWF2mtj57bD1P8oXbS" #"user4"
+  - ID: 31
+    #USER_TYPE: "DOCTOR"
+    ENABLED: true
+    EMAIL: "doctor31@email.com"
+    PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"
+  - ID: 32
+    #USER_TYPE: "DOCTOR"
+    ENABLED: true
+    EMAIL: "doctor32@email.com"
+    PASSWORD: "{bcrypt}$2a$12$Ywp1qCiBuhurS1e7QmkKH.b2gWAyjyeZVTAiHWfWAW.vJwkxvpgnW" #"doctor"
+PROFILES:
+  - USER_ID: 100
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Admin"
+    LAST_NAME: "Admin"
+  - USER_ID: 101
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Manager"
+    LAST_NAME: "Manager"
+  - USER_ID: 102
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Client"
+    LAST_NAME: "Client"
+  - USER_ID: 103
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Dr."
+    LAST_NAME: "Petrov"
+  - USER_ID: 33
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Doctor"
+    LAST_NAME: "Doctor"
+  - USER_ID: 34
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Vinni"
+    LAST_NAME: "Pukh"
+  - USER_ID: 3
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Ivan"
+    LAST_NAME: "Ivanov"
+  - USER_ID: 4
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Petr"
+    LAST_NAME: "Petrov"
+  - USER_ID: 31
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Dr."
+    LAST_NAME: "Petrov"
+  - USER_ID: 32
+    AVATAR_URL: "test.png"
+    FIRST_NAME: "Dr."
+    LAST_NAME: "Ivanov"
+
+
+ROLE:
+  - NAME: "ADMIN"
+  - NAME: "MANAGER"
+  - NAME: "CLIENT"
+  - NAME: "UNVERIFIED_CLIENT"
+  - NAME: "DOCTOR"
+
+USER_ROLE:
+  - USER_ID: 100
+    ROLE_NAME: "ADMIN"
+  - USER_ID: 101
+    ROLE_NAME: "MANAGER"
+  - USER_ID: 102
+    ROLE_NAME: "CLIENT"
+  - USER_ID: 103
+    ROLE_NAME: "DOCTOR"
+  - USER_ID: 3
+    ROLE_NAME: "CLIENT"
+  - USER_ID: 4
+    ROLE_NAME: "CLIENT"

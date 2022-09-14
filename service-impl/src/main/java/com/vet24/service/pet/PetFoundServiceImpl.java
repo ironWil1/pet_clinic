@@ -22,4 +22,9 @@ public class PetFoundServiceImpl extends ReadWriteServiceImpl<Long, PetFound> im
     public List<PetFound> getPetFoundByPetId(Long petId) {
         return petFoundDao.getPetFoundByPetId(petId);
     }
+
+    @Override
+    public boolean isExistByPetId(Long petId) {
+        return petFoundDao.isExistByPetId(petId);
+    }
 }
