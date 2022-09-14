@@ -16,4 +16,12 @@ public class PetFoundDaoImpl extends ReadWriteDaoImpl<Long, PetFound> implements
                 .setParameter("petId", petId)
                 .getResultList();
     }
+
+    @Override
+    public boolean isExistByPetId(Long petId) {
+        return manager.createQuery("SELECT CASE WHEN (count(*)>0) then true else false end" +
+                                           " from PetFound pf where pf.pet.id = :petId", Boolean.class)
+                .setParameter("petId", petId)
+                .getSingleResult();
+    }
 }

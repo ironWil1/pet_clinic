@@ -8,4 +8,6 @@ import java.util.List;
 public interface PetFoundService extends ReadWriteService<Long, PetFound> {
 
     List<PetFound> getPetFoundByPetId(Long petId);
+
+    boolean isExistByPetId(Long petId);
 }
