@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -107,7 +108,8 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString(), AuthResponse.class);
         assertTrue("JwtToken не сохранён, тест не пройден",
                 entityManager.createQuery("SELECT case when COUNT(c) = 1 then true else false end FROM JwtToken c WHERE c.token = ?1"
-                        , Boolean.class).setParameter(1, authResponse.jwtToken).getSingleResult());
+                        , Boolean.class).setParameter(1, authResponse.jwtToken)
+                        .getSingleResult());
     }
 
     @Test
@@ -152,5 +154,45 @@ public class AuthControllerTest extends ControllerAbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString(), Boolean.class);
 
         assertFalse("Тест не пройден", result);
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/authControllerTest/users.yml"})
+    public void currentUserIsAdmin() throws Exception {
+        String token = getAccessToken("admin1@email.com", "admin");
+        mockMvc.perform(get(URI  + "/getCurrent").header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.jsonPath("jwtToken").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("role").value("ADMIN"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/authControllerTest/users.yml"})
+    public void currentUserIsClient() throws Exception {
+        String token = getAccessToken("client1@email.com", "client");
+        mockMvc.perform(get(URI  + "/getCurrent").header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.jsonPath("jwtToken").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("role").value("CLIENT"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/authControllerTest/users.yml"})
+    public void currentUserIsDoctor() throws Exception {
+        String token = getAccessToken("doctor1@email.com", "doctor");
+        mockMvc.perform(get(URI  + "/getCurrent").header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.jsonPath("jwtToken").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("role").value("DOCTOR"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DataSet(cleanBefore = true, value = {"/datasets/controllers/user/authControllerTest/users.yml"})
+    public void currentUserIsManager() throws Exception {
+        String token = getAccessToken("manager1@email.com", "manager");
+        mockMvc.perform(get(URI  + "/getCurrent").header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.jsonPath("jwtToken").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("role").value("MANAGER"))
+                .andExpect(status().isOk());
     }
 }
