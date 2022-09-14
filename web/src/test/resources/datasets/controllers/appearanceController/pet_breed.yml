@@ -1,0 +1,10 @@
+PET_BREEd:
+  - ID: 101
+    PET_TYPE: dog
+    BREED: бигль
+  - ID: 102
+    PET_TYPE: dog
+    BREED: мопс
+  - ID: 103
+    PET_TYPE: cat
+    BREED: сфинкс
