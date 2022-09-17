@@ -27,4 +27,9 @@ public class BreedServiceImpl implements BreedService {
         return breedList;
     }
 
+    @Override
+    public Boolean isBreedExists(String petType, String breed) {
+        return getBreed(petType, breed).stream().anyMatch(breed::equalsIgnoreCase);
+    }
+
 }

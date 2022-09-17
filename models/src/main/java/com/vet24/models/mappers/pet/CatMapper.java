@@ -1,11 +1,12 @@
 package com.vet24.models.mappers.pet;
 
-import com.vet24.models.dto.pet.PetRequestDto;
+import com.vet24.models.dto.pet.PetRequestPostDto;
 import com.vet24.models.dto.pet.PetResponseDto;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.pet.Cat;
 import com.vet24.models.pet.Pet;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CatMapper extends AbstractPetMapper {
@@ -16,11 +17,12 @@ public interface CatMapper extends AbstractPetMapper {
     }
 
     @Override
-    default Pet petRequestDtoToPet(PetRequestDto petRequestDto) {
+    default Pet petRequestPostDtoToPet(PetRequestPostDto petRequestDto) {
         return toEntity(petRequestDto);
     }
 
-    Cat toEntity(PetRequestDto petRequestDto);
+    @Mapping(source = "size", target = "petSize")
+    Cat toEntity(PetRequestPostDto petRequestDto);
 
     @Override
     default Pet abstractPetDtoToPet(PetResponseDto petResponseDto) {

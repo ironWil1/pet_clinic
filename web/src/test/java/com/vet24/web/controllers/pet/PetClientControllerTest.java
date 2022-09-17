@@ -2,7 +2,8 @@ package com.vet24.web.controllers.pet;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.dao.pet.PetDao;
-import com.vet24.models.dto.pet.PetRequestDto;
+import com.vet24.models.dto.pet.PetRequestPostDto;
+import com.vet24.models.dto.pet.PetRequestPutDto;
 import com.vet24.models.enums.Gender;
 import com.vet24.models.enums.PetSize;
 import com.vet24.models.enums.PetType;
@@ -25,13 +26,19 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
     private PetDao petDao;
 
     private final String URI = "/api/client/pet";
-    private PetRequestDto petRequestDto;
+    private PetRequestPostDto petRequestPostDto;
+
+    private PetRequestPutDto petRequestDtoPut;
     private String token;
 
 
     @Before
     public void createNewClientAndDog() {
-        this.petRequestDto = new PetRequestDto("name", "white", LocalDate.now(), PetType.DOG,
+
+        this.petRequestPostDto = new PetRequestPostDto("name", "white", LocalDate.now(), PetType.DOG,
+                "good", Gender.MALE, "white", PetSize.SMALL, 0.1, "test.png");
+
+        this.petRequestDtoPut = new PetRequestPutDto("name", "white", LocalDate.now(),
                 "good", Gender.MALE, "white", PetSize.SMALL, 0.1, "test.png");
     }
 
@@ -52,14 +59,13 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
     @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml",
             "/datasets/pet-color.yml", "/datasets/pet-breed.yml"})
     public void persistPetSuccess() throws Exception {
-//        int sizeBefore = petDao.getAll().size();
-        Long size = entityManager.createQuery("SELECT COUNT(id) FROM Pet", Long.class).getSingleResult();
-        mockMvc.perform(MockMvcRequestBuilders.post(URI, PetRequestDto.class)
+        int sizeBefore = petDao.getAll().size();
+        mockMvc.perform(MockMvcRequestBuilders.post(URI, PetRequestPostDto.class)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(petRequestDto).toString())
+                        .content(objectMapper.valueToTree(petRequestPostDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-        assertThat(++size).isEqualTo((Long.valueOf(petDao.getAll().size())));
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        assertThat(++sizeBefore).isEqualTo((petDao.getAll().size()));
     }
 
     // +mock, delete by id - success
@@ -69,7 +75,7 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
         int sizeBefore = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}", 107)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(petRequestDto).toString())
+                        .content(objectMapper.valueToTree(petRequestPostDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(--sizeBefore).isEqualTo(petDao.getAll().size());
@@ -82,7 +88,7 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
         int sizeBefore = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}", 100)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(petRequestDto).toString())
+                        .content(objectMapper.valueToTree(petRequestPostDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(sizeBefore).isEqualTo(petDao.getAll().size());
@@ -95,7 +101,7 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
         int beforeCount = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{petId}", 69000)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(petRequestDto).toString())
+                        .content(objectMapper.valueToTree(petRequestPostDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
@@ -109,7 +115,7 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
         int beforeCount = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 107)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(petRequestDto).toString())
+                        .content(objectMapper.valueToTree(petRequestDtoPut).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
@@ -123,26 +129,27 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
         int beforeCount = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 101)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(petRequestDto).toString())
+                        .content(objectMapper.valueToTree(petRequestDtoPut).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());
     }
 
-    // +mock, put pet by id - error 400 type of pet can not be changed
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
-    public void updatePetChangeTypeBadRequest() throws Exception{
-        int beforeCount = petDao.getAll().size();
-        PetRequestDto updatedCat = new PetRequestDto();
-        updatedCat.setPetType(PetType.CAT);
-        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 102)
-                        .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(updatedCat).toString())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        assertThat(beforeCount).isEqualTo(petDao.getAll().size());
-    }
+//    // +mock, put pet by id - error 400 type of pet can not be changed
+//    @Test
+//    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
+//    public void updatePetChangeTypeBadRequest() throws Exception{
+//        int beforeCount = petDao.getAll().size();
+//        PetRequestDto.PutClass updatedCat
+////        PetRequestDto updatedCat = new PetRequestDto();
+//        updatedCat.setPetType(PetType.CAT);
+//        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 102)
+//                        .header("Authorization", "Bearer " + token)
+//                        .content(objectMapper.valueToTree(updatedCat).toString())
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+//        assertThat(beforeCount).isEqualTo(petDao.getAll().size());
+//    }
 
     // +mock, put pet by id - error 404 pet not found
     @Test
@@ -151,7 +158,7 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
         int beforeCount = petDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{petId}", 69000)
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(petRequestDto).toString())
+                        .content(objectMapper.valueToTree(petRequestDtoPut).toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         assertThat(beforeCount).isEqualTo(petDao.getAll().size());

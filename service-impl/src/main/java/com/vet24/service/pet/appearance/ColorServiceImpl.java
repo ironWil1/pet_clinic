@@ -20,4 +20,9 @@ public class ColorServiceImpl implements ColorService {
     public List<String> findColor(String color) {
         return colorDao.findColor(color);
     }
+
+    @Override
+    public Boolean isColorExists(String color) {
+        return findColor(color).stream().anyMatch(color::equalsIgnoreCase);
+    }
 }

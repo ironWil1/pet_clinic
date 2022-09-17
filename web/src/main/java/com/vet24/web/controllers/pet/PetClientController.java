@@ -1,7 +1,8 @@
 package com.vet24.web.controllers.pet;
 
 import com.vet24.models.dto.exception.ExceptionDto;
-import com.vet24.models.dto.pet.PetRequestDto;
+import com.vet24.models.dto.pet.PetRequestPostDto;
+import com.vet24.models.dto.pet.PetRequestPutDto;
 import com.vet24.models.dto.pet.PetResponseDto;
 import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.mappers.pet.PetMapper;
@@ -19,7 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.webjars.NotFoundException;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,7 +76,6 @@ public class PetClientController {
             throw new BadRequestException("pet not yours");
         });
 
-
         log.info("We have pet with this id {}", petId);
         return new ResponseEntity<>(petMapper.toDto(pet), HttpStatus.OK);
     }
@@ -99,27 +99,28 @@ public class PetClientController {
                     schema = @Schema(implementation = PetResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)})
     @PostMapping
-    public ResponseEntity<PetResponseDto> persistPet(@Validated(PetRequestDto.Post.class) @RequestBody PetRequestDto petRequestDto) {
-        boolean hasColor = colorService.findColor(petRequestDto.getColor())
-                .stream().anyMatch(petRequestDto.getColor()::equalsIgnoreCase);
-        boolean hasBreed = breedService.getBreed(petRequestDto.getPetType().name(), petRequestDto.getBreed())
-                .stream().anyMatch(petRequestDto.getBreed()::equalsIgnoreCase);
+    public ResponseEntity<PetResponseDto> persistPet(@Valid @RequestBody PetRequestPostDto petRequestDto) {
 
-        if (!hasColor) {
+        Optional<User> client = getOptionalOfNullableSecurityUser();
+
+        if (client.isEmpty()) {
+            throw new NotFoundException("User is not found");
+        }
+
+        if (!colorService.isColorExists(petRequestDto.getColor())) {
             throw new NotFoundException("No such color is presented");
         }
 
-        if (!hasBreed) {
+        if (!breedService.isBreedExists(petRequestDto.getPetType().name(), petRequestDto.getBreed())) {
             throw new NotFoundException("No such breed is presented");
         }
 
-        return getOptionalOfNullableSecurityUser().map(user -> {
-            Pet pet = petMapper.toEntity(petRequestDto);
-            pet.setClient(user);
-            petService.persist(pet);
-            log.info("We added new pet {}", petRequestDto.getName());
-            return ResponseEntity.status(201).body(petMapper.toDto(pet));
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+        Pet pet = petMapper.toEntity(petRequestDto);
+        pet.setClient(client.get());
+        petService.persist(pet);
+        log.info("We added new pet {}", petRequestDto.getName());
+
+        return new ResponseEntity<>(petMapper.toDto(pet), HttpStatus.OK);
     }
 
     @Operation(summary = "delete a Pet")
@@ -137,9 +138,9 @@ public class PetClientController {
                 log.info("We deleted pet with this id {}", petId);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("This pet is not yours");
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new NotFoundException("Pet is not found");
     }
 
     @Operation(summary = "update a Pet")
@@ -148,32 +149,30 @@ public class PetClientController {
             @ApiResponse(responseCode = "404", description = "Pet or Client is not found"),
             @ApiResponse(responseCode = "400", description = "Pet owner ID and current Client ID do not match")})
     @PutMapping("/{petId}")
-    public ResponseEntity<PetResponseDto> updatePet(@PathVariable("petId") Long petId, @Validated(PetRequestDto.Put.class) @RequestBody PetRequestDto petRequestDto) {
+    public ResponseEntity<PetResponseDto> updatePet(@PathVariable("petId") Long petId,
+                                                    @Valid @RequestBody PetRequestPutDto petRequestDto) {
+
+        Optional<User> client = getOptionalOfNullableSecurityUser();
+        Pet pet = petService.getByKey(petId);
+
+        if (pet == null || client.isEmpty()) {
+            throw new NotFoundException("Pet is not found");
+        }
+
+        if (!(pet.getClient().getId().equals(client.get().getId()))) {
+            throw new BadRequestException("This pet is not yours");
+        }
 
         if (petRequestDto.getColor() != null) {
-            if(colorService.findColor(petRequestDto.getColor())
-                    .stream().noneMatch(petRequestDto.getColor()::equalsIgnoreCase)) {
-                throw new NotFoundException("No such color is exists");
+            if (!colorService.isColorExists(petRequestDto.getColor())) {
+                throw new NotFoundException("No such color is presented");
             }
         }
 
         if (petRequestDto.getBreed() != null) {
-            if(breedService.getBreed(petRequestDto.getPetType().name(), petRequestDto.getBreed())
-                    .stream().noneMatch(petRequestDto.getBreed()::equalsIgnoreCase)) {
-                throw new NotFoundException("No such breed exists");
+            if(!breedService.isBreedExists(pet.getPetType().name(), petRequestDto.getBreed())) {
+                throw new NotFoundException("No such breed is presented");
             }
-        }
-
-        Optional<User> client = getOptionalOfNullableSecurityUser();
-        Pet pet = petService.getByKey(petId);
-        if (pet == null || client.isEmpty()) {
-            throw new NotFoundException("Pet is not found");
-        }
-        if (!(pet.getPetType().equals(petRequestDto.getPetType())) & petRequestDto.getPetType() != null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if (!(pet.getClient().getId().equals(client.get().getId()))) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         petMapper.updateEntity(petRequestDto, pet);

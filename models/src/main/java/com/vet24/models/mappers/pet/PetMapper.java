@@ -1,13 +1,15 @@
 package com.vet24.models.mappers.pet;
 
+import com.vet24.models.dto.pet.PetRequestPostDto;
+import com.vet24.models.dto.pet.PetRequestPutDto;
 import com.vet24.models.dto.pet.PetResponseDto;
-import com.vet24.models.dto.pet.PetRequestDto;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
 import com.vet24.models.mappers.DtoMapper;
 import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.pet.Pet;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +45,15 @@ public abstract class PetMapper implements DtoMapper<Pet, PetResponseDto>, Entit
         }
     }
 
-    public Pet toEntity(PetRequestDto petRequestDto) {
+    public Pet toEntity(PetRequestPostDto petRequestDto) {
         if (mapperMap.containsKey(petRequestDto.getPetType())) {
-            return mapperMap.get(petRequestDto.getPetType()).petRequestDtoToPet(petRequestDto);
+            return mapperMap.get(petRequestDto.getPetType()).petRequestPostDtoToPet(petRequestDto);
         } else {
             throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petRequestDto);
         }
     }
 
-    public abstract void updateEntity(PetRequestDto dto, @MappingTarget Pet entity);
+
+    @Mapping(source = "size", target = "petSize")
+    public abstract void updateEntity(PetRequestPutDto dto, @MappingTarget Pet entity);
 }
