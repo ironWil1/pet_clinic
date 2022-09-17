@@ -95,8 +95,8 @@ public class ExternalParasiteController {
 
     @Operation(summary = "Получить все записи питомца на обработку от эктопаразитов")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успешно получены все записи по обработку от эктопаразитов",
-                    content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
+            @ApiResponse(responseCode = "200",
+                    description = "Успешно получены все записи на обработку от эктопаразитов"),
             @ApiResponse(responseCode = "404", description = "Записи на обработку от эктопаразитов не найдены",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Питомец не записан на обработку от эктопаразитов",
@@ -121,8 +121,7 @@ public class ExternalParasiteController {
 
     @Operation(summary = "Получить запись на обработку от эктопаразитов по id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успешно найдена запись на обработку от эктопаразитов",
-                    content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
+            @ApiResponse(responseCode = "200", description = "Успешно найдена запись на обработку от эктопаразитов"),
             @ApiResponse(responseCode = "404", description = "Запись на обработку от эктопаразитов не найдена",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Питомец не записан на обработку от эктопаразитов",
