@@ -11,7 +11,7 @@ import com.vet24.models.user.User;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.appearance.BreedService;
 import com.vet24.service.pet.appearance.ColorService;
-import com.vet24.service.user.PetsService;
+import com.vet24.service.user.PetsOfUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,16 +48,16 @@ public class PetClientController {
     private final PetMapper petMapper;
     private final BreedService breedService;
     private final ColorService colorService;
-    private final PetsService petsService;
+    private final PetsOfUserService petsOfUserService;
 
 
     public PetClientController(PetService petService, PetMapper petMapper, BreedService breedService,
-                               ColorService colorService, PetsService petsService) {
+                               ColorService colorService, PetsOfUserService petsOfUserService) {
         this.petService = petService;
         this.petMapper = petMapper;
         this.breedService = breedService;
         this.colorService = colorService;
-        this.petsService = petsService;
+        this.petsOfUserService = petsOfUserService;
     }
 
     @Operation(summary = "get pet by id")
@@ -93,7 +93,9 @@ public class PetClientController {
             throw new NotFoundException("User is not found");
         }
 
-        return new ResponseEntity<>(petMapper.toDto(petsService.getAllPetsOfUser(client.get().getId())), HttpStatus.OK);
+        List<Pet> pets = petsOfUserService.getAllPetsOfUser(client.get().getId());
+
+        return new ResponseEntity<>(petMapper.toDto(pets), HttpStatus.OK);
     }
 
     @Operation(summary = "add a new Pet")

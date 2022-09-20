@@ -4,7 +4,7 @@ import com.vet24.models.pet.Pet;
 
 import java.util.List;
 
-public interface PetsService {
+public interface PetsOfUserService {
 
     List<Pet> getAllPetsOfUser(Long id);
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Repository
-public class PetsDaoImpl implements PetsDao {
+public class PetsOfUserDaoImpl implements PetsOfUserDao {
 
     @PersistenceContext
     private EntityManager manager;
