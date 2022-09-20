@@ -2,7 +2,6 @@ package com.vet24.dao.pet.appearance;
 
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -33,5 +32,12 @@ public class BreedDaoImpl implements BreedDao {
                 manager.createNativeQuery("SELECT breed from pet_breed where breed % :br ")
                         .setParameter("br", breed).getResultList());
         return listBreed;
+    }
+
+    @Override
+    public Boolean isPetTypeAndBreedCombinationExist(String petType, String breed) {
+        return (Boolean) manager.createNativeQuery("SELECT EXISTS(SELECT pet_type, breed FROM pet_breed WHERE " +
+                        "pet_type = :petType AND breed = :breed)")
+                .setParameter("petType", petType).setParameter("breed", breed).getSingleResult();
     }
 }

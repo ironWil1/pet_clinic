@@ -29,7 +29,7 @@ public class BreedServiceImpl implements BreedService {
 
     @Override
     public Boolean isBreedExists(String petType, String breed) {
-        return getBreed(petType, breed).stream().anyMatch(breed::equalsIgnoreCase);
+        return breedDao.isPetTypeAndBreedCombinationExist(petType, breed);
     }
 
 }

@@ -23,6 +23,6 @@ public class ColorServiceImpl implements ColorService {
 
     @Override
     public Boolean isColorExists(String color) {
-        return findColor(color).stream().anyMatch(color::equalsIgnoreCase);
+        return colorDao.isColorExists(color);
     }
 }

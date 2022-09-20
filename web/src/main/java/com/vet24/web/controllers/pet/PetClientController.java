@@ -11,6 +11,7 @@ import com.vet24.models.user.User;
 import com.vet24.service.pet.PetService;
 import com.vet24.service.pet.appearance.BreedService;
 import com.vet24.service.pet.appearance.ColorService;
+import com.vet24.service.user.PetsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,7 +34,6 @@ import org.webjars.NotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
@@ -48,14 +48,16 @@ public class PetClientController {
     private final PetMapper petMapper;
     private final BreedService breedService;
     private final ColorService colorService;
+    private final PetsService petsService;
 
 
-    public PetClientController(PetService petService, PetMapper petMapper,
-                               BreedService breedService, ColorService colorService) {
+    public PetClientController(PetService petService, PetMapper petMapper, BreedService breedService,
+                               ColorService colorService, PetsService petsService) {
         this.petService = petService;
         this.petMapper = petMapper;
         this.breedService = breedService;
         this.colorService = colorService;
+        this.petsService = petsService;
     }
 
     @Operation(summary = "get pet by id")
@@ -87,10 +89,11 @@ public class PetClientController {
     @GetMapping
     public ResponseEntity<List<PetResponseDto>> getAllPetsOfCurrentUser() {
         Optional<User> client = getOptionalOfNullableSecurityUser();
-        List<Pet> petsOfCurrentUser = petService.getAll().stream().filter(pet ->
-                pet.getClient().getId().equals(client.get().getId())).collect(Collectors.toList());
+        if (client.isEmpty()) {
+            throw new NotFoundException("User is not found");
+        }
 
-        return new ResponseEntity<>(petMapper.toDto(petsOfCurrentUser), HttpStatus.OK);
+        return new ResponseEntity<>(petMapper.toDto(petsService.getAllPetsOfUser(client.get().getId())), HttpStatus.OK);
     }
 
     @Operation(summary = "add a new Pet")
@@ -112,7 +115,7 @@ public class PetClientController {
         }
 
         if (!breedService.isBreedExists(petRequestDto.getPetType().name(), petRequestDto.getBreed())) {
-            throw new NotFoundException("No such breed is presented");
+            throw new NotFoundException("No such breed and pet type combination is presented");
         }
 
         Pet pet = petMapper.toEntity(petRequestDto);
@@ -171,7 +174,7 @@ public class PetClientController {
 
         if (petRequestDto.getBreed() != null) {
             if(!breedService.isBreedExists(pet.getPetType().name(), petRequestDto.getBreed())) {
-                throw new NotFoundException("No such breed is presented");
+                throw new NotFoundException("No such breed and pet type combination is presented");
             }
         }
 
