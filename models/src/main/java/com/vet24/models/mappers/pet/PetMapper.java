@@ -1,6 +1,8 @@
 package com.vet24.models.mappers.pet;
 
-import com.vet24.models.dto.pet.PetDto;
+import com.vet24.models.dto.pet.PetRequestPostDto;
+import com.vet24.models.dto.pet.PetRequestPutDto;
+import com.vet24.models.dto.pet.PetResponseDto;
 import com.vet24.models.enums.PetType;
 import com.vet24.models.exception.NoSuchAbstractEntityDtoException;
 import com.vet24.models.mappers.DtoMapper;
@@ -8,22 +10,18 @@ import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.pet.Pet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
-public abstract class PetMapper implements
-        DtoMapper<Pet, PetDto>, EntityMapper<PetDto, Pet> {
-
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+public abstract class PetMapper implements DtoMapper<Pet, PetResponseDto>, EntityMapper<PetResponseDto, Pet> {
     private Map<PetType, AbstractPetMapper> mapperMap;
 
     @Autowired
@@ -38,22 +36,24 @@ public abstract class PetMapper implements
         mapperMap = mapperList.stream().collect(Collectors.toMap(AbstractPetMapper::getPetType, Function.identity()));
     }
 
-    @Mapping(target = "petType", source = "petType")
-    @Mapping(target = "notificationCount", source = "pet")
     @Override
-    public abstract PetDto toDto(Pet pet);
-
-    protected int petToNotificationCountInt(Pet pet) {
-        return 4;
-    }
-
-    @Override
-    public Pet toEntity (PetDto petDto) {
-        if (mapperMap.containsKey(petDto.getPetType())) {
-            return mapperMap.get(petDto.getPetType()).abstractPetDtoToPet(petDto);
+    public Pet toEntity(PetResponseDto petResponseDto) {
+        if (mapperMap.containsKey(petResponseDto.getPetType())) {
+            return mapperMap.get(petResponseDto.getPetType()).abstractPetDtoToPet(petResponseDto);
         } else {
-            throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petDto);
+            throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petResponseDto);
         }
     }
 
+    public Pet toEntity(PetRequestPostDto petRequestDto) {
+        if (mapperMap.containsKey(petRequestDto.getPetType())) {
+            return mapperMap.get(petRequestDto.getPetType()).petRequestPostDtoToPet(petRequestDto);
+        } else {
+            throw new NoSuchAbstractEntityDtoException("Can't find Mapper for " + petRequestDto);
+        }
+    }
+
+
+    @Mapping(source = "size", target = "petSize")
+    public abstract void updateEntity(PetRequestPutDto dto, @MappingTarget Pet entity);
 }

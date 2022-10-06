@@ -2,7 +2,6 @@ package com.vet24.dao.pet.appearance;
 
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -22,5 +21,11 @@ public class ColorDaoImpl implements ColorDao {
                         .setParameter("cl", color)
                         .getResultList());
         return colorList;
+    }
+
+    @Override
+    public Boolean isColorExists(String color) {
+        return (Boolean) manager.createNativeQuery("SELECT EXISTS(SELECT color FROM pet_color WHERE " +
+                "color = :color)").setParameter("color", color).getSingleResult();
     }
 }

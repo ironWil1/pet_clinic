@@ -1,17 +1,15 @@
 package com.vet24.models.mappers.pet;
 
-import com.vet24.models.dto.pet.AbstractNewPetDto;
-import com.vet24.models.dto.pet.DogDto;
-import com.vet24.models.dto.pet.PetDto;
+import com.vet24.models.dto.pet.PetRequestPostDto;
+import com.vet24.models.dto.pet.PetResponseDto;
 import com.vet24.models.enums.PetType;
-import com.vet24.models.mappers.DtoMapper;
-import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface DogMapper extends AbstractPetMapper, DtoMapper<Dog, DogDto>, EntityMapper<DogDto, Dog> {
+public interface DogMapper extends AbstractPetMapper {
 
     @Override
     default PetType getPetType() {
@@ -19,15 +17,18 @@ public interface DogMapper extends AbstractPetMapper, DtoMapper<Dog, DogDto>, En
     }
 
     @Override
-    default Pet abstractNewPetDtoToPet(AbstractNewPetDto petDto) {
-        return toEntity((DogDto) petDto);
+    default Pet petRequestPostDtoToPet(PetRequestPostDto petRequestDto) {
+        return toEntity(petRequestDto);
     }
+
+    @Mapping(source = "size", target = "petSize")
+    Dog toEntity(PetRequestPostDto petRequestDto);
 
     @Override
-    default Pet abstractPetDtoToPet(PetDto petDto) {
-        return petDtoToPet(petDto);
+    default Pet abstractPetDtoToPet(PetResponseDto petResponseDto) {
+        return toEntity(petResponseDto);
     }
 
-    Dog petDtoToPet(PetDto petDto);
+    Dog toEntity(PetResponseDto petResponseDto);
 
 }
