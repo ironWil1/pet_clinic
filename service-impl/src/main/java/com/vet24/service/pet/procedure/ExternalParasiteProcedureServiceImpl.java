@@ -6,6 +6,8 @@ import com.vet24.service.ReadWriteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ExternalParasiteProcedureServiceImpl extends ReadWriteServiceImpl<Long, ExternalParasiteProcedure> implements ExternalParasiteProcedureService {
 
@@ -20,5 +22,10 @@ public class ExternalParasiteProcedureServiceImpl extends ReadWriteServiceImpl<L
     @Override
     public boolean isExistByIdAndClientId(Long id, Long clientId) {
         return externalParasiteProcedureDao.isExistByIdAndClientId(id, clientId);
+    }
+
+    @Override
+    public List<ExternalParasiteProcedure> getByPetId(Long petId) {
+        return externalParasiteProcedureDao.getByPetId(petId);
     }
 }
