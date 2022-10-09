@@ -119,7 +119,7 @@ public class ExternalParasiteControllerTest extends ControllerAbstractIntegratio
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/external?petId={petId}", 102)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(expectJsonArray("$[?(@.id == 102)]", externalParasiteDto))
                 .andExpect(expectJsonArray("$[?(@.id == 103)]", externalParasiteDto1));
     }

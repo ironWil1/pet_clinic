@@ -193,7 +193,7 @@
             <appender-ref ref="reproduction"/>
         </logger>
 
-        <logger name ="com.vet24.web.controllers.pet.PetController" level ="debug">
+        <logger name ="com.vet24.web.controllers.pet.PetClientController" level ="debug">
 
             <appender-ref ref="pet"/>
         </logger>

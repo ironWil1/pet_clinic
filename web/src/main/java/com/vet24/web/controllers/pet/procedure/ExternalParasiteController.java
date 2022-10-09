@@ -1,7 +1,5 @@
 package com.vet24.web.controllers.pet.procedure;
 
-import com.vet24.dao.pet.PetDaoImpl;
-import com.vet24.dao.pet.procedure.ExternalParasiteProcedureDaoImpl;
 import com.vet24.models.dto.OnUpdate;
 import com.vet24.models.dto.exception.ExceptionDto;
 import com.vet24.models.dto.pet.procedure.ExternalParasiteDto;
@@ -51,20 +49,15 @@ public class ExternalParasiteController {
     private final ExternalParasiteProcedureService externalParasiteProcedureService;
     private final MedicineService medicineService;
     private final ExternalParasiteMapper externalParasiteMapper;
-    private final ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao;
-    private final PetDaoImpl petDao;
 
     @Autowired
     public ExternalParasiteController(PetService petService, MedicineService medicineService,
                                       ExternalParasiteMapper externalParasiteMapper,
-                                      ExternalParasiteProcedureService externalParasiteProcedureService,
-                                      ExternalParasiteProcedureDaoImpl externalParasiteProcedureDao, PetDaoImpl petDao) {
+                                      ExternalParasiteProcedureService externalParasiteProcedureService) {
         this.petService = petService;
         this.externalParasiteProcedureService = externalParasiteProcedureService;
         this.medicineService = medicineService;
         this.externalParasiteMapper = externalParasiteMapper;
-        this.externalParasiteProcedureDao = externalParasiteProcedureDao;
-        this.petDao = petDao;
     }
 
     private void checkPet(Long petId) {
@@ -89,26 +82,27 @@ public class ExternalParasiteController {
     private void checkPetOwner(Long petId) {
         getOptionalOfNullableSecurityUser()
                 .map(User::getId)
-                .filter(userId -> petDao.isExistByPetIdAndClientId(petId, userId))
+                .filter(userId -> petService.isExistByPetIdAndClientId(petId, userId))
                 .orElseThrow(() -> new BadRequestException(PET_NOT_YOURS));
     }
 
     @Operation(summary = "Получить все записи питомца на обработку от эктопаразитов")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успешно получены все записи по обработку от эктопаразитов",
-                    content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
+            @ApiResponse(responseCode = "200",
+                    description = "Успешно получены все записи на обработку от эктопаразитов"),
             @ApiResponse(responseCode = "404", description = "Записи на обработку от эктопаразитов не найдены",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Питомец не записан на обработку от эктопаразитов",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @GetMapping
-    public ResponseEntity<List<ExternalParasiteDto>> get(@RequestParam Long petId) {
+    public ResponseEntity<List<ExternalParasiteDto>> getByPetId(@RequestParam Long petId) {
 
         checkPet(petId);
         checkPetOwner(petId);
 
-        List<ExternalParasiteProcedure> externalParasiteProcedureList = externalParasiteProcedureDao.getAll();
+        List<ExternalParasiteProcedure> externalParasiteProcedureList =
+                externalParasiteProcedureService.getByPetId(petId);
 
         if (externalParasiteProcedureList.isEmpty()) {
             throw new NotFoundException(PROCEDURE_NOT_FOUND);
@@ -121,8 +115,7 @@ public class ExternalParasiteController {
 
     @Operation(summary = "Получить запись на обработку от эктопаразитов по id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успешно найдена запись на обработку от эктопаразитов",
-                    content = @Content(schema = @Schema(implementation = ExternalParasiteDto.class))),
+            @ApiResponse(responseCode = "200", description = "Успешно найдена запись на обработку от эктопаразитов"),
             @ApiResponse(responseCode = "404", description = "Запись на обработку от эктопаразитов не найдена",
                     content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "400", description = "Питомец не записан на обработку от эктопаразитов",
@@ -133,7 +126,7 @@ public class ExternalParasiteController {
         checkProcedure(id);
         checkClientProcedure(id);
 
-        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getByKey(id);
+        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureService.getByKey(id);
         ExternalParasiteDto externalParasiteDto = externalParasiteMapper.toDto(externalParasiteProcedure);
 
         return new ResponseEntity<>(externalParasiteDto, HttpStatus.OK);
@@ -183,7 +176,7 @@ public class ExternalParasiteController {
         checkProcedure(id);
         checkClientProcedure(id);
 
-        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureDao.getByKey(id);
+        ExternalParasiteProcedure externalParasiteProcedure = externalParasiteProcedureService.getByKey(id);
         Pet pet = externalParasiteProcedure.getPet();
 
         checkPet(pet.getId());

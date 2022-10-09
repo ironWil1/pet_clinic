@@ -1,0 +1,17 @@
+TOPIC:
+  - ID : 100
+    CONTENT : "Что-то понаписал"
+    CREATION_DATE : 2021-01-02 00:00:00
+    IS_CLOSED : false
+    LAST_UPDATE_DATE : 2021-06-08 14:20:00
+    TITLE : "Какой сегодня день?"
+    TOPIC_STARTER_ID : 3
+
+  - ID : 101
+    CONTENT : "Какой-то контент"
+    CREATION_DATE : 2021-02-07 22:00:00
+    IS_CLOSED : true
+    LAST_UPDATE_DATE : 2021-02-07 22:00:00
+    TITLE : "Почему Земля круглая?"
+    TOPIC_STARTER_ID : 3
+

@@ -4,8 +4,11 @@ import com.vet24.dao.ReadWriteDaoImpl;
 import com.vet24.models.pet.procedure.ExternalParasiteProcedure;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public class ExternalParasiteProcedureDaoImpl extends ReadWriteDaoImpl<Long, ExternalParasiteProcedure> implements ExternalParasiteProcedureDao {
+public class ExternalParasiteProcedureDaoImpl extends ReadWriteDaoImpl<Long, ExternalParasiteProcedure>
+        implements ExternalParasiteProcedureDao {
 
     @Override
     public boolean isExistByIdAndClientId(Long id, Long clientId) {
@@ -16,5 +19,13 @@ public class ExternalParasiteProcedureDaoImpl extends ReadWriteDaoImpl<Long, Ext
                 .setParameter("id", id)
                 .setParameter("clientId", clientId)
                 .getSingleResult();
+    }
+
+    @Override
+    public List<ExternalParasiteProcedure> getByPetId(Long petId) {
+        return manager.createQuery("FROM ExternalParasiteProcedure e WHERE e.pet.id = :petId",
+                        ExternalParasiteProcedure.class)
+                .setParameter("petId", petId)
+                .getResultList();
     }
 }

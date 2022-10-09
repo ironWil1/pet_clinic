@@ -6,4 +6,6 @@ public interface BreedDao {
     List<String> getBreedByPetTypeByBreed(String petType, String breed);
 
     List<String> getBreedByBreed(String breed);
+
+    Boolean isPetTypeAndBreedCombinationExist(String petType, String breed);
 }

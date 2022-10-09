@@ -4,4 +4,5 @@ import java.util.List;
 
 public interface ColorService {
     List<String> findColor(String color);
+    Boolean isColorExists(String color);
 }
