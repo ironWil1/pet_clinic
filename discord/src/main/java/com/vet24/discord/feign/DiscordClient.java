@@ -40,6 +40,5 @@ public interface DiscordClient {
     // удалить сообщение по id
     @RequestMapping( value = "/messages/{message_id}",
             method = RequestMethod.DELETE)
-    void deleteMessageToId(@PathVariable Long message_id,
-                           @RequestParam(required = false) Long thread_id) throws JsonProcessingException;
+    void deleteMessageToId(@PathVariable Long message_id) throws JsonProcessingException;
 }

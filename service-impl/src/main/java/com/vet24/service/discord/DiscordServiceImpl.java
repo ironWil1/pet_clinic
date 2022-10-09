@@ -34,7 +34,6 @@ public class DiscordServiceImpl implements DiscordService {
             if (response.getBody().getChannel_id() != null) {
                 discordMessage.setChannelId(response.getBody().getChannel_id());
             }
-            discordMessageDao.persist(discordMessage);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -43,14 +42,11 @@ public class DiscordServiceImpl implements DiscordService {
 
     @Transactional
     @Override
-    public void deleteMessage(Long discordMessageId, Long thread_id) {
+    public void deleteMessage(Long discordMessageId) {
         try {
-            discordClient.deleteMessageToId(discordMessageId, thread_id);
+            discordClient.deleteMessageToId(discordMessageId);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }
-        if (discordMessageDao.getByDiscordMessageId(discordMessageId) != null) {
-            discordMessageDao.deleteByDiscordMessageId(discordMessageId);
         }
     }
 

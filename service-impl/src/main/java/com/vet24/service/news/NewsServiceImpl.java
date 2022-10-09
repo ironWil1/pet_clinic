@@ -1,9 +1,12 @@
 package com.vet24.service.news;
 
 import com.vet24.dao.news.NewsDao;
+import com.vet24.models.discord.DiscordMessage;
 import com.vet24.models.dto.user.ClientNewsResponseDto;
+import com.vet24.models.mappers.news.NewsMessageDTOMapper;
 import com.vet24.models.news.News;
 import com.vet24.service.ReadWriteServiceImpl;
+import com.vet24.service.discord.DiscordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +24,16 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
 
     private final NewsDao newsDao;
 
+    private final DiscordService discordService;
+
+    private final NewsMessageDTOMapper newsMessageDTOMapper;
+
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao) {
+    public NewsServiceImpl(NewsDao newsDao, DiscordService discordService, NewsMessageDTOMapper newsMessageDTOMapper) {
         super(newsDao);
         this.newsDao = newsDao;
+        this.discordService = discordService;
+        this.newsMessageDTOMapper = newsMessageDTOMapper;
     }
 
     @Override
@@ -58,6 +67,15 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
                 .collect(Collectors.toList());
 
         newsDao.publishNews(publishNewsIds);
+
+        for (News publishedNews: newsDao.getNewsById(publishNewsIds)) {
+            System.out.println(newsMessageDTOMapper.toDto(publishedNews));
+            DiscordMessage discordMessage = discordService
+                    .sendMessage(newsMessageDTOMapper.toDto(publishedNews));
+            discordMessage.setNews(publishedNews);
+            publishedNews.setDiscordMessage(discordMessage);
+            newsDao.update(publishedNews);
+        }
 
         for (long id : nonExistentNewsIds) {
             notPublishNews.put(id, "новость не существует");
@@ -95,6 +113,15 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
                 .map(News::getId)
                 .collect(Collectors.toList());
 
+        for (News unpublishedNews: newsDao.getNewsById(unpublishNewsIds)) {
+            System.out.println(unpublishedNews
+                    .getDiscordMessage().getChannelId());
+            discordService.deleteMessage(
+                    unpublishedNews.getDiscordMessage()
+                            .getDiscordMsgId());
+            newsDao.update(unpublishedNews);
+        }
+
         newsDao.unpublishNews(unpublishNewsIds);
 
         for (long id : nonExistentNewsIds) {
@@ -116,5 +143,20 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
             news.setPictures(pictures);
             newsDao.update(news);
         }
+    }
+
+    @Transactional
+    @Override
+    public News update(News news) {
+        discordService.editMessage(news.getDiscordMessage().getDiscordMsgId(),
+                newsMessageDTOMapper.toDto(news));
+        return super.update(news);
+    }
+
+    @Transactional
+    @Override
+    public void delete(News news) {
+        discordService.deleteMessage(news.getDiscordMessage().getDiscordMsgId());
+        super.delete(news);
     }
 }
