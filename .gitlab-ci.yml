@@ -99,7 +99,7 @@ rebuilding:
     - if: $CI_COMMIT_BRANCH == 'master'
       when: manual
 
-job:
+.detect-change:
   stage: trigger
   image: everpeace/curl-jq
   before_script:
