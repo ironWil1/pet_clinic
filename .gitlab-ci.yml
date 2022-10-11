@@ -91,7 +91,7 @@ integration_test_job:
       when: never
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
 draft-job:
-    extends: test
+    extends: integration_test_job
     script:
       - 'if [[ $PREVIOUS = Draft:* ]]; then echo "Pass. Previous title is draft"; else echo "Fail. Previous was not in Draft."; exit 0; fi'
       - 'if [[ $CURRENT = Draft:* ]];  then echo "Fail. Current is in draft."; exit 0; else echo "Pass. Current title is not in draft."; fi'
