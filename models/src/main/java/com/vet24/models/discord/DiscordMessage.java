@@ -6,9 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
@@ -31,8 +39,8 @@ public class DiscordMessage {
     @Column(name = "channel_id")
     private Long channelId;
 
-    @OneToOne
-    @JoinColumn(name = "news_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "discordMessage")
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private News news;
 
     @Override

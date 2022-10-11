@@ -7,9 +7,23 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
+import javax.persistence.ElementCollection;
+import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ForeignKey;
+import javax.persistence.ConstraintMode;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,9 +66,8 @@ public class News implements Serializable {
     @Column(name = "pictures")
     List<String> pictures;
 
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true, mappedBy = "news")
+    @OneToOne
+    @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private DiscordMessage discordMessage;
 
     @Override

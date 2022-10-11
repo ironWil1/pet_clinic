@@ -18,6 +18,7 @@ public class DiscordServiceImpl implements DiscordService {
     private final DiscordClient discordClient;
     private final DiscordMessageDao discordMessageDao;
 
+
     @Autowired
     public DiscordServiceImpl(DiscordClient discordClient, DiscordMessageDao discordMessageDao) {
         this.discordClient = discordClient;
@@ -34,6 +35,7 @@ public class DiscordServiceImpl implements DiscordService {
             if (response.getBody().getChannel_id() != null) {
                 discordMessage.setChannelId(response.getBody().getChannel_id());
             }
+            discordMessageDao.persist(discordMessage);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -45,6 +47,7 @@ public class DiscordServiceImpl implements DiscordService {
     public void deleteMessage(Long discordMessageId) {
         try {
             discordClient.deleteMessageToId(discordMessageId);
+            discordMessageDao.deleteByDiscordMessageId(discordMessageId);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

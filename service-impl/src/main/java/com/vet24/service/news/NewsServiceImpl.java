@@ -72,7 +72,6 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
             System.out.println(newsMessageDTOMapper.toDto(publishedNews));
             DiscordMessage discordMessage = discordService
                     .sendMessage(newsMessageDTOMapper.toDto(publishedNews));
-            discordMessage.setNews(publishedNews);
             publishedNews.setDiscordMessage(discordMessage);
             newsDao.update(publishedNews);
         }
@@ -114,12 +113,10 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
                 .collect(Collectors.toList());
 
         for (News unpublishedNews: newsDao.getNewsById(unpublishNewsIds)) {
-            System.out.println(unpublishedNews
-                    .getDiscordMessage().getChannelId());
             discordService.deleteMessage(
                     unpublishedNews.getDiscordMessage()
                             .getDiscordMsgId());
-            newsDao.update(unpublishedNews);
+            unpublishedNews.setDiscordMessage(null);
         }
 
         newsDao.unpublishNews(unpublishNewsIds);
@@ -148,15 +145,19 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
     @Transactional
     @Override
     public News update(News news) {
-        discordService.editMessage(news.getDiscordMessage().getDiscordMsgId(),
-                newsMessageDTOMapper.toDto(news));
+        if (news.getDiscordMessage() != null) {
+            discordService.editMessage(news.getDiscordMessage().getDiscordMsgId(),
+                    newsMessageDTOMapper.toDto(news));
+        }
         return super.update(news);
     }
 
     @Transactional
     @Override
     public void delete(News news) {
-        discordService.deleteMessage(news.getDiscordMessage().getDiscordMsgId());
+        if (news.getDiscordMessage() != null) {
+            discordService.deleteMessage(news.getDiscordMessage().getDiscordMsgId());
+        }
         super.delete(news);
     }
 }
