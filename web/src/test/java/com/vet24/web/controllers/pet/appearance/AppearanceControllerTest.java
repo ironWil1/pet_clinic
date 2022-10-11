@@ -48,7 +48,7 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
 
     }
 
-    //ответ на пустой запрос - пустой список
+    //ответ на пустой запрос - список всех расцветок
     @Test
     @DataSet(cleanBefore = true, value = {
             "datasets/controllers/appearanceController/user-entities.yml",
@@ -58,7 +58,7 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
                         .param("text", "")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$", Matchers.empty()));
+                .andExpect(jsonPath("$[*]", Matchers.contains("black", "grey")));
     }
 
     //ответ на запрос с ошибкой - нужная порода
@@ -75,7 +75,7 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
                 .andExpect(jsonPath("$[0]", Is.is("бигль")));
     }
 
-    //ответ на пустой запрос - пустой список
+    //ответ на пустой запрос - список всех пород
     @Test
     @DataSet(cleanBefore = true, value = {
             "datasets/controllers/appearanceController/user-entities.yml",
@@ -86,7 +86,7 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
                         .param("text", "")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$", Matchers.empty()));
+                .andExpect(jsonPath("$[*]", Matchers.contains("бигль", "мопс", "сфинкс")));
     }
 
 }

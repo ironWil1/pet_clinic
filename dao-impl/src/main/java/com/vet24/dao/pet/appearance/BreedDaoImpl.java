@@ -35,6 +35,13 @@ public class BreedDaoImpl implements BreedDao {
     }
 
     @Override
+    public List<String> findAll() {
+        List<String> allBreedsList = new ArrayList<>();
+        allBreedsList.addAll(manager.createNativeQuery("SELECT breed FROM pet_breed").getResultList());
+        return allBreedsList;
+    }
+
+    @Override
     public Boolean isPetTypeAndBreedCombinationExist(String petType, String breed) {
         return (Boolean) manager.createNativeQuery("SELECT EXISTS(SELECT pet_type, breed FROM pet_breed WHERE " +
                         "pet_type = :petType AND breed = :breed)")

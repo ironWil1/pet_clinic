@@ -27,14 +27,21 @@ public class AppearanceController {
     @Operation(summary = "Получение возможного окраса животного")
     @ApiResponse(responseCode = "200", description = "Окрас успешно получен или получен пустой список")
     @GetMapping("/color")
-    public List<String> getColor(@RequestParam String text) {
+    public List<String> getColor(@RequestParam(required = false) String text) {
+        if (text == null) {
+            return colorService.findAll();
+        }
         return colorService.findColor(text);
     }
 
     @Operation(summary = "Получение возможной породы животного")
     @ApiResponse(responseCode = "200", description = "Порода успешно получена или получен пустой список")
     @GetMapping("/breed")
-    public List<String> getBreed(@RequestParam String petType, @RequestParam String text) {
+    public List<String> getBreed(@RequestParam(required = false) String petType,
+                                 @RequestParam(required = false) String text) {
+        if ((text == null) & (petType == null)) {
+            return breedService.findAll();
+        }
         return breedService.getBreed(petType, text);
     }
 }

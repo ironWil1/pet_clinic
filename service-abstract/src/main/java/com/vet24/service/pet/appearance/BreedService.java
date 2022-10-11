@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface BreedService {
     List<String> getBreed(String petType, String breed);
-
+    List<String> findAll();
     Boolean isBreedExists(String petType, String breed);
 }
