@@ -393,7 +393,29 @@ GET /api/appearance/breed?petType(необязательный параметр)
 1. создать дао и сервис
 1. Создать эндпоинт получения списка окрасов, text - поле по которому происходит поиск совпадений в таблице (для поиска использовать триграммы в postgres). Если text - пустой, то отдавать пустой список
 ```
-GET /api/appearance/color?text -> List<String>
+GET /api/appearance/color?text(необязательный параметр) -> List<String>
+```
+
+## AppearanceManagerController  
+  
+### AppearanceManagerController color
+1. Создать круд контроллер для добавления цветов в базу
+2. исключения при добавлении существующих записей игнорировать
+
+```
+GET /api/manager/appearance/color?text(необязательный параметр) -> List<String>
+POST List<String> -> /api/manager/appearance/color -> Void
+DELETE List<String> - > /api/manager/appearance/color -> Void
+```
+
+### AppearanceManagerController breed
+1. Создать круд контроллер для добавления пород в базу
+2. исключения при добавлении существующих записей игнорировать
+
+```
+GET /api/manager/appearance/breed?petType(необязательный параметр)&text(необязательный параметр) -> List<String> -> List<String> ()
+POST List<String> -> /api/manager/appearance/breed?petType(обязательный параметр) -> Void
+DELETE List<String> - > /api/manager/appearance/breed?petType(обязательный параметр) -> Void
 ```
 
 ## PetController -> PetClientController
@@ -462,7 +484,7 @@ GET /api/appearance/color?text -> List<String>
   ```
   ```
   AppointmentCallendarDto {
-    List<AppointmentDayDto> days;
+    List<AppointmentCallendarElementDto> days;
   }
   ```
   ```
