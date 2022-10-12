@@ -1,39 +1,69 @@
 package com.vet24.models.mappers.news;
 
-import com.vet24.discord.models.dto.discord.AttachmentDto;
-import com.vet24.models.enums.NewsType;
+import com.vet24.discord.models.dto.discord.embed.EmbedDto;
+import com.vet24.discord.models.dto.discord.embed.EmbedImageDto;
 import com.vet24.models.mappers.EntityMapper;
 import com.vet24.models.news.News;
 import org.mapstruct.Mapper;
 import com.vet24.discord.models.dto.discord.MessageDto;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
-
 import java.util.List;
 
 @Mapper(componentModel = "spring",unmappedSourcePolicy = ReportingPolicy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface NewsMessageDTOMapper extends EntityMapper<MessageDto, News> {
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "type", constant = "1")
-    @Mapping(target = "content", source = "content")
-    @Mapping(target = "attachment", source = "pictures")
-    @Mapping(target = "pinned", constant = "false")
-    @Mapping(target = "mention_everyone", constant = "false")
-    @Mapping(target = "tts", constant = "false")
-    @Mapping(target = "webhook_id", constant = "993487572003213342L")
-    MessageDto toDto(News news);
+public abstract class NewsMessageDTOMapper implements EntityMapper<MessageDto, News> {
 
-    List<AttachmentDto> map(List<String> pictures);
+    private final MessageDto messageDto = new MessageDto();
+    public MessageDto toDto(News news) {
+        switch (news.getType()) {
+            case DISCOUNTS:
+                messageDto.setContent("ВНИМАНИЕ, СКИДКИ!!!");
+                break;
+            case UPDATING:
+                messageDto.setContent("ОБЪЯВЛЕНИЕ");
+                break;
+            case ADVERTISING_ACTIONS:
+                messageDto.setContent("Реклама");
+                break;
+            case PROMOTION:
+                messageDto.setContent("!!!ПРОМОАКЦИЯ!!!");
+                break;
 
-    default AttachmentDto map(String picture) {
-        AttachmentDto attachmentDto = new AttachmentDto();
-        attachmentDto.setFilename(picture);
+        }
 
-        return attachmentDto;
+        messageDto.setId(news.getId());
+        messageDto.setType(1);
+        messageDto.setPinned(false);
+        messageDto.setMention_everyone(false);
+        messageDto.setTts(false);
+        messageDto.setWebhook_id(993487572003213342L);
+
+        EmbedDto[] embedDtos = this.setUrlOfPicture(news.getPictures());
+
+        EmbedDto mainEmbedDto = embedDtos[0];
+        mainEmbedDto.setDescription(news.getContent());
+        mainEmbedDto.setTitle(news.getTitle());
+        messageDto.setEmbeds(embedDtos);
+        return messageDto;
     }
 
-    default NewsType map(Integer type) {
-        return NewsType.DISCOUNTS;
+    public EmbedDto[] setUrlOfPicture (List<String> pictureList) {
+        if (pictureList.size() > 0) {
+            EmbedDto[] embedDtos = new EmbedDto[pictureList.size()];
+            for (int n = 0; n < embedDtos.length; n++) {
+                embedDtos[n] = new EmbedDto();
+                embedDtos[n].setImage(new EmbedImageDto());
+                embedDtos[n].getImage().setUrl(pictureList.get(n));
+            }
+            return embedDtos;
+        } else {
+            return new EmbedDto[]{new EmbedDto()};
+        }
     }
+
+    @Override
+    @Mapping(target = "type", ignore = true)
+    public void updateEntity(MessageDto dto, @MappingTarget News entity) {}
 }
