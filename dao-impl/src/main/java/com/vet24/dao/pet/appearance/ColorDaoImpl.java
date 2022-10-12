@@ -24,10 +24,8 @@ public class ColorDaoImpl implements ColorDao {
     }
 
     @Override
-    public List<String> findAll() {
-        List<String> allColorsList = new ArrayList<>();
-        allColorsList.addAll(manager.createNativeQuery("SELECT color FROM pet_color").getResultList());
-        return allColorsList;
+    public List<String> getAllColors() {
+        return manager.createNativeQuery("SELECT color FROM pet_color").getResultList();
     }
 
     @Override

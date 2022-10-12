@@ -7,7 +7,9 @@ public interface BreedDao {
 
     List<String> getBreedByBreed(String breed);
 
-    List<String> findAll();
+    List<String> getAllBreeds();
+
+    List<String> getBreedsByPetType(String petType);
 
     Boolean isPetTypeAndBreedCombinationExist(String petType, String breed);
 }

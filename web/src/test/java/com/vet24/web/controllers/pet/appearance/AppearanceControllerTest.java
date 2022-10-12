@@ -48,12 +48,24 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
 
     }
 
-    //ответ на пустой запрос - список всех расцветок
+    //ответ на запрос без параметров - список всех расцветок
     @Test
     @DataSet(cleanBefore = true, value = {
             "datasets/controllers/appearanceController/user-entities.yml",
             "datasets/controllers/appearanceController/pet_color.yml"})
-    public void getListEmptyColorIfRequestIsEmpty() throws Exception {
+    public void getListColorsIfRequestParamsIsNull() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/color")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$[*]", Matchers.contains("black", "grey")));
+    }
+
+    //оответ на запрос с пустым параметром - список всех расцветок
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "datasets/controllers/appearanceController/user-entities.yml",
+            "datasets/controllers/appearanceController/pet_color.yml"})
+    public void getListColorsIfRequestParamsIsEmpty() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/color")
                         .param("text", "")
                         .header("Authorization", "Bearer " + token))
@@ -75,12 +87,24 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
                 .andExpect(jsonPath("$[0]", Is.is("бигль")));
     }
 
-    //ответ на пустой запрос - список всех пород
+    //ответ на запрос без параметров - список всех пород
     @Test
     @DataSet(cleanBefore = true, value = {
             "datasets/controllers/appearanceController/user-entities.yml",
             "datasets/controllers/appearanceController/pet_breed.yml"})
-    public void getListEmptyBreedIfRequestIsEmpty() throws Exception {
+    public void getListBreedsIfRequestParamsIsNull() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/breed")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$[*]", Matchers.contains("бигль", "мопс", "сфинкс")));
+    }
+
+    //ответ на запрос с пустыми параметрами - список всех пород
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "datasets/controllers/appearanceController/user-entities.yml",
+            "datasets/controllers/appearanceController/pet_breed.yml"})
+    public void getListBreedsIfRequestParamsIsEmpty() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/breed")
                         .param("petType", "")
                         .param("text", "")
@@ -89,4 +113,16 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
                 .andExpect(jsonPath("$[*]", Matchers.contains("бигль", "мопс", "сфинкс")));
     }
 
+    // ответ на запрос с параметром типа животного - список всех пород этого типа
+    @Test
+    @DataSet(cleanBefore = true, value = {
+            "datasets/controllers/appearanceController/user-entities.yml",
+            "datasets/controllers/appearanceController/pet_breed.yml"})
+    public void getListBreedsByPetType() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URI + "/breed")
+                        .param("petType", "dog")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$[*]", Matchers.contains("бигль", "мопс")));
+    }
 }

@@ -26,10 +26,14 @@ public class BreedServiceImpl implements BreedService {
         }
         return breedList;
     }
+    @Override
+    public List<String> getBreedsByPetType(String petType) {
+        return breedDao.getBreedsByPetType(petType);
+    }
 
     @Override
-    public List<String> findAll() {
-        return breedDao.findAll();
+    public List<String> getAllBreeds() {
+        return breedDao.getAllBreeds();
     }
 
     @Override

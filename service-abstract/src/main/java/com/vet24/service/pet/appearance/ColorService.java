@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface ColorService {
     List<String> findColor(String color);
-    List<String> findAll();
+    List<String> getAllColors();
     Boolean isColorExists(String color);
 }
