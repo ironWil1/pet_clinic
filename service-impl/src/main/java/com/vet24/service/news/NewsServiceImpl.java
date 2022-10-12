@@ -113,9 +113,11 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
                 .collect(Collectors.toList());
 
         for (News unpublishedNews: newsDao.getNewsById(unpublishNewsIds)) {
-            discordService.deleteMessage(
-                    unpublishedNews.getDiscordMessage()
-                            .getDiscordMsgId());
+            if(unpublishedNews.getDiscordMessage() != null) {
+                discordService.deleteMessage(
+                        unpublishedNews.getDiscordMessage()
+                                .getDiscordMsgId());
+            }
             unpublishedNews.setDiscordMessage(null);
         }
 

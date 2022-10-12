@@ -1,7 +1,7 @@
 NEWS:
   - ID: 101
     TYPE: "PROMOTION"
-    CONTENT: 'content'
+    CONTENT: "content"
     TITLE: "news"
     IS_IMPORTANT: true
     PUBLISHED: false
@@ -9,7 +9,7 @@ NEWS:
 
   - ID: 202
     TYPE: "PROMOTION"
-    CONTENT: 'content'
+    CONTENT: "content"
     TITLE: "news"
     IS_IMPORTANT: true
     PUBLISHED: true
@@ -17,7 +17,7 @@ NEWS:
 
   - ID: 303
     TYPE: "UPDATING"
-    CONTENT: 'content'
+    CONTENT: "content"
     TITLE: "news"
     IS_IMPORTANT: true
     PUBLISHED: true
