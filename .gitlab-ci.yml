@@ -25,15 +25,12 @@ stages:
 #   script:
 #   - 'if [ "$PREVIOUS" != "$CURRENT" ]; then curl --request POST --form "token=${PROJECT_TOKEN}" --form "ref=${SOURCE}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline" | jq -r .web_url; fi'
 
-
-
-
 draft-job:
   extends: .detect-change
   script:
     - 'if [[ $PREVIOUS = Draft:* ]]; then echo "Pass. Previous title is draft"; else echo "Fail. Previous was not in Draft."; exit 0; fi'
     - 'if [[ $CURRENT = Draft:* ]];  then echo "Fail. Current is in draft."; exit 0; else echo "Pass. Current title is not in draft."; fi'
-    - 'curl --request POST --header "PRIVATE-TOKEN: ${mergeFromDraftToReady}" "https://gitlab.com/api/v4/projects/68/merge_requests/{$IID}/pipelines" | jq -r .web_url;'
+    - 'curl --request POST --header "PRIVATE-TOKEN: ${mergeFromDraftToReady}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/merge_requests/{$IID}/pipelines" | jq -r .web_url;'
 
 
 
