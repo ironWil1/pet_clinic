@@ -26,6 +26,8 @@ stages:
 #   - 'if [ "$PREVIOUS" != "$CURRENT" ]; then curl --request POST --form "token=${PROJECT_TOKEN}" --form "ref=${SOURCE}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline" | jq -r .web_url; fi'
 
 
+
+
 draft-job:
   extends: .detect-change
   script:
