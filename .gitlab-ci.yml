@@ -6,7 +6,6 @@ stages:
   - rebuilding
   - trigger
 
-
 .detect-change:
   stage: trigger
   image: everpeace/curl-jq
@@ -18,12 +17,8 @@ stages:
     - echo $SOURCE
     - echo $PREVIOUS
     - echo $CURRENT
-  tags:
-    - docker_runner
   only:
     - triggers
-
-
 
 # title-change:
 #   extends: .detect-change
@@ -31,13 +26,14 @@ stages:
 #   - 'if [ "$PREVIOUS" != "$CURRENT" ]; then curl --request POST --form "token=${PROJECT_TOKEN}" --form "ref=${SOURCE}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/trigger/pipeline" | jq -r .web_url; fi'
 
 
+
+
 draft-job:
   extends: .detect-change
   script:
     - 'if [[ $PREVIOUS = Draft:* ]]; then echo "Pass. Previous title is draft"; else echo "Fail. Previous was not in Draft."; exit 0; fi'
     - 'if [[ $CURRENT = Draft:* ]];  then echo "Fail. Current is in draft."; exit 0; else echo "Pass. Current title is not in draft."; fi'
-    - 'curl --request POST --header "PRIVATE-TOKEN: ${mergeFromDraftToReady}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/merge_requests/{$IID}/pipelines" | jq -r .web_url;'
-
+    - 'curl --request POST --header "PRIVATE-TOKEN: ${mergeFromDraftToReady}" "https://gitlab.com/api/v4/projects/68/merge_requests/{$IID}/pipelines" | jq -r .web_url;'
 
 
 
@@ -98,7 +94,6 @@ restart:
     - if: $CI_COMMIT_BRANCH == 'master'
       when: on_success
 
-
 integration_test_job:
   services:
     - postgres:latest
@@ -115,9 +110,6 @@ integration_test_job:
     - if: $CI_MERGE_REQUEST_TITLE =~ /Draft:/
       when: never
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
-
-
-
 
 
 rebuilding:
@@ -138,3 +130,7 @@ rebuilding:
       when: never
     - if: $CI_COMMIT_BRANCH == 'master'
       when: manual
+
+
+
+
