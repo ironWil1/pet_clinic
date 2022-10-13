@@ -30,7 +30,6 @@ public abstract class NewsMessageDTOMapper implements EntityMapper<MessageDto, N
             case PROMOTION:
                 messageDto.setContent("!!!ПРОМОАКЦИЯ!!!");
                 break;
-
         }
 
         messageDto.setId(news.getId());

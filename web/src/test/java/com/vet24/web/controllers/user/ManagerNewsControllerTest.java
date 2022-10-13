@@ -104,7 +104,7 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content").value("content"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("PROMOTION"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.important").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.endTime").value("2022-09-27T20:09:00.712268"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.endTime").value("2032-09-27T20:09:00.712268"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.published").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.pictures")
                         .value("https://wikipet.ru/wp-content/uploads/2022/10/8503d1ee-a17a-469d-bd83-0f2fe7def73a.jpeg"))
@@ -350,7 +350,7 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                 .andExpect(status().isOk());
         News news1 = entityManager.find(News.class, 101L);
         News news2 = entityManager.find(News.class, 202L);
-        assertThat(news1.isPublished()).isFalse(); //EndData новости уже прошла
+        assertThat(news1.isPublished()).isTrue();
         assertThat(news2.isPublished()).isTrue();
     }
 
@@ -369,6 +369,6 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
         News news1 = entityManager.find(News.class, 101L);
         News news2 = entityManager.find(News.class, 202L);
         assertThat(news1.isPublished()).isFalse();
-        assertThat(news2.isPublished()).isTrue(); //endData новости уже прошла, нельзя снять с публикации
+        assertThat(news2.isPublished()).isFalse();
     }
 }

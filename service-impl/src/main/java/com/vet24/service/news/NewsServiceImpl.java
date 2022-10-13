@@ -66,15 +66,13 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
                 .map(News::getId)
                 .collect(Collectors.toList());
 
-        newsDao.publishNews(publishNewsIds);
-
         for (News publishedNews: newsDao.getNewsById(publishNewsIds)) {
-            System.out.println(newsMessageDTOMapper.toDto(publishedNews));
             DiscordMessage discordMessage = discordService
                     .sendMessage(newsMessageDTOMapper.toDto(publishedNews));
             publishedNews.setDiscordMessage(discordMessage);
-            newsDao.update(publishedNews);
         }
+
+        newsDao.publishNews(publishNewsIds);
 
         for (long id : nonExistentNewsIds) {
             notPublishNews.put(id, "новость не существует");
