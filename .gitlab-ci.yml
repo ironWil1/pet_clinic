@@ -17,6 +17,8 @@ stages:
     - echo $SOURCE
     - echo $PREVIOUS
     - echo $CURRENT
+  tags:
+    - docker_runner
   only:
     - triggers
 
