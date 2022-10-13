@@ -28,6 +28,7 @@ stages:
 
 
 
+
 draft-job:
   extends: .detect-change
   script:
