@@ -33,6 +33,8 @@ draft-job:
     - 'if [[ $PREVIOUS = Draft:* ]]; then echo "Pass. Previous title is draft"; else echo "Fail. Previous was not in Draft."; exit 0; fi'
     - 'if [[ $CURRENT = Draft:* ]];  then echo "Fail. Current is in draft."; exit 0; else echo "Pass. Current title is not in draft."; fi'
     - 'curl --request POST --header "PRIVATE-TOKEN: ${mergeFromDraftToReady}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/merge_requests/{$IID}/pipelines" | jq -r .web_url;'
+  rules:
+    - if: $CI_MERGE_REQUEST_TITLE !~ /Draft:/ && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
 
 
 #sonarqube-check:
