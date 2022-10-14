@@ -57,9 +57,7 @@ public class MedicineController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<MedicineResponseDto> getById(
-            @CheckExist(entityClass = Medicine.class) @PathVariable("id") Long id
-//            , @CheckExist(entityClass = Dog.class) @RequestParam ("id1") Long id1
-    ) {
+            @CheckExist(entityClass = Medicine.class) @PathVariable("id") Long id) {
         Medicine medicine = medicineService.getByKey(id);
         if (medicine != null) {
             return new ResponseEntity<>(medicineResponseMapper.toDto(medicine), HttpStatus.OK);

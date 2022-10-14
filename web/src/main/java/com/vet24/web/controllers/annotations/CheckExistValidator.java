@@ -62,5 +62,4 @@ public class CheckExistValidator {
         }
         return result != 0;
     }
-
 }
