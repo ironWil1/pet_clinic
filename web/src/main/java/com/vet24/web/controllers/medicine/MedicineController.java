@@ -5,8 +5,10 @@ import com.vet24.models.dto.medicine.MedicineResponseDto;
 import com.vet24.models.mappers.medicine.MedicineRequestMapper;
 import com.vet24.models.mappers.medicine.MedicineResponseMapper;
 import com.vet24.models.medicine.Medicine;
+import com.vet24.models.pet.Dog;
 import com.vet24.service.medicine.MedicineService;
 
+import com.vet24.web.controllers.annotations.CheckExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,15 +49,17 @@ public class MedicineController {
         this.medicineRequestMapper = medicineRequestMapper;
     }
 
-
-    @Operation(summary = "Поиск Препарата по ID")
+    @Operation(summary = "Поиск Препарата по ID (добавила еще id)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Препарат найден",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MedicineResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "Препарат не найден")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<MedicineResponseDto> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<MedicineResponseDto> getById(
+            @CheckExist(entityClass = Medicine.class) @PathVariable("id") Long id
+//            , @CheckExist(entityClass = Dog.class) @RequestParam ("id1") Long id1
+    ) {
         Medicine medicine = medicineService.getByKey(id);
         if (medicine != null) {
             return new ResponseEntity<>(medicineResponseMapper.toDto(medicine), HttpStatus.OK);
