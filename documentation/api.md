@@ -352,6 +352,26 @@ MedicineRequestDto {
 3. тесты поправить
 4. Сортировка выдачи списка препаратов осуществляется сперва по имени производителя, затем по названию препарата
 
+##  Дозировка препаратов
+1. Создать модель для дозировки препаратов.
+2. создать дао + сервис
+3. связь с препаратом делаем oneToMany (одна дозировка может быть связана только с одним препаратом)
+4. добавить связь в препараты  
+5. проверить что все тесты не перестали работать
+
+```
+class Dose {
+public class Dosage {
+    private Long id;
+    private Integer dosageSize; //добавь коммент что именно описывает это поле
+    private dosageForm form; // и тут
+}
+
+enum DosageForm {
+    DROPS, PILLS;
+}
+```
+
 # Аутентификация
 
 ### Получение текущего пользователя
@@ -393,7 +413,29 @@ GET /api/appearance/breed?petType(необязательный параметр)
 1. создать дао и сервис
 1. Создать эндпоинт получения списка окрасов, text - поле по которому происходит поиск совпадений в таблице (для поиска использовать триграммы в postgres). Если text - пустой, то отдавать пустой список
 ```
-GET /api/appearance/color?text -> List<String>
+GET /api/appearance/color?text(необязательный параметр) -> List<String>
+```
+
+## AppearanceManagerController  
+  
+### AppearanceManagerController color
+1. Создать круд контроллер для добавления цветов в базу
+2. исключения при добавлении существующих записей игнорировать
+
+```
+GET /api/manager/appearance/color?text(необязательный параметр) -> List<String>
+POST List<String> -> /api/manager/appearance/color -> Void
+DELETE List<String> - > /api/manager/appearance/color -> Void
+```
+
+### AppearanceManagerController breed
+1. Создать круд контроллер для добавления пород в базу
+2. исключения при добавлении существующих записей игнорировать
+
+```
+GET /api/manager/appearance/breed?petType(необязательный параметр)&text(необязательный параметр) -> List<String> -> List<String> ()
+POST List<String> -> /api/manager/appearance/breed?petType(обязательный параметр) -> Void
+DELETE List<String> - > /api/manager/appearance/breed?petType(обязательный параметр) -> Void
 ```
 
 ## PetController -> PetClientController
@@ -462,7 +504,7 @@ GET /api/appearance/color?text -> List<String>
   ```
   ```
   AppointmentCallendarDto {
-    List<AppointmentDayDto> days;
+    List<AppointmentCallendarElementDto> days;
   }
   ```
   ```
