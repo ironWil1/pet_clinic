@@ -5,14 +5,13 @@ NEWS:
     TITLE: "news"
     IS_IMPORTANT: true
     PUBLISHED: false
-    END_TIME: "js:var d = new Date();
-     var datestring = d.getFullYear()  
-     + '-' + (d.getMonth()+1) 
-     + '-' + (d.getDate()+ 1) 
-     + ' ' + d.getHours() 
-     + ':' + d.getMinutes() 
-     + ':' + d.getSeconds();
-     datestring.toString()"
+    END_TIME: "js:
+     var d = new Date(new Date().setHours(18,0,0,0));
+	 d.setMonth(d.getMonth()+1);
+	 d = d.toISOString();
+	 d = d.substring(0, d.length - 1);
+	 d = d.replace('T', ' ' );
+	 d.toString();"
 
   - ID: 202
     TYPE: "PROMOTION"
@@ -20,14 +19,13 @@ NEWS:
     TITLE: "news"
     IS_IMPORTANT: true
     PUBLISHED: true
-    END_TIME: "js:var d = new Date();
-     var datestring = d.getFullYear()  
-     + '-' + (d.getMonth()+1) 
-     + '-' + (d.getDate()+ 1) 
-     + ' ' + d.getHours() 
-     + ':' + d.getMinutes() 
-     + ':' + d.getSeconds();
-     datestring.toString()"
+    END_TIME: "js:
+     var d = new Date(new Date().setHours(18,0,0,0));
+	 d.setMonth(d.getMonth()+1);
+	 d = d.toISOString();
+	 d = d.substring(0, d.length - 1);
+	 d = d.replace('T', ' ' );
+	 d.toString();"
 
   - ID: 303
     TYPE: "UPDATING"
@@ -35,11 +33,10 @@ NEWS:
     TITLE: "news"
     IS_IMPORTANT: true
     PUBLISHED: true
-    END_TIME: "js:var d = new Date();
-     var datestring = d.getFullYear()  
-     + '-' + (d.getMonth()) 
-     + '-' + (d.getDate()) 
-     + ' ' + d.getHours() 
-     + ':' + d.getMinutes() 
-     + ':' + d.getSeconds();
-     datestring.toString()"
+    END_TIME: "js:
+     var d = new Date(new Date().setHours(18,0,0,0));
+	 d.setMonth(d.getMonth()+1);
+	 d = d.toISOString();
+	 d = d.substring(0, d.length - 1);
+	 d = d.replace('T', ' ' );
+	 d.toString();"

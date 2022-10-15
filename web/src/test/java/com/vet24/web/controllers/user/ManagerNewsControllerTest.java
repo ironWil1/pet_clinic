@@ -86,8 +86,8 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].pictures")
                         .value("https://wikipet.ru/wp-content/uploads/2022/10/83ac817b-7b9a-4f38-a46a-4f36b9c679ae.jpeg"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.is(3)));
-        assertThat(getNews(303).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .isEqualTo(LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        assertThat(getNews(303).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .isEqualTo(LocalDateTime.now().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+ " 18:00:00");
     }
 
     @Test
@@ -109,8 +109,8 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                 .andExpect(MockMvcResultMatchers.jsonPath("$.pictures")
                         .value("https://wikipet.ru/wp-content/uploads/2022/10/8503d1ee-a17a-469d-bd83-0f2fe7def73a.jpeg"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.is(8)));
-        assertThat(getNews(202).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .isEqualTo(LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        assertThat(getNews(202).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"18:00:00")
+                .isEqualTo(LocalDateTime.now().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"18:00:00");
     }
 
     // Новости с таким ID не существует для GET запроса
@@ -216,8 +216,8 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
         assertThat(getNews(202).getTitle()).isEqualTo("news");
         assertThat(getNews(202).getContent()).isEqualTo("content");
         assertThat(getNews(202).getType()).isEqualTo(NewsType.PROMOTION);
-        assertThat(getNews(202).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .isEqualTo(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        assertThat(getNews(202).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss")))
+                .isEqualTo(managerNewsSuccess.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss")));
         assertThat(new ArrayList<>(getNews(202).getPictures())).isEqualTo(pics);
         assertThat(getNews(202).isImportant()).isTrue();
         assertThat(getNews(202).isPublished()).isTrue();
