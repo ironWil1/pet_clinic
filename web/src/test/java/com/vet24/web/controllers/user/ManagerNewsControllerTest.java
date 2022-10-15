@@ -63,8 +63,8 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
         return entityManager.createQuery("SELECT COUNT(n) FROM News n", Long.class).getSingleResult();
     }
 
-    private News getNews() {
-        return entityManager.createQuery("select n from News n join fetch n.pictures where n.id = :id", News.class).setParameter("id", 202L).getSingleResult();
+    private News getNews(long id) {
+        return entityManager.createQuery("select n from News n join fetch n.pictures where n.id = :id", News.class).setParameter("id", id).getSingleResult();
     }
 
     @Test
@@ -82,11 +82,12 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].content").value("content"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].type").value("UPDATING"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].important").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].endTime").value("2022-07-27T20:09:00.712268"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].published").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].pictures")
                         .value("https://wikipet.ru/wp-content/uploads/2022/10/83ac817b-7b9a-4f38-a46a-4f36b9c679ae.jpeg"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.is(3)));
+        assertThat(getNews(303).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .isEqualTo(LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
     @Test
@@ -104,11 +105,12 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content").value("content"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.type").value("PROMOTION"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.important").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.endTime").value("2032-09-27T20:09:00.712268"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.published").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.pictures")
                         .value("https://wikipet.ru/wp-content/uploads/2022/10/8503d1ee-a17a-469d-bd83-0f2fe7def73a.jpeg"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.is(8)));
+        assertThat(getNews(202).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .isEqualTo(LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
     // Новости с таким ID не существует для GET запроса
@@ -211,13 +213,14 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                         .content(objectMapper.valueToTree(managerNewsSuccess).toString())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
-        assertThat(getNews().getTitle()).isEqualTo("news");
-        assertThat(getNews().getContent()).isEqualTo("content");
-        assertThat(getNews().getType()).isEqualTo(NewsType.PROMOTION);
-        assertThat(getNews().getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))).isEqualTo(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-        assertThat(new ArrayList<>(getNews().getPictures())).isEqualTo(pics);
-        assertThat(getNews().isImportant()).isTrue();
-        assertThat(getNews().isPublished()).isTrue();
+        assertThat(getNews(202).getTitle()).isEqualTo("news");
+        assertThat(getNews(202).getContent()).isEqualTo("content");
+        assertThat(getNews(202).getType()).isEqualTo(NewsType.PROMOTION);
+        assertThat(getNews(202).getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .isEqualTo(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        assertThat(new ArrayList<>(getNews(202).getPictures())).isEqualTo(pics);
+        assertThat(getNews(202).isImportant()).isTrue();
+        assertThat(getNews(202).isPublished()).isTrue();
     }
 
     // Новости с таким ID не существует для PUT запроса
@@ -333,7 +336,7 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                 .content(objectMapper.valueToTree(pictures).toString())
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
-        assertThat(new ArrayList<>(getNews().getPictures())).isEqualTo(pictures);
+        assertThat(new ArrayList<>(getNews(202).getPictures())).isEqualTo(pictures);
     }
 
     @Test

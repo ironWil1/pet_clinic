@@ -5,7 +5,14 @@ NEWS:
     TITLE: "news"
     IS_IMPORTANT: true
     PUBLISHED: false
-    END_TIME: "2032-11-27 20:09:00.712268"
+    END_TIME: "js:var d = new Date();
+     var datestring = d.getFullYear()  
+     + '-' + (d.getMonth()+1) 
+     + '-' + (d.getDate()+ 1) 
+     + ' ' + d.getHours() 
+     + ':' + d.getMinutes() 
+     + ':' + d.getSeconds();
+     datestring.toString()"
 
   - ID: 2
     TYPE: "PROMOTION"
@@ -13,4 +20,11 @@ NEWS:
     TITLE: "news"
     IS_IMPORTANT: true
     PUBLISHED: true
-    END_TIME: "2032-09-27 20:09:00.712268"
+    END_TIME: "js:var d = new Date();
+     var datestring = d.getFullYear()  
+     + '-' + (d.getMonth()+1) 
+     + '-' + (d.getDate()+ 1) 
+     + ' ' + d.getHours() 
+     + ':' + d.getMinutes() 
+     + ':' + d.getSeconds();
+     datestring.toString()"
