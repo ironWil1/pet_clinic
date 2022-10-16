@@ -3,9 +3,7 @@ package com.vet24.dao.pet.appearance;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +44,6 @@ public class BreedDaoImpl implements BreedDao {
 
     @Override
     public void addBreeds(String petType, List<String> breeds) {
-        //final String sql = "INSERT INTO pet_breed (pet_type, breed) VALUES (:petType, :breed) ON CONFLICT DO NOTHING;";
         final String sql = "INSERT INTO pet_breed (pet_type, breed) VALUES (:petType, :breed) ON CONFLICT DO NOTHING;";
         for(String breed : breeds) {
             manager.createNativeQuery(sql)
@@ -58,7 +55,6 @@ public class BreedDaoImpl implements BreedDao {
 
     @Override
     public void deleteBreeds(String petType, List<String> breeds) {
-        //final String sql = "DELETE FROM pet_breed WHERE pet_type = :petType AND breed = :breed";
         final String sql = "DELETE FROM pet_breed WHERE pet_type = :petType AND breed IN (:breeds);";
         manager.createNativeQuery(sql)
                 .setParameter("petType", petType.toLowerCase())
