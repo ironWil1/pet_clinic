@@ -28,7 +28,7 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
             "datasets/controllers/appearanceController/pet_color.yml"})
     public void findColorIfRequestIsInError() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/color")
-                        .param("text", "greyyy")
+                        .param("color", "greyyy")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$[0]", Is.is("grey")));
@@ -41,7 +41,7 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
             "datasets/controllers/appearanceController/pet_color.yml"})
     public void getListEmptyColorIfRequestIsInvalid() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/color")
-                        .param("text", "grerwerygdfg")
+                        .param("color", "grerwerygdfg")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$", Matchers.empty()));
@@ -67,7 +67,7 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
             "datasets/controllers/appearanceController/pet_color.yml"})
     public void getListColorsIfRequestParamsIsEmpty() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/color")
-                        .param("text", "")
+                        .param("color", "")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$[*]", Matchers.contains("black", "grey")));
@@ -81,7 +81,7 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
     public void getBreedIfRequestIsInError() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/breed")
                         .param("petType", "dog")
-                        .param("text", "бигльбв")
+                        .param("breed", "бигльбв")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$[0]", Is.is("бигль")));
@@ -107,7 +107,7 @@ public class AppearanceControllerTest extends ControllerAbstractIntegrationTest 
     public void getListBreedsIfRequestParamsIsEmpty() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/breed")
                         .param("petType", "")
-                        .param("text", "")
+                        .param("breed", "")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$[*]", Matchers.contains("бигль", "мопс", "сфинкс")));
