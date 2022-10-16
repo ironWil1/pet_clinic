@@ -8,4 +8,8 @@ public interface BreedDao {
     List<String> getBreedByBreed(String breed);
 
     Boolean isPetTypeAndBreedCombinationExist(String petType, String breed);
+
+    void addBreeds(String petType, List<String> breeds);
+
+    void deleteBreeds(String petType, List<String> breeds);
 }

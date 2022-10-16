@@ -3,9 +3,12 @@ package com.vet24.dao.pet.appearance;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class BreedDaoImpl implements BreedDao {
@@ -39,5 +42,27 @@ public class BreedDaoImpl implements BreedDao {
         return (Boolean) manager.createNativeQuery("SELECT EXISTS(SELECT pet_type, breed FROM pet_breed WHERE " +
                         "pet_type = :petType AND breed = :breed)")
                 .setParameter("petType", petType).setParameter("breed", breed).getSingleResult();
+    }
+
+    @Override
+    public void addBreeds(String petType, List<String> breeds) {
+        //final String sql = "INSERT INTO pet_breed (pet_type, breed) VALUES (:petType, :breed) ON CONFLICT DO NOTHING;";
+        final String sql = "INSERT INTO pet_breed (pet_type, breed) VALUES (:petType, :breed) ON CONFLICT DO NOTHING;";
+        for(String breed : breeds) {
+            manager.createNativeQuery(sql)
+                    .setParameter("petType", petType.toLowerCase())
+                    .setParameter("breed", breed.toLowerCase().trim()).executeUpdate();
+        }
+    }
+
+
+    @Override
+    public void deleteBreeds(String petType, List<String> breeds) {
+        //final String sql = "DELETE FROM pet_breed WHERE pet_type = :petType AND breed = :breed";
+        final String sql = "DELETE FROM pet_breed WHERE pet_type = :petType AND breed IN (:breeds);";
+        manager.createNativeQuery(sql)
+                .setParameter("petType", petType.toLowerCase())
+                .setParameter("breeds", breeds.stream().map(s -> s.toLowerCase().trim()).collect(Collectors.toList()))
+                .executeUpdate();
     }
 }
