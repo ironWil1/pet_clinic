@@ -59,6 +59,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -106,6 +108,8 @@ public class TestDataInitializer implements ApplicationRunner {
     private final Role manager = new Role(RoleNameEnum.MANAGER);
     private final List<Pet> petList = new ArrayList<>();
     private final PetFoundService petFoundService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public TestDataInitializer(
@@ -491,6 +495,26 @@ public class TestDataInitializer implements ApplicationRunner {
         petFoundService.persistAll(petFoundList);
     }
 
+    public void appearanceInit() {
+        String[] catBreeds = {"bengal", "bombay", "maine coon", "persian", "munchkin"};
+        String[] dogBreeds = {"boxer", "labrador", "poodle", "bulldog", "pug"};
+        String[] colors = {"black", "white", "orange", "brown", "yellow"};
+
+        String petSQL = "INSERT INTO pet_breed (pet_type, breed) VALUES (:petType, :breed) ON CONFLICT (pet_type, breed) DO NOTHING;";
+        String colorSQL = "INSERT INTO pet_color (color) VALUES (:color) ON CONFLICT (color) DO NOTHING;";
+
+        for (int i = 0; i < 5; i++) {
+            entityManager.createNativeQuery(petSQL)
+                    .setParameter("petType", "cat").setParameter("breed", catBreeds[i])
+                    .executeUpdate();
+            entityManager.createNativeQuery(petSQL)
+                    .setParameter("petType", "dog").setParameter("breed", dogBreeds[i])
+                    .executeUpdate();
+            entityManager.createNativeQuery(colorSQL)
+                    .setParameter("color", colors[i]).executeUpdate();
+        }
+    }
+
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
@@ -519,6 +543,7 @@ public class TestDataInitializer implements ApplicationRunner {
             newsInit();
             profileInit();
             petFoundInit();
+            appearanceInit();
         }
     }
 }
