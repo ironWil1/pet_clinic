@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,32 +59,4 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
     }
-
-//    @Test
-//    @DataSet(cleanBefore = true, value = {
-//            "datasets/user-entities.yml",
-//            "datasets/pet-breed.yml"})
-//    public void postBreedTest() throws Exception {
-//        mockMvc.perform(MockMvcRequestBuilders.post(URI + "/breed")
-//                        .param("petType", "FISH")
-//                        .param("breed", "Goldfish")
-//                        .header("Authorization", "Bearer " + token))
-//                .andExpect(MockMvcResultMatchers.status().isOk());
-//        assertThat(breedService.getBreed("FISH", "Goldfish")).isEqualTo("Goldfish");
-//    }
-
-//    @Test
-//    @DataSet(cleanBefore = true, value = {
-//            "datasets/user-entities.yml",
-//            "datasets/pet-breed.yml"})
-//    public void deleteBreedTest() throws Exception {
-//        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/breed")
-//                        .param("petType", "DOG")
-//                        .param("breed", "cHaoTIc")
-//                        .header("Authorization", "Bearer " + token))
-//                .andExpect(MockMvcResultMatchers.status().isOk());
-//        assertThat(breedService.getBreed("DOG", "chaotic")).isEqualTo("");
-//    }
-
-
 }
