@@ -3,7 +3,6 @@ package com.vet24.web.controllers.user;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.vet24.discord.models.dto.discord.MessageDto;
 import com.vet24.models.discord.DiscordMessage;
-import com.vet24.models.discord.DiscordMessage;
 import com.vet24.models.dto.user.ManagerNewsRequestDto;
 import com.vet24.models.enums.NewsType;
 import com.vet24.models.news.News;
