@@ -26,7 +26,7 @@ public class CheckExistValidator {
     @PersistenceContext
     private EntityManager entityManager;
 
-@Around("execution(public * *(.., @CheckExist (*), ..))")
+    @Around("execution(public * *(.., @CheckExist (*), ..))")
     private Object verify(ProceedingJoinPoint joinPoint) throws Throwable {
     MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
     Annotation[][] annotationMatrix = methodSignature.getMethod().getParameterAnnotations();
@@ -48,7 +48,8 @@ public class CheckExistValidator {
     for (Class<?> clazz : entityClassList) {
         if (entityManager.find(clazz, idArgs.get(entityClassList.indexOf(clazz))) == null) {
             stringJoiner.add(clazz.getSimpleName());
-            throw new NotFoundException(String.format("Сущность %s с указанным id %d не существует!", stringJoiner, idArgs.get(entityClassList.indexOf(clazz))));
+            throw new NotFoundException(String.format("Сущность %s с указанным id %d не существует!",
+                    stringJoiner, idArgs.get(entityClassList.indexOf(clazz))));
         }
     }
     return joinPoint.proceed();
