@@ -5,14 +5,7 @@ NEWS:
     TITLE: "news"
     IS_IMPORTANT: true
     PUBLISHED: false
-    END_TIME: "js:var d = new Date();
-     var datestring = d.getFullYear()  
-     + '-' + (d.getMonth()+1) 
-     + '-' + (d.getDate()+ 1) 
-     + ' ' + d.getHours() 
-     + ':' + d.getMinutes() 
-     + ':' + d.getSeconds();
-     datestring.toString()"
+    END_TIME: "[now+1d 18:00]"
 
   - ID: 2
     TYPE: "PROMOTION"
@@ -20,11 +13,4 @@ NEWS:
     TITLE: "news"
     IS_IMPORTANT: true
     PUBLISHED: true
-    END_TIME: "js:var d = new Date();
-     var datestring = d.getFullYear()  
-     + '-' + (d.getMonth()+1) 
-     + '-' + (d.getDate()+ 1) 
-     + ' ' + d.getHours() 
-     + ':' + d.getMinutes() 
-     + ':' + d.getSeconds();
-     datestring.toString()"
+    END_TIME: "[now+1d 18:00]"
