@@ -6,4 +6,6 @@ public interface ColorDao {
     List<String> findColor(String color);
 
     Boolean isColorExists(String color);
+
+    void addColor(List<String> collect);
 }

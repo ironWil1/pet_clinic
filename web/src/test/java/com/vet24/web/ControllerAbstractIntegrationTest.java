@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
+import com.vet24.service.discord.DiscordService;
 import com.vet24.service.media.MailService;
 import com.vet24.web.config.ClinicDBRider;
 import com.vet24.web.controllers.user.AuthRequest;
@@ -31,6 +32,9 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @MockBean
     protected MailService mailService;
+
+    @MockBean
+    protected DiscordService discordService;
 
     @Autowired
     protected EntityManager entityManager;
