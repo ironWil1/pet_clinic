@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.user;
 
+import com.vet24.models.enums.PetType;
 import com.vet24.service.pet.appearance.BreedService;
 import com.vet24.web.controllers.pet.appearance.AppearanceController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 
@@ -31,33 +32,27 @@ public class AppearanceManagerController {
 
     @GetMapping("/breed")
     @Operation(summary = "get breed(s)")
-    @ApiResponse(responseCode = "200", description = "Breed(s) retrieved")
+    @ApiResponse(responseCode = "200", description = "Порода(ы) получена")
     public ResponseEntity<List<String>> getBreed(@RequestParam(required = false) String petType, @RequestParam(required = false) String breed) {
         return new ResponseEntity<>(appearanceController.getBreed(petType, breed), HttpStatus.OK);
     }
 
 
     @Operation(summary = "add new breed(s)")
-    @ApiResponse(responseCode = "200", description = "Breed(s) added to DB")
-    @ApiResponse(responseCode = "400", description = "Bad request (petType should not be empty)")
+    @ApiResponse(responseCode = "200", description = "Порода(ы) добавлена в базу данных")
     @PostMapping("/breed")
-    public ResponseEntity<Void> save(@RequestParam String petType,
+    public ResponseEntity<Void> addBreeds(@RequestParam @NotBlank PetType petType,
                                      @RequestBody List<String> breeds) {
-        if (petType.isBlank())
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        breedService.addBreeds(petType.strip(), breeds);
+        breedService.addBreeds(petType.toString().strip(), breeds);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "delete breed(s)")
-    @ApiResponse(responseCode = "200", description = "Breed(s) deleted from DB")
-    @ApiResponse(responseCode = "400", description = "Bad request (petType should not be empty)")
+    @ApiResponse(responseCode = "200", description = "Порода(ы) удалена из базы данных")
     @DeleteMapping("/breed")
-    public ResponseEntity<Void> delete(@RequestParam String petType,
+    public ResponseEntity<Void> deleteBreeds(@RequestParam @NotBlank PetType petType,
                                        @RequestBody List<String> breeds) {
-        if (petType.isBlank())
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        breedService.deleteBreeds(petType.strip(), breeds);
+        breedService.deleteBreeds(petType.toString().strip(), breeds);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
