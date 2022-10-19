@@ -18,7 +18,7 @@ public class BreedDaoImpl implements BreedDao {
         List<String> listBreed = new ArrayList<>();
         listBreed.addAll(
                 manager.createNativeQuery("SELECT breed from pet_breed where " +
-                                "pet_type = :pt and breed % :br")
+                                "pet_type % :pt and breed % :br")
                         .setParameter("pt", petType)
                         .setParameter("br", breed)
                         .getResultList());
