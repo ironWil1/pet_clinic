@@ -1,9 +1,9 @@
 NEWS_PICTURES:
   - NEWS_ID: 101
-    PICTURES: "picture1"
+    PICTURES: "https://wikipet.ru/uploads/posts/2018-09/1538037544_1.png"
 
   - NEWS_ID: 202
-    PICTURES: "picture2"
+    PICTURES: "https://wikipet.ru/wp-content/uploads/2022/10/8503d1ee-a17a-469d-bd83-0f2fe7def73a.jpeg"
 
   - NEWS_ID: 303
-    PICTURES: "picture3"
+    PICTURES: "https://wikipet.ru/wp-content/uploads/2022/10/83ac817b-7b9a-4f38-a46a-4f36b9c679ae.jpeg"
