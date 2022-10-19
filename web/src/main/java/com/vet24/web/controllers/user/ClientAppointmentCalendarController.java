@@ -70,6 +70,10 @@ public class ClientAppointmentCalendarController {
                             list.add(appointmentCalendarElementDtoService.createAppointmentCalendarDto(x, dateDoctor, dateRequest).get(i));
                         }
                     });
+            if (list.size() == 0) {
+                log.info("Appointment not found");
+                return ResponseEntity.notFound().build();
+            }
             return ResponseEntity.ok(new AppointmentCallendarDto(list));
         }
     }
