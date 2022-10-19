@@ -23,22 +23,29 @@ import java.util.List;
 public class AppearanceManagerController {
 
     private final BreedService breedService;
-    private final AppearanceController appearanceController;
 
-    public AppearanceManagerController(BreedService breedService, AppearanceController appearanceController) {
+    public AppearanceManagerController(BreedService breedService) {
         this.breedService = breedService;
-        this.appearanceController = appearanceController;
     }
 
     @GetMapping("/breed")
     @Operation(summary = "get breed(s)")
     @ApiResponse(responseCode = "200", description = "Порода(ы) получена")
-    public ResponseEntity<List<String>> getBreed(@RequestParam(required = false) String petType, @RequestParam(required = false) String breed) {
-        return new ResponseEntity<>(appearanceController.getBreed(petType, breed), HttpStatus.OK);
+    public ResponseEntity<List<String>> getBreed(@RequestParam(required = false) PetType petType, @RequestParam(required = false) String breed) {
+        List<String> response;
+        if (breed == null || breed.isBlank()) {
+            response = (petType == null || petType.toString().isBlank()) ?
+                    breedService.getAllBreeds() : breedService.getBreedsByPetType(petType.toString());
+        } else {
+            response = (petType == null || petType.toString().isBlank()) ?
+                    breedService.getBreed("", breed) : breedService.getBreed(petType.toString(), breed);
+
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
-    @Operation(summary = "add new breed(s)")
+        @Operation(summary = "add new breed(s)")
     @ApiResponse(responseCode = "200", description = "Порода(ы) добавлена в базу данных")
     @PostMapping("/breed")
     public ResponseEntity<Void> addBreeds(@RequestParam @NotBlank PetType petType,
