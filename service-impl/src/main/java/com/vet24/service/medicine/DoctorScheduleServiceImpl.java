@@ -28,5 +28,18 @@ public class DoctorScheduleServiceImpl extends ReadWriteServiceImpl<Long, Doctor
     public List<DoctorSchedule> getDoctorScheduleAfterDate(LocalDate date) {
         return doctorScheduleDao.getDoctorScheduleAfterDate(date);
     }
+    @Override
+    public String getDoctorScheduleWorkShift(Long doctorId, LocalDate date) {
+        return doctorScheduleDao.getDoctorScheduleWorkShift(doctorId, date);
+    }
+    @Override
+    public List<DoctorSchedule> getDoctorScheduleCurrentDate(LocalDate date) {
+        return doctorScheduleDao.getDoctorScheduleCurrentDate(date);
+    }
+
+    @Override
+    public Long getDoctorId(DoctorSchedule doctorSchedule) {
+        return doctorScheduleDao.getDoctorId(doctorSchedule);
+    }
 }
 

@@ -1,6 +1,7 @@
 package com.vet24.dao.medicine;
 
 import com.vet24.dao.ReadWriteDaoImpl;
+import com.vet24.models.enums.WorkShift;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.user.DoctorNonWorking;
 import org.springframework.stereotype.Repository;
@@ -27,5 +28,34 @@ public class DoctorScheduleDaoImpl extends ReadWriteDaoImpl<Long, DoctorSchedule
                 .createQuery("FROM DoctorSchedule d WHERE d.startWeek >= :date", DoctorSchedule.class)
                 .setParameter("date", date)
                 .getResultList();
+    }
+
+    @Override
+    public String getDoctorScheduleWorkShift(Long doctorId, LocalDate date) {
+        DoctorSchedule doctorSchedule = manager
+                .createQuery("FROM DoctorSchedule d WHERE d.doctor.id = :id AND d.startWeek = :date", DoctorSchedule.class)
+                .setParameter("id", doctorId)
+                .setParameter("date", date)
+                .getSingleResult();
+        return doctorSchedule.getWorkShift().toString();
+
+    }
+
+
+    @Override
+    public List<DoctorSchedule> getDoctorScheduleCurrentDate(LocalDate date) {
+        return manager
+                .createQuery("FROM DoctorSchedule d WHERE d.startWeek = :date", DoctorSchedule.class)
+                .setParameter("date", date)
+                .getResultList();
+    }
+
+    @Override
+    public Long getDoctorId(DoctorSchedule doctorSchedule) {
+        Long id = doctorSchedule.getId();
+        return manager
+                .createQuery("select d.doctor.id FROM DoctorSchedule d WHERE d.id = :id", Long.class)
+                .setParameter("id", id)
+                .getSingleResult();
     }
 }
