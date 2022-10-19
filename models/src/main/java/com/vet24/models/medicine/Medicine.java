@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -37,8 +39,12 @@ public class Medicine extends ChangeTrackedEntity {
     @Column(nullable = false, name = "description")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Dosage dosage;
+    @OneToMany(
+            mappedBy = "medicine",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Dosage> dosages = new ArrayList<>();
 
     public Medicine(String manufactureName, String name, String iconUrl, String description) {
         this.manufactureName = manufactureName;

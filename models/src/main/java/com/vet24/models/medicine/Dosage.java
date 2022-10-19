@@ -4,8 +4,6 @@ import com.vet24.models.enums.DosageType;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -28,12 +26,7 @@ public class Dosage {
     @Enumerated(EnumType.STRING)
     private DosageType dosageType; // форма выпуска препарата: капли, таблетки
 
-    @OneToMany(
-            mappedBy = "dosage",
-            cascade = CascadeType.ALL
-    )
-    private List<Medicine> medicines = new ArrayList<>();
-
-    
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Medicine medicine;
 
 }
