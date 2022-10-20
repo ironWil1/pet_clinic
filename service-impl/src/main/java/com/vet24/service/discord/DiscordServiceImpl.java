@@ -2,11 +2,15 @@ package com.vet24.service.discord;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vet24.dao.discord.DiscordMessageDao;
+import com.vet24.dao.news.NewsDao;
 import com.vet24.discord.feign.DiscordClient;
 
 import com.vet24.discord.models.dto.discord.MessageDto;
 import com.vet24.models.discord.DiscordMessage;
+import com.vet24.models.news.News;
+import com.vet24.service.news.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class DiscordServiceImpl implements DiscordService {
     private final DiscordClient discordClient;
     private final DiscordMessageDao discordMessageDao;
-
 
     @Autowired
     public DiscordServiceImpl(DiscordClient discordClient, DiscordMessageDao discordMessageDao) {
@@ -46,8 +49,12 @@ public class DiscordServiceImpl implements DiscordService {
     @Override
     public void deleteMessage(Long discordMessageId) {
         try {
+            News updatedNews = discordMessageDao.getByDiscordMessageId(discordMessageId).getNews();
+            DiscordMessage discordMessage = discordMessageDao.getByDiscordMessageId(discordMessageId);
+            discordMessage.setNews(null);
+            updatedNews.setDiscordMessage(null);
             discordClient.deleteMessageToId(discordMessageId);
-            discordMessageDao.deleteByDiscordMessageId(discordMessageId);
+            discordMessageDao.delete(discordMessage);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

@@ -8,19 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
-import javax.persistence.ElementCollection;
-import javax.persistence.OneToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.ForeignKey;
-import javax.persistence.ConstraintMode;
+
+import javax.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -64,8 +53,8 @@ public class News implements Serializable {
     @Column(name = "pictures")
     List<String> pictures;
 
-    @OneToOne
-    @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn
     private DiscordMessage discordMessage;
 
     @Override
@@ -73,7 +62,7 @@ public class News implements Serializable {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         News news = (News) o;
-        return Objects.nonNull(id) && Objects.equals(id, news.id);
+        return Objects.equals(id, news.id);
     }
 
     @Override

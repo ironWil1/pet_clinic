@@ -116,7 +116,6 @@ public class NewsServiceImpl extends ReadWriteServiceImpl<Long, News> implements
                         unpublishedNews.getDiscordMessage()
                                 .getDiscordMsgId());
             }
-            unpublishedNews.setDiscordMessage(null);
         }
 
         newsDao.unpublishNews(unpublishNewsIds);
