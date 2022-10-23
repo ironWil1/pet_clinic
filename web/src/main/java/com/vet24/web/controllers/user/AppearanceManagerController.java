@@ -2,7 +2,6 @@ package com.vet24.web.controllers.user;
 
 import com.vet24.models.enums.PetType;
 import com.vet24.service.pet.appearance.BreedService;
-import com.vet24.web.controllers.pet.appearance.AppearanceController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,8 +36,8 @@ public class AppearanceManagerController {
             response = (petType == null || petType.toString().isBlank()) ?
                     breedService.getAllBreeds() : breedService.getBreedsByPetType(petType.toString());
         } else {
-            response = (petType == null || petType.toString().isBlank()) ?
-                    breedService.getBreed("", breed) : breedService.getBreed(petType.toString(), breed);
+            response = (petType == null) ?
+                    breedService.getBreedByBreed(breed) : breedService.getBreed(petType.toString(), breed);
 
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
