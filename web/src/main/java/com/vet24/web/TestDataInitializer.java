@@ -505,10 +505,10 @@ public class TestDataInitializer implements ApplicationRunner {
 
         for (int i = 0; i < 5; i++) {
             entityManager.createNativeQuery(petSQL)
-                    .setParameter("petType", "cat").setParameter("breed", catBreeds[i])
+                    .setParameter("petType", "CAT").setParameter("breed", catBreeds[i])
                     .executeUpdate();
             entityManager.createNativeQuery(petSQL)
-                    .setParameter("petType", "dog").setParameter("breed", dogBreeds[i])
+                    .setParameter("petType", "DOG").setParameter("breed", dogBreeds[i])
                     .executeUpdate();
             entityManager.createNativeQuery(colorSQL)
                     .setParameter("color", colors[i]).executeUpdate();
