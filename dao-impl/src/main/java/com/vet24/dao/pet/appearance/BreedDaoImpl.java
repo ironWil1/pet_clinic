@@ -55,8 +55,8 @@ public class BreedDaoImpl implements BreedDao {
         final String sql = "INSERT INTO pet_breed (pet_type, breed) VALUES (:petType, :breed) ON CONFLICT DO NOTHING;";
         for(String breed : breeds) {
             manager.createNativeQuery(sql)
-                    .setParameter("petType", petType.toLowerCase())
-                    .setParameter("breed", breed.toLowerCase().trim()).executeUpdate();
+                    .setParameter("petType", petType)
+                    .setParameter("breed", breed.trim()).executeUpdate();
         }
     }
 
@@ -65,7 +65,7 @@ public class BreedDaoImpl implements BreedDao {
     public void deleteBreeds(String petType, List<String> breeds) {
         final String sql = "DELETE FROM pet_breed WHERE pet_type = :petType AND breed IN (:breeds);";
         manager.createNativeQuery(sql)
-                .setParameter("petType", petType.toLowerCase())
+                .setParameter("petType", petType)
                 .setParameter("breeds", breeds.stream().map(s -> s.toLowerCase().trim()).collect(Collectors.toList()))
                 .executeUpdate();
     }
