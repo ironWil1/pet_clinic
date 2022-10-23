@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.annotations;
 
 
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,32 +27,55 @@ public class CheckExistValidator {
 
     @Around("execution(public * *(.., @CheckExist (*), ..))")
     private Object verify(ProceedingJoinPoint joinPoint) throws Throwable {
-    MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-    Annotation[][] annotationMatrix = methodSignature.getMethod().getParameterAnnotations();
-    Object[] args = joinPoint.getArgs();
-    List<Class<?>> entityClassList = new ArrayList<>();
-    List<Long> idArgs = Arrays.stream(args)
-            .filter(this::isCanParse)
-            .map(x -> Long.parseLong(x.toString()))
-            .collect(Collectors.toList());
-    for (Annotation[] annotations : annotationMatrix) {
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof CheckExist) {
-                entityClassList.add(((CheckExist) annotation).entityClass());
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        Annotation[][] annotationMatrix = methodSignature.getMethod().getParameterAnnotations();
+        List<Long> idArgs = this.getIdList(joinPoint.getArgs());
+        List<Class<?>> entityClassList = this.getEntityList(annotationMatrix);
+
+
+//        List<Long> idArgs = Arrays.stream(args)
+//                .filter(arg -> isCanParse(arg))
+//                .map(x -> Long.parseLong(x.toString()))
+//                .collect(Collectors.toList());
+//        List<Class<?>> entityClassList = new ArrayList<>();
+//        for (Annotation[] annotations : annotationMatrix) {
+//            for (Annotation annotation : annotations) {
+//                if (annotation instanceof CheckExist) {
+//                    entityClassList.add(((CheckExist) annotation).entityClass());
+//                }
+//            }
+//        }
+
+        StringJoiner stringJoiner = new StringJoiner(",");
+        for (Class<?> clazz : entityClassList) {
+            if (entityManager.find(clazz, idArgs.get(entityClassList.indexOf(clazz))) == null) {
+                stringJoiner.add(clazz.getSimpleName());
+                throw new NotFoundException(String.format("Сущность %s с указанным id %d не существует!",
+                        stringJoiner, idArgs.get(entityClassList.indexOf(clazz))));
             }
         }
+        return joinPoint.proceed();
     }
 
-    StringJoiner stringJoiner = new StringJoiner(",");
-    for (Class<?> clazz : entityClassList) {
-        if (entityManager.find(clazz, idArgs.get(entityClassList.indexOf(clazz))) == null) {
-            stringJoiner.add(clazz.getSimpleName());
-            throw new NotFoundException(String.format("Сущность %s с указанным id %d не существует!",
-                    stringJoiner, idArgs.get(entityClassList.indexOf(clazz))));
-        }
+    private List<Long> getIdList(Object[] args) {
+        List<Long> idArgs = Arrays.stream(args)
+                .filter(this::isCanParse)
+                .map(x -> Long.parseLong(x.toString()))
+                .collect(Collectors.toList());
+        return idArgs;
     }
-    return joinPoint.proceed();
-}
+
+    private List<Class<?>> getEntityList(Annotation[][] annotationMatrix) {
+        List<Class<?>> entityClassList = new ArrayList<>();
+        for (Annotation[] annotations : annotationMatrix) {
+            for (Annotation annotation : annotations) {
+                if (annotation instanceof CheckExist) {
+                    entityClassList.add(((CheckExist) annotation).entityClass());
+                }
+            }
+        }
+        return entityClassList;
+    }
 
     private boolean isCanParse(Object arg) {
         long result = 0;
