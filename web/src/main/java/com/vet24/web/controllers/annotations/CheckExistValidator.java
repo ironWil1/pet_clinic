@@ -32,20 +32,6 @@ public class CheckExistValidator {
         List<Long> idArgs = this.getIdList(joinPoint.getArgs());
         List<Class<?>> entityClassList = this.getEntityList(annotationMatrix);
 
-
-//        List<Long> idArgs = Arrays.stream(args)
-//                .filter(arg -> isCanParse(arg))
-//                .map(x -> Long.parseLong(x.toString()))
-//                .collect(Collectors.toList());
-//        List<Class<?>> entityClassList = new ArrayList<>();
-//        for (Annotation[] annotations : annotationMatrix) {
-//            for (Annotation annotation : annotations) {
-//                if (annotation instanceof CheckExist) {
-//                    entityClassList.add(((CheckExist) annotation).entityClass());
-//                }
-//            }
-//        }
-
         StringJoiner stringJoiner = new StringJoiner(",");
         for (Class<?> clazz : entityClassList) {
             if (entityManager.find(clazz, idArgs.get(entityClassList.indexOf(clazz))) == null) {
@@ -57,12 +43,20 @@ public class CheckExistValidator {
         return joinPoint.proceed();
     }
 
+    private boolean isCanParse(Object arg) {
+        long result = 0;
+        try {
+            result = Long.parseLong(arg.toString());
+        } catch (Exception ignored) {
+        }
+        return result != 0;
+    }
+
     private List<Long> getIdList(Object[] args) {
-        List<Long> idArgs = Arrays.stream(args)
+        return Arrays.stream(args)
                 .filter(this::isCanParse)
                 .map(x -> Long.parseLong(x.toString()))
                 .collect(Collectors.toList());
-        return idArgs;
     }
 
     private List<Class<?>> getEntityList(Annotation[][] annotationMatrix) {
@@ -75,14 +69,5 @@ public class CheckExistValidator {
             }
         }
         return entityClassList;
-    }
-
-    private boolean isCanParse(Object arg) {
-        long result = 0;
-        try {
-            result = Long.parseLong(arg.toString());
-        } catch (Exception ignored) {
-        }
-        return result != 0;
     }
 }
