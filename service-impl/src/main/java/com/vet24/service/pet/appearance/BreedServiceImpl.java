@@ -19,13 +19,22 @@ public class BreedServiceImpl implements BreedService {
 
     @Override
     public List<String> getBreed(String petType, String breed) {
-        List<String> breedList;
-        if (petType.isEmpty()) {
-            breedList = breedDao.getBreedByBreed(breed);
-        } else {
-            breedList = breedDao.getBreedByPetTypeByBreed(petType, breed);
-        }
-        return breedList;
+        return breedDao.getBreedByPetTypeByBreed(petType, breed);
+    }
+
+    @Override
+    public List<String> getBreedByBreed(String breed) {
+        return breedDao.getBreedByBreed(breed);
+    }
+
+    @Override
+    public List<String> getBreedsByPetType(String petType) {
+        return breedDao.getBreedsByPetType(petType);
+    }
+
+    @Override
+    public List<String> getAllBreeds() {
+        return breedDao.getAllBreeds();
     }
 
     @Override

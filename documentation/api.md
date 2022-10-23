@@ -360,7 +360,7 @@ MedicineRequestDto {
 5. проверить что все тесты не перестали работать
 
 ```
-class Dose {
+
 public class Dosage {
     private Long id;
     private Integer dosageSize; //добавь коммент что именно описывает это поле
@@ -371,6 +371,28 @@ enum DosageForm {
     DROPS, PILLS;
 }
 ```
+
+### Api работы с дозировкой
+1. добавить в medicineConntoller api работы с дозировкой
+1. При добавлении новой дозировки делать проверку, что для  данного препарата такой дозировки (тип + доза) не было  
+
+```
+GET /api/manager/medicine/{medicineId}/dosage -> List<DosageResponseDto>
+POST List<DosageRequstDto> -> /api/manager/medicine/{medicineId}/dose -> Void //добавление новых дозировок
+DELETE /api/manager/medicine/{medicineId}/dosage/{doseId} -> Void
+
+class DosageRequstDto {
+	Integer dosageSize; //not Null
+	dosageForm form; //not Null
+}
+
+class DosageResponseDto {
+	Long id
+	Integer dosageSize 
+	dosageForm form 
+}
+
+``` 
 
 # Аутентификация
 

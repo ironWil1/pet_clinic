@@ -47,7 +47,6 @@ public class MedicineController {
         this.medicineRequestMapper = medicineRequestMapper;
     }
 
-
     @Operation(summary = "Поиск Препарата по ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Препарат найден",
@@ -55,7 +54,7 @@ public class MedicineController {
             @ApiResponse(responseCode = "404", description = "Препарат не найден")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<MedicineResponseDto> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<MedicineResponseDto> getById(@PathVariable("id") Long id){
         Medicine medicine = medicineService.getByKey(id);
         if (medicine != null) {
             return new ResponseEntity<>(medicineResponseMapper.toDto(medicine), HttpStatus.OK);
