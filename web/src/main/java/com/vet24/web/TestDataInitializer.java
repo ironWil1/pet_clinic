@@ -1,10 +1,6 @@
 package com.vet24.web;
 
-import com.vet24.models.enums.DayOffType;
-import com.vet24.models.enums.Gender;
-import com.vet24.models.enums.NewsType;
-import com.vet24.models.enums.RoleNameEnum;
-import com.vet24.models.enums.WorkShift;
+import com.vet24.models.enums.*;
 import com.vet24.models.medicine.Appointment;
 import com.vet24.models.medicine.Diagnosis;
 import com.vet24.models.medicine.DoctorSchedule;
@@ -12,8 +8,6 @@ import com.vet24.models.medicine.Medicine;
 import com.vet24.models.news.News;
 import com.vet24.models.notification.Notification;
 import com.vet24.models.notification.UserNotification;
-import com.vet24.models.pet.Cat;
-import com.vet24.models.pet.Dog;
 import com.vet24.models.pet.Pet;
 import com.vet24.models.pet.PetContact;
 import com.vet24.models.pet.PetFound;
@@ -59,6 +53,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -106,6 +102,8 @@ public class TestDataInitializer implements ApplicationRunner {
     private final Role manager = new Role(RoleNameEnum.MANAGER);
     private final List<Pet> petList = new ArrayList<>();
     private final PetFoundService petFoundService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public TestDataInitializer(
@@ -185,9 +183,9 @@ public class TestDataInitializer implements ApplicationRunner {
         List<Pet> pets = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
             if (i <= 15) {
-                pets.add(new Dog("DogName" + i, LocalDate.now(), MALE, "DogBreed" + i, userService.getByKey((long) i)));
+                pets.add(new Pet("DogName" + i, LocalDate.now(), PetType.DOG, MALE, "DogBreed" + i, userService.getByKey((long) i)));
             } else {
-                pets.add(new Cat("CatName" + i, LocalDate.now(), FEMALE, "CatBreed" + i, userService.getByKey((long) i)));
+                pets.add(new Pet("CatName" + i, LocalDate.now(), PetType.CAT, FEMALE, "CatBreed" + i, userService.getByKey((long) i)));
             }
         }
         petService.persistAll(pets);
@@ -491,6 +489,26 @@ public class TestDataInitializer implements ApplicationRunner {
         petFoundService.persistAll(petFoundList);
     }
 
+    public void appearanceInit() {
+        String[] catBreeds = {"bengal", "bombay", "maine coon", "persian", "munchkin"};
+        String[] dogBreeds = {"boxer", "labrador", "poodle", "bulldog", "pug"};
+        String[] colors = {"black", "white", "orange", "brown", "yellow"};
+
+        String petSQL = "INSERT INTO pet_breed (pet_type, breed) VALUES (:petType, :breed) ON CONFLICT (pet_type, breed) DO NOTHING;";
+        String colorSQL = "INSERT INTO pet_color (color) VALUES (:color) ON CONFLICT (color) DO NOTHING;";
+
+        for (int i = 0; i < 5; i++) {
+            entityManager.createNativeQuery(petSQL)
+                    .setParameter("petType", "CAT").setParameter("breed", catBreeds[i])
+                    .executeUpdate();
+            entityManager.createNativeQuery(petSQL)
+                    .setParameter("petType", "DOG").setParameter("breed", dogBreeds[i])
+                    .executeUpdate();
+            entityManager.createNativeQuery(colorSQL)
+                    .setParameter("color", colors[i]).executeUpdate();
+        }
+    }
+
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
@@ -519,6 +537,7 @@ public class TestDataInitializer implements ApplicationRunner {
             newsInit();
             profileInit();
             petFoundInit();
+            appearanceInit();
         }
     }
 }

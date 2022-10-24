@@ -22,6 +22,11 @@ public class ColorServiceImpl implements ColorService {
     }
 
     @Override
+    public List<String> getAllColors() {
+        return colorDao.getAllColors();
+    }
+
+    @Override
     public Boolean isColorExists(String color) {
         return colorDao.isColorExists(color);
     }
