@@ -10,9 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -47,18 +46,20 @@ public class AppearanceManagerController {
         @Operation(summary = "add new breed(s)")
     @ApiResponse(responseCode = "200", description = "Порода(ы) добавлена в базу данных")
     @PostMapping("/breed")
-    public ResponseEntity<Void> addBreeds(@RequestParam @NotBlank PetType petType,
+    public ResponseEntity<Void> addBreeds(@RequestParam PetType petType,
                                      @RequestBody List<String> breeds) {
-        breedService.addBreeds(petType.toString().strip(), breeds);
+        breedService.addBreeds(petType.toString(), breeds.stream()
+                .map(s -> s.toLowerCase().trim()).collect(Collectors.toList()));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "delete breed(s)")
     @ApiResponse(responseCode = "200", description = "Порода(ы) удалена из базы данных")
     @DeleteMapping("/breed")
-    public ResponseEntity<Void> deleteBreeds(@RequestParam @NotBlank PetType petType,
+    public ResponseEntity<Void> deleteBreeds(@RequestParam PetType petType,
                                        @RequestBody List<String> breeds) {
-        breedService.deleteBreeds(petType.toString().strip(), breeds);
+        breedService.deleteBreeds(petType.toString(), breeds.stream()
+                .map(s -> s.toLowerCase().trim()).collect(Collectors.toList()));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
