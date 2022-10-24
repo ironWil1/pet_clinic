@@ -1,12 +1,12 @@
 package com.vet24.web.controllers.annotations;
 
 
+import com.vet24.models.exception.BadRequestException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.webjars.NotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,7 +34,7 @@ public class CheckExistValidator {
         for (Class<?> clazz : entityClassList) {
             Long id = idArgs.get(entityClassList.indexOf(clazz));
             if (entityManager.find(clazz, id) == null) {
-                throw new NotFoundException(String.format("Сущность %s с указанным id %d не существует!",
+                throw new BadRequestException (String.format("Сущность %s с указанным id %d не существует!",
                         clazz.getSimpleName(), id));
             }
         }
