@@ -14,7 +14,6 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 
@@ -32,12 +31,11 @@ public class CheckExistValidator {
         List<Long> idArgs = this.getIdList(joinPoint.getArgs());
         List<Class<?>> entityClassList = this.getEntityList(annotationMatrix);
 
-        StringJoiner stringJoiner = new StringJoiner(",");
         for (Class<?> clazz : entityClassList) {
-            if (entityManager.find(clazz, idArgs.get(entityClassList.indexOf(clazz))) == null) {
-                stringJoiner.add(clazz.getSimpleName());
+            Long id = idArgs.get(entityClassList.indexOf(clazz));
+            if (entityManager.find(clazz, id) == null) {
                 throw new NotFoundException(String.format("Сущность %s с указанным id %d не существует!",
-                        stringJoiner, idArgs.get(entityClassList.indexOf(clazz))));
+                        clazz.getSimpleName(), id));
             }
         }
         return joinPoint.proceed();
