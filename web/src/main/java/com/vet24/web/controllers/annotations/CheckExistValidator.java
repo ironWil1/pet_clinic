@@ -13,7 +13,6 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 
@@ -28,26 +27,14 @@ public class CheckExistValidator {
     private Object verify(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Annotation[][] annotationMatrix = methodSignature.getMethod().getParameterAnnotations();
-        Object[] args = joinPoint.getArgs();
-        List<Class<?>> entityClassList = new ArrayList<>();
-        List<Long> idArgs = Arrays.stream(args)
-                .filter(this::isCanParse)
-                .map(x -> Long.parseLong(x.toString()))
-                .collect(Collectors.toList());
-        for (Annotation[] annotations : annotationMatrix) {
-            for (Annotation annotation : annotations) {
-                if (annotation instanceof CheckExist) {
-                    entityClassList.add(((CheckExist) annotation).entityClass());
-                }
-            }
-        }
+        List<Long> idArgs = this.getIdList(joinPoint.getArgs());
+        List<Class<?>> entityClassList = this.getEntityList(annotationMatrix);
 
-        StringJoiner stringJoiner = new StringJoiner(",");
         for (Class<?> clazz : entityClassList) {
-            if (entityManager.find(clazz, idArgs.get(entityClassList.indexOf(clazz))) == null) {
-                stringJoiner.add(clazz.getSimpleName());
-                throw new BadRequestException(String.format("Сущность %s с указанным id %d не существует!",
-                        stringJoiner, idArgs.get(entityClassList.indexOf(clazz))));
+            Long id = idArgs.get(entityClassList.indexOf(clazz));
+            if (entityManager.find(clazz, id) == null) {
+                throw new BadRequestException (String.format("Сущность %s с указанным id %d не существует!",
+                        clazz.getSimpleName(), id));
             }
         }
         return joinPoint.proceed();
@@ -60,6 +47,24 @@ public class CheckExistValidator {
         } catch (Exception ignored) {
         }
         return result != 0;
+    }
+    private List<Long> getIdList(Object[] args) {
+        return Arrays.stream(args)
+                .filter(this::isCanParse)
+                .map(x -> Long.parseLong(x.toString()))
+                .collect(Collectors.toList());
+    }
+
+    private List<Class<?>> getEntityList(Annotation[][] annotationMatrix) {
+        List<Class<?>> entityClassList = new ArrayList<>();
+        for (Annotation[] annotations : annotationMatrix) {
+            for (Annotation annotation : annotations) {
+                if (annotation instanceof CheckExist) {
+                    entityClassList.add(((CheckExist) annotation).entityClass());
+                }
+            }
+        }
+        return entityClassList;
     }
 }
 
