@@ -36,6 +36,8 @@ draft-job:
 
 
 
+
+
 #sonarqube-check:
 #  stage: sonar-check
 #  variables:
