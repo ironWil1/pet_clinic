@@ -26,11 +26,11 @@ public class CheckExistValidator {
 
     @Around("execution(public * *(.., @CheckExist (*), ..))")
     private Object verify(ProceedingJoinPoint joinPoint) throws Throwable {
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Annotation[][] annotationMatrix = methodSignature.getMethod().getParameterAnnotations();
-        List<Long> idArgs = this.getIdList(joinPoint.getArgs());
-        List<Class<?>> entityClassList = this.getEntityList(annotationMatrix);
+        return verifyEntity(getEntityList(joinPoint), getIdList(joinPoint), joinPoint);
+    }
 
+    private Object verifyEntity
+            (List<Class<?>> entityClassList,List<Long> idArgs, ProceedingJoinPoint joinPoint) throws Throwable {
         for (Class<?> clazz : entityClassList) {
             Long id = idArgs.get(entityClassList.indexOf(clazz));
             if (entityManager.find(clazz, id) == null) {
@@ -50,14 +50,16 @@ public class CheckExistValidator {
         return result != 0;
     }
 
-    private List<Long> getIdList(Object[] args) {
-        return Arrays.stream(args)
+    private List<Long> getIdList(ProceedingJoinPoint joinPoint) {
+        return Arrays.stream(joinPoint.getArgs())
                 .filter(this::isCanParse)
                 .map(x -> Long.parseLong(x.toString()))
                 .collect(Collectors.toList());
     }
 
-    private List<Class<?>> getEntityList(Annotation[][] annotationMatrix) {
+    private List<Class<?>> getEntityList(ProceedingJoinPoint joinPoint) {
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        Annotation[][] annotationMatrix = methodSignature.getMethod().getParameterAnnotations();
         List<Class<?>> entityClassList = new ArrayList<>();
         for (Annotation[] annotations : annotationMatrix) {
             for (Annotation annotation : annotations) {
