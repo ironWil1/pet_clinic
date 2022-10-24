@@ -12,7 +12,6 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public abstract class PetMapper implements DtoMapper<Pet, PetResponseDto>, EntityMapper<PetResponseDto, Pet> {
-
     @Mapping(source = "size", target ="petSize")
     public abstract Pet toEntity(PetRequestPostDto postDto);
 
