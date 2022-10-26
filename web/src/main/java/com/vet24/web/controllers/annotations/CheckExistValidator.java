@@ -26,11 +26,12 @@ public class CheckExistValidator {
 
     @Around("execution(public * *(.., @CheckExist (*), ..))")
     private Object verify(ProceedingJoinPoint joinPoint) throws Throwable {
-        return verifyEntity(getEntityList(joinPoint), getIdList(joinPoint), joinPoint);
+        verifyEntity(getEntityList(joinPoint), getIdList(joinPoint));
+        return joinPoint.proceed();
     }
 
-    private Object verifyEntity
-            (List<Class<?>> entityClassList,List<Long> idArgs, ProceedingJoinPoint joinPoint) throws Throwable {
+    private void verifyEntity
+            (List<Class<?>> entityClassList,List<Long> idArgs) {
         for (Class<?> clazz : entityClassList) {
             Long id = idArgs.get(entityClassList.indexOf(clazz));
             if (entityManager.find(clazz, id) == null) {
@@ -38,7 +39,7 @@ public class CheckExistValidator {
                         clazz.getSimpleName(), id));
             }
         }
-        return joinPoint.proceed();
+
     }
 
     private boolean isCanParse(Object arg) {
