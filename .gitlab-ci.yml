@@ -22,6 +22,8 @@ stages:
   only:
     - triggers
 
+
+
 # title-change:
 #   extends: .detect-change
 #   script:
