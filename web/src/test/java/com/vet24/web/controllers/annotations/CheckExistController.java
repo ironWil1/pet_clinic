@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
 
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/doctors")
 public class CheckExistController {
 
-
+    private static final String DESCRIPTION_OF_EXCEPTION = "clinical examination not found";
     private final ClinicalExaminationService clinicalExaminationService;
     private final ClinicalExaminationResponseMapper clinicalExaminationResponseMapper;
 
@@ -36,6 +37,9 @@ public class CheckExistController {
     @GetMapping("/exam")
     public ResponseEntity<List<ClinicalExaminationResponseDto>> getExaminationByPetId
             (@CheckExist(entityClass = ClinicalExamination.class) @RequestParam(value = "petId") Long petId) {
+        if (!clinicalExaminationService.isExistByPetId(petId)) {
+            throw new NotFoundException(DESCRIPTION_OF_EXCEPTION);
+        }
 
         List<ClinicalExamination> clinicalExaminations = clinicalExaminationService.getByPetId(petId);
         return new ResponseEntity<>(clinicalExaminationResponseMapper.toDto(clinicalExaminations), HttpStatus.OK);
