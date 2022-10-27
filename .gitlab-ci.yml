@@ -6,6 +6,7 @@ stages:
   - rebuilding
   - trigger
 
+
 .detect-change:
   stage: trigger
   image: everpeace/curl-jq
