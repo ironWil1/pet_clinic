@@ -96,6 +96,7 @@ restart:
     - if: $CI_COMMIT_BRANCH == 'master'
       when: on_success
 
+
 integration_test_job:
   services:
     - postgres:latest
