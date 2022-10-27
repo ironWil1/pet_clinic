@@ -2,15 +2,11 @@ package com.vet24.service.discord;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vet24.dao.discord.DiscordMessageDao;
-import com.vet24.dao.news.NewsDao;
 import com.vet24.discord.feign.DiscordClient;
-
 import com.vet24.discord.models.dto.discord.MessageDto;
 import com.vet24.models.discord.DiscordMessage;
 import com.vet24.models.news.News;
-import com.vet24.service.news.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
