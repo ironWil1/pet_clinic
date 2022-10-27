@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.vet24.discord.models.dto.discord.MessageDto;
 import com.vet24.models.discord.DiscordMessage;
 import com.vet24.models.dto.user.ManagerNewsRequestDto;
 import com.vet24.models.enums.NewsType;
@@ -10,7 +9,6 @@ import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -22,8 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest {
@@ -81,8 +77,7 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
     @DataSet(cleanBefore = true, value = {
             "/datasets/controllers/user/managerNewsController/user_entities.yml",
             "/datasets/controllers/user/managerNewsController/news.yml",
-            "/datasets/controllers/user/managerNewsController/news_pictures.yml",
-            "/datasets/controllers/user/managerNewsController/discord_message.yml"
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
     public void getAllNewsSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
@@ -354,14 +349,9 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
     @DataSet(cleanBefore = true, value = {
             "/datasets/controllers/user/managerNewsController/user_entities.yml",
             "/datasets/controllers/user/managerNewsController/news.yml",
-            "/datasets/controllers/user/managerNewsController/news_pictures.yml",
-            "/datasets/controllers/user/managerNewsController/discord_message.yml"
+            "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
     public void publishNewsSuccess() throws Exception {
-        DiscordMessage discordMessage = getDiscordMessage();
-        Mockito.doReturn(discordMessage)
-                .when(discordService)
-                .sendMessage(any(MessageDto.class));
         mockMvc. perform(MockMvcRequestBuilders.put(URI + "/publish")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(Arrays.asList(101, 202)))
@@ -369,11 +359,12 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                 .andExpect(status().isOk());
         News news1 = entityManager.find(News.class, 101L);
         News news2 = entityManager.find(News.class, 202L);
-
+        DiscordMessage discordMessage1 = entityManager.find(DiscordMessage.class, 1L);
+        DiscordMessage discordMessage2 = entityManager.find(DiscordMessage.class, 2L);
         assertThat(news1.isPublished()).isTrue();
         assertThat(news2.isPublished()).isTrue();
-        assertThat(news1.getDiscordMessage()).isEqualTo(discordMessage);
-        assertThat(news2.getDiscordMessage()).isEqualTo(discordMessage);
+        assertThat(discordMessage1.getDiscordMsgId()).isEqualTo(101L);
+        assertThat(discordMessage2.getDiscordMsgId()).isEqualTo(202L);
     }
 
     @Test
@@ -383,9 +374,6 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
             "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
     public void unpublishNewsSuccess() throws Exception {
-        Mockito.doNothing()
-                .when(discordService)
-                .deleteMessage(anyLong());
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/unpublish")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(Arrays.asList(101, 202)))
