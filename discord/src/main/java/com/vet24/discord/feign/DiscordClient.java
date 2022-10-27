@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @FeignClient(name = "api-service",url = "https://discord.com/api/webhooks/993487572003213342/LV3qfF2IcKhsKIQQrv4TPD6w180ALKTXJh0gmJrlO1pg1JLfM1NRzLb3rl1VaQSOKIRG")
-@Profile("!test")
+@Profile({"local & prod"})
 public interface DiscordClient {
     // получить сообщение по id
     @RequestMapping( value = "/messages/{message_id}",

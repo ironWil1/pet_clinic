@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("test")
+@Profile({"test & testprod"})
 public class DiscordClientMock implements DiscordClient {
 
     @Override

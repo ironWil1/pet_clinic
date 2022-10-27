@@ -64,11 +64,6 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
         return entityManager.createQuery("SELECT COUNT(n) FROM News n", Long.class).getSingleResult();
     }
 
-    private DiscordMessage getDiscordMessage() {
-        return entityManager.createQuery("SELECT d FROM DiscordMessage d where d.id= :id", DiscordMessage.class)
-                .setParameter("id",1L).getSingleResult();
-    }
-    
     private News getNews(long id) {
         return entityManager.createQuery("select n from News n join fetch n.pictures where n.id = :id", News.class).setParameter("id", id).getSingleResult();
     }
@@ -352,7 +347,7 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
             "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
     public void publishNewsSuccess() throws Exception {
-        mockMvc. perform(MockMvcRequestBuilders.put(URI + "/publish")
+        mockMvc.perform(MockMvcRequestBuilders.put(URI + "/publish")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(Arrays.asList(101, 202)))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
