@@ -360,7 +360,7 @@ MedicineRequestDto {
 5. проверить что все тесты не перестали работать
 
 ```
-class Dose {
+
 public class Dosage {
     private Long id;
     private Integer dosageSize; //добавь коммент что именно описывает это поле
@@ -371,6 +371,28 @@ enum DosageForm {
     DROPS, PILLS;
 }
 ```
+
+### Api работы с дозировкой
+1. добавить в medicineConntoller api работы с дозировкой
+1. При добавлении новой дозировки делать проверку, что для  данного препарата такой дозировки (тип + доза) не было  
+
+```
+GET /api/manager/medicine/{medicineId}/dosage -> List<DosageResponseDto>
+POST List<DosageRequstDto> -> /api/manager/medicine/{medicineId}/dose -> Void //добавление новых дозировок
+DELETE /api/manager/medicine/{medicineId}/dosage/{doseId} -> Void
+
+class DosageRequstDto {
+	Integer dosageSize; //not Null
+	dosageForm form; //not Null
+}
+
+class DosageResponseDto {
+	Long id
+	Integer dosageSize 
+	dosageForm form 
+}
+
+``` 
 
 # Аутентификация
 
@@ -519,3 +541,62 @@ DELETE List<String> - > /api/manager/appearance/breed?petType(обязатель
     isAvailable // доступен слот или нет
   }
   ```
+
+# Scheduler
+
+## TaskScheduler 
+1. Создать TaskScheduler (интерфейс + реализацию)
+2. Таск шедулер будет иметь методы, которые вызываются по расписанию.
+3. маски для Cron вынести в application.properties
+4. добавить запуск балансировки расписания докторов по расписанию
+
+## DoctorScheduleBalancer
+1. Создать DoctorScheduleBalancer (интерфейс + реализацию)
+1. Перенести реализацию балансироваки из DoctorScheduleBalanceUtil в балансер, а DoctorScheduleBalanceUtil - удалить
+1. убрать вызов метода по расписанию из балансера
+1. убрать "очистки коллекций"
+1. Разобраться в алгоритме балансировки и декомпозировать метод balance()
+
+
+```
+interface DoctorScheduleBalancer {
+ void balance();
+}
+
+```
+
+# Notification
+
+## Reminder
+
+1. Создать Интерфейс Reminder;
+1. Создать абстрактный класс Remind;
+  
+
+```  
+interface RemindSender {
+	void send(Remind remind) // получает нужный тип уведомления и отправляет 
+	void send(List<Remind> reminds)
+}
+
+```  
+
+```
+abstract class Remind<T> {
+	T content;
+	String reciver; // тут будет идентификатор, куда посылать ведомление. Например, если это EmailRemind то тут будет email. Для дискорда - дискордайди
+	RemindType type;
+}
+```
+```
+enum RemindType {
+	EMAIL, DISCORD;
+}
+```
+
+## EmailReminder
+
+1. Создать EmailReminder - релизацию Reminder;
+1. Создать ```EmailRemind extends Remind<String>```;
+1. в EmailReminder метод send должен принимать EmailRemind и отправлять электронное сообщение используя метод sendMultipartHtmlMessage в MailService
+

@@ -1,5 +1,6 @@
 package com.vet24.web.controllers.pet.appearance;
 
+import com.vet24.models.enums.PetType;
 import com.vet24.service.pet.appearance.BreedService;
 import com.vet24.service.pet.appearance.ColorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,14 +28,25 @@ public class AppearanceController {
     @Operation(summary = "Получение возможного окраса животного")
     @ApiResponse(responseCode = "200", description = "Окрас успешно получен или получен пустой список")
     @GetMapping("/color")
-    public List<String> getColor(@RequestParam String text) {
-        return colorService.findColor(text);
+    public List<String> getColor(@RequestParam(required = false) String color) {
+        if (color == null || color.isBlank()) {
+            return colorService.getAllColors();
+        } else {
+            return colorService.findColor(color);
+        }
     }
 
     @Operation(summary = "Получение возможной породы животного")
     @ApiResponse(responseCode = "200", description = "Порода успешно получена или получен пустой список")
     @GetMapping("/breed")
-    public List<String> getBreed(@RequestParam String petType, @RequestParam String text) {
-        return breedService.getBreed(petType, text);
+    public List<String> getBreed(@RequestParam(required = false) PetType petType,
+                                 @RequestParam(required = false) String breed) {
+        if (breed == null || breed.isBlank()) {
+           return (petType == null) ?
+                   breedService.getAllBreeds() : breedService.getBreedsByPetType(petType.toString());
+        } else {
+            return (petType == null) ?
+                    breedService.getBreedByBreed(breed) : breedService.getBreed(petType.toString(), breed);
+        }
     }
 }
