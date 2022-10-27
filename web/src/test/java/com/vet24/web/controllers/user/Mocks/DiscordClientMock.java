@@ -9,9 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"test & testprod"})
+@Profile({"test", "testprod"})
 public class DiscordClientMock implements DiscordClient {
-
     @Override
     public ResponseEntity<MessageDto> getMessageToId(Long message_id, Long thread_id) throws JsonProcessingException {
         MessageDto messageDto = new MessageDto();
