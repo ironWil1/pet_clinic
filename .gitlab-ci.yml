@@ -135,7 +135,3 @@ rebuilding:
       when: never
     - if: $CI_COMMIT_BRANCH == 'master'
       when: manual
-
-
-
-
