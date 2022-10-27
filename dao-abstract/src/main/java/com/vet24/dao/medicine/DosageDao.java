@@ -9,6 +9,6 @@ public interface DosageDao extends ReadWriteDao<Long, Dosage> {
 
     List<Dosage> getByMedicineId(Long medicineId);
 
-    Boolean isDosageTypeAndDosageSizeCombinationExist(String dosageType, Integer dosageSize);
+    Boolean isDosageTypeAndDosageSizeCombinationExist(Long medicineId, String dosageType, Integer dosageSize);
 
 }

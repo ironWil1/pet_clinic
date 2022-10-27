@@ -9,5 +9,5 @@ public interface DosageService extends ReadWriteService<Long, Dosage> {
 
     List<Dosage> getByMedicineId(Long medicineId);
 
-    Boolean isDosageExists(String dosageType, Integer dosageSize);
+    Boolean isDosageExists(Long medicineId, String dosageType, Integer dosageSize);
 }

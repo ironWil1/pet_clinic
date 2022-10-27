@@ -17,9 +17,13 @@ public class DosageDaoImpl extends ReadWriteDaoImpl<Long, Dosage> implements Dos
     }
 
     @Override
-    public Boolean isDosageTypeAndDosageSizeCombinationExist(String dosageType, Integer dosageSize) {
-        return (Boolean) manager.createNativeQuery("SELECT EXISTS(SELECT dosage_type, dosage_size FROM dosage WHERE " +
-                        "dosage_type = :dosageType AND dosage_size = :dosageSize)")
-                .setParameter("dosageType", dosageType).setParameter("dosageSize", dosageSize).getSingleResult();
+    public Boolean isDosageTypeAndDosageSizeCombinationExist(Long medicineId, String dosageType, Integer dosageSize) {
+        return (Boolean) manager.createNativeQuery("SELECT EXISTS(SELECT medicine_id, dosage_type, dosage_size FROM dosage WHERE " +
+                        "medicine_id = :medicineId AND dosage_type = :dosageType AND dosage_size = :dosageSize)")
+                .setParameter("medicineId", medicineId)
+                .setParameter("dosageType", dosageType)
+                .setParameter("dosageSize", dosageSize)
+                .getSingleResult();
     }
+
 }

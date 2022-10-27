@@ -26,8 +26,8 @@ public class DosageServiceImpl extends ReadWriteServiceImpl<Long, Dosage>
     }
 
     @Override
-    public Boolean isDosageExists(String dosageType, Integer dosageSize) {
-        return dosageDao.isDosageTypeAndDosageSizeCombinationExist(dosageType, dosageSize);
+    public Boolean isDosageExists(Long medicineId, String dosageType, Integer dosageSize) {
+        return dosageDao.isDosageTypeAndDosageSizeCombinationExist(medicineId, dosageType, dosageSize);
     }
 
 }

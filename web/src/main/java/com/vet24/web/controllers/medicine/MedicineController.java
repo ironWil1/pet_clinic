@@ -13,6 +13,7 @@ import com.vet24.models.medicine.Medicine;
 import com.vet24.service.medicine.DosageService;
 import com.vet24.service.medicine.MedicineService;
 
+import com.vet24.web.controllers.annotations.CheckExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -141,7 +142,7 @@ public class MedicineController {
     @Operation(summary = "Поиск списка Дозировок")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Дозировки найдены")})
     @GetMapping("/{medicineId}/dosage")
-    public ResponseEntity<List<DosageResponseDto>> getAllDosages(@PathVariable Long medicineId) {
+    public ResponseEntity<List<DosageResponseDto>> getAllDosages(@CheckExist(entityClass = Medicine.class) @PathVariable Long medicineId) {
         List<Dosage> dosageList = dosageService.getByMedicineId(medicineId);
         List<DosageResponseDto> dosageDtoList = dosageResponseMapper.toDto(dosageList);
         return new ResponseEntity<>(dosageDtoList, HttpStatus.OK);
@@ -152,11 +153,11 @@ public class MedicineController {
     @ApiResponse(responseCode = "201", description = "Новая Дозировка была добавлена")
     @ApiResponse(responseCode = "400", description = "Данная Дозировка уже существует")
     @PostMapping("/{medicineId}/dose")
-    public ResponseEntity<Void> save(@PathVariable Long medicineId, @RequestBody DosageRequestDto dosageDto) {
+    public ResponseEntity<Void> save(@CheckExist(entityClass = Medicine.class) @PathVariable Long medicineId, @RequestBody DosageRequestDto dosageDto) {
         Medicine medicine = medicineService.getByKey(medicineId);
         Dosage dosage = dosageRequestMapper.toEntity(dosageDto);
 
-        if(!dosageService.isDosageExists(dosageDto.getDosageType().name(), dosageDto.getDosageSize())) {
+        if(!dosageService.isDosageExists(medicine.getId(), dosageDto.getDosageType().name(), dosageDto.getDosageSize())) {
             dosageService.persist(dosage);
             medicine.addDosage(dosage);
             medicineService.update(medicine);
@@ -170,20 +171,15 @@ public class MedicineController {
     @ApiResponse(responseCode = "200", description = "Дозировка удалена")
     @ApiResponse(responseCode = "404", description = "Дозировка или препарат не найдены")
     @DeleteMapping(value = "/{medicineId}/dosage/{dosageId}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long medicineId, @PathVariable Long dosageId) {
+    public ResponseEntity<Void> deleteById(@CheckExist(entityClass = Medicine.class) @PathVariable Long medicineId, @CheckExist(entityClass = Dosage.class) @PathVariable Long dosageId) {
         Medicine medicine = medicineService.getByKey(medicineId);
         Dosage dosage = dosageService.getByKey(dosageId);
-
-        if (medicine == null || dosage == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
         medicine.removeDosage(dosage);
         medicineService.update(medicine);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 }
 
