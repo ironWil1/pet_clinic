@@ -71,7 +71,7 @@ public class DoctorScheduleBalanceUtil {
     }
 
     /**
-     * Получаем смену у доктора(doctroId) по переданной дате
+     * Получаем смену у доктора(doctorId) по переданной дате
      */
     private String getShiftByLocalDate(Long doctorId, LocalDate date) {
         if (doctorScheduleMap.containsKey(doctorId)) {

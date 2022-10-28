@@ -13,6 +13,7 @@ import com.vet24.models.util.View;
 import com.vet24.service.user.CommentService;
 import com.vet24.service.user.TopicService;
 import com.vet24.service.user.UserService;
+import com.vet24.web.controllers.annotations.CheckExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -93,13 +94,10 @@ public class UserTopicController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful getting topic",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = TopicDto.class))),
-            @ApiResponse(responseCode = "404", description = "Topic not found")
+            @ApiResponse(responseCode = "400", description = "Topic not found")
     })
     @GetMapping("/{topicId}")
-    public ResponseEntity<TopicDto> getTopicById(@PathVariable("topicId") Long topicId) {
-        if (!topicService.isExistByKey(topicId)) {
-            throw new NotFoundException("topic not found");
-        }
+    public ResponseEntity<TopicDto> getTopicById(@CheckExist (entityClass = Topic.class) @PathVariable("topicId") Long topicId) {
         return new ResponseEntity<>(topicMapper.toDto(topicService.getByKey(topicId)), HttpStatus.OK);
     }
 
@@ -127,14 +125,12 @@ public class UserTopicController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic is update",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = TopicDto.class))),
-            @ApiResponse(responseCode = "404", description = "topic not found or is not your topic")
+            @ApiResponse(responseCode = "404", description = "is not your topic"),
+            @ApiResponse(responseCode = "400", description = "topic not found")
     })
     @PutMapping("/{topicId}")
-    public ResponseEntity<TopicDto> updateTopic(@PathVariable("topicId") Long topicId, @JsonView(View.Put.class)
+    public ResponseEntity<TopicDto> updateTopic(@CheckExist (entityClass = Topic.class) @PathVariable("topicId") Long topicId, @JsonView(View.Put.class)
     @RequestBody(required = false) TopicDto topicDto) {
-        if (!topicService.isExistByKey(topicId)) {
-            throw new NotFoundException("topic not found");
-        }
 
         Topic topic = topicService.getByKey(topicId);
         getOptionalOfNullableSecurityUser().filter(topic.getTopicStarter()::equals)
@@ -153,13 +149,10 @@ public class UserTopicController {
     @Operation(summary = "delete topic by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic is delete"),
-            @ApiResponse(responseCode = "404", description = "topic not found or is not your topic")
+            @ApiResponse(responseCode = "400", description = "topic not found or is not your topic")
     })
     @DeleteMapping("/{topicId}")
-    public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") Long topicId) {
-        if (!topicService.isExistByKey(topicId)) {
-            throw new NotFoundException("topic is not found");
-        }
+    public ResponseEntity<Void> deleteTopic(@CheckExist(entityClass = Topic.class)@PathVariable("topicId") Long topicId) {
 
         Topic topic = topicService.getByKey(topicId);
         getOptionalOfNullableSecurityUser()
@@ -173,19 +166,15 @@ public class UserTopicController {
     @Operation(summary = "add comment to topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "comment created"),
-            @ApiResponse(responseCode = "400", description = "comment bad request"),
-            @ApiResponse(responseCode = "404", description = "topic not found"),
+            @ApiResponse(responseCode = "400", description = "comment bad request or topic not found"),
             @ApiResponse(responseCode = "403", description = "topic is closed")
     })
     @PostMapping(value = "/{topicId}/addComment")
-    public ResponseEntity<CommentDto> persistTopicComment(@PathVariable("topicId") Long topicId,
+    public ResponseEntity<CommentDto> persistTopicComment(@CheckExist (entityClass = Topic.class) @PathVariable("topicId") Long topicId,
                                                           @NotBlank(message = "{registration.validation.blank.field}")
                                                           @Size(min = 15)
                                                           @RequestBody String content) {
         Topic topic = topicService.getByKey(topicId);
-        if (topic == null) {
-            throw new NotFoundException("topic is not found");
-        }
         if (topic.isClosed()) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

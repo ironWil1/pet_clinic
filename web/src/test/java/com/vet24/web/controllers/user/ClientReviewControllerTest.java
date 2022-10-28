@@ -56,7 +56,7 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content("This doctor is very GOOOD!!")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ClientReviewControllerTest extends ControllerAbstractIntegrationTes
         int beforeCount = commentDao.getAll().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{doctorId}/review", 50000)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(beforeCount).isEqualTo(commentDao.getAll().size());
     }
 }
