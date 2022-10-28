@@ -19,7 +19,7 @@ public class BreedDaoImpl implements BreedDao {
         List<String> listBreed = new ArrayList<>();
         listBreed.addAll(
                 manager.createNativeQuery("SELECT breed from pet_breed where " +
-                                "pet_type % :pt and breed % :br")
+                                "pet_type = :pt and breed % :br")
                         .setParameter("pt", petType)
                         .setParameter("br", breed)
                         .getResultList());
@@ -39,7 +39,7 @@ public class BreedDaoImpl implements BreedDao {
 
     @Override
     public List<String> getBreedsByPetType(String petType) {
-        return manager.createNativeQuery("SELECT breed from pet_breed where pet_type % :pt ")
+        return manager.createNativeQuery("SELECT breed from pet_breed where pet_type = :pt ")
                 .setParameter("pt", petType).getResultList();
     }
 

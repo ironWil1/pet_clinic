@@ -18,8 +18,6 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -27,8 +25,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -40,12 +36,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "pet_entities")
-@DiscriminatorColumn(name = "pet_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-public abstract class Pet {
+public class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,7 +55,7 @@ public abstract class Pet {
     @Column(nullable = false)
     private LocalDate birthDay;
 
-    @Column(insertable = false, updatable = false, name = "pet_type")
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PetType petType;
 
@@ -152,22 +146,23 @@ public abstract class Pet {
     )
     private PetContact petContact;
 
-    protected Pet() {
+    public Pet() {
     }
 
-    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, User client) {
+    public Pet(String name, LocalDate birthDay, PetType petType, Gender gender, String breed, User client) {
         this.name = name;
         this.birthDay = birthDay;
+        this.petType = petType;
         this.gender = gender;
         this.breed = breed;
         this.client = client;
     }
 
-    protected Pet(String name, LocalDate birthDay, Gender gender, String breed, User client,
+    public Pet(String name, LocalDate birthDay, PetType petType, Gender gender, String breed, User client,
                   List<ExternalParasiteProcedure> externalParasiteProcedures,
                   List<Deworming> dewormings, List<Reproduction> reproductions,
                   List<ClinicalExamination> clinicalExaminations, List<VaccinationProcedure> vaccinationProcedures) {
-        this(name, birthDay, gender, breed, client);
+        this(name, birthDay, petType, gender, breed, client);
         this.externalParasiteProcedures = externalParasiteProcedures;
         this.dewormings = dewormings;
         this.reproductions = reproductions;
