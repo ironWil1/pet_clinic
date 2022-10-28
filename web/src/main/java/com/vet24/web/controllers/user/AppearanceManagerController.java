@@ -27,7 +27,7 @@ public class AppearanceManagerController {
     }
 
     @GetMapping("/breed")
-    @Operation(summary = "get breed(s)")
+    @Operation(summary = "Получить породу(ы)")
     @ApiResponse(responseCode = "200", description = "Порода(ы) получена")
     public ResponseEntity<List<String>> getBreed(@RequestParam(required = false) PetType petType, @RequestParam(required = false) String breed) {
         List<String> response;
@@ -43,7 +43,7 @@ public class AppearanceManagerController {
     }
 
 
-        @Operation(summary = "add new breed(s)")
+    @Operation(summary = "Добавить породу(ы)")
     @ApiResponse(responseCode = "200", description = "Порода(ы) добавлена в базу данных")
     @PostMapping("/breed")
     public ResponseEntity<Void> addBreeds(@RequestParam PetType petType,
@@ -53,7 +53,7 @@ public class AppearanceManagerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(summary = "delete breed(s)")
+    @Operation(summary = "Удалить породу(ы)")
     @ApiResponse(responseCode = "200", description = "Порода(ы) удалена из базы данных")
     @DeleteMapping("/breed")
     public ResponseEntity<Void> deleteBreeds(@RequestParam PetType petType,

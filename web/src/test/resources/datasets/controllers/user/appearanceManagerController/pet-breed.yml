@@ -1,0 +1,25 @@
+PET_BREED:
+  - ID: 100
+    PET_TYPE: "DOG"
+    BREED: "good"
+  - ID: 101
+    PET_TYPE: "DOG"
+    BREED: "evil"
+  - ID: 102
+    PET_TYPE: "DOG"
+    BREED: "neutral"
+  - ID: 103
+    PET_TYPE: "DOG"
+    BREED: "chaotic"
+  - ID: 104
+    PET_TYPE: "CAT"
+    BREED: "good"
+  - ID: 105
+    PET_TYPE: "CAT"
+    BREED: "evil"
+  - ID: 106
+    PET_TYPE: "CAT"
+    BREED: "neutral"
+  - ID: 107
+    PET_TYPE: "CAT"
+    BREED: "chaotic"
