@@ -21,8 +21,9 @@ public class AppointmentServiceImpl extends ReadWriteServiceImpl<Long, Appointme
         this.appointmentDao = appointmentDao;
     }
 
+
     @Override
-    public boolean isExistByDoctorIdAndLocalDateTime(Long doctorId, LocalDateTime dateTime) {
-        return appointmentDao.isExistByDoctorIdAndLocalDateTime(doctorId, dateTime);
+    public List<LocalDateTime> getLocalDateTimeByDoctorIdAndDate(Long doctorId, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd) {
+        return appointmentDao.getLocalDateTimeByDoctorIdAndDate(doctorId, dateTimeStart, dateTimeEnd);
     }
 }

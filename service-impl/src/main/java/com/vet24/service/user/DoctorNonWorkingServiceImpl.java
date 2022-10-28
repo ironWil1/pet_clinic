@@ -28,4 +28,9 @@ public class DoctorNonWorkingServiceImpl extends ReadWriteServiceImpl<Long, Doct
     public List<DoctorNonWorking> getDoctorNonWorkingAfterDate(LocalDate date) {
         return doctorNonWorkingDao.getDoctorNonWorkingAfterDate(date);
     }
+
+    @Override
+    public List<LocalDate> getDateByDoctorIdAndDate(Long doctorId, LocalDate dateStart, LocalDate dateEnd) {
+        return doctorNonWorkingDao.getDateByDoctorIdAndDate(doctorId, dateStart, dateEnd);
+    }
 }

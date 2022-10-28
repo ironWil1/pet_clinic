@@ -12,4 +12,7 @@ public interface DoctorNonWorkingDao extends ReadWriteDao<Long, DoctorNonWorking
     boolean isExistByDoctorIdAndDate(User doctor, LocalDate date);
 
     List<DoctorNonWorking> getDoctorNonWorkingAfterDate(LocalDate date);
+
+    List<LocalDate> getDateByDoctorIdAndDate(Long doctorId, LocalDate dateStart, LocalDate dateEnd);
+
 }

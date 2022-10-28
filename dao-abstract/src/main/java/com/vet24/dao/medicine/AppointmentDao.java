@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface AppointmentDao extends ReadWriteDao<Long, Appointment> {
 
-    boolean isExistByDoctorIdAndLocalDateTime(Long doctorId, LocalDateTime dateTime);
+    List<LocalDateTime> getLocalDateTimeByDoctorIdAndDate(Long doctorId, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd);
 }

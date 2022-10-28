@@ -12,12 +12,13 @@ import java.util.List;
 public class AppointmentDaoImpl extends ReadWriteDaoImpl<Long, Appointment> implements AppointmentDao {
 
     @Override
-    public boolean isExistByDoctorIdAndLocalDateTime(Long doctorId, LocalDateTime dateTime) {
+    public List<LocalDateTime> getLocalDateTimeByDoctorIdAndDate(Long doctorId, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd) {
         return manager
-                .createQuery("SELECT CASE WHEN (count(id)>0) then true else false end" +
-                        " FROM Appointment WHERE doctor.id = :doctorId AND startDateTime = :start", Boolean.class)
-                .setParameter("doctorId", doctorId)
-                .setParameter("start", dateTime)
-                .getSingleResult();
+                .createQuery("select d.startDateTime from Appointment d WHERE d.doctor.id = :id AND d.startDateTime >= :dateTimeStart AND d.startDateTime <= :dateTimeEnd", LocalDateTime.class)
+                .setParameter("id", doctorId)
+                .setParameter("dateTimeStart", dateTimeStart)
+                .setParameter("dateTimeEnd", dateTimeEnd)
+                .getResultList();
     }
+
 }

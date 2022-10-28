@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface AppointmentService extends ReadWriteService<Long, Appointment> {
 
-   boolean isExistByDoctorIdAndLocalDateTime(Long doctorId, LocalDateTime dateTime);
+   List<LocalDateTime> getLocalDateTimeByDoctorIdAndDate(Long doctorId, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd);
 }
