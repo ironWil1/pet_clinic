@@ -3,6 +3,7 @@ package com.vet24.service.pet.appearance;
 import com.vet24.dao.pet.appearance.BreedDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -41,4 +42,15 @@ public class BreedServiceImpl implements BreedService {
         return breedDao.isPetTypeAndBreedCombinationExist(petType, breed);
     }
 
+    @Transactional
+    @Override
+    public void addBreeds(String petType, List<String> breeds) {
+        breedDao.addBreeds(petType, breeds);
+    }
+
+    @Transactional
+    @Override
+    public void deleteBreeds(String petType, List<String> breeds) {
+        breedDao.deleteBreeds(petType, breeds);
+    }
 }

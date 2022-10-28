@@ -8,4 +8,8 @@ public interface BreedService {
     List<String> getBreedsByPetType(String petType);
     List<String> getAllBreeds();
     Boolean isBreedExists(String petType, String breed);
+
+    void addBreeds(String petType, List<String> breeds);
+
+    void deleteBreeds(String petType, List<String> breeds);
 }
