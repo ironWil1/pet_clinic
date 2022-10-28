@@ -1,6 +1,7 @@
 package com.vet24.dao.user;
 
 import com.vet24.dao.ReadWriteDaoImpl;
+import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.Role;
 import com.vet24.models.user.User;
 import org.springframework.stereotype.Repository;
@@ -57,10 +58,10 @@ public class UserDaoImpl extends ReadWriteDaoImpl<Long, User> implements UserDao
     }
 
     @Override
-    public boolean isExistByIdAndRole(Long id, Role role) {
+    public boolean isExistByIdAndRole(Long id, RoleNameEnum role) {
         return manager
                 .createQuery("SELECT CASE WHEN (count(id)>0) then true else false end" +
-                        " FROM User WHERE id = :id AND role = :role", Boolean.class)
+                        " FROM User WHERE id = :id AND role.name = :role", Boolean.class)
                 .setParameter("id", id)
                 .setParameter("role", role)
                 .getSingleResult();

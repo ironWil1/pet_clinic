@@ -57,7 +57,7 @@ public class ClientAppointmentCalendarController {
         }
 
         if (doctorId != null) {
-            if (!userService.isExistByIdAndRole(doctorId, new Role(RoleNameEnum.DOCTOR))) {
+            if (!userService.isExistByIdAndRole(doctorId, RoleNameEnum.DOCTOR)) {
                 log.info("Доктора с заданным Id не существует");
                 return ResponseEntity.badRequest().build();
             }

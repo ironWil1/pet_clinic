@@ -1,6 +1,7 @@
 package com.vet24.service.user;
 
 import com.vet24.dao.user.UserDao;
+import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.Role;
 import com.vet24.models.user.User;
 import com.vet24.service.ReadWriteServiceImpl;
@@ -108,7 +109,7 @@ public class UserServiceImpl extends ReadWriteServiceImpl<Long, User> implements
     }
 
     @Override
-    public boolean isExistByIdAndRole(Long id, Role role) {
+    public boolean isExistByIdAndRole(Long id, RoleNameEnum role) {
         return userDao.isExistByIdAndRole(id, role);
     }
 }

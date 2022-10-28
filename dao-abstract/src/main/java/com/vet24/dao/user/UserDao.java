@@ -1,6 +1,7 @@
 package com.vet24.dao.user;
 
 import com.vet24.dao.ReadWriteDao;
+import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.user.Role;
 import com.vet24.models.user.User;
 
@@ -16,5 +17,5 @@ public interface UserDao extends ReadWriteDao<Long, User> {
 
     User getUserWithReactionsByEmail(String email);
 
-    boolean isExistByIdAndRole(Long id, Role role);
+    boolean isExistByIdAndRole(Long id, RoleNameEnum role);
 }
