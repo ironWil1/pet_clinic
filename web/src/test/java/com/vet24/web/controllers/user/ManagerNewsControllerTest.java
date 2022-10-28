@@ -1,6 +1,7 @@
 package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.vet24.models.discord.DiscordMessage;
 import com.vet24.models.dto.user.ManagerNewsRequestDto;
 import com.vet24.models.enums.NewsType;
 import com.vet24.models.news.News;
@@ -348,13 +349,17 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
     public void publishNewsSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/publish")
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.valueToTree(Arrays.asList(101, 202)).toString())
+                        .content(objectMapper.writeValueAsString(Arrays.asList(101, 202)))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
         News news1 = entityManager.find(News.class, 101L);
         News news2 = entityManager.find(News.class, 202L);
+        DiscordMessage discordMessage1 = entityManager.find(DiscordMessage.class, 1L);
+        DiscordMessage discordMessage2 = entityManager.find(DiscordMessage.class, 2L);
         assertThat(news1.isPublished()).isTrue();
         assertThat(news2.isPublished()).isTrue();
+        assertThat(discordMessage1.getDiscordMsgId()).isEqualTo(101L);
+        assertThat(discordMessage2.getDiscordMsgId()).isEqualTo(202L);
     }
 
     @Test

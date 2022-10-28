@@ -85,30 +85,37 @@ public class User implements UserDetails {
     )
 
     private List<CommentReaction> commentReactions = new ArrayList<>();
+
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<UserNotification> userNotifications = new ArrayList<>();
+
     @OneToMany(
             mappedBy = "doctor",
             cascade = CascadeType.ALL
     )
     private List<DoctorNonWorking> doctorNonWorkings = new ArrayList<>();
+
     @OneToMany(
             cascade = CascadeType.ALL,
             mappedBy = "doctor")
     private List<DoctorReview> doctorReviews = new ArrayList<>();
+
     @OneToMany(
             mappedBy = "doctor",
             cascade = CascadeType.ALL
     )
     private List<Diagnosis> diagnoses = new ArrayList<>();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "doctor")
     private List<ClinicalExamination> clinicalExaminations = new ArrayList<>();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "doctor")
     private List<Appointment> appointments = new ArrayList<>();
+
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),

@@ -1,5 +1,6 @@
 package com.vet24.models.news;
 
+import com.vet24.models.discord.DiscordMessage;
 import com.vet24.models.enums.NewsType;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.FetchType;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,12 +64,16 @@ public class News implements Serializable {
     @Column(name = "pictures")
     List<String> pictures;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private DiscordMessage discordMessage;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         News news = (News) o;
-        return Objects.nonNull(id) && Objects.equals(id, news.id);
+        return Objects.equals(id, news.id);
     }
 
     @Override
