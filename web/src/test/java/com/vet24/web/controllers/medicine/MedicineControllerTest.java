@@ -131,7 +131,7 @@ public class MedicineControllerTest extends ControllerAbstractIntegrationTest {
                 .andExpect(status().isNotFound());
     }
 
-    // Были заполнены не все поля при изменении существующего Препарата (1 поле)
+// Были заполнены не все поля при изменении существующего Препарата (1 поле)
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/controllers/medicineController/user-entities.yml",
             "/datasets/controllers/medicineController/medicine.yml"})

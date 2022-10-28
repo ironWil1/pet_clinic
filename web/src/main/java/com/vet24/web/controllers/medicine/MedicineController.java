@@ -1,12 +1,19 @@
 package com.vet24.web.controllers.medicine;
 
+import com.vet24.models.dto.medicine.DosageRequestDto;
+import com.vet24.models.dto.medicine.DosageResponseDto;
 import com.vet24.models.dto.medicine.MedicineRequestDto;
 import com.vet24.models.dto.medicine.MedicineResponseDto;
+import com.vet24.models.mappers.medicine.DosageRequestMapper;
+import com.vet24.models.mappers.medicine.DosageResponseMapper;
 import com.vet24.models.mappers.medicine.MedicineRequestMapper;
 import com.vet24.models.mappers.medicine.MedicineResponseMapper;
+import com.vet24.models.medicine.Dosage;
 import com.vet24.models.medicine.Medicine;
+import com.vet24.service.medicine.DosageService;
 import com.vet24.service.medicine.MedicineService;
 
+import com.vet24.web.controllers.annotations.CheckExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,14 +46,19 @@ public class MedicineController {
     private final MedicineService medicineService;
     private final MedicineResponseMapper medicineResponseMapper;
     private final MedicineRequestMapper medicineRequestMapper;
+    private final DosageRequestMapper dosageRequestMapper;
+    private final DosageResponseMapper dosageResponseMapper;
+    private final DosageService dosageService;
 
     @Autowired
-    public MedicineController(MedicineService medicineService, MedicineResponseMapper medicineResponseMapper, MedicineRequestMapper medicineRequestMapper) {
+    public MedicineController(MedicineService medicineService, MedicineResponseMapper medicineResponseMapper, MedicineRequestMapper medicineRequestMapper, DosageRequestMapper dosageRequestMapper, DosageResponseMapper dosageResponseMapper, DosageService dosageService) {
         this.medicineService = medicineService;
         this.medicineResponseMapper = medicineResponseMapper;
         this.medicineRequestMapper = medicineRequestMapper;
+        this.dosageRequestMapper = dosageRequestMapper;
+        this.dosageResponseMapper = dosageResponseMapper;
+        this.dosageService = dosageService;
     }
-
 
     @Operation(summary = "Поиск Препарата по ID")
     @ApiResponses(value = {
@@ -55,7 +67,7 @@ public class MedicineController {
             @ApiResponse(responseCode = "404", description = "Препарат не найден")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<MedicineResponseDto> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<MedicineResponseDto> getById(@PathVariable("id") Long id){
         Medicine medicine = medicineService.getByKey(id);
         if (medicine != null) {
             return new ResponseEntity<>(medicineResponseMapper.toDto(medicine), HttpStatus.OK);
@@ -124,6 +136,51 @@ public class MedicineController {
         List<MedicineResponseDto> medicineDtoList = medicineResponseMapper.toDto(medicineList);
         return new ResponseEntity<>(medicineDtoList, HttpStatus.OK);
     }
+
+    //Работа с дозировкой
+
+    @Operation(summary = "Поиск списка Дозировок")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Дозировки найдены")})
+    @GetMapping("/{medicineId}/dosage")
+    public ResponseEntity<List<DosageResponseDto>> getAllDosages(@CheckExist(entityClass = Medicine.class) @PathVariable Long medicineId) {
+        List<Dosage> dosageList = dosageService.getByMedicineId(medicineId);
+        List<DosageResponseDto> dosageDtoList = dosageResponseMapper.toDto(dosageList);
+        return new ResponseEntity<>(dosageDtoList, HttpStatus.OK);
+    }
+
+
+    @Operation(summary = "Создание новой Дозировки")
+    @ApiResponse(responseCode = "201", description = "Новая Дозировка была добавлена")
+    @ApiResponse(responseCode = "400", description = "Данная Дозировка уже существует")
+    @PostMapping("/{medicineId}/dose")
+    public ResponseEntity<Void> save(@CheckExist(entityClass = Medicine.class) @PathVariable Long medicineId, @RequestBody DosageRequestDto dosageDto) {
+        Medicine medicine = medicineService.getByKey(medicineId);
+        Dosage dosage = dosageRequestMapper.toEntity(dosageDto);
+
+        if(!dosageService.isDosageExists(medicine.getId(), dosageDto.getDosageType().name(), dosageDto.getDosageSize())) {
+            dosageService.persist(dosage);
+            medicine.addDosage(dosage);
+            medicineService.update(medicine);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @Operation(summary = "Удаление Дозировки по ID")
+    @ApiResponse(responseCode = "200", description = "Дозировка удалена")
+    @ApiResponse(responseCode = "404", description = "Дозировка или препарат не найдены")
+    @DeleteMapping(value = "/{medicineId}/dosage/{dosageId}")
+    public ResponseEntity<Void> deleteById(@CheckExist(entityClass = Medicine.class) @PathVariable Long medicineId, @CheckExist(entityClass = Dosage.class) @PathVariable Long dosageId) {
+        Medicine medicine = medicineService.getByKey(medicineId);
+        Dosage dosage = dosageService.getByKey(dosageId);
+
+        medicine.removeDosage(dosage);
+        medicineService.update(medicine);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
 
 

@@ -179,7 +179,6 @@ public class PetClientController {
                 throw new NotFoundException("No such breed and pet type combination is presented");
             }
         }
-
         petMapper.updateEntity(petRequestDto, pet);
         petService.update(pet);
         log.info("We updated pet with this id {}", petId);

@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 @ClinicDBRider
 public abstract class ControllerAbstractIntegrationTest {
 
+
     @MockBean
     protected MailService mailService;
 
@@ -40,6 +41,7 @@ public abstract class ControllerAbstractIntegrationTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
 
     @Nullable
     protected String getAccessToken(String email, String password) throws Exception{

@@ -8,13 +8,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Column;
+import javax.persistence.GenerationType;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -43,11 +48,28 @@ public class Medicine extends ChangeTrackedEntity {
     @Column(nullable = false, name = "description")
     private String description;
 
+    @OneToMany(
+            mappedBy = "medicine",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Dosage> dosages = new ArrayList<>();
+
     public Medicine(String manufactureName, String name, String iconUrl, String description) {
         this.manufactureName = manufactureName;
         this.name = name;
         this.iconUrl = iconUrl;
         this.description = description;
+    }
+
+    public void addDosage(Dosage dosage) {
+        dosages.add(dosage);
+        dosage.setMedicine(this);
+    }
+
+    public void removeDosage(Dosage dosage) {
+        dosages.remove(dosage);
+        dosage.setMedicine(null);
     }
 
     @Override

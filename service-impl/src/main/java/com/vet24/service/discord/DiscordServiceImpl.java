@@ -3,9 +3,9 @@ package com.vet24.service.discord;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vet24.dao.discord.DiscordMessageDao;
 import com.vet24.discord.feign.DiscordClient;
-
 import com.vet24.discord.models.dto.discord.MessageDto;
 import com.vet24.models.discord.DiscordMessage;
+import com.vet24.models.news.News;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -43,14 +43,16 @@ public class DiscordServiceImpl implements DiscordService {
 
     @Transactional
     @Override
-    public void deleteMessage(Long discordMessageId, Long thread_id) {
+    public void deleteMessage(Long discordMessageId) {
         try {
-            discordClient.deleteMessageToId(discordMessageId, thread_id);
+            News updatedNews = discordMessageDao.getByDiscordMessageId(discordMessageId).getNews();
+            DiscordMessage discordMessage = discordMessageDao.getByDiscordMessageId(discordMessageId);
+            discordMessage.setNews(null);
+            updatedNews.setDiscordMessage(null);
+            discordClient.deleteMessageToId(discordMessageId);
+            discordMessageDao.delete(discordMessage);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }
-        if (discordMessageDao.getByDiscordMessageId(discordMessageId) != null) {
-            discordMessageDao.deleteByDiscordMessageId(discordMessageId);
         }
     }
 
