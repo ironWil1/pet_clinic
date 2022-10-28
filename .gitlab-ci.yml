@@ -80,6 +80,7 @@ build:
     - if: $CI_COMMIT_BRANCH == 'master'
       when: always
 
+
 restart:
   stage: restart
   script:
