@@ -35,8 +35,6 @@ draft-job:
     - 'curl --request POST --header "PRIVATE-TOKEN: ${mergeFromDraftToReady}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/merge_requests/{$IID}/pipelines" | jq -r .web_url;'
 
 
-
-
 #sonarqube-check:
 #  stage: sonar-check
 #  variables:
