@@ -48,7 +48,7 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(commentDto).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class AdminCommentControllerTest extends ControllerAbstractIntegrationTes
     public void commentDeletedNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 1_000_000)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
