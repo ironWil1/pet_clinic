@@ -62,6 +62,16 @@ public class Medicine extends ChangeTrackedEntity {
         this.description = description;
     }
 
+    public void addDosage(Dosage dosage) {
+        dosages.add(dosage);
+        dosage.setMedicine(this);
+    }
+
+    public void removeDosage(Dosage dosage) {
+        dosages.remove(dosage);
+        dosage.setMedicine(null);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
