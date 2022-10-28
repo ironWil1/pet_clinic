@@ -132,10 +132,10 @@ public class AppointmentCalendarDtoServiceImpl implements AppointmentCalendarDto
     @Override
     public List<AppointmentCalendarElementDto> doctorScheduleNotFound(LocalDate dateDoctor) {
         List<AppointmentCalendarElementDto> appointmentCalendarElementDto = new ArrayList<>();
-        List<AppointmentDayElementDto> appointmentDayElementDtoList = new ArrayList<>();
 
         for (int i = 0; i < 7; i++) {
             LocalDate localDate = dateDoctor.plusDays(i);
+            List<AppointmentDayElementDto> appointmentDayElementDtoList = new ArrayList<>();
             IntStream.range(0, 16).forEach(j -> appointmentDayElementDtoList.add(new AppointmentDayElementDto(LocalTime.of(7 + j, 0), false)));
             appointmentCalendarElementDto.add(new AppointmentCalendarElementDto(localDate, appointmentDayElementDtoList));
         }
