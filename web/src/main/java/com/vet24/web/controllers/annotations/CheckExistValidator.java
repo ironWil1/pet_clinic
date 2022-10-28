@@ -30,16 +30,14 @@ public class CheckExistValidator {
         return joinPoint.proceed();
     }
 
-    private void verifyEntity
-            (List<Class<?>> entityClassList,List<Long> idArgs) {
+    private void verifyEntity(List<Class<?>> entityClassList, List<Long> idArgs) {
         for (Class<?> clazz : entityClassList) {
             Long id = idArgs.get(entityClassList.indexOf(clazz));
             if (entityManager.find(clazz, id) == null) {
-                throw new BadRequestException (String.format("Сущность %s с указанным id %d не существует!",
+                throw new BadRequestException(String.format("Сущность %s с указанным id %d не существует!",
                         clazz.getSimpleName(), id));
             }
         }
-
     }
 
     private boolean isCanParse(Object arg) {
@@ -50,6 +48,7 @@ public class CheckExistValidator {
         }
         return result != 0;
     }
+
 
     private List<Long> getIdList(ProceedingJoinPoint joinPoint) {
         return Arrays.stream(joinPoint.getArgs())

@@ -7,9 +7,10 @@ import java.lang.annotation.*;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CheckExist {
-   Class<?> entityClass();
 
-   Class<?>[] groups() default {};
+        Class<?> entityClass();
 
-   Class<? extends Payload>[] payload() default {};
+        Class<?>[] groups() default {};
+
+        Class<? extends Payload>[] payload() default {};
 }
