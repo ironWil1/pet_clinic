@@ -33,10 +33,10 @@ public interface DoctorPostMapper extends DtoMapper<User, DoctorDtoPost>, Entity
     }
 
     @Override
-    default List<User> toEntity(List<DoctorDtoPost> dto) {
+    default List<User> toEntity(List<DoctorDtoPost> dtos) {
         List<User> userList = new ArrayList<>();
-        for (DoctorDtoPost dtos : dto) {
-            userList.add(toEntity(dtos));
+        for (DoctorDtoPost dto : dtos) {
+            userList.add(toEntity(dto));
         }
         return userList;
     }
