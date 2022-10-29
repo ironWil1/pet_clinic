@@ -10,6 +10,9 @@ import com.vet24.models.user.User;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @Mapper(componentModel = "spring")
 public interface DoctorPostMapper extends DtoMapper<User, DoctorDtoPost>, EntityMapper<UserDoctorDto, User> {
@@ -27,5 +30,14 @@ public interface DoctorPostMapper extends DtoMapper<User, DoctorDtoPost>, Entity
         user.setRole(new Role(RoleNameEnum.DOCTOR));
 
         return user;
+    }
+
+    @Override
+    default List<User> toEntity(List<DoctorDtoPost> dto) {
+        List<User> userList = new ArrayList<>();
+        for (DoctorDtoPost dtos : dto) {
+            userList.add(toEntity(dtos));
+        }
+        return userList;
     }
 }
