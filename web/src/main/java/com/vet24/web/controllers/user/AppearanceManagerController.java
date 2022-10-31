@@ -68,9 +68,13 @@ public class AppearanceManagerController {
     @Operation(summary = "Получить цвет(а)")
     @ApiResponse(responseCode = "200", description = "Цвет(а) получен(ы)")
     public ResponseEntity<List<String>> getColor(@RequestParam(required = false) String color) {
-        List<String> colorList = color == null || color.isBlank() ? colorService.getAllColors() :
-                colorService.findColor(color.trim().toLowerCase());
-        return new ResponseEntity<>(colorList, HttpStatus.OK);
+        List<String> colorList;
+        if (color == null || color.isBlank()) {
+            colorList = colorService.getAllColors();
+        } else {
+            colorList = colorService.findColor(color.trim().toLowerCase());
+        }
+        return ResponseEntity.ok(colorList);
     }
 
     @Operation(summary = "Добавить цвет(а)")
@@ -80,7 +84,7 @@ public class AppearanceManagerController {
         colorService.add(colors.stream()
                 .map(s -> s.toLowerCase().trim())
                 .collect(Collectors.toList()));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Удалить цвет(а)")
@@ -89,6 +93,6 @@ public class AppearanceManagerController {
     public ResponseEntity<Void> deleteColors(@RequestBody List<String> colors) {
         colorService.delete(colors.stream()
                 .map(s -> s.toLowerCase().trim()).collect(Collectors.toList()));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }
