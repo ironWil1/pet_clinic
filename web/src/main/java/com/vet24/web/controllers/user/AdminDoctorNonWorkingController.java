@@ -7,6 +7,7 @@ import com.vet24.models.user.DoctorNonWorking;
 import com.vet24.models.user.User;
 import com.vet24.service.user.DoctorNonWorkingService;
 import com.vet24.service.user.UserService;
+import com.vet24.web.controllers.annotations.CheckExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,14 +40,17 @@ public class AdminDoctorNonWorkingController {
     private final UserService userService;
 
     @Autowired
-    public AdminDoctorNonWorkingController(DoctorNonWorkingService doctorNonWorkingService, DoctorNonWorkingMapper doctorNonWorkingMapper, UserService userService) {
+    public AdminDoctorNonWorkingController(DoctorNonWorkingService doctorNonWorkingService,
+                                           DoctorNonWorkingMapper doctorNonWorkingMapper, UserService userService) {
         this.doctorNonWorkingService = doctorNonWorkingService;
         this.doctorNonWorkingMapper = doctorNonWorkingMapper;
         this.userService = userService;
     }
 
     @Operation(summary = "create doctorNonWorking")
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Successfully created new DoctorNonWorking"), @ApiResponse(responseCode = "404", description = "Doctor in DoctorNonWorking not found"), @ApiResponse(responseCode = "422", description = "Doctor already has an event on the day")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Successfully created new DoctorNonWorking"),
+            @ApiResponse(responseCode = "404", description = "Doctor in DoctorNonWorking not found"),
+            @ApiResponse(responseCode = "422", description = "Doctor already has an event on the day")})
     @PostMapping("")
     public ResponseEntity<DoctorNonWorkingDto> createDoctorNonWorking(@Valid @RequestBody DoctorNonWorkingDto doctorNonWorkingDto) {
         DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
@@ -70,15 +74,15 @@ public class AdminDoctorNonWorkingController {
     }
 
     @Operation(summary = "edit doctorNonWorking")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "DoctorNonWorking updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DoctorNonWorkingDto.class))), @ApiResponse(responseCode = "404", description = "DoctorNonWorking not found"), @ApiResponse(responseCode = "422", description = "Doctor already has an event on the day")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "DoctorNonWorking updated",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DoctorNonWorkingDto.class))),
+            @ApiResponse(responseCode = "400", description = "DoctorNonWorking not found"),
+            @ApiResponse(responseCode = "422", description = "Doctor already has an event on the day")})
     @PutMapping("{id}")
-    public ResponseEntity<DoctorNonWorkingDto> editDoctorNonWorking(@Valid @RequestBody DoctorNonWorkingDto doctorNonWorkingDto, @PathVariable("id") Long id) {
-        if (doctorNonWorkingService.isExistByKey(id)) {
-            log.info("DoctorNonWorking with id {}", id);
-        } else {
-            log.info("DoctorNonWorking with id {} not found", id);
-            throw new NotFoundException("DoctorNonWorking not found");
-        }
+    public ResponseEntity<DoctorNonWorkingDto> editDoctorNonWorking(@Valid @RequestBody DoctorNonWorkingDto doctorNonWorkingDto,
+                                                                    @CheckExist(entityClass = DoctorNonWorking.class)
+                                                                    @PathVariable("id") Long id) {
+        log.info("DoctorNonWorking with id {}", id);
 
         DoctorNonWorking doctorNonWorking = doctorNonWorkingMapper.toEntity(doctorNonWorkingDto);
         User doc = userService.getByKey(doctorNonWorkingDto.getDoctorId());
@@ -90,7 +94,8 @@ public class AdminDoctorNonWorkingController {
         }
 
         boolean exist = doctorNonWorkingService.isExistByDoctorIdAndDate(doc, date);
-        boolean selfEdited = doctorNonWorkingService.getByKey(id).getDoctor().equals(doc) && doctorNonWorkingService.getByKey(id).getDate().equals(date);
+        boolean selfEdited = doctorNonWorkingService.getByKey(id).getDoctor().equals(doc)
+                && doctorNonWorkingService.getByKey(id).getDate().equals(date);
 
         if (exist && !selfEdited) {
             log.info("This doctor already has an event scheduled for this date");
@@ -103,16 +108,13 @@ public class AdminDoctorNonWorkingController {
     }
 
     @Operation(summary = "delete doctorNonWorking")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "DoctorNonWorking deleted"), @ApiResponse(responseCode = "404", description = "DoctorNonWorking not found")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "DoctorNonWorking deleted"),
+            @ApiResponse(responseCode = "400", description = "DoctorNonWorking not found")})
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteDoctorNonWorking(@PathVariable("id") Long id) {
-        if (doctorNonWorkingService.isExistByKey(id)) {
-            doctorNonWorkingService.delete(doctorNonWorkingService.getByKey(id));
-            log.info("DoctorNonWorking with id {} deleted", id);
-        } else {
-            log.info("DoctorNonWorking with id {} not found", id);
-            throw new NotFoundException("DoctorNonWorking not found");
-        }
+    public ResponseEntity<Void> deleteDoctorNonWorking
+            (@CheckExist(entityClass = DoctorNonWorking.class) @PathVariable("id") Long id) {
+        doctorNonWorkingService.delete(doctorNonWorkingService.getByKey(id));
+        log.info("DoctorNonWorking with id {} deleted", id);
         return ResponseEntity.ok().build();
     }
 }

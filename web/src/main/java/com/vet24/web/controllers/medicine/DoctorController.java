@@ -8,6 +8,7 @@ import com.vet24.models.pet.Pet;
 import com.vet24.service.medicine.DiagnosisService;
 import com.vet24.service.medicine.TreatmentService;
 import com.vet24.service.pet.PetService;
+import com.vet24.web.controllers.annotations.CheckExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.webjars.NotFoundException;
 
 import static com.vet24.models.secutity.SecurityUtil.getOptionalOfNullableSecurityUser;
 
@@ -54,17 +54,13 @@ public class DoctorController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully added new diagnosis",
                     content = @Content(schema = @Schema(implementation = DiagnosisDto.class))),
-            @ApiResponse(responseCode = "404", description = "Pet is not found")
+            @ApiResponse(responseCode = "400", description = "Pet is not found")
     })
 
     @PostMapping("/pet/{petId}/addDiagnosis")
-    public ResponseEntity<DiagnosisDto> addDiagnosis(@PathVariable Long petId,
+    public ResponseEntity<DiagnosisDto> addDiagnosis(@CheckExist (entityClass = Pet.class)@PathVariable Long petId,
                                                      @RequestBody String text) {
         Pet pet = petService.getByKey(petId);
-        if (pet == null) {
-            log.info("No such pet found with Id {}", petId);
-            throw new NotFoundException("No such pet found");
-        }
         return getOptionalOfNullableSecurityUser().
                 map(doctor -> new Diagnosis(doctor, pet, text))
                 .map(diagnosis -> {

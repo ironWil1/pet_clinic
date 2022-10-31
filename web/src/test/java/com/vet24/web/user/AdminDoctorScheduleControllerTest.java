@@ -89,7 +89,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
     public void scheduleDeletedNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 1_000_000)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class AdminDoctorScheduleControllerTest extends ControllerAbstractIntegra
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(updateNotFoundSchedule).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test

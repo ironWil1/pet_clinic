@@ -109,7 +109,7 @@ public class UserTopicControllerTest extends ControllerAbstractIntegrationTest {
     public void getTopicByIdNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{topicId}", 154)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -160,7 +160,7 @@ public class UserTopicControllerTest extends ControllerAbstractIntegrationTest {
                                 LocalDateTime.of(2022, 1, 2, 23, 1, 1),
                                 userInfoDto, commentDtoList)).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertThat(result).isEqualTo(getCount());
 
     }
@@ -188,6 +188,6 @@ public class UserTopicControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoCreateOrDelete).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

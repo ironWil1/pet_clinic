@@ -30,7 +30,7 @@ public class DoctorControllerTest extends ControllerAbstractIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(new DiagnosisDto(4L, 1001L, 33L, "text")))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
         boolean isDiagnosisNotCreated = entityManager.createQuery("SELECT CASE WHEN dd.diagnoses.size = 0 " +
                         "THEN TRUE ELSE FALSE END FROM User dd WHERE dd.email =: email", Boolean.class)
                 .setParameter("email", "doctor33@gmail.com").getSingleResult();

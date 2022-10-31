@@ -6,6 +6,7 @@ import com.vet24.models.mappers.user.ManagerNewsRequestMapper;
 import com.vet24.models.mappers.user.ManagerNewsResponseMapper;
 import com.vet24.models.news.News;
 import com.vet24.service.news.NewsService;
+import com.vet24.web.controllers.annotations.CheckExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -35,7 +35,6 @@ import java.util.Map;
 @Tag(name = "manager news controller", description = "managerNewsController operations")
 public class ManagerNewsController {
 
-    private static final String NEWS_NOT_FOUND = "news not found";
     private final NewsService newsService;
     private final ManagerNewsResponseMapper responseMapper;
     private final ManagerNewsRequestMapper requestMapper;
@@ -65,14 +64,10 @@ public class ManagerNewsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Новость получена",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ManagerNewsResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "Новость с таким ID не найдена")
+            @ApiResponse(responseCode = "400", description = "Новость с таким ID не найдена")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ManagerNewsResponseDto> getNewsById(@PathVariable("id") Long newsId) {
-
-        if (!newsService.isExistByKey(newsId)) {
-            throw new NotFoundException(NEWS_NOT_FOUND);
-        }
+    public ResponseEntity<ManagerNewsResponseDto> getNewsById(@CheckExist (entityClass = News.class) @PathVariable("id") Long newsId) {
         return new ResponseEntity<>(responseMapper.toDto(newsService.getByKey(newsId)), HttpStatus.OK);
     }
 
@@ -94,15 +89,12 @@ public class ManagerNewsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Новость обновлена",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ManagerNewsResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "Новость с таким ID не найдена")
+            @ApiResponse(responseCode = "400", description = "Новость с таким ID не найдена")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ManagerNewsResponseDto> updateNewsById(@PathVariable("id") Long newsId,
+    public ResponseEntity<ManagerNewsResponseDto> updateNewsById(@CheckExist (entityClass = News.class) @PathVariable("id") Long newsId,
                                                                  @Valid @RequestBody ManagerNewsRequestDto newsDto) {
         News news = newsService.getByKey(newsId);
-        if (!newsService.isExistByKey(newsId)) {
-            throw new NotFoundException(NEWS_NOT_FOUND);
-        }
         requestMapper.updateEntity(newsDto, news);
         newsService.update(news);
         return ResponseEntity.ok(responseMapper.toDto(news));
@@ -126,7 +118,7 @@ public class ManagerNewsController {
             @ApiResponse(responseCode = "404", description = "Новости не найдены")
     })
     @PutMapping("/publish")
-    public ResponseEntity<Map<Long, String>> publishNews(@RequestBody List<Long> newsId) {
+    public ResponseEntity<Map<Long, String>> publishNews (@RequestBody List<Long> newsId) {
         return ResponseEntity.ok(newsService.publishNews(newsId));
     }
 
@@ -144,15 +136,12 @@ public class ManagerNewsController {
     @Operation(summary = "Удаление Новостей по ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Новость удалена"),
-            @ApiResponse(responseCode = "404", description = "Новость не найдена")
+            @ApiResponse(responseCode = "400", description = "Новость не найдена")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNewsById(@PathVariable("id") Long newsId) {
+    public ResponseEntity<Void> deleteNewsById(@CheckExist (entityClass = News.class) @PathVariable("id") Long newsId) {
 
         News news = newsService.getByKey(newsId);
-        if (!newsService.isExistByKey(newsId)) {
-            throw new NotFoundException(NEWS_NOT_FOUND);
-        }
 
         newsService.delete(news);
         return ResponseEntity.ok().build();
