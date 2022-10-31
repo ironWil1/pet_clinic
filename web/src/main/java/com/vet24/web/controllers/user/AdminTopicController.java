@@ -8,6 +8,7 @@ import com.vet24.models.mappers.user.TopicMapper;
 import com.vet24.models.user.Topic;
 import com.vet24.models.util.View;
 import com.vet24.service.user.TopicService;
+import com.vet24.web.controllers.annotations.CheckExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.webjars.NotFoundException;
 
 import java.util.List;
 
@@ -46,61 +46,56 @@ public class AdminTopicController {
     @Operation(summary = "Deleting a topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic removed"),
-            @ApiResponse(responseCode = "404", description = "topic not found")
+            @ApiResponse(responseCode = "400", description = "topic not found")
     })
     @DeleteMapping("{topicId}")
-    public ResponseEntity<Void> deleteTopic(@PathVariable("topicId") Long id) {
+    public ResponseEntity<Void> deleteTopic(@CheckExist (entityClass = Topic.class)@PathVariable("topicId") Long id) {
         Topic topic = topicService.getByKey(id);
-        if (topic != null) topicService.delete(topic);
-        else throw new NotFoundException("topic not found");
+        topicService.delete(topic);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Closing an open topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "the topic is close"),
-            @ApiResponse(responseCode = "404", description = "topic not found")
+            @ApiResponse(responseCode = "400", description = "topic not found or is closed")
     })
     @PutMapping("{topicId}/close")
-    public ResponseEntity<Void> closeTopic(@PathVariable("topicId") Long id) {
+    public ResponseEntity<Void> closeTopic(@CheckExist(entityClass = Topic.class)@PathVariable("topicId") Long id) {
         Topic topic = topicService.getByKey(id);
-        if (topic != null) {
             if (!topic.isClosed()) {
                 topic.setClosed(true);
                 topicService.update(topic);
                 return ResponseEntity.ok().build();
             } else throw new BadRequestException("Топик является закрытым");
-        } else throw new NotFoundException("Топик не найден");
-    }
+        }
 
     @Operation(summary = "Opening a closed topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "the topic is open"),
-            @ApiResponse(responseCode = "404", description = "topic not found")
+            @ApiResponse(responseCode = "400", description = "topic not found or is opened")
     })
     @PutMapping("{topicId}/open")
-    public ResponseEntity<Void> openTopic(@PathVariable("topicId") Long id) {
+    public ResponseEntity<Void> openTopic(@CheckExist(entityClass = Topic.class) @PathVariable("topicId") Long id) {
         Topic topic = topicService.getByKey(id);
-        if (topic != null) {
             if (topic.isClosed()) {
                 topic.setClosed(false);
                 topicService.update(topic);
                 return ResponseEntity.ok().build();
             } else throw new BadRequestException("Топик является открытым");
-        } else throw new NotFoundException("Топик не найден");
-    }
+        }
 
     @Operation(summary = "update info from topic")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "topic is update",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = TopicDto.class))),
-            @ApiResponse(responseCode = "404", description = "topic not found")
+            @ApiResponse(responseCode = "400", description = "topic not found")
     })
     @PutMapping("/{topicId}")
-    public ResponseEntity<TopicDto> updateTopic(@PathVariable("topicId") Long topicId, @JsonView(View.Put.class)
+    public ResponseEntity<TopicDto> updateTopic
+            (@CheckExist(entityClass = Topic.class) @PathVariable("topicId") Long topicId, @JsonView(View.Put.class)
     @Validated(OnUpdate.class) @RequestBody(required = false) TopicDto topicDto) {
-        if (!topicService.isExistByKey(topicId)) throw new NotFoundException("topic not found");
         Topic topic = topicService.getByKey(topicId);
         topic.setTitle(topicDto.getTitle());
         topic.setContent(topicDto.getContent());
@@ -123,13 +118,10 @@ public class AdminTopicController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful getting topic",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = TopicDto.class))),
-            @ApiResponse(responseCode = "404", description = "Topic not found")
+            @ApiResponse(responseCode = "400", description = "Topic not found")
     })
     @GetMapping("/{topicId}")
-    public ResponseEntity<TopicDto> getTopicById(@PathVariable("topicId") Long topicId) {
-        if (!topicService.isExistByKey(topicId)) {
-            throw new NotFoundException("topic not found");
-        }
+    public ResponseEntity<TopicDto> getTopicById (@CheckExist(entityClass = Topic.class) @PathVariable("topicId") Long topicId) {
         return new ResponseEntity<>(topicMapper.toDto(topicService.getByKey(topicId)), HttpStatus.OK);
     }
 }

@@ -116,10 +116,10 @@ public class UserCommentControllerTest extends ControllerAbstractIntegrationTest
         assertNull(entityManager.find(Comment.class, 245L));
         mockMvc.perform(MockMvcRequestBuilders.delete(URI, 245)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
         assertNull(entityManager.find(Comment.class, 350L));
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/{positive}", 350, false)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

@@ -119,7 +119,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(topicDtoClosed))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
         assertThat(result).isEqualTo(getCount());
     }
 
@@ -151,7 +151,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(topicDtoClosed))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
         assertThat(result).isEqualTo(getCount());
     }
 
@@ -183,7 +183,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(topicDtoOpen).toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
         assertThat(result).isEqualTo(getCount());
     }
 
@@ -226,7 +226,7 @@ public class AdminTopicControllerTest extends ControllerAbstractIntegrationTest 
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(topicDtoNotFound))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
         boolean isEntityNotUpdate = entityManager.createQuery("SELECT CASE WHEN COUNT(t) = 0 THEN TRUE ELSE FALSE END " +
                         "FROM Topic t WHERE t.title =: title AND t.content =: content", Boolean.class)
                 .setParameter("title", topicDtoNotFound.getTitle())
