@@ -61,9 +61,9 @@ build:
       - web/target/*.jar
     expire_in: 1 day
   cache:
-    key: maven-cache
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
-      - $CI_PROJECT_DIR/.m2/
+      - m2/repository
   tags:
     - docker_runner
   rules:
