@@ -34,7 +34,6 @@ draft-job:
     - 'if [[ $CURRENT = Draft:* ]];  then echo "Fail. Current is in draft."; exit 0; else echo "Pass. Current title is not in draft."; fi'
     - 'curl --request POST --header "PRIVATE-TOKEN: ${mergeFromDraftToReady}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/merge_requests/{$IID}/pipelines" | jq -r .web_url;'
 
-
 #sonarqube-check:
 #  stage: sonar-check
 #  variables:
