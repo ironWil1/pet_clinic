@@ -13,7 +13,7 @@ public class EmailReminder implements Reminder<EmailRemind> {
     @Autowired
     private MailService mailService;
 
-    @Value("${spring.xxminder.subject}")
+    @Value("${spring.reminder.subject}")
     private String subject;
 
     @Override
