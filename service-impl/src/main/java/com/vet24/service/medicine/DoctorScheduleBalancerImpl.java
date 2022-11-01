@@ -112,7 +112,7 @@ public class DoctorScheduleBalancerImpl implements DoctorScheduleBalancer {
                 .forEach(doc -> addDoctorNonWorkingToMap(doc.getDoctor().getId(), doc.getDate()));
 
         //Получение всех смен докторов за месяц
-        //Заполняем doctorScheduleMap -  Map <ID доктора, Set <Map<дата понедельник, смена>>
+        //Заполняем doctorScheduleMap -  Map <ID доктора, Set <Map<дата понедельника, смена>>
         doctorScheduleService.getDoctorScheduleAfterDate(localDate.minusWeeks(4))
                 .stream()
                 .forEach(docsched -> addDoctorScheduleToMap(docsched.getDoctor().getId(), docsched.getWorkShift().toString(), docsched.getStartWeek()));
@@ -168,7 +168,11 @@ public class DoctorScheduleBalancerImpl implements DoctorScheduleBalancer {
             countWorkWeekSecondShift++;
         }
     }
-    private void addDoctorsListNonWorkingMinusOneWeek(List<User> doctorsListNonWorkingMinusOneWeek) {
+    /**
+     * Если у доктора не было смен на прошлой неделе, добавляем его в балансировку
+     */
+
+    private void addDoctorsListNonWorkingMinusOneWeekToBalance(List<User> doctorsListNonWorkingMinusOneWeek) {
         if (!doctorsListNonWorkingMinusOneWeek.isEmpty()) {
             for (int i = 0; i < doctorsListNonWorkingMinusOneWeek.size(); i++) {
                 if (doctorScheduleExistsByIdAndLocalDate(doctorsListNonWorkingMinusOneWeek.get(i).getId(), localDate)) {
@@ -244,7 +248,8 @@ public class DoctorScheduleBalancerImpl implements DoctorScheduleBalancer {
             }
             //Добавляем докторов, которые на прошлой недели не работали, за их счет балансируем примерно
             //равное их количество на текущей неделе
-            addDoctorsListNonWorkingMinusOneWeek(doctorsListNonWorkingMinusOneWeek);
+            addDoctorsListNonWorkingMinusOneWeekToBalance(doctorsListNonWorkingMinusOneWeek);
+            doctorsListNonWorkingMinusOneWeek.clear();
         }
 
         doctorScheduleService.persistAll(doctorScheduleList);
