@@ -3,6 +3,7 @@ package com.vet24.service.pet.appearance;
 import com.vet24.dao.pet.appearance.ColorDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,5 +30,17 @@ public class ColorServiceImpl implements ColorService {
     @Override
     public Boolean isColorExists(String color) {
         return colorDao.isColorExists(color);
+    }
+
+    @Transactional
+    @Override
+    public void add(List<String> colors) {
+        colorDao.add(colors);
+    }
+
+    @Transactional
+    @Override
+    public void delete(List<String> colors) {
+        colorDao.delete(colors);
     }
 }
