@@ -47,12 +47,18 @@ draft-job:
 #  allow_failure: false
 #  rules:
 #    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+cache:
+  paths:
+    - .m2/repository
+
+variables:
+  MAVEN_OPTS: -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
 
 build:
   image: maven:3.8-jdk-11-slim
   stage: build
   variables:
-    MAVEN_OPTS: -Dmaven.test.skip=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2
+    MAVEN_OPTS: -Dmaven.test.skip=true
   script:
     - mvn -q clean package
   artifacts:
@@ -60,10 +66,6 @@ build:
     paths:
       - web/target/*.jar
     expire_in: 1 day
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - m2/repository
   tags:
     - docker_runner
   rules:
