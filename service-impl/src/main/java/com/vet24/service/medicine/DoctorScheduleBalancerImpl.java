@@ -1,15 +1,13 @@
-package com.vet24.web.util;
+package com.vet24.service.medicine;
 
 import com.vet24.models.enums.WorkShift;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.user.User;
-import com.vet24.service.medicine.DoctorScheduleService;
 import com.vet24.service.user.DoctorNonWorkingService;
 import com.vet24.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
@@ -23,9 +21,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 @Slf4j
-public class DoctorScheduleBalanceUtil {
+public class DoctorScheduleBalancerImpl implements DoctorScheduleBalancer {
     private final DoctorScheduleService doctorScheduleService;
     private final DoctorNonWorkingService doctorNonWorkingService;
     private final UserService userService;
@@ -39,9 +37,9 @@ public class DoctorScheduleBalanceUtil {
     private int countWorkWeekSecondShift;
 
     @Autowired
-    public DoctorScheduleBalanceUtil(DoctorScheduleService doctorScheduleService,
-                                     DoctorNonWorkingService doctorNonWorkingService,
-                                     UserService userService) {
+    public DoctorScheduleBalancerImpl(DoctorScheduleService doctorScheduleService,
+                                      DoctorNonWorkingService doctorNonWorkingService,
+                                      UserService userService) {
         this.doctorScheduleService = doctorScheduleService;
         this.doctorNonWorkingService = doctorNonWorkingService;
         this.userService = userService;
@@ -71,7 +69,7 @@ public class DoctorScheduleBalanceUtil {
     }
 
     /**
-     * Получаем смену у доктора(doctroId) по переданной дате
+     * Получаем смену у доктора(doctorId) по переданной дате
      */
     private String getShiftByLocalDate(Long doctorId, LocalDate date) {
         if (doctorScheduleMap.containsKey(doctorId)) {
@@ -92,7 +90,7 @@ public class DoctorScheduleBalanceUtil {
      */
     private LocalDate setFirstDayOfWeek(LocalDate tmpDate) {
         if (tmpDate.getDayOfWeek().getValue() != 1) {
-            return tmpDate = tmpDate.plusDays((8 - tmpDate.getDayOfWeek().getValue()));
+            return tmpDate.plusDays((8 - tmpDate.getDayOfWeek().getValue()));
         } else {
             return tmpDate;
         }
@@ -108,26 +106,30 @@ public class DoctorScheduleBalanceUtil {
         localDate = setFirstDayOfWeek(localDate);
         currentData = LocalDate.of(localDate.getYear(), localDate.getMonth(), localDate.getDayOfMonth());
 
-        //Получаем всех неработающих докторов начиная от текущей даты вперед, переводим в Map(Id доктора, List с датами)
+        //Получаем всех неработающих докторов начиная от текущей даты вперед, переводим в Map
         doctorNonWorkingService.getDoctorNonWorkingAfterDate(localDate)
                 .stream()
-                .forEach(doc -> {
-                    if (!doctorNonWorkingMap.containsKey(doc.getDoctor().getId())) {
-                        List<Integer> tmpList = new ArrayList<>();
-                        tmpList.add(doc.getDate().get(WeekFields.of(Locale.getDefault()).weekOfYear()));
-                        doctorNonWorkingMap.put(doc.getDoctor().getId(), tmpList);
-                    } else {
-                        List<Integer> tmpList = doctorNonWorkingMap.get(doc.getDoctor().getId());
-                        tmpList.add(doc.getDate().get(WeekFields.of(Locale.getDefault()).weekOfYear()));
-                        doctorNonWorkingMap.put(doc.getDoctor().getId(), tmpList);
-                    }
-                });
+                .forEach(doc -> addDoctorNonWorkingToMap(doc.getDoctor().getId(), doc.getDate()));
 
-        //Получение все смен докторов за месяц
-        //Заполняем doctorScheduleMap -  Map <ID доктора, List<Map<дата понедельник, смена>>
+        //Получение всех смен докторов за месяц
+        //Заполняем doctorScheduleMap -  Map <ID доктора, Set <Map<дата понедельник, смена>>
         doctorScheduleService.getDoctorScheduleAfterDate(localDate.minusWeeks(4))
                 .stream()
-                .forEach(doc -> addDoctorScheduleToMap(doc.getDoctor().getId(), doc.getWorkShift().toString(), doc.getStartWeek()));
+                .forEach(docsched -> addDoctorScheduleToMap(docsched.getDoctor().getId(), docsched.getWorkShift().toString(), docsched.getStartWeek()));
+    }
+
+    /**
+     * Добавляем неработающих докторов в Map(Id доктора, List с датами)
+     */
+    private void addDoctorNonWorkingToMap(Long doctorId, LocalDate localDate) {
+        List<Integer> tmpList;
+        if (!doctorNonWorkingMap.containsKey(doctorId)) {
+            tmpList = new ArrayList<>();
+        } else {
+            tmpList = doctorNonWorkingMap.get(doctorId);
+        }
+        tmpList.add(localDate.get(WeekFields.of(Locale.getDefault()).weekOfYear()));
+        doctorNonWorkingMap.put(doctorId, tmpList);
     }
 
     /**
@@ -166,19 +168,41 @@ public class DoctorScheduleBalanceUtil {
             countWorkWeekSecondShift++;
         }
     }
+    private void addDoctorsListNonWorkingMinusOneWeek(List<User> doctorsListNonWorkingMinusOneWeek) {
+        if (!doctorsListNonWorkingMinusOneWeek.isEmpty()) {
+            for (int i = 0; i < doctorsListNonWorkingMinusOneWeek.size(); i++) {
+                if (doctorScheduleExistsByIdAndLocalDate(doctorsListNonWorkingMinusOneWeek.get(i).getId(), localDate)) {
+                    continue;
+                }
+                addNewAndNonWorkingDoctor(doctorsListNonWorkingMinusOneWeek.get(i), localDate);
+            }
+        }
+    }
+
+    private List<User> getDoctorsCurrentWeekList(List<User> doctorsList) {
+        List<User> doctorsCurrentWeekList = doctorsList.stream()
+                .filter(doc -> !doctorNonWorkingByIdAndWeek(doc.getId(), localDate))
+                .collect(Collectors.toList());
+        //Перемешиваем коллекцию, для случайного распределения смен, в принципе нужно только при начальной инициализации БД
+        Collections.shuffle(doctorsCurrentWeekList);
+        return doctorsCurrentWeekList;
+    }
 
     /**
      * Основной метод для балансировки смен
      */
-    @Scheduled(cron = "0 0 3 * * *")
-    public void balancer() {
+
+    @Override
+    public void balance() {
         //Получение всех докторов
         List<User> doctorsList = userService.getAll();
+
         //Выходной лист DoctorSchedule для записи в БД
         doctorScheduleList = new ArrayList<>();
 
         //Стартовое заполнение карт из БД
         initialize();
+
         //Лист для докторов, вышедших с выходных, для балансировки
         List<User> doctorsListNonWorkingMinusOneWeek = new ArrayList<>(0);
 
@@ -192,11 +216,7 @@ public class DoctorScheduleBalanceUtil {
             countWorkWeekSecondShift = 0;
 
             //Загружаем докторов работающих на текущей неделе, за минусом неработающих
-            List<User> doctorsCurrentWeekList = doctorsList.stream()
-                    .filter(doc -> !doctorNonWorkingByIdAndWeek(doc.getId(), localDate))
-                    .collect(Collectors.toList());
-            //Перемешиваем коллекцию, для случайного распределения смен, в принципе нужно только при начальной инициализации БД
-            Collections.shuffle(doctorsCurrentWeekList);
+            List<User> doctorsCurrentWeekList = getDoctorsCurrentWeekList(doctorsList);
 
             for (int i = 0; i < doctorsCurrentWeekList.size(); i++) {
                 //Если у доктора есть уже смена на текущей неделе добавляем счетчик смен, пропускаем цикл
@@ -222,33 +242,16 @@ public class DoctorScheduleBalanceUtil {
                     doctorsListNonWorkingMinusOneWeek.add(doctorsCurrentWeekList.get(i));
                 }
             }
-
             //Добавляем докторов, которые на прошлой недели не работали, за их счет балансируем примерно
             //равное их количество на текущей неделе
-            if (!doctorsListNonWorkingMinusOneWeek.isEmpty()) {
-                for (int i = 0; i < doctorsListNonWorkingMinusOneWeek.size(); i++) {
-                    if (doctorScheduleExistsByIdAndLocalDate(doctorsListNonWorkingMinusOneWeek.get(i).getId(), localDate)) {
-                        continue;
-                    }
-
-                    addNewAndNonWorkingDoctor(doctorsListNonWorkingMinusOneWeek.get(i), localDate);
-                }
-            }
-            doctorsListNonWorkingMinusOneWeek.clear();
+            addDoctorsListNonWorkingMinusOneWeek(doctorsListNonWorkingMinusOneWeek);
         }
 
-        //очищаем все листы и мапы, чтоб не занимать память, неизвестно когда придет GC
-        doctorsList.clear();
-        doctorsListNonWorkingMinusOneWeek.clear();
-        doctorScheduleMap.clear();
-        doctorNonWorkingMap.clear();
-
         doctorScheduleService.persistAll(doctorScheduleList);
-
-        doctorScheduleList.clear();
 
         //TODO Сделал временную заглушку, нужно тестить, если без нее вызвать вручную контроллер, заполняет следующие четыре недели
         localDate = currentData;
     }
+
 
 }

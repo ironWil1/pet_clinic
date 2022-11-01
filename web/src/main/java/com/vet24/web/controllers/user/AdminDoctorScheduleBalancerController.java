@@ -1,6 +1,6 @@
 package com.vet24.web.controllers.user;
 
-import com.vet24.web.util.DoctorScheduleBalanceUtil;
+import com.vet24.service.medicine.DoctorScheduleBalancerImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,19 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AdminDoctorScheduleBalancerController {
 
-    private final DoctorScheduleBalanceUtil doctorScheduleBalanceUtil;
+    private final DoctorScheduleBalancerImpl doctorScheduleBalancer;
 
     @Autowired
-    public AdminDoctorScheduleBalancerController(DoctorScheduleBalanceUtil doctorScheduleBalanceUtil) {
-        this.doctorScheduleBalanceUtil = doctorScheduleBalanceUtil;
+    public AdminDoctorScheduleBalancerController(DoctorScheduleBalancerImpl doctorScheduleBalancer) {
+        this.doctorScheduleBalancer = doctorScheduleBalancer;
     }
 
-    @Operation(summary = "Balancer doctor schedule")
-    @ApiResponse(responseCode = "200", description = "The load balancer has successfully worked")
+    @Operation(summary = "Balance doctor schedule")
+    @ApiResponse(responseCode = "200", description = "The load balance has successfully worked")
 
     @GetMapping("/schedule")
     public ResponseEntity<Void> balanceDoctorSchedule() {
-        doctorScheduleBalanceUtil.balancer();
+        doctorScheduleBalancer.balance();
 
         return ResponseEntity.ok().build();
     }
