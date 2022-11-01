@@ -46,7 +46,8 @@ public class ClientController {
 
     private final ProfileService profileService;
 
-    public ClientController(UserService userService, UserMapper userMapper, UploadService uploadService, ResourceService resourceService, ProfileService profileService) {
+    public ClientController(UserService userService, UserMapper userMapper, UploadService uploadService,
+                            ResourceService resourceService, ProfileService profileService) {
         this.userService = userService;
 
         this.userMapper = userMapper;
@@ -57,7 +58,11 @@ public class ClientController {
 
     @GetMapping("")
     @Operation(summary = "get current Client with his pets")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully retrieved the Client", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserDto.class))), @ApiResponse(responseCode = "403", description = "Forbidden access", content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE)), @ApiResponse(responseCode = "404", description = "Client not found exception", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)), @ApiResponse(responseCode = "406", description = "Client not acceptable type", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully retrieved the Client",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden access", content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Client not found exception", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "406", description = "Client not acceptable type", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))})
     public ResponseEntity<UserDto> getCurrentClient() {
         return getOptionalOfNullableSecurityUser()
                 .map(User::getUsername)
@@ -74,7 +79,8 @@ public class ClientController {
 
 
     @Operation(summary = "get avatar of a Client")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully retrieved the avatar"), @ApiResponse(responseCode = "404", description = "Client or avatar is not found")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully retrieved the avatar"),
+            @ApiResponse(responseCode = "404", description = "Client or avatar is not found")})
 
     @CheckForNull
     @GetMapping("/avatar")
@@ -90,7 +96,9 @@ public class ClientController {
     }
 
     @Operation(summary = "upload avatar for a Client")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully uploaded the avatar", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UploadedFileDto.class))), @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully uploaded the avatar",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UploadedFileDto.class))),
+            @ApiResponse(responseCode = "404", description = "Client is not found", content = @Content)})
     @PostMapping(value = "/avatar", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UploadedFileDto> persistClientAvatar(@RequestParam("file") MultipartFile file) throws IOException {
 

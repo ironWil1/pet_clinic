@@ -124,7 +124,7 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
     public void getNonExistingNewsError() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/" + 1000)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -236,7 +236,7 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.valueToTree(managerNewsSuccess).toString())
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
     // Были заполнены не все поля при изменении Новости (1 поле)
@@ -322,7 +322,7 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
     public void deleteNonExistingNewsError() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{id}", 1000)
                         .header("Authorization", "Bearer " + token))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
