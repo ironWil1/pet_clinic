@@ -52,7 +52,7 @@ build:
   image: maven:3.8-jdk-11-slim
   stage: build
   variables:
-    MAVEN_OPTS: -Dmaven.test.skip=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+    MAVEN_OPTS: -Dmaven.test.skip=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2
   script:
     - mvn -q clean package
   artifacts:
