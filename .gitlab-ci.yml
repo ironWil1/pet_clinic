@@ -48,6 +48,8 @@ draft-job:
 #  rules:
 #    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 cache:
+  key: "$CI_BUILD_REF"
+  untracked: true
   paths:
     - .m2/repository
 
