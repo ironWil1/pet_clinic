@@ -9,6 +9,7 @@ import com.vet24.models.mappers.user.UserMapper;
 import com.vet24.models.user.User;
 import com.vet24.models.util.View;
 import com.vet24.service.user.UserService;
+import com.vet24.web.controllers.annotations.CheckExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -48,15 +48,10 @@ public class AdminDoctorController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<UserDto> getDoctorById(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getDoctorById(@CheckExist (entityClass = User.class) @PathVariable Long id) {
         User doctor = userService.getByKey(id);
-        if (doctor != null) {
             UserDto doctorDto = userMapper.toDto(doctor);
             return ResponseEntity.ok(doctorDto);
-        } else {
-            log.info("The current doctor is not found");
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @GetMapping("")
@@ -85,11 +80,11 @@ public class AdminDoctorController {
             @ApiResponse(responseCode = "200", description = "Doctor is update",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = DoctorDtoPost.class))),
-            @ApiResponse(responseCode = "404", description = "Doctor not found"),
+            @ApiResponse(responseCode = "400", description = "Doctor not found"),
     })
     @PutMapping("{id}")
     public ResponseEntity<UserDto> doctorDtoPut(@JsonView(View.Put.class) @Valid @RequestBody DoctorDtoPost doctorDtoPost,
-                                                @PathVariable("id") long id) {
+                                                @CheckExist(entityClass = User.class) @PathVariable("id") long id) {
         User doctor = userService.getByKey(id);
 
         doctor.setPassword(doctorDtoPost.getPassword());
@@ -103,19 +98,13 @@ public class AdminDoctorController {
             @ApiResponse(responseCode = "200", description = "Doctor removed",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = DoctorDtoPost.class))),
-            @ApiResponse(responseCode = "404", description = "Doctor not found"),
+            @ApiResponse(responseCode = "400", description = "Doctor not found"),
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteDto(@PathVariable("id") long id) {
+    public ResponseEntity<Void> deleteDto(@CheckExist(entityClass = User.class) @PathVariable("id") long id) {
         User doctor = userService.getByKey(id);
-        if (doctor != null) {
             userService.delete(doctor);
             return ResponseEntity.ok().build();
-        } else {
-            log.info("The current doctor is not found");
-            throw new NotFoundException("Doctor not found");
-        }
     }
-
 
 }

@@ -33,4 +33,22 @@ public class ColorDaoImpl implements ColorDao {
         return (Boolean) manager.createNativeQuery("SELECT EXISTS(SELECT color FROM pet_color WHERE " +
                 "color = :color)").setParameter("color", color).getSingleResult();
     }
+
+    @Override
+    public void add(List<String> colors) {
+        final String sql = "INSERT INTO pet_color (color) VALUES (:color) ON CONFLICT DO NOTHING;";
+        for (String color : colors) {
+            manager.createNativeQuery(sql)
+                    .setParameter("color", color)
+                    .executeUpdate();
+        }
+    }
+
+    @Override
+    public void delete(List<String> colors) {
+        final String sql = "DELETE FROM pet_color WHERE color IN (:colors);";
+        manager.createNativeQuery(sql)
+                .setParameter("colors", colors)
+                .executeUpdate();
+    }
 }

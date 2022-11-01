@@ -600,3 +600,47 @@ enum RemindType {
 1. Создать ```EmailRemind extends Remind<String>```;
 1. в EmailReminder метод send должен принимать EmailRemind и отправлять электронное сообщение используя метод sendMultipartHtmlMessage в MailService
 
+
+
+
+
+
+# Админка
+## AdminUserController
+
+1. создать CRUD контроллер для создания пользователей 
+1. при создании пользователя для него должен создавать и профиль
+1. При изменении пользователя менять только не записи, которые не null. 
+1. CLIENT должен создаваться как UNVERIFIED_CLIENT, со всей сопуствтующей логикой (как при регистрации) - создание токена, отправка письма со ссылкой подтверждения почты. Админы доктора и клиенты создаются без этого. 
+1. AdminDoctorController удалить + удалить все мапперы и дто, которые в нем использовались (если они больше нигде не используются)
+
+
+```
+GET /api/amind/user -> UserResponseDto
+GET /api/amind/user/{id} -> List<UserResponseDto>
+POST UserRequestDto -> /api/amind/user -> UserResponseDto
+PUT UserRequestDto -> /api/amind/user/{id} -> UserResponseDto
+DELETE /api/amind/user/{id} -> Void
+```
+
+```
+class UserRequestDto {
+   String email ; //notNull
+   RoleNameEnum role //notNull
+   password // notNull
+   String firstName; //nullable
+   String lastName; //nullable
+   LocalDate birthDate; //nullable
+   String discordId; //nullable
+   String telegramId; // nullable
+   String avatarUrl; // nullable
+}
+
+class UserResponseDto {
+  Long id
+  String email 
+  RoleNameEnum role
+  String password 
+  ProfileDto profile;
+}
+```

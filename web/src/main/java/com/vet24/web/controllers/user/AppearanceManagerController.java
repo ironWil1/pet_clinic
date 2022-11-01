@@ -2,6 +2,7 @@ package com.vet24.web.controllers.user;
 
 import com.vet24.models.enums.PetType;
 import com.vet24.service.pet.appearance.BreedService;
+import com.vet24.service.pet.appearance.ColorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,9 +21,11 @@ import java.util.stream.Collectors;
 public class AppearanceManagerController {
 
     private final BreedService breedService;
+    private final ColorService colorService;
 
-    public AppearanceManagerController(BreedService breedService) {
+    public AppearanceManagerController(BreedService breedService, ColorService colorService) {
         this.breedService = breedService;
+        this.colorService = colorService;
     }
 
     @GetMapping("/breed")
@@ -41,7 +43,6 @@ public class AppearanceManagerController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
     @Operation(summary = "Добавить породу(ы)")
     @ApiResponse(responseCode = "200", description = "Порода(ы) добавлена в базу данных")
@@ -63,4 +64,35 @@ public class AppearanceManagerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/color")
+    @Operation(summary = "Получить цвет(а)")
+    @ApiResponse(responseCode = "200", description = "Цвет(а) получен(ы)")
+    public ResponseEntity<List<String>> getColor(@RequestParam(required = false) String color) {
+        List<String> colorList;
+        if (color == null || color.isBlank()) {
+            colorList = colorService.getAllColors();
+        } else {
+            colorList = colorService.findColor(color.trim().toLowerCase());
+        }
+        return ResponseEntity.ok(colorList);
+    }
+
+    @Operation(summary = "Добавить цвет(а)")
+    @ApiResponse(responseCode = "200", description = "Цвет(а) добавлен(ы) в базу данных")
+    @PostMapping("/color")
+    public ResponseEntity<Void> addColors(@RequestBody List<String> colors) {
+        colorService.add(colors.stream()
+                .map(s -> s.toLowerCase().trim())
+                .collect(Collectors.toList()));
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Удалить цвет(а)")
+    @ApiResponse(responseCode = "200", description = "Цвет(а) удален(ы) из базы данных")
+    @DeleteMapping("/color")
+    public ResponseEntity<Void> deleteColors(@RequestBody List<String> colors) {
+        colorService.delete(colors.stream()
+                .map(s -> s.toLowerCase().trim()).collect(Collectors.toList()));
+        return ResponseEntity.ok().build();
+    }
 }

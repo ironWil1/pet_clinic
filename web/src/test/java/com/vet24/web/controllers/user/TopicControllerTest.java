@@ -65,7 +65,7 @@ public class TopicControllerTest extends ControllerAbstractIntegrationTest {
                                 "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("Any comment string"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
