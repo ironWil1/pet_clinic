@@ -54,7 +54,7 @@ build:
   image: maven:3.8-jdk-11-slim
   stage: build
   variables:
-    MAVEN_OPTS: -Dmaven.test.skip=true -Dmaven.repo.local=.m2/repository
+    MAVEN_OPTS: -Dmaven.test.skip=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
   script:
     - mvn -q clean package
   artifacts:
@@ -63,8 +63,9 @@ build:
       - web/target/*.jar
     expire_in: 1 day
   cache:
+    key: maven-cache
     paths:
-      - .m2/repository
+      - $CI_PROJECT_DIR/.m2/
   tags:
     - docker_runner
   rules:
