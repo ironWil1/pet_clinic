@@ -88,18 +88,6 @@ public class DosageControllerTest extends ControllerAbstractIntegrationTest {
         assertThat(--beforeCount).isEqualTo(getCountDosages(101L));
     }
 
-    //400 - Дозировка или препарат не существует
-    @Test
-    @DataSet(cleanBefore = true, value = {"/datasets/controllers/medicineController/user-entities.yml",
-            "/datasets/controllers/medicineController/medicine.yml",
-            "/datasets/controllers/medicineController/dosage.yml"})
-    public void deleteNotExistDosage() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/{medicineId}/dosage/{dosageId}", 155L, 55L)
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-
-    }
-
     //404 - Данная Дозировка не найдена
     @Test
     @DataSet(cleanBefore = true, value = {"/datasets/controllers/medicineController/user-entities.yml",
