@@ -169,11 +169,16 @@ public class MedicineController {
 
     @Operation(summary = "Удаление Дозировки по ID")
     @ApiResponse(responseCode = "200", description = "Дозировка удалена")
-    @ApiResponse(responseCode = "404", description = "Дозировка или препарат не найдены")
+    @ApiResponse(responseCode = "400", description = "Дозировка или препарат не существует")
+    @ApiResponse(responseCode = "404", description = "Данная Дозировка не найдена")
     @DeleteMapping(value = "/{medicineId}/dosage/{dosageId}")
     public ResponseEntity<Void> deleteById(@CheckExist(entityClass = Medicine.class) @PathVariable Long medicineId, @CheckExist(entityClass = Dosage.class) @PathVariable Long dosageId) {
         Medicine medicine = medicineService.getByKey(medicineId);
         Dosage dosage = dosageService.getByKey(dosageId);
+
+        if (!dosage.getMedicine().getId().equals(medicine.getId())) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
         medicine.removeDosage(dosage);
         medicineService.update(medicine);
