@@ -1,6 +1,8 @@
 package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.vet24.discord.feign.DiscordClient;
+import com.vet24.discord.models.dto.discord.MessageDto;
 import com.vet24.models.discord.DiscordMessage;
 import com.vet24.models.dto.user.ManagerNewsRequestDto;
 import com.vet24.models.enums.NewsType;
@@ -9,7 +11,9 @@ import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -20,6 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest {
@@ -35,6 +42,9 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
     private List<String> pics;
     private int initialCount = 3;
     private String token;
+
+    @MockBean
+    DiscordClient discordClient;
 
     @Before
     public void createManagerNewsRequestDto() {
@@ -347,6 +357,11 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
             "/datasets/controllers/user/managerNewsController/news_pictures.yml"
     })
     public void publishNewsSuccess() throws Exception {
+        MessageDto messageDto = new MessageDto();
+        messageDto.setId(112112L);
+        ResponseEntity<MessageDto> response = ResponseEntity.ok(messageDto);
+        when(discordClient.send(any(MessageDto.class), any(), anyBoolean()))
+                .thenReturn(response);
         mockMvc.perform(MockMvcRequestBuilders.put(URI + "/publish")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(Arrays.asList(101, 202)))
@@ -358,8 +373,8 @@ public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest
         DiscordMessage discordMessage2 = entityManager.find(DiscordMessage.class, 2L);
         assertThat(news1.isPublished()).isTrue();
         assertThat(news2.isPublished()).isTrue();
-        assertThat(discordMessage1.getDiscordMsgId()).isEqualTo(101L);
-        assertThat(discordMessage2.getDiscordMsgId()).isEqualTo(202L);
+        assertThat(discordMessage1.getDiscordMsgId()).isEqualTo(112112L);
+        assertThat(discordMessage2.getDiscordMsgId()).isEqualTo(112112L);
     }
 
     @Test
