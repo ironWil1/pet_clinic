@@ -216,6 +216,15 @@ GET /api/user/profile -> ProfileDto
 PUT ProfileDto /api/user/profile -> Void
 ```
 
+### 4. Настройки уведомлений
+1. в профиль поля указанные ниже
+1. посмотреть все места, где редактируется профиль, на то, что новые поля там теперь тоже тестируются
+
+```
+boolean discordNotify // false - дефолтное значение
+boolean emailNotify // false - дефолтное значение
+```
+
 # Интеграция с discord
 
 ## DiscordModule
@@ -600,8 +609,28 @@ enum RemindType {
 1. Создать ```EmailRemind extends Remind<String>```;
 1. в EmailReminder метод send должен принимать EmailRemind и отправлять электронное сообщение используя метод sendMultipartHtmlMessage в MailService
 
+## RemindConverter
+1. создать интерфейс RemindConverter
+1. создать реализацию EmailRemindConverter, который будет конвертировать уведомление в EmailRemind
+
+```
+RemindConverter {
+Remind convert(UserNotification notification);
+}
+```
+
+## RemindService
+1. добавить в RemindSender
+1. создать RemindService (с реализацией)
+1. RemindService - должен собирать в себе все RemindSender, и RemindConverter
+1. remindAllNotification() - должен смотреть в базе все уведомления, события которых наступают завтра и отправлять пользователям напоминания, и отправлять уведомления (на данный момент на email) через соответствующий RemindSender
 
 
+```
+class ReminService {
+void remindAllNotification();
+}
+```
 
 
 
