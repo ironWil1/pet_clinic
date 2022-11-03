@@ -5,6 +5,7 @@ stages:
   - test
   - rebuilding
   - trigger
+  - cleanup
 
 .detect-change:
   stage: trigger
