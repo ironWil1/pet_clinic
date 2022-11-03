@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
+import com.vet24.discord.feign.DiscordClient;
 import com.vet24.service.media.MailService;
 import com.vet24.web.config.ClinicDBRider;
 import com.vet24.web.controllers.user.AuthRequest;
@@ -29,7 +30,8 @@ import javax.persistence.EntityManager;
 @ClinicDBRider
 public abstract class ControllerAbstractIntegrationTest {
 
-
+    @MockBean
+    protected DiscordClient discordClient;
     @MockBean
     protected MailService mailService;
 
