@@ -129,3 +129,10 @@ rebuilding:
       when: never
     - if: $CI_COMMIT_BRANCH == 'master'
       when: manual
+
+cleanup_job:
+  stage: cleanup
+  script:
+    - echo "Cleaning up"
+    - rm -rf "%CACHE_PATH%/%CI_PIPELINE_ID%"
+  when: always
