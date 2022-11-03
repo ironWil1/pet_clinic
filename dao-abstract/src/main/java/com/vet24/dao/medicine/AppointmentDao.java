@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface AppointmentDao extends ReadWriteDao<Long, Appointment> {
 
-    List<LocalDateTime> getLocalDateTimeByDoctorIdAndDate(Long doctorId, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd);
+    List<LocalDateTime> getLocalDateTimeByDoctorIdAndBetweenDates(Long doctorId, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd);
 }

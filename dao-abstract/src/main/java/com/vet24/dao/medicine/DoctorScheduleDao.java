@@ -12,7 +12,7 @@ public interface DoctorScheduleDao extends ReadWriteDao<Long, DoctorSchedule> {
     boolean isExistByDoctorIdAndWeekNumber(Long doctorId, LocalDate startWeek);
     public List<DoctorSchedule> getDoctorScheduleAfterDate(LocalDate date);
 
-    String getDoctorScheduleWorkShift(Long doctorId, LocalDate date);
+    WorkShift getDoctorScheduleWorkShift(Long doctorId, LocalDate date);
 
     List<DoctorSchedule> getDoctorScheduleCurrentDate(LocalDate date);
 

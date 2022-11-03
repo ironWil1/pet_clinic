@@ -1,6 +1,7 @@
 package com.vet24.service.medicine.dto;
 
 import com.vet24.models.dto.appointment.AppointmentCalendarElementDto;
+import com.vet24.models.dto.appointment.AppointmentCallendarDto;
 import com.vet24.models.dto.appointment.AppointmentDayElementDto;
 import com.vet24.models.medicine.DoctorSchedule;
 
@@ -10,9 +11,9 @@ import java.util.List;
 
 public interface AppointmentCalendarDtoService {
 
-    List<AppointmentCalendarElementDto> doctorScheduleNotFound(LocalDate dateDoctor);
-    List<AppointmentCalendarElementDto> createAppointmentCalendarDtoWithoutDoctorId(LocalDate dateDoctor, List<DoctorSchedule> doctorScheduleList);
+    //List<AppointmentCalendarElementDto> doctorScheduleNotFound(LocalDate dateDoctor);
+    AppointmentCallendarDto createAppointmentCalendarDtoWithoutDoctorId(LocalDate firstDayOfWeek);
 
-    List<AppointmentCalendarElementDto> createAppointmentCalendarDto(Long doctorId, LocalDate dateDoctor);
+    AppointmentCallendarDto createAppointmentCalendarDto(Long doctorId, LocalDate firstDayOfWeek);
 
 }

@@ -13,6 +13,6 @@ public interface DoctorNonWorkingDao extends ReadWriteDao<Long, DoctorNonWorking
 
     List<DoctorNonWorking> getDoctorNonWorkingAfterDate(LocalDate date);
 
-    List<LocalDate> getDateByDoctorIdAndDate(Long doctorId, LocalDate dateStart, LocalDate dateEnd);
+    List<LocalDate> getNonWorkingDatesByDoctorIdAndBetweenDates(Long doctorId, LocalDate dateStart, LocalDate dateEnd);
 
 }

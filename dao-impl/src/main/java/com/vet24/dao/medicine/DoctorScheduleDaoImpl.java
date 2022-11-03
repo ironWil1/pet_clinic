@@ -31,14 +31,12 @@ public class DoctorScheduleDaoImpl extends ReadWriteDaoImpl<Long, DoctorSchedule
     }
 
     @Override
-    public String getDoctorScheduleWorkShift(Long doctorId, LocalDate date) {
-        DoctorSchedule doctorSchedule = manager
-                .createQuery("FROM DoctorSchedule d WHERE d.doctor.id = :id AND d.startWeek = :date", DoctorSchedule.class)
+    public WorkShift getDoctorScheduleWorkShift(Long doctorId, LocalDate date) {
+        return manager
+                .createQuery("select d.workShift FROM DoctorSchedule d WHERE d.doctor.id = :id AND d.startWeek = :date", WorkShift.class)
                 .setParameter("id", doctorId)
                 .setParameter("date", date)
                 .getSingleResult();
-        return doctorSchedule.getWorkShift().toString();
-
     }
 
 

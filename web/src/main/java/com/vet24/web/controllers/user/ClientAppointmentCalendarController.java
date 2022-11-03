@@ -2,6 +2,7 @@ package com.vet24.web.controllers.user;
 
 import com.vet24.models.dto.appointment.AppointmentCallendarDto;
 import com.vet24.models.enums.RoleNameEnum;
+import com.vet24.models.exception.BadRequestException;
 import com.vet24.models.medicine.DoctorSchedule;
 import com.vet24.models.user.Role;
 import com.vet24.service.medicine.DoctorScheduleService;
@@ -53,26 +54,16 @@ public class ClientAppointmentCalendarController {
 
         if (date.isBefore(LocalDate.now()) || date.isAfter(LocalDate.now().with(DayOfWeek.MONDAY).plusWeeks(2L).minusDays(1L))) {
             log.info("Расписание можно получать только на текущую и следующую неделю");
-            return ResponseEntity.badRequest().build();
+            throw new BadRequestException("Bad request");
         }
-
         if (doctorId != null) {
             if (!userService.isExistByIdAndRole(doctorId, RoleNameEnum.DOCTOR)) {
                 log.info("Доктора с заданным Id не существует");
-                return ResponseEntity.badRequest().build();
+                throw new BadRequestException("Bad request");
             }
-            if (!doctorScheduleService.isExistByDoctorIdAndWeekNumber(doctorId, date.with(DayOfWeek.MONDAY))) {
-                log.info("Appointment not found");
-                return ResponseEntity.ok(new AppointmentCallendarDto(appointmentCalendarElementDtoService.doctorScheduleNotFound(date.with(DayOfWeek.MONDAY))));
-            }
-            return ResponseEntity.ok(new AppointmentCallendarDto(appointmentCalendarElementDtoService.createAppointmentCalendarDto(doctorId, date.with(DayOfWeek.MONDAY))));
+            return ResponseEntity.ok(appointmentCalendarElementDtoService.createAppointmentCalendarDto(doctorId, date.with(DayOfWeek.MONDAY)));
         } else {
-            List<DoctorSchedule> doctorScheduleList = doctorScheduleService.getDoctorScheduleCurrentDate(date.with(DayOfWeek.MONDAY));
-            if (doctorScheduleList.size() == 0) {
-                log.info("Appointment not found");
-                return ResponseEntity.ok(new AppointmentCallendarDto(appointmentCalendarElementDtoService.doctorScheduleNotFound(date.with(DayOfWeek.MONDAY))));
-            }
-            return ResponseEntity.ok(new AppointmentCallendarDto(appointmentCalendarElementDtoService.createAppointmentCalendarDtoWithoutDoctorId(date.with(DayOfWeek.MONDAY), doctorScheduleList)));
+            return ResponseEntity.ok(appointmentCalendarElementDtoService.createAppointmentCalendarDtoWithoutDoctorId(date.with(DayOfWeek.MONDAY)));
         }
     }
 }

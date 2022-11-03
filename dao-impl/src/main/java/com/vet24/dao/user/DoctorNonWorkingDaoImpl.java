@@ -37,7 +37,7 @@ public class DoctorNonWorkingDaoImpl extends ReadWriteDaoImpl<Long, DoctorNonWor
                 .getResultList();
     }
     @Override
-    public List<LocalDate> getDateByDoctorIdAndDate(Long doctorId, LocalDate dateStart, LocalDate dateEnd) {
+    public List<LocalDate> getNonWorkingDatesByDoctorIdAndBetweenDates(Long doctorId, LocalDate dateStart, LocalDate dateEnd) {
         return manager
                 .createQuery("select d.date FROM DoctorNonWorking d WHERE d.doctor.id = :id AND d.date >= :dateStart AND d.date <= :dateEnd", LocalDate.class)
                 .setParameter("id", doctorId)
@@ -45,5 +45,4 @@ public class DoctorNonWorkingDaoImpl extends ReadWriteDaoImpl<Long, DoctorNonWor
                 .setParameter("dateEnd", dateEnd)
                 .getResultList();
     }
-
 }

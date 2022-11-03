@@ -23,7 +23,7 @@ public class AppointmentServiceImpl extends ReadWriteServiceImpl<Long, Appointme
 
 
     @Override
-    public List<LocalDateTime> getLocalDateTimeByDoctorIdAndDate(Long doctorId, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd) {
-        return appointmentDao.getLocalDateTimeByDoctorIdAndDate(doctorId, dateTimeStart, dateTimeEnd);
+    public List<LocalDateTime> getLocalDateTimeByDoctorIdAndBetweenDates(Long doctorId, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd) {
+        return appointmentDao.getLocalDateTimeByDoctorIdAndBetweenDates(doctorId, dateTimeStart, dateTimeEnd);
     }
 }

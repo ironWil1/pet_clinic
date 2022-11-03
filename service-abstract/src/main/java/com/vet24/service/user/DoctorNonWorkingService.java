@@ -13,6 +13,6 @@ public interface DoctorNonWorkingService extends ReadWriteService<Long, DoctorNo
 
     List<DoctorNonWorking> getDoctorNonWorkingAfterDate(LocalDate date);
 
-    List<LocalDate> getDateByDoctorIdAndDate(Long doctorId, LocalDate dateStart, LocalDate dateEnd);
+    List<LocalDate> getNonWorkingDatesByDoctorIdAndBetweenDates(Long doctorId, LocalDate dateStart, LocalDate dateEnd);
 
 }

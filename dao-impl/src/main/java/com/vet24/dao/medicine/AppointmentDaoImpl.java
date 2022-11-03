@@ -12,7 +12,7 @@ import java.util.List;
 public class AppointmentDaoImpl extends ReadWriteDaoImpl<Long, Appointment> implements AppointmentDao {
 
     @Override
-    public List<LocalDateTime> getLocalDateTimeByDoctorIdAndDate(Long doctorId, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd) {
+    public List<LocalDateTime> getLocalDateTimeByDoctorIdAndBetweenDates(Long doctorId, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd) {
         return manager
                 .createQuery("select d.startDateTime from Appointment d WHERE d.doctor.id = :id AND d.startDateTime >= :dateTimeStart AND d.startDateTime <= :dateTimeEnd", LocalDateTime.class)
                 .setParameter("id", doctorId)
