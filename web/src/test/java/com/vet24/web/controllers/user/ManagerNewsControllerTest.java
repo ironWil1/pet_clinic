@@ -1,7 +1,6 @@
 package com.vet24.web.controllers.user;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.vet24.discord.feign.DiscordClient;
 import com.vet24.discord.models.dto.discord.MessageDto;
 import com.vet24.models.discord.DiscordMessage;
 import com.vet24.models.dto.user.ManagerNewsRequestDto;
@@ -11,7 +10,6 @@ import com.vet24.web.ControllerAbstractIntegrationTest;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,20 +29,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ManagerNewsControllerTest extends ControllerAbstractIntegrationTest {
     private final String URI = "/api/manager/news";
-
     private ManagerNewsRequestDto managerNewsSuccess;
     private ManagerNewsRequestDto managerNewsEmptyFirstField;
     private ManagerNewsRequestDto managerNewsEmptySecondField;
     private ManagerNewsRequestDto managerNewsEmptyThirdField;
     private ManagerNewsRequestDto managerNewsEmptyFifthField;
-
     private List<String> pictures;
     private List<String> pics;
     private int initialCount = 3;
     private String token;
-
-    @MockBean
-    DiscordClient discordClient;
 
     @Before
     public void createManagerNewsRequestDto() {
