@@ -11,9 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 
 public class UserProfileControllerTest extends ControllerAbstractIntegrationTest {
@@ -41,7 +38,7 @@ public class UserProfileControllerTest extends ControllerAbstractIntegrationTest
     public void updateProfile() throws Exception {
         ProfileDto profileDto = new ProfileDto("test.png",
                 "Vasya", "Vasilev", LocalDate.of(1970, 01, 01),
-                "discord", "telegram");
+                "discord", "telegram", true, true);
         mockMvc.perform(MockMvcRequestBuilders.put(URL)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(profileDto))
@@ -54,5 +51,7 @@ public class UserProfileControllerTest extends ControllerAbstractIntegrationTest
         Assert.assertEquals(profile.getBirthDate(),  LocalDate.of(1970, 01, 01));
         Assert.assertEquals(profile.getDiscordId(), "discord");
         Assert.assertEquals(profile.getTelegramId(), "telegram");
+        Assert.assertEquals(profile.getDiscordNotify(), true);
+        Assert.assertEquals(profile.getEmailNotify(), true);
     }
 }

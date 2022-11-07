@@ -61,6 +61,14 @@ public class Profile {
     @Column(name = "telegram_id")
     private String telegramId;
 
+    @NonNull
+    @Column(name = "discord_notify")
+    private Boolean discordNotify;
+
+    @NonNull
+    @Column(name = "email_notify")
+    private Boolean emailNotify;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
