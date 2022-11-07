@@ -466,7 +466,9 @@ public class TestDataInitializer implements ApplicationRunner {
                     "lastName" + i,
                     LocalDate.parse("1970-01-01"),
                     "discordId" + i,
-                    "telegramId" + i));
+                    "telegramId" + i,
+                    false,
+                    false));
         }
         profileService.persistAll(profileList);
     }
