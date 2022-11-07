@@ -18,7 +18,7 @@ public class AppTaskScheduler {
         this.doctorScheduleBalancer = doctorScheduleBalancer;
     }
 
-    @Scheduled(cron = "${cron.expression}")
+    @Scheduled(cron = "${cron.doctor-schedule-balance}")
     public void scheduleBalance() {
 
         log.info("Balance started.");
