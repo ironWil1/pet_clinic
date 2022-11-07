@@ -460,15 +460,17 @@ public class TestDataInitializer implements ApplicationRunner {
         List<User> users = userService.getAll();
         List<com.vet24.models.user.Profile> profileList = new ArrayList<>();
         for (int i = 1; i <= users.size(); i++) {
-            profileList.add(new com.vet24.models.user.Profile(users.get(i - 1),
-                    "avatarUrl" + i,
-                    "firstName" + i,
-                    "lastName" + i,
-                    LocalDate.parse("1970-01-01"),
-                    "discordId" + i,
-                    "telegramId" + i,
-                    false,
-                    false));
+            com.vet24.models.user.Profile profile = new com.vet24.models.user.Profile();
+            profile.setUser(users.get(i - 1));
+            profile.setAvatarUrl("avatarUrl" + i);
+            profile.setFirstName("firstName" + i);
+            profile.setLastName("lastName" + i);
+            profile.setDiscordId("discordId" + i);
+            profile.setTelegramId("telegramId" + i);
+            profile.setBirthDate(LocalDate.parse("1970-01-01"));
+            profile.setDiscordNotify(false);
+            profile.setEmailNotify(false);
+            profileList.add(profile);
         }
         profileService.persistAll(profileList);
     }
