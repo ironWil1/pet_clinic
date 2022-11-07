@@ -1,6 +1,6 @@
 package com.vet24.models.notification;
 
-public interface RemindConverter<T>{
+public interface RemindConverter{
 
-    Remind<T> convert(UserNotification notification);
+    Remind<String> convert(UserNotification notification);
 }
