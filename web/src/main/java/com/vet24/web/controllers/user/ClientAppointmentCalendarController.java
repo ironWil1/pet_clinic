@@ -54,12 +54,12 @@ public class ClientAppointmentCalendarController {
 
         if (date.isBefore(LocalDate.now()) || date.isAfter(LocalDate.now().with(DayOfWeek.MONDAY).plusWeeks(2L).minusDays(1L))) {
             log.info("Расписание можно получать только на текущую и следующую неделю");
-            throw new BadRequestException("Bad request");
+            throw new BadRequestException("Расписание можно получать только на текущую и следующую неделю");
         }
         if (doctorId != null) {
             if (!userService.isExistByIdAndRole(doctorId, RoleNameEnum.DOCTOR)) {
                 log.info("Доктора с заданным Id не существует");
-                throw new BadRequestException("Bad request");
+                throw new BadRequestException("Доктора с заданным Id не существует");
             }
             return ResponseEntity.ok(appointmentCalendarElementDtoService.createAppointmentCalendarDto(doctorId, date.with(DayOfWeek.MONDAY)));
         } else {

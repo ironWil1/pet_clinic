@@ -45,13 +45,12 @@ public class AppointmentCalendarDtoServiceImpl implements AppointmentCalendarDto
                 calendarElementList.add(new AppointmentCalendarElementDto(currentDayOfWeek, appointmentDayElementDtoList));
                 continue;
             }
-
             if (workShift.equals(WorkShift.FIRST_SHIFT)) {
-                addAvailableAppointmentDayElementDto(appointments, currentDayOfWeek, 7, appointmentDayElementDtoList);
-                addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, workShift);
-            } else if (workShift.equals(WorkShift.SECOND_SHIFT)) {
-                addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, workShift);
-                addAvailableAppointmentDayElementDto(appointments, currentDayOfWeek, 15, appointmentDayElementDtoList);
+                addAvailableAppointmentDayElementDto(appointments, currentDayOfWeek, workShift.getStartWorkShift(), appointmentDayElementDtoList);
+                addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, WorkShift.SECOND_SHIFT);
+            } else {
+                addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, WorkShift.FIRST_SHIFT);
+                addAvailableAppointmentDayElementDto(appointments, currentDayOfWeek, workShift.getStartWorkShift(), appointmentDayElementDtoList);
             }
             calendarElementList.add(new AppointmentCalendarElementDto(currentDayOfWeek, appointmentDayElementDtoList));
         }
@@ -64,14 +63,13 @@ public class AppointmentCalendarDtoServiceImpl implements AppointmentCalendarDto
         if (!doctorScheduleService.isExistByDoctorIdAndWeekNumber(doctorId, firstDayOfWeek)) {
             return new AppointmentCallendarDto(createFullDayUnavailableAppointmentDayElementDto(firstDayOfWeek));
         }
-
+        if (!doctorScheduleService.isExistByDoctorIdAndWeekNumber(doctorId, firstDayOfWeek)) {
+            return new AppointmentCallendarDto(createFullDayUnavailableAppointmentDayElementDto(firstDayOfWeek));
+        }
         WorkShift workShift = doctorScheduleService.getDoctorScheduleWorkShift(doctorId, firstDayOfWeek);
         List<LocalDate> doctorNonWorkingList = doctorNonWorkingService.getNonWorkingDatesByDoctorIdAndBetweenDates(doctorId, firstDayOfWeek, firstDayOfWeek.with(DayOfWeek.SUNDAY));
         List<LocalDateTime> appointments = appointmentService.getLocalDateTimeByDoctorIdAndBetweenDates(doctorId, LocalDateTime.of(firstDayOfWeek, LocalTime.of(7, 0)), LocalDateTime.of(firstDayOfWeek.with(DayOfWeek.SUNDAY), LocalTime.of(23, 0)));
 
-        if (!doctorScheduleService.isExistByDoctorIdAndWeekNumber(doctorId, firstDayOfWeek)) {
-            return new AppointmentCallendarDto(createFullDayUnavailableAppointmentDayElementDto(firstDayOfWeek));
-        }
         return new AppointmentCallendarDto(createAppointmentCalendarElementDto(firstDayOfWeek, workShift, doctorNonWorkingList, appointments));
     }
 
@@ -86,10 +84,7 @@ public class AppointmentCalendarDtoServiceImpl implements AppointmentCalendarDto
     }
 
     private void addHalfDayUnavailableAppointmentDayElementDto (List<AppointmentDayElementDto> appointmentDayElementDtoList, WorkShift workShift) {
-        int startOfRange = workShift.equals(WorkShift.FIRST_SHIFT) ? 15 : 7;
-        int endOfRange = workShift.equals(WorkShift.FIRST_SHIFT) ? 23 : 15;
-
-        IntStream.range(startOfRange, endOfRange).forEach(j -> appointmentDayElementDtoList.add(new AppointmentDayElementDto(LocalTime.of(j, 0), false)));
+        IntStream.range(workShift.getStartWorkShift(), workShift.getEndWorkShift()).forEach(j -> appointmentDayElementDtoList.add(new AppointmentDayElementDto(LocalTime.of(j, 0), false)));
     }
 
     private  <T> List<T> commonElements(Iterable<? extends List<? extends T>> lists) throws NullPointerException {
@@ -110,31 +105,26 @@ public class AppointmentCalendarDtoServiceImpl implements AppointmentCalendarDto
         Map<Long, List<LocalDateTime>> appointmentsMap = new HashMap<>();
         List<DoctorSchedule> doctorScheduleList = doctorScheduleService.getDoctorScheduleCurrentDate(firstDayOfWeek);
 
-        if (doctorScheduleList.size() == 0) {
+        if (doctorScheduleList.isEmpty()) {
             return new AppointmentCallendarDto(createFullDayUnavailableAppointmentDayElementDto(firstDayOfWeek));
         }
         doctorScheduleList.stream()
-                .forEach(x -> workShiftMap.put(x.getDoctor().getId(), x.getWorkShift()));
+                .forEach(doctorSchedule -> workShiftMap.put(doctorSchedule.getDoctor().getId(), doctorSchedule.getWorkShift()));
         workShiftMap.keySet().stream()
-                .forEach(x -> doctorNonWorkingMap.put(x, doctorNonWorkingService.getNonWorkingDatesByDoctorIdAndBetweenDates(x, firstDayOfWeek, firstDayOfWeek.with(DayOfWeek.SUNDAY))));
+                .forEach(doctorId -> doctorNonWorkingMap.put(doctorId, doctorNonWorkingService.getNonWorkingDatesByDoctorIdAndBetweenDates(doctorId, firstDayOfWeek, firstDayOfWeek.with(DayOfWeek.SUNDAY))));
         workShiftMap.entrySet().stream()
-                .forEach(x -> appointmentsMap.put(x.getKey(), appointmentService.getLocalDateTimeByDoctorIdAndBetweenDates(x.getKey(),
-                        LocalDateTime.of(firstDayOfWeek, LocalTime.of(x.getValue().equals(WorkShift.FIRST_SHIFT) ? 7 : 15, 0)),
-                        LocalDateTime.of(firstDayOfWeek, LocalTime.of(x.getValue().equals(WorkShift.FIRST_SHIFT) ? 15 : 22, 0)).plusDays(6L))));
+                .forEach(doctorIdAndWorkShift -> appointmentsMap.put(doctorIdAndWorkShift.getKey(), appointmentService.getLocalDateTimeByDoctorIdAndBetweenDates(doctorIdAndWorkShift.getKey(),
+                        LocalDateTime.of(firstDayOfWeek, LocalTime.of(doctorIdAndWorkShift.getValue().getStartWorkShift(), 0)),
+                        LocalDateTime.of(firstDayOfWeek, LocalTime.of(doctorIdAndWorkShift.getValue().getEndWorkShift(), 0)).plusDays(6L))));
 
         List<LocalDate> commonDoctorNonWorking = commonElements(doctorNonWorkingMap.values());
         List<LocalDateTime> commonAppointments = commonElements(appointmentsMap.values());
 
-        List<WorkShift> currentWorkShift = new ArrayList<>();
-
         if (!workShiftMap.containsValue(WorkShift.FIRST_SHIFT)) {
-            currentWorkShift.add(WorkShift.SECOND_SHIFT);
+            return new AppointmentCallendarDto(createAppointmentCalendarElementDto(firstDayOfWeek, WorkShift.SECOND_SHIFT, commonDoctorNonWorking, commonAppointments));
         } else if (!workShiftMap.containsValue(WorkShift.SECOND_SHIFT)) {
-            currentWorkShift.add(WorkShift.FIRST_SHIFT);
+            return new AppointmentCallendarDto(createAppointmentCalendarElementDto(firstDayOfWeek, WorkShift.FIRST_SHIFT, commonDoctorNonWorking, commonAppointments));
         } else {
-
-            currentWorkShift.addAll(Arrays.asList(WorkShift.FIRST_SHIFT, WorkShift.SECOND_SHIFT));
-
             Map<Long, List<LocalDate>> doctorNonWorkingForFirstWorkShift = new HashMap<>();
             workShiftMap.entrySet().stream()
                     .filter(x -> x.getValue().equals(WorkShift.FIRST_SHIFT))
@@ -142,40 +132,40 @@ public class AppointmentCalendarDtoServiceImpl implements AppointmentCalendarDto
 
             Map<Long, List<LocalDate>> doctorNonWorkingForSecondWorkShift = new HashMap<>();
             workShiftMap.entrySet().stream()
-                    .filter(x -> x.getValue().equals(WorkShift.SECOND_SHIFT))
-                    .forEach(x -> doctorNonWorkingForSecondWorkShift.put(x.getKey(), doctorNonWorkingMap.get(x.getKey())));
+                    .filter(doctorIdAndWorkShift -> doctorIdAndWorkShift.getValue().equals(WorkShift.SECOND_SHIFT))
+                    .forEach(doctorIdAndWorkShift -> doctorNonWorkingForSecondWorkShift.put(doctorIdAndWorkShift.getKey(), doctorNonWorkingMap.get(doctorIdAndWorkShift.getKey())));
 
-            List<LocalDate> commonDoctorNonWorkingForFirstWorkShift = commonElements(doctorNonWorkingForFirstWorkShift.values());//NullPointer
+            List<LocalDate> commonDoctorNonWorkingForFirstWorkShift = commonElements(doctorNonWorkingForFirstWorkShift.values());
             List<LocalDate> commonDoctorNonWorkingForSecondWorkShift = commonElements(doctorNonWorkingForSecondWorkShift.values());
 
             if (doctorNonWorkingForFirstWorkShift.size() == 1) {
-                doctorNonWorkingForFirstWorkShift.keySet().forEach(x -> commonDoctorNonWorkingForFirstWorkShift.addAll(doctorNonWorkingMap.get(x)));
-                doctorNonWorkingForFirstWorkShift.keySet().forEach(x -> commonAppointments.addAll(appointmentsMap.get(x)));
+                doctorNonWorkingForFirstWorkShift.keySet().forEach(doctorId -> commonDoctorNonWorkingForFirstWorkShift.addAll(doctorNonWorkingMap.get(doctorId)));
+                doctorNonWorkingForFirstWorkShift.keySet().forEach(doctorId -> commonAppointments.addAll(appointmentsMap.get(doctorId)));
             }
             if (doctorNonWorkingForSecondWorkShift.size() == 1) {
-                doctorNonWorkingForSecondWorkShift.keySet().forEach(x -> commonDoctorNonWorkingForSecondWorkShift.addAll(doctorNonWorkingMap.get(x)));
-                doctorNonWorkingForSecondWorkShift.keySet().forEach(x -> commonAppointments.addAll(appointmentsMap.get(x)));
+                doctorNonWorkingForSecondWorkShift.keySet().forEach(doctorId -> commonDoctorNonWorkingForSecondWorkShift.addAll(doctorNonWorkingMap.get(doctorId)));
+                doctorNonWorkingForSecondWorkShift.keySet().forEach(doctorId -> commonAppointments.addAll(appointmentsMap.get(doctorId)));
             }
-            return new AppointmentCallendarDto(createAppointmentForDifferentWorkShifts(commonDoctorNonWorkingForFirstWorkShift, commonDoctorNonWorkingForSecondWorkShift, commonAppointments, firstDayOfWeek, currentWorkShift));
+            return new AppointmentCallendarDto(createAppointmentForDifferentWorkShifts(commonDoctorNonWorkingForFirstWorkShift, commonDoctorNonWorkingForSecondWorkShift, commonAppointments, firstDayOfWeek));
         }
-        return new AppointmentCallendarDto(createAppointmentCalendarElementDto(firstDayOfWeek, currentWorkShift.get(0), commonDoctorNonWorking, commonAppointments));
+
     }
 
     private List<AppointmentCalendarElementDto> createAppointmentForDifferentWorkShifts(List<LocalDate> commonDoctorNonWorkingForFirstWorkShift, List<LocalDate> commonDoctorNonWorkingForSecondWorkShift,
-                                                                                        List<LocalDateTime> commonAppointments, LocalDate firstDayOfWeek, List<WorkShift> currentWorkShift) {
+                                                                                        List<LocalDateTime> commonAppointments, LocalDate firstDayOfWeek) {
         List<AppointmentCalendarElementDto> calendarElementList = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             LocalDate currentDayOfWeek = firstDayOfWeek.plusDays(i);
             List<AppointmentDayElementDto> appointmentDayElementDtoList = new ArrayList<>();
             if (commonDoctorNonWorkingForFirstWorkShift.contains(currentDayOfWeek)) {
-                addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, currentWorkShift.get(1));
+                addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, WorkShift.FIRST_SHIFT);
             } else {
-                addAvailableAppointmentDayElementDto(commonAppointments, currentDayOfWeek, 7, appointmentDayElementDtoList);
+                addAvailableAppointmentDayElementDto(commonAppointments, currentDayOfWeek, WorkShift.FIRST_SHIFT.getStartWorkShift(), appointmentDayElementDtoList);
             }
             if (commonDoctorNonWorkingForSecondWorkShift.contains(currentDayOfWeek)) {
-                addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, currentWorkShift.get(0));
+                addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, WorkShift.SECOND_SHIFT);
             } else {
-                addAvailableAppointmentDayElementDto(commonAppointments, currentDayOfWeek, 15, appointmentDayElementDtoList);
+                addAvailableAppointmentDayElementDto(commonAppointments, currentDayOfWeek, WorkShift.SECOND_SHIFT.getStartWorkShift(), appointmentDayElementDtoList);
             }
             calendarElementList.add(new AppointmentCalendarElementDto(currentDayOfWeek, appointmentDayElementDtoList));
         }
