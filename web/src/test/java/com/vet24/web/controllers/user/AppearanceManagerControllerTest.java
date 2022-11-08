@@ -40,8 +40,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-breed.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_breed.yml"})
     public void getBreedSuccessTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/breed")
                         .param("petType", "DOG")
@@ -53,35 +53,37 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-breed.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_breed.yml"})
     public void getBreedEmptyParamTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/breed")
                         .param("petType", "")
                         .param("breed", "")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$", Is.is(breedService.getAllBreeds())))
+                .andExpect(jsonPath("$",
+                        Is.is(entityManager.
+                                createNativeQuery("select breed from pet_breed").getResultList())))
                 .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-breed.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_breed.yml"})
     public void getBreedEmptyPetTypeTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/breed")
                         .param("petType", "")
                         .param("breed", "chaotic")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$", Is.is(breedService.getBreedByBreed("chaotic"))));
+                .andExpect(jsonPath("$", Is.is(List.of("chaotic","chaotic"))));
     }
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-breed.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_breed.yml"})
     public void getBreedEmptyBreedTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/breed")
                         .param("petType", "DOG")
@@ -93,8 +95,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-breed.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_breed.yml"})
     public void postBreedSuccessTest() throws Exception {
         int sizeBefore = breedService.getAllBreeds().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/breed")
@@ -109,8 +111,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-breed.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_breed.yml"})
     public void postBreedIfBreedPresentTest() throws Exception {
         int sizeBefore = breedService.getAllBreeds().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/breed")
@@ -125,8 +127,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-breed.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_breed.yml"})
     public void postBreedEmptyPetTypeTest() throws Exception {
         int sizeBefore = breedService.getAllBreeds().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/breed")
@@ -141,8 +143,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-breed.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_breed.yml"})
     public void deleteBreedSuccessTest() throws Exception {
         int sizeBefore = breedService.getAllBreeds().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/breed")
@@ -157,8 +159,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-breed.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_breed.yml"})
     public void deleteBreedNotPresentTest() throws Exception {
         int sizeBefore = breedService.getAllBreeds().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/breed")
@@ -173,8 +175,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-breed.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_breed.yml"})
     public void deleteBreedEmptyPetTypeTest() throws Exception {
         int sizeBefore = breedService.getAllBreeds().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/breed")
@@ -189,8 +191,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-color.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_color.yml"})
     public void getColorSuccessTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/color")
                         //test trim of incorrect param insert
@@ -202,8 +204,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-color.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_color.yml"})
     public void getColorEmptyParamTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(URI + "/color")
                         .param("color", "")
@@ -215,8 +217,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-color.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_color.yml"})
     public void addColorSuccessTest() throws Exception {
         int sizeBeforeTest = colorService.getAllColors().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/color")
@@ -230,8 +232,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-color.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_color.yml"})
     public void addColorIfPresentTest() throws Exception {
         int sizeBefore = colorService.getAllColors().size();
         mockMvc.perform(MockMvcRequestBuilders.post(URI + "/color")
@@ -245,8 +247,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-color.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_color.yml"})
     public void deleteColorSuccessTest() throws Exception {
         int sizeBefore = colorService.getAllColors().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/color")
@@ -260,8 +262,8 @@ public class AppearanceManagerControllerTest extends ControllerAbstractIntegrati
 
     @Test
     @DataSet(cleanBefore = true, value = {
-            "datasets/controllers/user/appearanceManagerController/user-entities.yml",
-            "datasets/controllers/user/appearanceManagerController/pet-color.yml"})
+            "datasets/controllers/user/appearanceManagerController/user_entities.yml",
+            "datasets/controllers/user/appearanceManagerController/pet_color.yml"})
     public void deleteColorIfNotPresentTest() throws Exception {
         int sizeBefore = colorService.getAllColors().size();
         mockMvc.perform(MockMvcRequestBuilders.delete(URI + "/color")
