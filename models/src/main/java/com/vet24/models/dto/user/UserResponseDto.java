@@ -1,21 +1,20 @@
 package com.vet24.models.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.vet24.models.enums.RoleNameEnum;
 import com.vet24.models.util.View;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
+import lombok.NoArgsConstructor;
 
 @Data
+@JsonView(View.Get.class)
 @AllArgsConstructor
-public class DoctorDtoPost {
-    @JsonView(View.Get.class)
+@NoArgsConstructor
+public class UserResponseDto {
     private Long id;
-    @JsonView({View.Get.class, View.Post.class})
     private String email;
-    private String firstname;
-    private String lastname;
+    private RoleNameEnum role;
     private String password;
-    private String avatar;
-
+    ProfileDto profile;
 }
