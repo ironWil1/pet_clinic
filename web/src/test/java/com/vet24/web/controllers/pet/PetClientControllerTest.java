@@ -137,7 +137,7 @@ public class PetClientControllerTest extends ControllerAbstractIntegrationTest {
 
 //    // +mock, put pet by id - error 400 type of pet can not be changed
 //    @Test
-//    @DataSet(cleanBefore = true, value = {"/datasets/user-entities.yml", "/datasets/pet-entities.yml"})
+//    @DataSet(cleanBefore = true, value = {"/datasets/user_entities.yml", "/datasets/pet-entities.yml"})
 //    public void updatePetChangeTypeBadRequest() throws Exception{
 //        int beforeCount = petDao.getAll().size();
 //        PetRequestDto.PutClass updatedCat
