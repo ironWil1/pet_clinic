@@ -108,14 +108,11 @@ public class AppointmentCalendarDtoServiceImpl implements AppointmentCalendarDto
         if (doctorScheduleList.isEmpty()) {
             return new AppointmentCallendarDto(createFullDayUnavailableAppointmentDayElementDto(firstDayOfWeek));
         }
-        doctorScheduleList.stream()
-                .forEach(doctorSchedule -> workShiftMap.put(doctorSchedule.getDoctor().getId(), doctorSchedule.getWorkShift()));
-        workShiftMap.keySet().stream()
-                .forEach(doctorId -> doctorNonWorkingMap.put(doctorId, doctorNonWorkingService.getNonWorkingDatesByDoctorIdAndBetweenDates(doctorId, firstDayOfWeek, firstDayOfWeek.with(DayOfWeek.SUNDAY))));
-        workShiftMap.entrySet().stream()
-                .forEach(doctorIdAndWorkShift -> appointmentsMap.put(doctorIdAndWorkShift.getKey(), appointmentService.getLocalDateTimeByDoctorIdAndBetweenDates(doctorIdAndWorkShift.getKey(),
-                        LocalDateTime.of(firstDayOfWeek, LocalTime.of(doctorIdAndWorkShift.getValue().getStartWorkShift(), 0)),
-                        LocalDateTime.of(firstDayOfWeek, LocalTime.of(doctorIdAndWorkShift.getValue().getEndWorkShift(), 0)).plusDays(6L))));
+        doctorScheduleList.forEach(doctorSchedule -> workShiftMap.put(doctorSchedule.getDoctor().getId(), doctorSchedule.getWorkShift()));
+        workShiftMap.keySet().forEach(doctorId -> doctorNonWorkingMap.put(doctorId, doctorNonWorkingService.getNonWorkingDatesByDoctorIdAndBetweenDates(doctorId, firstDayOfWeek, firstDayOfWeek.with(DayOfWeek.SUNDAY))));
+        workShiftMap.forEach((key, value) -> appointmentsMap.put(key, appointmentService.getLocalDateTimeByDoctorIdAndBetweenDates(key,
+                LocalDateTime.of(firstDayOfWeek, LocalTime.of(value.getStartWorkShift(), 0)),
+                LocalDateTime.of(firstDayOfWeek, LocalTime.of(value.getEndWorkShift(), 0)).plusDays(6L))));
 
         List<LocalDate> commonDoctorNonWorking = commonElements(doctorNonWorkingMap.values());
         List<LocalDateTime> commonAppointments = commonElements(appointmentsMap.values());
