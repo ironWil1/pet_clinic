@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -37,27 +38,27 @@ public class Profile {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @NonNull
+    @Nullable
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @NonNull
+    @Nullable
     @Column(name = "first_name")
     private String firstName;
 
-    @NonNull
+    @Nullable
     @Column(name = "last_name")
     private String lastName;
 
-    @NonNull
+    @Nullable
     @Column(name = "birth_date")
     private LocalDate birthDate;
 
-    @NonNull
+    @Nullable
     @Column(name = "discord_id")
     private String discordId;
 
-    @NonNull
+    @Nullable
     @Column(name = "telegram_id")
     private String telegramId;
 
