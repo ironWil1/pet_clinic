@@ -45,13 +45,10 @@ public class AppointmentCalendarDtoServiceImpl implements AppointmentCalendarDto
                 calendarElementList.add(new AppointmentCalendarElementDto(currentDayOfWeek, appointmentDayElementDtoList));
                 continue;
             }
-            if (workShift.equals(WorkShift.FIRST_SHIFT)) {
-                addAvailableAppointmentDayElementDto(appointments, currentDayOfWeek, workShift.getStartWorkShift(), appointmentDayElementDtoList);
-                addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, WorkShift.SECOND_SHIFT);
-            } else {
-                addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, WorkShift.FIRST_SHIFT);
-                addAvailableAppointmentDayElementDto(appointments, currentDayOfWeek, workShift.getStartWorkShift(), appointmentDayElementDtoList);
-            }
+            addAvailableAppointmentDayElementDto(appointments, currentDayOfWeek, workShift.getStartWorkShift(), appointmentDayElementDtoList);
+            addHalfDayUnavailableAppointmentDayElementDto(appointmentDayElementDtoList, workShift.equals(WorkShift.FIRST_SHIFT) ? WorkShift.SECOND_SHIFT : WorkShift.FIRST_SHIFT);
+            Collections.sort(appointmentDayElementDtoList);
+
             calendarElementList.add(new AppointmentCalendarElementDto(currentDayOfWeek, appointmentDayElementDtoList));
         }
         return calendarElementList;
