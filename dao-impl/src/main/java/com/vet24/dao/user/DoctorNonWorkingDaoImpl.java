@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -33,6 +34,15 @@ public class DoctorNonWorkingDaoImpl extends ReadWriteDaoImpl<Long, DoctorNonWor
         return manager
                 .createQuery("FROM DoctorNonWorking d WHERE d.date >= :date", DoctorNonWorking.class)
                 .setParameter("date", date)
+                .getResultList();
+    }
+    @Override
+    public List<LocalDate> getNonWorkingDatesByDoctorIdAndBetweenDates(Long doctorId, LocalDate dateStart, LocalDate dateEnd) {
+        return manager
+                .createQuery("select d.date FROM DoctorNonWorking d WHERE d.doctor.id = :id AND d.date >= :dateStart AND d.date <= :dateEnd", LocalDate.class)
+                .setParameter("id", doctorId)
+                .setParameter("dateStart", dateStart)
+                .setParameter("dateEnd", dateEnd)
                 .getResultList();
     }
 }
