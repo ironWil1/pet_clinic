@@ -30,8 +30,16 @@ public class ResourceController {
     }
 
     @GetMapping("/{year:\\d{4}}/{month:\\d{2}}/{day:\\d{2}}/{filename}")
-    public ResponseEntity<byte[]> getFile(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String filename) {
-        byte[] file = resourceService.loadAsByteArray(uploadFolder + File.separator + year + File.separator + month + File.separator + day + File.separator + filename);
+    public ResponseEntity<byte[]> getFile(@PathVariable String year,
+                                          @PathVariable String month,
+                                          @PathVariable String day,
+                                          @PathVariable String filename) {
+        byte[] file = resourceService
+                .loadAsByteArray(uploadFolder + File.separator
+                + year + File.separator
+                + month + File.separator
+                + day + File.separator
+                + filename);
         log.info("Resource data file {} {} {] {} {}",year,month,day,filename);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", resourceService.getContentTypeByFileName(filename));

@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
@@ -49,8 +50,9 @@ public class UploadServiceImpl implements UploadService {
                 + originFilename.substring(extensionIndex);
 
         InputStream inputStream = file.getInputStream();
-        if (!Files.exists(Paths.get(storageFolder))) {
-            Files.createDirectories(Paths.get(storageFolder));
+        Path of = Path.of(storageFolder);
+        if (!Files.exists(of)) {
+            Files.createDirectories(of);
         }
         Files.copy(inputStream, Paths.get(storageFolder + storageFilename),StandardCopyOption.REPLACE_EXISTING);
         inputStream.close();
